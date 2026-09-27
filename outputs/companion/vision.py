@@ -8,7 +8,7 @@ from PIL import Image, ImageOps, ImageStat
 import bootstrap
 from choice_reader import read_choice, bounds
 from ocr_baseline import build_engine
-from core import resolve_name
+from core import resolve_name, description_terms, resolve_description
 from roman_glyph import roman_evidence
 from scene_gate import may_be_choice
 
@@ -69,14 +69,36 @@ class Vision:
         for i,cx in enumerate((.236,.499,.761)):
             area=rect(cx-.09,.34,cx+.09,.382)
             result=self.read_name(image.crop(area),catalog)
+            description=None
+            if result['status']=='ambiguous' and any(description_terms(result['candidates'])):
+                description=rect(cx-.085,.395,cx+.085,.505)
+                result=self.read_description(image.crop(description),result)
             readings=[s for s in result['readings'] if s]
             raw=result.get('name') or (max(set(readings),key=readings.count) if readings else '未确认选项')
             cards.append({'slot':i,'raw_text':raw,'box':box(area),'resolution':result})
+            if description:cards[-1]['description_box']=box(description)
         confirmed=sum(c['resolution']['status']=='resolved' for c in cards)
         return {**base,'scene':'choice_candidates' if confirmed>=1 else 'choice_unresolved',
                 'round':stage,'cards':cards,'round_box':box(stage_rect),'header_box':None,
                 'layout_method':'three_refresh_controls','reason':'fast_mumu_layout',
                 'elapsed_ms':round((time.monotonic()-start)*1000,2)}
+
+    def read_description(self,crop,resolution):
+        # Read only text bands, avoiding a costly full-screen detection pass.
+        pixels=np.asarray(crop.convert('RGB'))
+        mask=(pixels.min(axis=2)>180)&((pixels.max(axis=2)-pixels.min(axis=2))<55)
+        ys=np.flatnonzero(mask.sum(axis=1)>5)
+        if not len(ys):return resolution
+        bands=np.split(ys,np.where(np.diff(ys)>3)[0]+1)
+        readings=['','']
+        for band in bands[:6]:
+            if len(band)<10:continue
+            line=crop.crop((0,max(0,int(band[0])-3),crop.width,min(crop.height,int(band[-1])+4)))
+            for index,factor in enumerate((1,1.3)):
+                view=line.resize((round(line.width*factor),line.height),Image.Resampling.BICUBIC)
+                result=self.engine(np.asarray(view)[:,:,::-1].copy(),use_det=False,use_cls=False,return_word_box=False)
+                if result.txts and result.scores[0]>=.95:readings[index]+=result.txts[0]
+        return resolve_description(resolution,readings)
 
     def read_name(self, crop, catalog):
         if self.engine is None:
@@ -106,6 +128,21 @@ class Vision:
                     resolution={**combined,'method':'tight_binary_two_views'}
                 elif combined['status'] in ('conflict','ambiguous'):
                     resolution=combined
+                if resolution['status']=='unrecognized':
+                    # Thin suffixes can disappear at the recognizer's fixed height.
+                    # Require two direct OCR matches; never replace 1/l with I.
+                    widened=[]
+                    for factor in (1.3,1.6):
+                        view=tight.resize((round(tight.width*factor),tight.height),Image.Resampling.BICUBIC)
+                        result=self.engine(np.asarray(view)[:,:,::-1].copy(),use_det=False,use_cls=False,return_word_box=False)
+                        widened.append(result.txts[0] if result.txts and result.scores[0]>=.90 else '')
+                    supported=resolve_name(widened,catalog)
+                    combined=resolve_name(readings+widened,catalog)
+                    readings+=widened
+                    if supported['status']=='resolved' and combined['status']=='resolved':
+                        resolution={**combined,'method':'tight_wide_two_views'}
+                    elif combined['status'] in ('conflict','ambiguous'):
+                        resolution=combined
         glyph=roman_evidence(crop)
         if glyph and resolution['status']=='unrecognized':
             prefix=crop.crop((0,0,glyph['prefix_right']+2,crop.height))
@@ -259,6 +296,10 @@ def tracked_signature(image,observation):
         regions.append((min(p[0] for p in points)-6,min(p[1] for p in points)-4,
                         max(p[0] for p in points)+6,max(p[1] for p in points)+4))
     for card in observation.get('cards',[]):
+        if card.get('description_box'):
+            points=card['description_box']
+            regions.append((min(p[0] for p in points),min(p[1] for p in points),
+                            max(p[0] for p in points),max(p[1] for p in points)))
         x1,y1,x2,y2=bounds(card)
         center=(x1+x2)/2
         half=max(width*.09,(x2-x1)/2+2)

@@ -15,8 +15,8 @@ def main():
     panel.timer.stop();panel.adapter=FrozenSource()
     checks=[]
     assert panel.advanced.isHidden() and panel.start_button.isEnabled()
-    assert panel.trigger_mode.currentIndex()==0 and not panel.automatic.isChecked()
-    panel.trigger_mode.setCurrentIndex(1)
+    assert panel.automatic.isChecked()
+    panel.automatic.setChecked(False)
     checks.append('default screen hides binding, IDs and technical settings')
     with patch('app.win.enumerate_mumu',return_value=[]):panel.start_or_pause()
     assert panel.activity_code=='no_game' and not panel.automatic.isChecked()

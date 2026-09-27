@@ -16,7 +16,7 @@ class SourceError(RuntimeError):
 
 class DataJ:
     def __init__(self, set_id=18, patch='18.2a', db=None, transport=None):
-        if set_id != 18 or not re.fullmatch(r'18\.\d+[a-z]?', patch):
+        if set_id != 18 or not re.fullmatch(r'18\.\d+(?:\.?[a-z])?', patch):
             raise ValueError('此试用版仅配置了 S18，需明确选择 18.x 统计版本')
         self.set_id, self.patch = set_id, patch
         self.db = db or STATE_DIR/'cache.sqlite'
@@ -69,6 +69,26 @@ class DataJ:
         if not isinstance(data,dict) or not isinstance(data.get('hex'),list):
             raise SourceError('目录字段变化')
         return result
+
+    @staticmethod
+    def parse_versions(page):
+        for raw in re.findall(r'self\.__next_f\.push\(\[1,("(?:\\.|[^"\\])*")\]\)',page):
+            chunk=json.loads(raw)
+            marker='"gameVersions":'
+            if marker not in chunk:continue
+            rows,_=json.JSONDecoder().raw_decode(chunk.split(marker,1)[1])
+            if not isinstance(rows,list):break
+            versions=list(dict.fromkeys(row['gameVersion'] for row in rows
+                if isinstance(row,dict) and row.get('setId')==18
+                and isinstance(row.get('gameVersion'),str)
+                and re.fullmatch(r'18\.\d+(?:\.?[a-z])?',row['gameVersion'])))
+            if versions:return versions
+        raise SourceError('版本列表暂不可用')
+
+    def versions(self):
+        with httpx.Client(timeout=15,follow_redirects=False,transport=self.transport) as client:
+            response=client.get('https://www.dataj.cc/comp');response.raise_for_status()
+        return self.parse_versions(response.text)
 
     def hexes(self, comp=None):
         if comp is not None and not re.fullmatch(r'[1-9][0-9]*',str(comp)):

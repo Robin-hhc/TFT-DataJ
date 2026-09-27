@@ -28,9 +28,9 @@ from PySide6.QtCore import Qt, QTimer, QObject, Signal, QRunnable, QThreadPool, 
 from PySide6.QtGui import QDesktopServices,QColor
 from PySide6.QtWidgets import (QApplication, QWidget, QLabel, QPushButton, QComboBox, QLineEdit,
     QVBoxLayout, QHBoxLayout, QTabWidget, QTableWidget, QTableWidgetItem, QListWidget,
-    QListWidgetItem, QCheckBox, QFileDialog, QHeaderView, QAbstractItemView,QFrame,QScrollArea,QButtonGroup)
+    QListWidgetItem, QCheckBox, QFileDialog, QHeaderView, QAbstractItemView,QFrame,QScrollArea,QButtonGroup,QSizeGrip)
 from PySide6.QtWebEngineWidgets import QWebEngineView
-from PySide6.QtWebEngineCore import QWebEnginePage, QWebEngineProfile
+from PySide6.QtWebEngineCore import QWebEnginePage, QWebEngineProfile,QWebEngineSettings
 
 
 class Signals(QObject):
@@ -123,6 +123,13 @@ class CardOverlay(QLabel):
 
 
 class GuidePage(QWebEnginePage):
+    def __init__(self,*args,**kwargs):
+        super().__init__(*args,**kwargs)
+        # DataJ's button uses navigator.clipboard.writeText after a user click.
+        # Enable sanitized copy, not clipboard reads or unrestricted paste.
+        self.settings().setAttribute(QWebEngineSettings.WebAttribute.JavascriptCanAccessClipboard,True)
+        self.settings().setAttribute(QWebEngineSettings.WebAttribute.JavascriptCanPaste,False)
+
     def acceptNavigationRequest(self,url,kind,is_main):
         return url.toString()=='about:blank' or (url.scheme()=='https' and url.host()=='www.dataj.cc')
 
@@ -133,14 +140,17 @@ class GuidePage(QWebEnginePage):
 class Companion(QWidget):
     def __init__(self, offline=False):
         super().__init__()
-        self.setWindowTitle('金铲铲 DataJ Companion · 本机试用版')
+        self.setWindowTitle('DataJ 阵容助手')
+        self.setWindowFlag(Qt.WindowType.FramelessWindowHint,True)
         self.setObjectName('companion');self.setStyleSheet(STYLE)
-        self.resize(1140,860);self.setMinimumSize(920,660)
+        self.resize(760,430);self.setMinimumSize(760,430)
         self.session=Session()
         self.offline=offline
         self.frame_recorder=FrameRecorder()
         self.save_diagnostic_frames=os.environ.get('DATAJ_DIAGNOSTIC_FRAMES')=='1'
         self.next_ocr_allowed=0.0
+        self.last_binding_probe=float('-inf')
+        self.partial_retries=0
         self.stage_probe_pending=False;self.last_stage_probe=0.0
         self.last_probe_stage=None;self.stage_window_until=0.0
         self.last_overlay_diagnostic=None
@@ -181,29 +191,34 @@ class Companion(QWidget):
         self.recent=[]
         self.overlays=[CardOverlay() for _ in range(3)]
         shell=QHBoxLayout(self);shell.setContentsMargins(0,0,0,0);shell.setSpacing(0)
-        sidebar=QFrame();sidebar.setObjectName('sidebar');sidebar.setFixedWidth(156)
-        rail=QVBoxLayout(sidebar);rail.setContentsMargins(16,28,16,20);rail.setSpacing(9)
-        brand=QHBoxLayout();brand.addWidget(Rune());brand.addWidget(label('金铲铲\n助手','brand'));rail.addLayout(brand)
-        rail.addWidget(label('DATAJ COMPANION','eyebrow'));rail.addSpacing(28)
-        rail.addWidget(label('本局工具','muted'))
+        sidebar=QFrame();sidebar.setObjectName('sidebar');sidebar.setFixedWidth(120)
+        rail=QVBoxLayout(sidebar);rail.setContentsMargins(8,10,8,8);rail.setSpacing(4)
+        brand=QHBoxLayout();brand.addWidget(label('阵容助手','brand'));rail.addLayout(brand)
+        rail.addSpacing(4)
+
         self.navigation={}
         self.navigation_group=QButtonGroup(self);self.navigation_group.setExclusive(True)
         for index,title in [(1,'⌕   选阵容'),(2,'▤   本局攻略'),(3,'▥   英雄出装'),(0,'◇   强化 / 设置')]:
             nav=button(title,lambda checked=False,i=index:self.tabs.setCurrentIndex(i))
             nav.setObjectName('nav');nav.setCheckable(True);rail.addWidget(nav);self.navigation[index]=nav
             self.navigation_group.addButton(nav,index)
-        rail.addStretch();rail.addWidget(label('S18  自然之力','badge'));rail.addSpacing(8)
-        rail.addWidget(label('统计来自 DataJ\n仅作局内查询参考','muted'))
-        rail.addSpacing(16);rail.addWidget(button('退出助手',QApplication.instance().quit))
+        rail.addStretch();rail.addWidget(label('统计版本','muted'))
+        self.patch=QComboBox();self.patch.addItem('18.2a');self.patch.setToolTip('切换后重新加载该版本的统计')
+        self.patch.setStyleSheet('QComboBox::down-arrow {image:url("'+(ROOT/'outputs/companion/chevron-down.svg').as_posix()+'");width:12px;height:8px;}')
+        self.patch.activated.connect(self.change_patch);rail.addWidget(self.patch);rail.addSpacing(8)
+
+        rail.addSpacing(4);rail.addWidget(button('退出助手',QApplication.instance().quit))
         shell.addWidget(sidebar)
-        content=QWidget();root=QVBoxLayout(content);root.setContentsMargins(26,24,26,15);root.setSpacing(15)
+        content=QWidget();root=QVBoxLayout(content);root.setContentsMargins(10,8,10,6);root.setSpacing(5)
         shell.addWidget(content,1)
         header=QHBoxLayout();headings=QVBoxLayout();headings.setSpacing(5)
         self.banner=label('海克斯助手','pageTitle');headings.addWidget(self.banner)
-        self.subtitle=label('按快捷键查均排，也可开启低频阶段检查。','subtitle');headings.addWidget(self.subtitle)
+        self.subtitle=label('','subtitle');self.subtitle.hide()
         header.addLayout(headings,1)
-        self.patch=QLineEdit('18.2a');self.patch.setMaximumWidth(100)
-        header.addWidget(button('新的一局',self.new_game));header.addWidget(button('收起为小标记',self.return_to_game))
+        self.banner.setToolTip('按住标题拖动窗口')
+        self.banner.mousePressEvent=self.drag_window
+        header.addWidget(button('新的一局',self.new_game));header.addWidget(button('收起 ‹',self.return_to_game))
+        close_button=button('×',QApplication.instance().quit);close_button.setFixedWidth(32);close_button.setStyleSheet('padding:0;font-size:20px');close_button.setToolTip('退出助手');header.addWidget(close_button)
         root.addLayout(header)
         self.target_label=label('本局阵容：未固定','target')
         target_row=QHBoxLayout();target_row.addWidget(self.target_label,1)
@@ -218,8 +233,9 @@ class Companion(QWidget):
         self.tabs.currentChanged.connect(self.navigate);self.tabs.setCurrentIndex(1);self.navigate(1)
         self.apply_display_preferences()
         self.status=label('Ctrl + Alt + F9 随时展开或收起助手。','status')
-        self.status.setWordWrap(True);root.addWidget(self.status)
-        root.addWidget(label('CTRL + ALT + F10   截图查均排     ·     F9 展开 / 收起     ·     F12 退出（均需 CTRL + ALT）','muted'))
+        self.status.setWordWrap(True)
+        bottom=QHBoxLayout();bottom.addWidget(self.status,1);bottom.addWidget(QSizeGrip(self));root.addLayout(bottom)
+        self.status.setToolTip('Ctrl+Alt+F10 查均排 · Ctrl+Alt+F9 展开/收起 · Ctrl+Alt+F12 退出')
         self.timer=QTimer(self);self.timer.timeout.connect(self.tick);self.timer.start(150)
         self.refresh_windows()
         if offline:
@@ -227,6 +243,17 @@ class Companion(QWidget):
             self.catalog_loaded({'data':data},True)
         else:
             self.load_catalog()
+            self.submit(self.network,self.adapter.versions,self.versions_loaded,lambda _:self.patch.setToolTip('版本列表读取失败；保留当前版本，可重启后重试'))
+
+    def drag_window(self,event):
+        if event.button()==Qt.MouseButton.LeftButton and self.windowHandle():self.windowHandle().startSystemMove()
+
+    def versions_loaded(self,versions):
+        selected=self.adapter.patch
+        self.patch.blockSignals(True);self.patch.clear();self.patch.addItems(versions)
+        if selected not in versions:self.patch.addItem(selected)
+        self.patch.setCurrentText(selected);self.patch.blockSignals(False)
+        self.latest_patch=versions[0]
 
     def navigate(self,index):
         headings=[('海克斯助手','按快捷键查均排，也可开启低频阶段检查。'),
@@ -264,16 +291,16 @@ class Companion(QWidget):
         hero=QFrame();hero.setObjectName('hero');hero_layout=QHBoxLayout(hero)
         hero_layout.setContentsMargins(22,22,22,22);hero_layout.setSpacing(22)
         hero_text=QVBoxLayout();hero_text.setSpacing(9)
-        hero_text.addWidget(label('手动触发 · 低负载','eyebrow'))
+        hero_text.addWidget(label('自动阶段识别 · 侧键随时补查','eyebrow'))
         self.activity=label('正在准备海克斯数据…','activity');hero_text.addWidget(self.activity)
         hero_text.addWidget(label('鼠标侧键截图查均排 · Ctrl+Alt+F10 仍可使用','muted'))
         hero_layout.addLayout(hero_text,1)
-        self.start_button=button('截图查均排',self.start_or_pause)
+        self.start_button=button('暂停自动识别',self.start_or_pause)
         self.start_button.setObjectName('primary');self.start_button.setMinimumWidth(150)
         self.start_button.setMinimumHeight(46);self.start_button.setEnabled(False)
         hero_layout.addWidget(self.start_button);layout.addWidget(hero)
-        self.trigger_mode=QComboBox();self.trigger_mode.addItems(['手动触发（默认）','阶段触发 · 每 3 秒检查顶部回合'])
-        self.trigger_mode.currentIndexChanged.connect(self.trigger_mode_changed);layout.addWidget(self.trigger_mode)
+        layout.addWidget(label('默认每 3 秒检查回合；到 2-1、3-2、4-2 自动识别。鼠标侧键可随时补查。','muted'))
+        layout.addWidget(button('立即补查一次',self.capture_once))
         self.mouse_button=QComboBox()
         for title,value in [('后退侧键查均排（默认）',1),('前进侧键查均排',2),('关闭鼠标侧键',0)]:self.mouse_button.addItem(title,value)
         saved=str(self.mouse_settings.value('mouse_button',1)) if not self.offline else '1'
@@ -299,10 +326,10 @@ class Companion(QWidget):
         self.windows=QComboBox();row.addWidget(self.windows)
         row.addWidget(button('刷新窗口',self.refresh_windows))
         row.addWidget(button('绑定',self.bind_window));advanced.addLayout(row)
-        self.automatic=QCheckBox('阶段触发（试用；每 3 秒检查顶部回合，仅 MuMu 前台）')
+        self.automatic=QCheckBox('自动阶段识别（默认开启，仅 MuMu 前台）')
+        self.automatic.setChecked(True)
         self.automatic.toggled.connect(self.automatic_changed);advanced.addWidget(self.automatic)
-        row=QHBoxLayout();row.addWidget(QLabel('统计版本'));row.addWidget(self.patch)
-        row.addWidget(button('应用版本',self.change_patch));advanced.addLayout(row)
+
         row=QHBoxLayout()
         row.addWidget(button('读取本地截图',self.open_image))
         row.addWidget(button('收起并识别一次',self.capture_once))
@@ -319,25 +346,27 @@ class Companion(QWidget):
         advanced.addWidget(QLabel('同名条目保留品质与 ID 供纠错；手动查询仅在面板显示。'))
         advanced.addWidget(button('查询手动选择的海克斯',self.manual_stats))
         appearance=QHBoxLayout();appearance.addWidget(QLabel('界面大小'))
-        self.panel_size=QComboBox();self.panel_size.addItems(['紧凑','标准','宽屏']);self.panel_size.setCurrentIndex(1)
+        self.panel_size=QComboBox();self.panel_size.addItems(['紧凑','标准','宽屏']);self.panel_size.setCurrentIndex(0)
         self.panel_size.activated.connect(self.resize_panel);appearance.addWidget(self.panel_size)
         self.text_size=QComboBox();self.text_size.addItems(['标准字体','大字体']);self.text_size.activated.connect(self.change_text_size)
         appearance.addWidget(self.text_size);appearance.addWidget(button('回到左上角',self.reset_position));advanced.addLayout(appearance)
         self.add_page(page,'海克斯')
 
     def resize_panel(self,index):
-        self.resize(*[(1000,700),(1140,860),(1320,940)][index])
+        self.resize(*[(760,430),(960,600),(1140,760)][index])
 
     def change_text_size(self,index):
         scale=1.12 if index else 1.0
         self.setStyleSheet(re.sub(r'font-size:(\d+)px',lambda m:f'font-size:{round(int(m[1])*scale)}px',STYLE))
-        self.setMinimumWidth(1020 if index else 920)
+        self.setMinimumWidth(760)
         if not self.offline:self.mouse_settings.setValue('large_text',index)
 
     def apply_display_preferences(self):
         if self.offline:return
         saved=self.mouse_settings.value('panel_geometry')
         if saved is not None:self.restoreGeometry(saved)
+        if str(self.mouse_settings.value('compact_dimensions',0))!='1':
+            self.resize(760,430);self.mouse_settings.setValue('compact_dimensions',1)
         index=1 if str(self.mouse_settings.value('large_text',0))=='1' else 0
         self.text_size.setCurrentIndex(index);self.change_text_size(index)
 
@@ -352,7 +381,7 @@ class Companion(QWidget):
 
     def set_activity(self,code,message):
         self.activity.setText(message)
-        self.mark.button.setToolTip(message+'\n点击展开 / 收起 · Ctrl+Alt+F10 查均排')
+        self.mark.button.setToolTip(message+'\n点击展开 / 收起 · 按住拖动位置 · Ctrl+Alt+F10 查均排')
         if self.activity_code==code:return
         self.activity_code=code
         if not self.offline:record('state',code=code,automatic=self.automatic.isChecked(),bound=self.binding is not None)
@@ -365,7 +394,7 @@ class Companion(QWidget):
     def start_or_pause(self):
         if self.automatic.isChecked():
             self.automatic.setChecked(False)
-            self.set_activity('paused','辅助已暂停');return
+            self.set_activity('paused','自动识别已暂停，鼠标侧键仍可补查。');return
         if not self.catalog:
             self.set_activity('catalog_missing','数据尚未准备好，正在重新加载…');self.load_catalog();return
         self.refresh_windows()
@@ -379,16 +408,9 @@ class Companion(QWidget):
         if not bound_valid:self.bind_window()
         if self.binding is None:
             self.set_activity('no_game','游戏窗口已变化，请再次点击主按钮。');return
-        if self.trigger_mode.currentIndex()==0:
-            self.capture_once();return
         self.automatic.setChecked(True)
         self.set_activity('waiting_choice','已连接 MuMu，等待海克斯选择。')
         self.return_to_game()
-
-    def trigger_mode_changed(self,*_):
-        self.automatic.setChecked(False);self.invalidate()
-        self.stage_window_until=0;self.last_probe_stage=None
-        self.start_button.setText('截图查均排' if self.trigger_mode.currentIndex()==0 else '开启阶段触发')
 
     def make_explorer(self):
         self.browser=CompBrowser(self.mouse_settings,self.offline)
@@ -416,6 +438,7 @@ class Companion(QWidget):
         self.guide_page=GuidePage(self.profile,self.web)
         self.guide_page.featurePermissionRequested.connect(lambda origin,feature:self.guide_page.setFeaturePermission(origin,feature,QWebEnginePage.PermissionPolicy.PermissionDeniedByUser))
         self.web.setPage(self.guide_page);self.guide_page.setBackgroundColor(QColor('#191922'))
+        self.web.setZoomFactor(0.75)
         self.guide_empty=QFrame();self.guide_empty.setObjectName('hero');empty=QVBoxLayout(self.guide_empty)
         empty.setContentsMargins(30,40,30,40);empty.addWidget(label('先找到这局的方向','pageTitle'))
         empty.addWidget(label('从阵容列表点击一套，立刻固定为本局目标。\n之后可以复制阵容码，并查看攻略、出装与强化统计。','muted'))
@@ -481,7 +504,7 @@ class Companion(QWidget):
             combo.completer().setFilterMode(Qt.MatchFlag.MatchContains)
         self.browser.set_catalog(self.catalog)
         self.start_button.setEnabled(True)
-        self.set_activity('ready','按所选鼠标侧键或 Ctrl+Alt+F10 查均排，空闲时不截图。')
+        self.set_activity('ready','收起面板后自动检查海克斯阶段，鼠标侧键可随时补查。' if self.automatic.isChecked() else '自动识别已暂停，鼠标侧键可随时补查。')
         self.status.setText('离线演示已准备好。' if offline else '目录已准备好，正在后台预热识别与统计；首次查询可能稍慢。')
         if not offline:
             # Native OCR runtime initialization on a Qt worker crashes on first
@@ -495,9 +518,10 @@ class Companion(QWidget):
             self.submit(self.network,self.adapter.hexes,lambda _:None)
             self.browser.retry()
 
-    def change_patch(self):
-        try:adapter=DataJ(patch=self.patch.text().strip())
+    def change_patch(self,*_):
+        try:adapter=DataJ(patch=self.patch.currentText().strip())
         except ValueError as exc:self.status.setText(str(exc));return
+        if adapter.patch==self.adapter.patch:return
         self.adapter=adapter;self.session.patch=adapter.patch;self.catalog={}
         self.new_game();self.load_catalog()
         self.status.setText(f'当前统计版本 {adapter.patch}，请与游戏版本保持一致。')
@@ -511,13 +535,14 @@ class Companion(QWidget):
     def bind_window(self):
         item=self.windows.currentData()
         if item and win.same_target(item,win.describe(item.hwnd)):
-            self.binding=item;self.geometry=(item.rect,item.dpi);self.invalidate();self.status.setText('已绑定 MuMu。默认按 Ctrl+Alt+F10 查询；也可选择阶段触发。')
+            self.binding=item;self.geometry=(item.rect,item.dpi);self.invalidate();self.status.setText('已绑定 MuMu。默认自动检查海克斯阶段，鼠标侧键可随时补查。')
         else:self.status.setText('没有有效 MuMu 游戏窗口')
 
     def hide_overlays(self):
         for label in self.overlays:label.hide()
 
     def invalidate(self):
+        self.partial_retries=0
         self.stats_inflight_token=None
         self.session.invalidate();self.signature=None;self.stable=0;self.stats_payload=None;self.last_observation=None
         self.once_active=False
@@ -537,7 +562,8 @@ class Companion(QWidget):
 
     def automatic_changed(self,*_):
         self.invalidate()
-        self.start_button.setText('暂停阶段触发' if self.automatic.isChecked() else ('截图查均排' if self.trigger_mode.currentIndex()==0 else '开启阶段触发'))
+        self.stage_window_until=0;self.last_probe_stage=None;self.last_binding_probe=float('-inf')
+        self.start_button.setText('暂停自动识别' if self.automatic.isChecked() else '恢复自动识别')
 
     def new_game(self):
         self.last_probe_stage=None;self.stage_window_until=0
@@ -565,6 +591,18 @@ class Companion(QWidget):
 
     def panel_open(self):
         return self.isVisible() and not self.isMinimized()
+
+    def showEvent(self,event):
+        super().showEvent(event)
+        self.mark.set_panel_open(True)
+
+    def hideEvent(self,event):
+        super().hideEvent(event)
+        self.mark.set_panel_open(False)
+
+    def changeEvent(self,event):
+        super().changeEvent(event)
+        if hasattr(self,'mark'):self.mark.set_panel_open(self.panel_open())
 
     def closeEvent(self,event):
         self.timer.stop();self.hide_overlays()
@@ -645,8 +683,21 @@ class Companion(QWidget):
             if not unchanged(signature,self.signature):self.invalidate()
         self.last_frame=image
         if once:self.once_ocr_pending=True
+        # Retry a transient unreadable title twice, using already scheduled captures.
+        # Keep existing ranks visible; normal session checks still reject changed cards.
+        partial_retry=(self.last_observation is not None
+                       and any(not c.get('resolution',{}).get('id') for c in self.last_observation.get('cards',[]))
+                       and self.partial_retries<2
+                       and (self.automatic.isChecked() or self.once_active)
+                       and not self.ocr_busy and self.catalog
+                       and time.monotonic()>=self.next_ocr_allowed
+                       and time.monotonic()-self.last_ocr>2)
         if self.once_ocr_pending and not self.ocr_busy and self.catalog:
             self.once_ocr_pending=False
+            self.partial_retries=0
+            self.analyze(image,True)
+        elif partial_retry:
+            self.partial_retries+=1
             self.analyze(image,True)
         elif (self.automatic.isChecked() and time.monotonic()>=self.next_ocr_allowed
               and time.monotonic()-self.last_ocr>2
@@ -662,7 +713,7 @@ class Companion(QWidget):
         def done(obs):
             self.ocr_busy=False
             self.next_ocr_allowed=time.monotonic()+1.5
-            if not self.offline:record('ocr_complete',scene=obs.get('scene'),reason=obs.get('reason'),diagnostic_frame=obs.get('diagnostic_frame'),stage=obs.get('round'),elapsed_ms=obs.get('elapsed_ms'),resolutions=[c.get('resolution',{}).get('status') for c in obs.get('cards',[])],session_valid=self.session.accepts(token))
+            if not self.offline:record('ocr_complete',scene=obs.get('scene'),reason=obs.get('reason'),diagnostic_frame=obs.get('diagnostic_frame'),stage=obs.get('round'),elapsed_ms=obs.get('elapsed_ms'),resolutions=[c.get('resolution',{}).get('status') for c in obs.get('cards',[])],unresolved=[{'slot':c.get('slot'),'readings':c.get('resolution',{}).get('readings',[])} for c in obs.get('cards',[]) if not c.get('resolution',{}).get('id')],session_valid=self.session.accepts(token))
             if not self.session.accepts(token):return
             if live and (self.panel_open() or not self.binding or win.foreground_root()!=self.binding.hwnd):return
             if live and obs.get('scene')=='choice_candidates' and (self.last_frame is None or not unchanged(tracked_signature(image,obs),tracked_signature(self.last_frame,obs))):
@@ -788,6 +839,13 @@ class Companion(QWidget):
 
     def tick(self):
         if not self.automatic.isChecked() and not self.once_active and not self.stats_payload:return
+        if self.automatic.isChecked() and not self.binding and not self.panel_open():
+            if time.monotonic()-self.last_binding_probe<3:return
+            self.last_binding_probe=time.monotonic()
+            targets=game_windows();foreground=win.foreground_root()
+            if len(targets)!=1 or targets[0].hwnd!=foreground:return
+            self.binding=targets[0];self.geometry=(self.binding.rect,self.binding.dpi)
+            self.set_activity('watching_stage','自动识别已就绪；每 3 秒检查回合，侧键可随时补查。')
         current=win.describe(self.binding.hwnd) if self.binding else None
         reason=win.capture_block_reason(self.binding,current,win.foreground_root()) if self.binding else 'no_binding'
         if self.panel_open() or reason:
@@ -796,8 +854,8 @@ class Companion(QWidget):
             self.was_available=False
             if self.automatic.isChecked() and not self.panel_open():
                 if reason=='target_changed_or_closed':
-                    self.automatic.setChecked(False)
-                    self.set_activity('game_closed','游戏窗口已关闭或变化。重新打开游戏后点击主按钮。')
+                    self.binding=None;self.geometry=None
+                    self.set_activity('game_closed','等待 MuMu；回到游戏后自动连接，侧键可随时补查。')
                 elif reason:self.set_activity('waiting_foreground','已暂停识别；回到 MuMu 后会自动继续。')
             return
         self.was_available=True
@@ -851,6 +909,10 @@ class Companion(QWidget):
         self.open_guide(self.comp_url.text())
 
     def open_guide(self,url):
+        if self.adapter.patch!=getattr(self,'latest_patch','18.2a'):
+            self.web.stop();self.web.hide();self.guide_empty.show()
+            self.guide_notice.setText(f'当前统计版本 {self.adapter.patch}。来源攻略网页默认最新版本，已避免混显；本局阵容码、强化和出装仍按所选版本查询。')
+            self.tabs.setCurrentIndex(2);return
         self.guide_empty.hide();self.web.show()
         self.web.setUrl(QUrl(url));self.tabs.setCurrentIndex(2)
 
@@ -889,7 +951,7 @@ class Companion(QWidget):
             code=detail.get('gameCode');self.copy_button.setEnabled(isinstance(code,str) and code.startswith('【阵容码】'))
             self.guide_notice.setText('已固定 · 强化与出装查询会跟随本阵容。'+('复制按钮对应主阵容。' if self.copy_button.isEnabled() else '来源暂无主阵容码。'))
             self.guide_empty.hide();self.web.show()
-            if not self.offline:self.web.setUrl(QUrl('https://www.dataj.cc/comp/'+comp))
+            if not self.offline:self.open_guide('https://www.dataj.cc/comp/'+comp)
             self.status.setText('已固定 '+detail.get('name',comp))
         self.submit(self.network,lambda:adapter.comp(comp),done,failed)
 
@@ -965,7 +1027,7 @@ def main():
         for id_,key in ((51,0x78),(52,0x79),(53,0x7B)):
             if win.user.RegisterHotKey(None,id_,0x4003,key):registered.append(id_)
         panel.reopen_shortcut_available=51 in registered
-        if not panel.reopen_shortcut_available:panel.status.setText('展开快捷键被占用。收起后，可点击左上角「铲」标记重新打开。')
+        if not panel.reopen_shortcut_available:panel.status.setText('展开快捷键被占用。收起后，可点击左上角「阵容助手 · 展开」重新打开。')
         elif len(registered)!=3:panel.status.setText('部分快捷键被占用，可以使用面板按钮。')
         if not mouse.start():panel.status.setText('鼠标侧键监听不可用，请用截图按钮或 Ctrl+Alt+F10。')
         panel.setWindowFlag(Qt.WindowType.WindowStaysOnTopHint,True)

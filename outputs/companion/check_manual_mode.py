@@ -13,10 +13,11 @@ panel.timer.stop();panel.hide();panel.adapter=FrozenSource();panel.vision.prepar
 frame=Image.open(ROOT/'work/user-game-sample/new-round/before.png').convert('RGB')
 binding=SimpleNamespace(hwnd=123,pid=456,process='MuMuNxDevice.exe',rect=(0,0,3840,2160),dpi=192)
 panel.binding=binding;panel.geometry=(binding.rect,binding.dpi)
-assert panel.trigger_mode.currentIndex()==0 and not panel.automatic.isChecked()
+assert panel.automatic.isChecked()
+panel.automatic.setChecked(False)
 with patch('app.win.describe',side_effect=AssertionError('manual idle must not poll windows')):
     panel.tick()
-assert panel.mark.size().width()==44 and panel.mark.size().height()==44
+assert panel.mark.size().width()==160 and panel.mark.size().height()==42
 assert not panel.mark.isModal() and not panel.isModal()
 placements=[]
 for overlay in panel.overlays:overlay.place=lambda *args:placements.append(time.monotonic())
@@ -32,6 +33,6 @@ with patch('app.win.describe',return_value=binding),patch('app.win.same_target',
     assert not panel.automatic.isChecked()
 report={'warm_manual_ms':elapsed,'ocr_ms':panel.last_observation['elapsed_ms'],
         'capture':'in-memory user frame','statistics':'frozen','game_operated':False,
-        'manual_idle_no_capture':True,'mark_size':[44,44]}
+        'manual_idle_no_capture':True,'mark_size':[160,42]}
 panel.shutdown();(STATE_DIR/'manual-result.json').write_text(json.dumps(report,indent=2),encoding='utf-8')
 print(json.dumps(report))

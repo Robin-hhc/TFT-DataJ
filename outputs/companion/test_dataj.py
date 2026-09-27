@@ -49,6 +49,21 @@ class AdapterTests(unittest.TestCase):
         self.assertEqual(len(body['filter']['rules']),1)
         self.assertEqual(body['filter']['rules'][0]['targetId'],'41806')
 
+    def test_version_list_uses_site_values_including_dotted_patch(self):
+        chunk='16:'+json.dumps({'gameVersions':[{'setId':18,'gameVersion':'18.2a'},
+            {'setId':18,'gameVersion':'18.1.c'},{'setId':19,'gameVersion':'19.1'}]},separators=(',',':'))
+        html='<script>self.__next_f.push([1,'+json.dumps(chunk)+'])</script>'
+        self.assertEqual(DataJ.parse_versions(html),['18.2a','18.1.c'])
+        with self.assertRaises(SourceError):DataJ.parse_versions('<html>error</html>')
+
+    def test_selected_version_reaches_every_statistics_endpoint(self):
+        a=DataJ(patch='18.1.c',db=self.db,transport=httpx.MockTransport(self.handle))
+        for endpoint in ('/comp/rank','/stats/hex','/comp/112','/comp/112/hexes','/comp/112/hero-equips'):
+            a.next_request=0;a.request(endpoint)
+            self.assertEqual(self.calls[-1].url.params['gameVersion'],'18.1.c')
+        a.next_request=0;a.explore('hex',{'id':'1023','name':'应急护甲 I'})
+        self.assertEqual(json.loads(self.calls[-1].content)['version'],'18.1.c')
+
     def test_failure_does_not_return_expired_cache(self):
         a=DataJ(db=self.db,transport=httpx.MockTransport(self.handle))
         a.request('/stats/hex')

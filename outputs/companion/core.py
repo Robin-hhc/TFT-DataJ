@@ -62,6 +62,27 @@ def resolve_name(readings, catalog):
     return {'status':'resolved','id':str(matches[0]['id']),'name':matches[0]['name'], 'candidates':matches}
 
 
+def description_terms(candidates):
+    """Only explicit bracketed entities unique among the same-name variants."""
+    terms=[set(re.findall(r'【([^【】]{2,20})】',r.get('descText',''))) for r in candidates]
+    return [own-set().union(*(other for j,other in enumerate(terms) if j!=i))
+            for i,own in enumerate(terms)]
+
+
+def resolve_description(resolution, readings):
+    candidates=resolution.get('candidates',[])
+    if resolution.get('status')!='ambiguous' or len(readings)!=2:return resolution
+    terms=description_terms(candidates)
+    matches=[{i for i,words in enumerate(terms) if any(word in text for word in words)}
+             for text in readings]
+    if len(matches[0])!=1 or matches[0]!=matches[1]:return resolution
+    candidate=candidates[next(iter(matches[0]))]
+    title=resolve_name(resolution.get('readings',[]),[candidate])
+    if title['status']!='resolved':return resolution
+    return {**title,'method':'name_and_description_two_views',
+            'readings':resolution['readings'],'description_readings':readings}
+
+
 def parse_comp_url(value):
     url = urlparse(value.strip())
     if url.scheme != 'https' or url.netloc != 'www.dataj.cc' or url.query or url.fragment:

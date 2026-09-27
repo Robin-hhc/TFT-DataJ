@@ -8,6 +8,8 @@ qt=QApplication([])
 with patch('app.win.enumerate_mumu',return_value=[]):panel=Companion(offline=True)
 panel.timer.stop();panel.hide();panel.adapter=FrozenSource();panel.vision.prepare()
 obs=panel.vision.analyze_fast(Image.open(ROOT/'work/companion/live-validation/choice-2-1.png').convert('RGB'),panel.catalog['hex'])
+# Force one unreadable slot to retain coverage of partial-result rendering.
+obs['cards'][0]['resolution']={'status':'unrecognized','readings':[]}
 panel.observed(obs,False)
 end=time.monotonic()+5
 while panel.jobs and time.monotonic()<end:qt.processEvents();time.sleep(.005)

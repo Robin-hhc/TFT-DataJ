@@ -13,6 +13,7 @@ from bootstrap import ROOT
 from integration_check import FrozenSource
 
 class Source(FrozenSource):
+    def versions(self):return ['18.2a']
     def catalog(self):
         return {'data':json.loads((ROOT/'work/s18-refresh-20260926/catalog.json').read_text(encoding='utf-8'))['data']}
 
@@ -35,8 +36,8 @@ try:
     for _ in range(3):
         panel.analyze(frame,False);settle()
         assert panel.last_observation['round']=='2-1'
-        assert panel.activity_code=='partial_results',panel.activity_code
-        assert panel.session.choices==(None,'1479','1006')
+        assert panel.activity_code=='results',panel.activity_code
+        assert panel.session.choices==('1023','1479','1006')
     print(json.dumps({'cold_start':'passed','recognitions':3,'UI':'hidden','statistics':'frozen'}),flush=True)
 finally:
     panel.shutdown()
