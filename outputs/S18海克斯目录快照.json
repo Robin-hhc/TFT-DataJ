@@ -1,0 +1,6772 @@
+{
+  "scope": {
+    "game": "金铲铲之战",
+    "page_season": "S18 自然之力",
+    "set_id": 18,
+    "stats_version": "18.2a",
+    "retrieved_date": "2026-09-26",
+    "catalog_metadata_conflict": "Catalog entries report season S19/version 18.18.1; retained verbatim, not used to override page/stat scope."
+  },
+  "sources": [
+    {
+      "url": "https://www.dataj.cc/api/web/gamedata?setId=18",
+      "status": 200,
+      "sha256": "0338c0734fc0faec4cbd8d34bc1ffed1d77fae49169855536b4630097730d9c2",
+      "retrieved_at": "2026-09-26T01:34:18.749086+00:00"
+    },
+    {
+      "url": "https://www.dataj.cc/api/web/stats/hex?setId=18&gameVersion=18.2a",
+      "status": 200,
+      "sha256": "0f9528e1c7fcf1b51c139394c3d7bac71407dc16e83d1fb1870da8b9b364c4aa",
+      "retrieved_at": "2026-09-26T01:34:18.945912+00:00"
+    }
+  ],
+  "counts": {
+    "catalog": 263,
+    "with_version_stats": 229,
+    "without_version_stats": 34
+  },
+  "limitations": [
+    "Snapshot, not an automatic update service.",
+    "No statistics does not prove an augment is unavailable.",
+    "Catalog membership alone does not validate screenshot season."
+  ],
+  "augments": [
+    {
+      "id": "1002",
+      "name": "存心失利",
+      "level": 2,
+      "description": "在输掉你的战斗环节之后，获得2金币和一次免费的商店刷新。",
+      "icon": "https://img.dataj.cc/images/hex/calculatedloss2.png",
+      "catalog_metadata": {
+        "setId": "18",
+        "season": "S19",
+        "version": "18.18.1"
+      },
+      "has_version_stats": false,
+      "round_stats": []
+    },
+    {
+      "id": "1003",
+      "name": "花到上头",
+      "level": 2,
+      "description": "你不再获得利息，但会在每个玩家对战回合开始时获得3金币。立刻获得3金币。  利息是你每储存10金币时获得的额外金币。",
+      "icon": "https://img.dataj.cc/images/hex/hyperroll2.png",
+      "catalog_metadata": {
+        "setId": "18",
+        "season": "S19",
+        "version": "18.18.1"
+      },
+      "has_version_stats": true,
+      "round_stats": [
+        {
+          "round": 0,
+          "roundLabel": "2-1",
+          "sampleCount": 1369,
+          "playRate": 0.04,
+          "avgPlacement": 4.26,
+          "top4Rate": 55.66,
+          "topRate": 8.98
+        }
+      ]
+    },
+    {
+      "id": "1006",
+      "name": "装备百宝袋 I",
+      "level": 1,
+      "description": "获得1件随机成装。",
+      "icon": "https://img.dataj.cc/images/hex/itemgrabbag1.png",
+      "catalog_metadata": {
+        "setId": "18",
+        "season": "S19",
+        "version": "18.18.1"
+      },
+      "has_version_stats": true,
+      "round_stats": [
+        {
+          "round": 0,
+          "roundLabel": "2-1",
+          "sampleCount": 1022,
+          "playRate": 0.03,
+          "avgPlacement": 4.47,
+          "top4Rate": 51.17,
+          "topRate": 11.06
+        },
+        {
+          "round": 1,
+          "roundLabel": "3-2",
+          "sampleCount": 2501,
+          "playRate": 0.08,
+          "avgPlacement": 4.51,
+          "top4Rate": 49.82,
+          "topRate": 10.16
+        },
+        {
+          "round": 2,
+          "roundLabel": "4-2",
+          "sampleCount": 561,
+          "playRate": 0.02,
+          "avgPlacement": 4.5,
+          "top4Rate": 51.69,
+          "topRate": 11.94
+        }
+      ]
+    },
+    {
+      "id": "1007",
+      "name": "潘朵拉的装备 I",
+      "level": 1,
+      "description": "回合开始时：你备战席上的装备会随机变化。  获得1件随机基础装备。",
+      "icon": "https://img.dataj.cc/images/hex/pandora1.png",
+      "catalog_metadata": {
+        "setId": "18",
+        "season": "S19",
+        "version": "18.18.1b"
+      },
+      "has_version_stats": true,
+      "round_stats": [
+        {
+          "round": 0,
+          "roundLabel": "2-1",
+          "sampleCount": 783,
+          "playRate": 0.02,
+          "avgPlacement": 4.48,
+          "top4Rate": 49.94,
+          "topRate": 10.6
+        },
+        {
+          "round": 1,
+          "roundLabel": "3-2",
+          "sampleCount": 2342,
+          "playRate": 0.07,
+          "avgPlacement": 4.63,
+          "top4Rate": 48.46,
+          "topRate": 10.97
+        },
+        {
+          "round": 2,
+          "roundLabel": "4-2",
+          "sampleCount": 390,
+          "playRate": 0.01,
+          "avgPlacement": 4.78,
+          "top4Rate": 42.82,
+          "topRate": 11.79
+        }
+      ]
+    },
+    {
+      "id": "1008",
+      "name": "打捞桶",
+      "level": 2,
+      "description": "立刻获得1件随机成装，并在8个玩家对战回合之后提供1个基础装备。出售弈子会将其携带的成装拆分成基础装备(冠冕系装备和纹章除外)。",
+      "icon": "https://img.dataj.cc/images/hex/salvage2.png",
+      "catalog_metadata": {
+        "setId": "18",
+        "season": "S19",
+        "version": "18.18.1"
+      },
+      "has_version_stats": true,
+      "round_stats": [
+        {
+          "round": 0,
+          "roundLabel": "2-1",
+          "sampleCount": 1728,
+          "playRate": 0.05,
+          "avgPlacement": 4.46,
+          "top4Rate": 51.1,
+          "topRate": 8.04
+        }
+      ]
+    },
+    {
+      "id": "1011",
+      "name": "清晰头脑",
+      "level": 2,
+      "description": "如果在一个玩家对战回合结束时你的备战席没有任何英雄，则获得3经验。",
+      "icon": "https://img.dataj.cc/images/hex/clearmind2.png",
+      "catalog_metadata": {
+        "setId": "18",
+        "season": "S19",
+        "version": "18.18.1"
+      },
+      "has_version_stats": true,
+      "round_stats": [
+        {
+          "round": 0,
+          "roundLabel": "2-1",
+          "sampleCount": 903,
+          "playRate": 0.03,
+          "avgPlacement": 4.84,
+          "top4Rate": 42.08,
+          "topRate": 13.29
+        }
+      ]
+    },
+    {
+      "id": "1019",
+      "name": "并肩作战 I",
+      "level": 1,
+      "description": "在你的队伍之中，每有一个已激活的非唯一特质/职业，你的弈子就会获得1.5%物理加成和1.5%法术加成。  当前加成：0%【物理加成】0%【法术加成】",
+      "icon": "https://img.dataj.cc/images/hex/standunited1.png",
+      "catalog_metadata": {
+        "setId": "18",
+        "season": "S19",
+        "version": "18.18.1"
+      },
+      "has_version_stats": true,
+      "round_stats": [
+        {
+          "round": 1,
+          "roundLabel": "3-2",
+          "sampleCount": 470,
+          "playRate": 0.01,
+          "avgPlacement": 4.66,
+          "top4Rate": 50,
+          "topRate": 11.28
+        }
+      ]
+    },
+    {
+      "id": "1021",
+      "name": "部分飞升",
+      "level": 1,
+      "description": "在战斗开始12秒后，你的队伍获得20%伤害增幅。",
+      "icon": "https://img.dataj.cc/images/hex/ascension1.png",
+      "catalog_metadata": {
+        "setId": "18",
+        "season": "S19",
+        "version": "18.18.1"
+      },
+      "has_version_stats": true,
+      "round_stats": [
+        {
+          "round": 1,
+          "roundLabel": "3-2",
+          "sampleCount": 6143,
+          "playRate": 0.19,
+          "avgPlacement": 4.41,
+          "top4Rate": 51.59,
+          "topRate": 11.67
+        },
+        {
+          "round": 2,
+          "roundLabel": "4-2",
+          "sampleCount": 1770,
+          "playRate": 0.05,
+          "avgPlacement": 4.45,
+          "top4Rate": 51.86,
+          "topRate": 10.17
+        }
+      ]
+    },
+    {
+      "id": "1023",
+      "name": "应急护甲 I",
+      "level": 1,
+      "description": "没有携带任何装备的弈子们获得30护甲和魔法抗性。",
+      "icon": "https://img.dataj.cc/images/hex/makeshift1.png",
+      "catalog_metadata": {
+        "setId": "18",
+        "season": "S19",
+        "version": "18.18.1b"
+      },
+      "has_version_stats": true,
+      "round_stats": [
+        {
+          "round": 0,
+          "roundLabel": "2-1",
+          "sampleCount": 249,
+          "playRate": 0.01,
+          "avgPlacement": 4.76,
+          "top4Rate": 44.58,
+          "topRate": 8.84
+        },
+        {
+          "round": 1,
+          "roundLabel": "3-2",
+          "sampleCount": 672,
+          "playRate": 0.02,
+          "avgPlacement": 4.44,
+          "top4Rate": 52.08,
+          "topRate": 11.46
+        }
+      ]
+    },
+    {
+      "id": "1068",
+      "name": "秘法帮派",
+      "level": 1,
+      "description": "获得1个秘法手套",
+      "icon": "https://img.dataj.cc/images/hex/bandthieves1.png",
+      "catalog_metadata": {
+        "setId": "18",
+        "season": "S19",
+        "version": "18.18.1"
+      },
+      "has_version_stats": true,
+      "round_stats": [
+        {
+          "round": 0,
+          "roundLabel": "2-1",
+          "sampleCount": 233,
+          "playRate": 0.01,
+          "avgPlacement": 4.51,
+          "top4Rate": 48.93,
+          "topRate": 15.88
+        },
+        {
+          "round": 1,
+          "roundLabel": "3-2",
+          "sampleCount": 1081,
+          "playRate": 0.03,
+          "avgPlacement": 4.29,
+          "top4Rate": 54.76,
+          "topRate": 13.41
+        },
+        {
+          "round": 2,
+          "roundLabel": "4-2",
+          "sampleCount": 377,
+          "playRate": 0.01,
+          "avgPlacement": 4.12,
+          "top4Rate": 59.68,
+          "topRate": 13.79
+        }
+      ]
+    },
+    {
+      "id": "1093",
+      "name": "休眠锻炉",
+      "level": 1,
+      "description": "在8个玩家对战后，获得1个【神器锻造器】。  这个锻造器提供4个选项。神器是可以提供独特效果的强力装备。",
+      "icon": "https://img.dataj.cc/images/hex/longtimecrafting1.png",
+      "catalog_metadata": {
+        "setId": "18",
+        "season": "S19",
+        "version": "18.18.1"
+      },
+      "has_version_stats": true,
+      "round_stats": [
+        {
+          "round": 0,
+          "roundLabel": "2-1",
+          "sampleCount": 2178,
+          "playRate": 0.07,
+          "avgPlacement": 4.48,
+          "top4Rate": 51.42,
+          "topRate": 11.85
+        }
+      ]
+    },
+    {
+      "id": "1134",
+      "name": "嘀个痛快！ I",
+      "level": 1,
+      "description": "获得10次免费刷新。",
+      "icon": "https://img.dataj.cc/images/hex/rollingfordays1.png",
+      "catalog_metadata": {
+        "setId": "18",
+        "season": "S19",
+        "version": "18.18.1"
+      },
+      "has_version_stats": true,
+      "round_stats": [
+        {
+          "round": 1,
+          "roundLabel": "3-2",
+          "sampleCount": 6035,
+          "playRate": 0.18,
+          "avgPlacement": 4.5,
+          "top4Rate": 50.27,
+          "topRate": 11.63
+        },
+        {
+          "round": 2,
+          "roundLabel": "4-2",
+          "sampleCount": 2121,
+          "playRate": 0.06,
+          "avgPlacement": 4.45,
+          "top4Rate": 50.26,
+          "topRate": 12.59
+        }
+      ]
+    },
+    {
+      "id": "1147",
+      "name": "后期专家",
+      "level": 1,
+      "description": "在你到达9级时，提供27金币。",
+      "icon": "https://img.dataj.cc/images/hex/lategamespecialist1.png",
+      "catalog_metadata": {
+        "setId": "18",
+        "season": "S19",
+        "version": "18.18.1"
+      },
+      "has_version_stats": true,
+      "round_stats": [
+        {
+          "round": 1,
+          "roundLabel": "3-2",
+          "sampleCount": 1261,
+          "playRate": 0.04,
+          "avgPlacement": 4.72,
+          "top4Rate": 45.44,
+          "topRate": 14.91
+        }
+      ]
+    },
+    {
+      "id": "1158",
+      "name": "节外生枝",
+      "level": 1,
+      "description": "获得1个随机【纹章】。",
+      "icon": "https://img.dataj.cc/images/hex/branchingout1.png",
+      "catalog_metadata": {
+        "setId": "18",
+        "season": "S19",
+        "version": "18.18.1"
+      },
+      "has_version_stats": true,
+      "round_stats": [
+        {
+          "round": 0,
+          "roundLabel": "2-1",
+          "sampleCount": 4989,
+          "playRate": 0.15,
+          "avgPlacement": 4.61,
+          "top4Rate": 47.66,
+          "topRate": 12.53
+        }
+      ]
+    },
+    {
+      "id": "1478",
+      "name": "游神的盟友",
+      "level": 1,
+      "description": "即刻获得1个随机的2费弈子。在你每次升级时，再次获得一个相同弈子。（弈子：？？？）",
+      "icon": "https://img.dataj.cc/images/hex/caretakerschosenlegend1.png",
+      "catalog_metadata": {
+        "setId": "18",
+        "season": "S19",
+        "version": "18.18.1"
+      },
+      "has_version_stats": true,
+      "round_stats": [
+        {
+          "round": 0,
+          "roundLabel": "2-1",
+          "sampleCount": 822,
+          "playRate": 0.03,
+          "avgPlacement": 4.46,
+          "top4Rate": 49.64,
+          "topRate": 12.53
+        }
+      ]
+    },
+    {
+      "id": "1479",
+      "name": "一，二，三",
+      "level": 1,
+      "description": "获得2个1费弈子、1个2费弈子和1个3费弈子。",
+      "icon": "https://img.dataj.cc/images/hex/onetwothree1.png",
+      "catalog_metadata": {
+        "setId": "18",
+        "season": "S19",
+        "version": "18.18.1"
+      },
+      "has_version_stats": true,
+      "round_stats": [
+        {
+          "round": 0,
+          "roundLabel": "2-1",
+          "sampleCount": 1407,
+          "playRate": 0.04,
+          "avgPlacement": 4.83,
+          "top4Rate": 43.07,
+          "topRate": 8.39
+        }
+      ]
+    },
+    {
+      "id": "1625",
+      "name": "别再错过",
+      "level": 1,
+      "description": "获得每个1费弈子各1个。",
+      "icon": "https://img.dataj.cc/images/hex/missedconnections1.png",
+      "catalog_metadata": {
+        "setId": "18",
+        "season": "S19",
+        "version": "18.18.1"
+      },
+      "has_version_stats": true,
+      "round_stats": [
+        {
+          "round": 1,
+          "roundLabel": "3-2",
+          "sampleCount": 4385,
+          "playRate": 0.13,
+          "avgPlacement": 4.23,
+          "top4Rate": 54.78,
+          "topRate": 14.21
+        },
+        {
+          "round": 2,
+          "roundLabel": "4-2",
+          "sampleCount": 707,
+          "playRate": 0.02,
+          "avgPlacement": 4.82,
+          "top4Rate": 42.86,
+          "topRate": 10.61
+        }
+      ]
+    },
+    {
+      "id": "1634",
+      "name": "治疗法球 I",
+      "level": 1,
+      "description": "在一名敌人倒下时，相距最近的那个己方弈子获得250治疗效果。",
+      "icon": "https://img.dataj.cc/images/hex/healingorbs1.png",
+      "catalog_metadata": {
+        "setId": "18",
+        "season": "S19",
+        "version": "18.18.1"
+      },
+      "has_version_stats": true,
+      "round_stats": [
+        {
+          "round": 1,
+          "roundLabel": "3-2",
+          "sampleCount": 1169,
+          "playRate": 0.04,
+          "avgPlacement": 4.66,
+          "top4Rate": 48.25,
+          "topRate": 7.87
+        },
+        {
+          "round": 2,
+          "roundLabel": "4-2",
+          "sampleCount": 453,
+          "playRate": 0.01,
+          "avgPlacement": 4.37,
+          "top4Rate": 52.98,
+          "topRate": 10.6
+        }
+      ]
+    },
+    {
+      "id": "1646",
+      "name": "团队建设",
+      "level": 1,
+      "description": "获得1个【次级英雄复制器】。在5个玩家对战回合后获得另一个。  这个物品允许你能复制一个3费或以下的弈子。",
+      "icon": "https://img.dataj.cc/images/hex/buildinganarmy1.png",
+      "catalog_metadata": {
+        "setId": "18",
+        "season": "S19",
+        "version": "18.18.1"
+      },
+      "has_version_stats": true,
+      "round_stats": [
+        {
+          "round": 0,
+          "roundLabel": "2-1",
+          "sampleCount": 1379,
+          "playRate": 0.04,
+          "avgPlacement": 4.53,
+          "top4Rate": 49.96,
+          "topRate": 9.5
+        },
+        {
+          "round": 1,
+          "roundLabel": "3-2",
+          "sampleCount": 3719,
+          "playRate": 0.11,
+          "avgPlacement": 4.44,
+          "top4Rate": 52.19,
+          "topRate": 10.08
+        }
+      ]
+    },
+    {
+      "id": "1650",
+      "name": "一，二，五！",
+      "level": 1,
+      "description": "获得1个随机的基础装备、2金币、和1个随机的5费弈子。",
+      "icon": "https://img.dataj.cc/images/hex/onetwofive1.png",
+      "catalog_metadata": {
+        "setId": "18",
+        "season": "S19",
+        "version": "18.18.1"
+      },
+      "has_version_stats": true,
+      "round_stats": [
+        {
+          "round": 2,
+          "roundLabel": "4-2",
+          "sampleCount": 1636,
+          "playRate": 0.05,
+          "avgPlacement": 4.52,
+          "top4Rate": 49.39,
+          "topRate": 13.26
+        }
+      ]
+    },
+    {
+      "id": "1701",
+      "name": "黑铁资产",
+      "level": 1,
+      "description": "获得1个【基础装备锻造器】和3金币。  这个锻造器提供4个选项。",
+      "icon": "https://img.dataj.cc/images/hex/ironassets1.png",
+      "catalog_metadata": {
+        "setId": "18",
+        "season": "S19",
+        "version": "18.18.1"
+      },
+      "has_version_stats": true,
+      "round_stats": [
+        {
+          "round": 0,
+          "roundLabel": "2-1",
+          "sampleCount": 972,
+          "playRate": 0.03,
+          "avgPlacement": 4.28,
+          "top4Rate": 53.91,
+          "topRate": 10.49
+        }
+      ]
+    },
+    {
+      "id": "1712",
+      "name": "不拘一格",
+      "level": 1,
+      "description": "你在选秀回合中总能自由移动。获得5金币。",
+      "icon": "https://img.dataj.cc/images/hex/youngandwildandfree1.png",
+      "catalog_metadata": {
+        "setId": "18",
+        "season": "S19",
+        "version": "18.18.1"
+      },
+      "has_version_stats": true,
+      "round_stats": [
+        {
+          "round": 0,
+          "roundLabel": "2-1",
+          "sampleCount": 2883,
+          "playRate": 0.09,
+          "avgPlacement": 4.57,
+          "top4Rate": 48.35,
+          "topRate": 13.18
+        }
+      ]
+    },
+    {
+      "id": "1713",
+      "name": "对冲基金",
+      "level": 3,
+      "description": "你的最大利息提升至10。获得22金币。  利息是你每储存10金币时获得的额外金币。",
+      "icon": "https://img.dataj.cc/images/hex/richgetricher3.png",
+      "catalog_metadata": {
+        "setId": "18",
+        "season": "S19",
+        "version": "18.18.1"
+      },
+      "has_version_stats": true,
+      "round_stats": [
+        {
+          "round": 0,
+          "roundLabel": "2-1",
+          "sampleCount": 712,
+          "playRate": 0.02,
+          "avgPlacement": 4.89,
+          "top4Rate": 44.38,
+          "topRate": 12.92
+        }
+      ]
+    },
+    {
+      "id": "1714",
+      "name": "银汤匙",
+      "level": 1,
+      "description": "获得10经验值。",
+      "icon": "https://img.dataj.cc/images/hex/silverspoon1.png",
+      "catalog_metadata": {
+        "setId": "18",
+        "season": "S19",
+        "version": "18.18.1"
+      },
+      "has_version_stats": true,
+      "round_stats": [
+        {
+          "round": 0,
+          "roundLabel": "2-1",
+          "sampleCount": 1549,
+          "playRate": 0.05,
+          "avgPlacement": 4.39,
+          "top4Rate": 49.9,
+          "topRate": 11.81
+        }
+      ]
+    },
+    {
+      "id": "1718",
+      "name": "基础装备自助餐",
+      "level": 1,
+      "description": "每当你将要获得一个基础装备时，转而获得1个【基础装备锻造器】。获得1个随机的基础装备。  这个锻造器提供4个选项。",
+      "icon": "https://img.dataj.cc/images/hex/thecustomerisalwaysright1.png",
+      "catalog_metadata": {
+        "setId": "18",
+        "season": "S19",
+        "version": "18.18.1"
+      },
+      "has_version_stats": true,
+      "round_stats": [
+        {
+          "round": 0,
+          "roundLabel": "2-1",
+          "sampleCount": 1072,
+          "playRate": 0.03,
+          "avgPlacement": 4.48,
+          "top4Rate": 50.65,
+          "topRate": 10.17
+        }
+      ]
+    },
+    {
+      "id": "1789",
+      "name": "有用之材 I",
+      "level": 1,
+      "description": "未携带装备的弈子们在倒下时有40%几率掉落1金币。  金币掉落数量：0",
+      "icon": "https://img.dataj.cc/images/hex/goodforsomething1.png",
+      "catalog_metadata": {
+        "setId": "18",
+        "season": "S19",
+        "version": "18.18.1"
+      },
+      "has_version_stats": true,
+      "round_stats": [
+        {
+          "round": 0,
+          "roundLabel": "2-1",
+          "sampleCount": 485,
+          "playRate": 0.01,
+          "avgPlacement": 4.51,
+          "top4Rate": 49.9,
+          "topRate": 12.16
+        }
+      ]
+    },
+    {
+      "id": "1895",
+      "name": "四费增援",
+      "level": 2,
+      "description": "你用金币购买的下一个4费弈子将立刻升到2星。获得7金币。",
+      "icon": "https://img.dataj.cc/images/hex/reinfourcement2.png",
+      "catalog_metadata": {
+        "setId": "18",
+        "season": "S19",
+        "version": "18.18.1"
+      },
+      "has_version_stats": false,
+      "round_stats": []
+    },
+    {
+      "id": "2007",
+      "name": "潘朵拉的装备 II",
+      "level": 2,
+      "description": "回合开始时：你备战席上的装备会随机变化。  获得2件随机基础装备。",
+      "icon": "https://img.dataj.cc/images/hex/pandora2.png",
+      "catalog_metadata": {
+        "setId": "18",
+        "season": "S19",
+        "version": "18.18.1"
+      },
+      "has_version_stats": true,
+      "round_stats": [
+        {
+          "round": 0,
+          "roundLabel": "2-1",
+          "sampleCount": 1304,
+          "playRate": 0.04,
+          "avgPlacement": 4.62,
+          "top4Rate": 49.16,
+          "topRate": 8.13
+        },
+        {
+          "round": 1,
+          "roundLabel": "3-2",
+          "sampleCount": 1628,
+          "playRate": 0.05,
+          "avgPlacement": 4.63,
+          "top4Rate": 48.16,
+          "topRate": 11.06
+        },
+        {
+          "round": 2,
+          "roundLabel": "4-2",
+          "sampleCount": 2169,
+          "playRate": 0.07,
+          "avgPlacement": 5.02,
+          "top4Rate": 40.2,
+          "topRate": 9.13
+        }
+      ]
+    },
+    {
+      "id": "2008",
+      "name": "打捞桶+",
+      "level": 2,
+      "description": "立刻获得1件随机成装，并在4个玩家对战回合之后提供1个基础装备。出售弈子会将其携带的成装拆分成基础装备(冠冕系装备和纹章除外)。",
+      "icon": "https://img.dataj.cc/images/hex/salvage2.png",
+      "catalog_metadata": {
+        "setId": "18",
+        "season": "S19",
+        "version": "18.18.1"
+      },
+      "has_version_stats": true,
+      "round_stats": [
+        {
+          "round": 1,
+          "roundLabel": "3-2",
+          "sampleCount": 1600,
+          "playRate": 0.05,
+          "avgPlacement": 4.51,
+          "top4Rate": 49.75,
+          "topRate": 11
+        },
+        {
+          "round": 2,
+          "roundLabel": "4-2",
+          "sampleCount": 2767,
+          "playRate": 0.08,
+          "avgPlacement": 4.77,
+          "top4Rate": 44.31,
+          "topRate": 10.48
+        }
+      ]
+    },
+    {
+      "id": "2021",
+      "name": "飞升",
+      "level": 2,
+      "description": "在战斗开始12秒后，你的队伍获得35%伤害增幅。",
+      "icon": "https://img.dataj.cc/images/hex/finalascension2.png",
+      "catalog_metadata": {
+        "setId": "18",
+        "season": "S19",
+        "version": "18.18.1"
+      },
+      "has_version_stats": true,
+      "round_stats": [
+        {
+          "round": 1,
+          "roundLabel": "3-2",
+          "sampleCount": 4727,
+          "playRate": 0.14,
+          "avgPlacement": 4.34,
+          "top4Rate": 53.9,
+          "topRate": 11.61
+        },
+        {
+          "round": 2,
+          "roundLabel": "4-2",
+          "sampleCount": 10989,
+          "playRate": 0.34,
+          "avgPlacement": 4.29,
+          "top4Rate": 54.66,
+          "topRate": 11.74
+        }
+      ]
+    },
+    {
+      "id": "2022",
+      "name": "星界赐福 II",
+      "level": 2,
+      "description": "你的队伍获得18%全能汲取。溢出的治疗量会转化为护盾，最高可达到400护盾值。",
+      "icon": "https://img.dataj.cc/images/hex/celestialblessing2.png",
+      "catalog_metadata": {
+        "setId": "18",
+        "season": "S19",
+        "version": "18.18.1b"
+      },
+      "has_version_stats": true,
+      "round_stats": [
+        {
+          "round": 1,
+          "roundLabel": "3-2",
+          "sampleCount": 752,
+          "playRate": 0.02,
+          "avgPlacement": 4.49,
+          "top4Rate": 51.2,
+          "topRate": 12.37
+        },
+        {
+          "round": 2,
+          "roundLabel": "4-2",
+          "sampleCount": 2573,
+          "playRate": 0.08,
+          "avgPlacement": 4.43,
+          "top4Rate": 52.12,
+          "topRate": 13.02
+        }
+      ]
+    },
+    {
+      "id": "2023",
+      "name": "应急护甲 II",
+      "level": 2,
+      "description": "没有携带任何装备的弈子们获得50护甲和魔法抗性。",
+      "icon": "https://img.dataj.cc/images/hex/makeshift2.png",
+      "catalog_metadata": {
+        "setId": "18",
+        "season": "S19",
+        "version": "18.18.1b"
+      },
+      "has_version_stats": true,
+      "round_stats": [
+        {
+          "round": 0,
+          "roundLabel": "2-1",
+          "sampleCount": 464,
+          "playRate": 0.01,
+          "avgPlacement": 4.93,
+          "top4Rate": 41.38,
+          "topRate": 8.41
+        },
+        {
+          "round": 1,
+          "roundLabel": "3-2",
+          "sampleCount": 444,
+          "playRate": 0.01,
+          "avgPlacement": 4.6,
+          "top4Rate": 48.65,
+          "topRate": 9.01
+        }
+      ]
+    },
+    {
+      "id": "2069",
+      "name": "嘀嘀街区",
+      "level": 2,
+      "description": "每回合获得1次免费的商店刷新。获得2金币。",
+      "icon": "https://img.dataj.cc/images/hex/trade2.png",
+      "catalog_metadata": {
+        "setId": "18",
+        "season": "S19",
+        "version": "18.18.1"
+      },
+      "has_version_stats": true,
+      "round_stats": [
+        {
+          "round": 0,
+          "roundLabel": "2-1",
+          "sampleCount": 8854,
+          "playRate": 0.27,
+          "avgPlacement": 4.44,
+          "top4Rate": 51.43,
+          "topRate": 10.92
+        }
+      ]
+    },
+    {
+      "id": "2127",
+      "name": "变形重组器",
+      "level": 1,
+      "description": "你棋盘上的弈子永久变形为一个比自身高1费的随机弈子（最高5费）。获得2个【装备拆卸器】和3次刷新。",
+      "icon": "https://img.dataj.cc/images/hex/recombobulator1.png",
+      "catalog_metadata": {
+        "setId": "18",
+        "season": "S19",
+        "version": "18.18.1"
+      },
+      "has_version_stats": true,
+      "round_stats": [
+        {
+          "round": 1,
+          "roundLabel": "3-2",
+          "sampleCount": 1988,
+          "playRate": 0.06,
+          "avgPlacement": 4.48,
+          "top4Rate": 49.7,
+          "topRate": 13.98
+        }
+      ]
+    },
+    {
+      "id": "2128",
+      "name": "珠光莲花 I",
+      "level": 2,
+      "description": "己方获得10%暴击几率和【技能暴击】。  技能暴击：技能伤害可产生暴击。额外的【技能暴击】提供10%暴击伤害。",
+      "icon": "https://img.dataj.cc/images/hex/jeweledlotus2.png",
+      "catalog_metadata": {
+        "setId": "18",
+        "season": "S19",
+        "version": "18.18.1"
+      },
+      "has_version_stats": true,
+      "round_stats": [
+        {
+          "round": 1,
+          "roundLabel": "3-2",
+          "sampleCount": 1186,
+          "playRate": 0.04,
+          "avgPlacement": 4.69,
+          "top4Rate": 45.7,
+          "topRate": 10.29
+        },
+        {
+          "round": 2,
+          "roundLabel": "4-2",
+          "sampleCount": 2714,
+          "playRate": 0.08,
+          "avgPlacement": 4.57,
+          "top4Rate": 48.53,
+          "topRate": 13.04
+        }
+      ]
+    },
+    {
+      "id": "2133",
+      "name": "好事成双 II",
+      "level": 2,
+      "description": "如果你恰好登场了相同英雄的2个弈子，那么他们都会获得25%物理加成和法术加成、25护甲和魔法抗性。当你将弈子升至3星时，获得该英雄的1个2星弈子。",
+      "icon": "https://img.dataj.cc/images/hex/doubletrouble2.png",
+      "catalog_metadata": {
+        "setId": "18",
+        "season": "S19",
+        "version": "18.18.1b"
+      },
+      "has_version_stats": false,
+      "round_stats": []
+    },
+    {
+      "id": "2184",
+      "name": "大百宝袋",
+      "level": 2,
+      "description": "获得3件随机基础装备、2金币和1个【装备重铸器】。  【装备重铸器】允许你将任一装备随机成另一件装备。",
+      "icon": "https://img.dataj.cc/images/hex/grabbag2.png",
+      "catalog_metadata": {
+        "setId": "18",
+        "season": "S19",
+        "version": "18.18.1"
+      },
+      "has_version_stats": true,
+      "round_stats": [
+        {
+          "round": 1,
+          "roundLabel": "3-2",
+          "sampleCount": 5971,
+          "playRate": 0.18,
+          "avgPlacement": 4.32,
+          "top4Rate": 53.66,
+          "topRate": 12.01
+        },
+        {
+          "round": 2,
+          "roundLabel": "4-2",
+          "sampleCount": 11494,
+          "playRate": 0.35,
+          "avgPlacement": 4.59,
+          "top4Rate": 48.36,
+          "topRate": 10.84
+        }
+      ]
+    },
+    {
+      "id": "2185",
+      "name": "阿福的百宝袋",
+      "level": 3,
+      "description": "获得1个【金铲铲】、3件随机基础装备和5金币。",
+      "icon": "https://img.dataj.cc/images/hex/urfsgrabbag33.png",
+      "catalog_metadata": {
+        "setId": "18",
+        "season": "S19",
+        "version": "18.18.1"
+      },
+      "has_version_stats": true,
+      "round_stats": [
+        {
+          "round": 1,
+          "roundLabel": "3-2",
+          "sampleCount": 5840,
+          "playRate": 0.18,
+          "avgPlacement": 4.09,
+          "top4Rate": 56.73,
+          "topRate": 20.1
+        },
+        {
+          "round": 2,
+          "roundLabel": "4-2",
+          "sampleCount": 3764,
+          "playRate": 0.12,
+          "avgPlacement": 4.28,
+          "top4Rate": 53.91,
+          "topRate": 18.01
+        }
+      ]
+    },
+    {
+      "id": "2189",
+      "name": "纷乱头脑",
+      "level": 2,
+      "description": "即刻获得4个随机的1费弈子。如果玩家对战回合结束时你的备战席已满，提供3经验。",
+      "icon": "https://img.dataj.cc/images/hex/dizzy2.png",
+      "catalog_metadata": {
+        "setId": "18",
+        "season": "S19",
+        "version": "18.18.1"
+      },
+      "has_version_stats": true,
+      "round_stats": [
+        {
+          "round": 0,
+          "roundLabel": "2-1",
+          "sampleCount": 3897,
+          "playRate": 0.12,
+          "avgPlacement": 4.6,
+          "top4Rate": 47.6,
+          "topRate": 11.98
+        }
+      ]
+    },
+    {
+      "id": "2276",
+      "name": "幸运手套",
+      "level": 3,
+      "description": "【秘法手套】总会为你的弈子们提供推荐装备。获得2个【拳套】与1金币",
+      "icon": "https://img.dataj.cc/images/hex/luckygloves3.png",
+      "catalog_metadata": {
+        "setId": "18",
+        "season": "S19",
+        "version": "18.18.1"
+      },
+      "has_version_stats": true,
+      "round_stats": [
+        {
+          "round": 0,
+          "roundLabel": "2-1",
+          "sampleCount": 268,
+          "playRate": 0.01,
+          "avgPlacement": 4.88,
+          "top4Rate": 43.28,
+          "topRate": 4.48
+        }
+      ]
+    },
+    {
+      "id": "2294",
+      "name": "生日礼物",
+      "level": 3,
+      "description": "在你每次升级时提供1个2星弈子和1金币。这个弈子的费用位阶是你的等级减4(最大值：5费)。",
+      "icon": "https://img.dataj.cc/images/hex/treasuretrove3.png",
+      "catalog_metadata": {
+        "setId": "18",
+        "season": "S19",
+        "version": "18.18.1"
+      },
+      "has_version_stats": true,
+      "round_stats": [
+        {
+          "round": 0,
+          "roundLabel": "2-1",
+          "sampleCount": 1555,
+          "playRate": 0.05,
+          "avgPlacement": 4.57,
+          "top4Rate": 47.78,
+          "topRate": 13.05
+        }
+      ]
+    },
+    {
+      "id": "2478",
+      "name": "游神的眷顾",
+      "level": 2,
+      "description": "在你达到5级、6级、7级和8级时获得1个【基础装备锻造器】。  这个锻造器提供4个选项。",
+      "icon": "https://img.dataj.cc/images/hex/caretakerschosenlegend2.png",
+      "catalog_metadata": {
+        "setId": "18",
+        "season": "S19",
+        "version": "18.18.1"
+      },
+      "has_version_stats": true,
+      "round_stats": [
+        {
+          "round": 0,
+          "roundLabel": "2-1",
+          "sampleCount": 1256,
+          "playRate": 0.04,
+          "avgPlacement": 4.5,
+          "top4Rate": 49.76,
+          "topRate": 10.91
+        }
+      ]
+    },
+    {
+      "id": "2634",
+      "name": "治疗法球 II",
+      "level": 2,
+      "description": "在一名敌人倒下时，相距最近的那个己方弈子获得575治疗效果。",
+      "icon": "https://img.dataj.cc/images/hex/healingorbs2.png",
+      "catalog_metadata": {
+        "setId": "18",
+        "season": "S19",
+        "version": "18.18.1"
+      },
+      "has_version_stats": true,
+      "round_stats": [
+        {
+          "round": 1,
+          "roundLabel": "3-2",
+          "sampleCount": 1223,
+          "playRate": 0.04,
+          "avgPlacement": 4.64,
+          "top4Rate": 48.24,
+          "topRate": 10.06
+        },
+        {
+          "round": 2,
+          "roundLabel": "4-2",
+          "sampleCount": 3476,
+          "playRate": 0.11,
+          "avgPlacement": 4.65,
+          "top4Rate": 47.24,
+          "topRate": 9.38
+        }
+      ]
+    },
+    {
+      "id": "2640",
+      "name": "了解你的敌人",
+      "level": 2,
+      "description": "你可以看到你下一回合将要和谁战斗。你的队伍获得8%伤害增幅。如果你和你的对手有任何相同的已激活特质/职业，那么转而获得15%伤害增幅。",
+      "icon": "https://img.dataj.cc/images/hex/knowyourenemy2.png",
+      "catalog_metadata": {
+        "setId": "18",
+        "season": "S19",
+        "version": "18.18.1"
+      },
+      "has_version_stats": false,
+      "round_stats": []
+    },
+    {
+      "id": "2705",
+      "name": "成吨的属性！",
+      "level": 2,
+      "description": "你的弈子们获得44生命值、4%物理加成、4%法术加成、4护甲、4魔抗、4%攻击速度和4法力值。",
+      "icon": "https://img.dataj.cc/images/hex/tonsofstats2.png",
+      "catalog_metadata": {
+        "setId": "18",
+        "season": "S19",
+        "version": "18.18.1"
+      },
+      "has_version_stats": true,
+      "round_stats": [
+        {
+          "round": 1,
+          "roundLabel": "3-2",
+          "sampleCount": 941,
+          "playRate": 0.03,
+          "avgPlacement": 4.36,
+          "top4Rate": 53.24,
+          "topRate": 13.07
+        },
+        {
+          "round": 2,
+          "roundLabel": "4-2",
+          "sampleCount": 1698,
+          "playRate": 0.05,
+          "avgPlacement": 4.57,
+          "top4Rate": 49.18,
+          "topRate": 10.48
+        }
+      ]
+    },
+    {
+      "id": "2804",
+      "name": "英勇福袋",
+      "level": 2,
+      "description": "获得2个【次级英雄复制器】和4金币。  这个物品允许你能复制一个3费或以下的弈子。",
+      "icon": "https://img.dataj.cc/images/hex/heroicgrabbag2.png",
+      "catalog_metadata": {
+        "setId": "18",
+        "season": "S19",
+        "version": "18.18.1"
+      },
+      "has_version_stats": true,
+      "round_stats": [
+        {
+          "round": 0,
+          "roundLabel": "2-1",
+          "sampleCount": 2482,
+          "playRate": 0.08,
+          "avgPlacement": 4.66,
+          "top4Rate": 47.62,
+          "topRate": 6.93
+        }
+      ]
+    },
+    {
+      "id": "2917",
+      "name": "物尽其用",
+      "level": 2,
+      "description": "获得3金币。每个玩家对战回合结束时，如果你的备战席没有任何装备(消耗品除外)，则获得2经验值。",
+      "icon": "https://img.dataj.cc/images/hex/slammin2.png",
+      "catalog_metadata": {
+        "setId": "18",
+        "season": "S19",
+        "version": "18.18.1"
+      },
+      "has_version_stats": true,
+      "round_stats": [
+        {
+          "round": 0,
+          "roundLabel": "2-1",
+          "sampleCount": 2746,
+          "playRate": 0.08,
+          "avgPlacement": 4.58,
+          "top4Rate": 47.63,
+          "topRate": 11.47
+        }
+      ]
+    },
+    {
+      "id": "3007",
+      "name": "潘朵拉的装备 III",
+      "level": 3,
+      "description": "回合开始时：你备战席上的装备会随机变化。  获得1件随机光明武器。",
+      "icon": "https://img.dataj.cc/images/hex/pandora3.png",
+      "catalog_metadata": {
+        "setId": "18",
+        "season": "S19",
+        "version": "18.18.1"
+      },
+      "has_version_stats": true,
+      "round_stats": [
+        {
+          "round": 0,
+          "roundLabel": "2-1",
+          "sampleCount": 1119,
+          "playRate": 0.03,
+          "avgPlacement": 4.23,
+          "top4Rate": 56.39,
+          "topRate": 9.92
+        },
+        {
+          "round": 1,
+          "roundLabel": "3-2",
+          "sampleCount": 1572,
+          "playRate": 0.05,
+          "avgPlacement": 4.54,
+          "top4Rate": 50,
+          "topRate": 11.9
+        },
+        {
+          "round": 2,
+          "roundLabel": "4-2",
+          "sampleCount": 926,
+          "playRate": 0.03,
+          "avgPlacement": 4.87,
+          "top4Rate": 44.06,
+          "topRate": 8.96
+        }
+      ]
+    },
+    {
+      "id": "3008",
+      "name": "升级咯！",
+      "level": 3,
+      "description": "即刻获得6经验值。在你购买经验值的时候，免费获得额外的2经验值。",
+      "icon": "https://img.dataj.cc/images/hex/levelup3.png",
+      "catalog_metadata": {
+        "setId": "18",
+        "season": "S19",
+        "version": "18.18.1"
+      },
+      "has_version_stats": true,
+      "round_stats": [
+        {
+          "round": 0,
+          "roundLabel": "2-1",
+          "sampleCount": 2529,
+          "playRate": 0.08,
+          "avgPlacement": 5.05,
+          "top4Rate": 39.11,
+          "topRate": 10.48
+        }
+      ]
+    },
+    {
+      "id": "3022",
+      "name": "星界赐福 III",
+      "level": 3,
+      "description": "你的队伍获得25%全能汲取。溢出的治疗量会转化为护盾，最高可达到1000护盾值。",
+      "icon": "https://img.dataj.cc/images/hex/celestialblessing3.png",
+      "catalog_metadata": {
+        "setId": "18",
+        "season": "S19",
+        "version": "18.18.1b"
+      },
+      "has_version_stats": true,
+      "round_stats": [
+        {
+          "round": 1,
+          "roundLabel": "3-2",
+          "sampleCount": 585,
+          "playRate": 0.02,
+          "avgPlacement": 4.95,
+          "top4Rate": 41.03,
+          "topRate": 9.57
+        },
+        {
+          "round": 2,
+          "roundLabel": "4-2",
+          "sampleCount": 704,
+          "playRate": 0.02,
+          "avgPlacement": 4.81,
+          "top4Rate": 43.32,
+          "topRate": 11.08
+        }
+      ]
+    },
+    {
+      "id": "3065",
+      "name": "棱彩门票",
+      "level": 3,
+      "description": "每当你的商店刷新时，你都有45%几率获得1次免费刷新。",
+      "icon": "https://img.dataj.cc/images/hex/goldenticket3.png",
+      "catalog_metadata": {
+        "setId": "18",
+        "season": "S19",
+        "version": "18.18.1"
+      },
+      "has_version_stats": true,
+      "round_stats": [
+        {
+          "round": 0,
+          "roundLabel": "2-1",
+          "sampleCount": 1080,
+          "playRate": 0.03,
+          "avgPlacement": 4.92,
+          "top4Rate": 40.65,
+          "topRate": 9.72
+        },
+        {
+          "round": 1,
+          "roundLabel": "3-2",
+          "sampleCount": 1558,
+          "playRate": 0.05,
+          "avgPlacement": 5.09,
+          "top4Rate": 39.79,
+          "topRate": 9.5
+        }
+      ]
+    },
+    {
+      "id": "3066",
+      "name": "新人入队",
+      "level": 3,
+      "description": "获得+1最大队伍规模和1个4费弈子。",
+      "icon": "https://img.dataj.cc/images/hex/newrecruit3.png",
+      "catalog_metadata": {
+        "setId": "18",
+        "season": "S19",
+        "version": "18.18.1"
+      },
+      "has_version_stats": false,
+      "round_stats": []
+    },
+    {
+      "id": "3068",
+      "name": "秘法帮派 II",
+      "level": 3,
+      "description": "获得2个【秘法手套】，在5个玩家对战回合后，获得额外1个。",
+      "icon": "https://img.dataj.cc/images/hex/bandthieves3.png",
+      "catalog_metadata": {
+        "setId": "18",
+        "season": "S19",
+        "version": "18.18.1b"
+      },
+      "has_version_stats": false,
+      "round_stats": []
+    },
+    {
+      "id": "3069",
+      "name": "嘀嘀街区加强版",
+      "level": 2,
+      "description": "每回合获得1次免费的商店刷新。获得8金币。",
+      "icon": "https://img.dataj.cc/images/hex/trade2.png",
+      "catalog_metadata": {
+        "setId": "18",
+        "season": "S19",
+        "version": "18.18.1"
+      },
+      "has_version_stats": true,
+      "round_stats": [
+        {
+          "round": 1,
+          "roundLabel": "3-2",
+          "sampleCount": 6611,
+          "playRate": 0.2,
+          "avgPlacement": 4.52,
+          "top4Rate": 49.96,
+          "topRate": 13.07
+        }
+      ]
+    },
+    {
+      "id": "3093",
+      "name": "便携锻炉",
+      "level": 2,
+      "description": "从4件神器中选出1件。  神器是可以提供独特效果的强力装备。",
+      "icon": "https://img.dataj.cc/images/hex/portableforge2.png",
+      "catalog_metadata": {
+        "setId": "18",
+        "season": "S19",
+        "version": "18.18.1"
+      },
+      "has_version_stats": true,
+      "round_stats": [
+        {
+          "round": 0,
+          "roundLabel": "2-1",
+          "sampleCount": 6965,
+          "playRate": 0.21,
+          "avgPlacement": 4.45,
+          "top4Rate": 51.83,
+          "topRate": 9.75
+        },
+        {
+          "round": 1,
+          "roundLabel": "3-2",
+          "sampleCount": 4969,
+          "playRate": 0.15,
+          "avgPlacement": 4.56,
+          "top4Rate": 49.39,
+          "topRate": 10.08
+        },
+        {
+          "round": 2,
+          "roundLabel": "4-2",
+          "sampleCount": 8269,
+          "playRate": 0.25,
+          "avgPlacement": 4.78,
+          "top4Rate": 44.89,
+          "topRate": 8.86
+        }
+      ]
+    },
+    {
+      "id": "3128",
+      "name": "珠光莲花 II",
+      "level": 3,
+      "description": "己方获得25%暴击几率、10%暴击伤害和【技能暴击】。  技能暴击：技能伤害可产生暴击。额外的【技能暴击】提供10%暴击伤害。",
+      "icon": "https://img.dataj.cc/images/hex/jeweledlotus3.png",
+      "catalog_metadata": {
+        "setId": "18",
+        "season": "S19",
+        "version": "18.18.1"
+      },
+      "has_version_stats": true,
+      "round_stats": [
+        {
+          "round": 1,
+          "roundLabel": "3-2",
+          "sampleCount": 996,
+          "playRate": 0.03,
+          "avgPlacement": 4.71,
+          "top4Rate": 46.79,
+          "topRate": 10.44
+        },
+        {
+          "round": 2,
+          "roundLabel": "4-2",
+          "sampleCount": 1030,
+          "playRate": 0.03,
+          "avgPlacement": 4.43,
+          "top4Rate": 51.17,
+          "topRate": 12.33
+        }
+      ]
+    },
+    {
+      "id": "3132",
+      "name": "光明圣物",
+      "level": 3,
+      "description": "从5件光明武器中选出1件。获得1个【装备拆卸器】。  光明武器是各个成装的超级加强版。",
+      "icon": "https://img.dataj.cc/images/hex/radiantrelics3.png",
+      "catalog_metadata": {
+        "setId": "18",
+        "season": "S19",
+        "version": "18.18.1"
+      },
+      "has_version_stats": true,
+      "round_stats": [
+        {
+          "round": 0,
+          "roundLabel": "2-1",
+          "sampleCount": 2152,
+          "playRate": 0.07,
+          "avgPlacement": 4.33,
+          "top4Rate": 54.51,
+          "topRate": 8.27
+        },
+        {
+          "round": 1,
+          "roundLabel": "3-2",
+          "sampleCount": 3194,
+          "playRate": 0.1,
+          "avgPlacement": 4.46,
+          "top4Rate": 51.75,
+          "topRate": 9.8
+        },
+        {
+          "round": 2,
+          "roundLabel": "4-2",
+          "sampleCount": 3319,
+          "playRate": 0.1,
+          "avgPlacement": 4.51,
+          "top4Rate": 50.56,
+          "topRate": 9.61
+        }
+      ]
+    },
+    {
+      "id": "3137",
+      "name": "金蛋",
+      "level": 3,
+      "description": "获得1个大金蛋，需要11个回合来孵化，在孵化时提供大量战利品。赢下玩家对战回合后会使孵化倒计时加快1个额外的回合。",
+      "icon": "https://img.dataj.cc/images/hex/thegoldenegg3.png",
+      "catalog_metadata": {
+        "setId": "18",
+        "season": "S19",
+        "version": "18.18.1"
+      },
+      "has_version_stats": true,
+      "round_stats": [
+        {
+          "round": 2,
+          "roundLabel": "4-2",
+          "sampleCount": 342,
+          "playRate": 0.01,
+          "avgPlacement": 3.38,
+          "top4Rate": 67.54,
+          "topRate": 29.82
+        }
+      ]
+    },
+    {
+      "id": "3158",
+      "name": "耐心学习",
+      "level": 2,
+      "description": "在与玩家的战斗后，如果你赢了则获得2经验，如果你输了则获得3经验。",
+      "icon": "https://img.dataj.cc/images/hex/learningfromexperience2.png",
+      "catalog_metadata": {
+        "setId": "18",
+        "season": "S19",
+        "version": "18.18.1"
+      },
+      "has_version_stats": true,
+      "round_stats": [
+        {
+          "round": 0,
+          "roundLabel": "2-1",
+          "sampleCount": 3155,
+          "playRate": 0.1,
+          "avgPlacement": 4.66,
+          "top4Rate": 46.91,
+          "topRate": 11.41
+        }
+      ]
+    },
+    {
+      "id": "3269",
+      "name": "诅咒冠冕",
+      "level": 3,
+      "description": "提供+2最大队伍规模，但你在输掉一场玩家对战回合后会承受2倍的玩家伤害。",
+      "icon": "https://img.dataj.cc/images/hex/cursedcrown3.png",
+      "catalog_metadata": {
+        "setId": "18",
+        "season": "S19",
+        "version": "18.18.2"
+      },
+      "has_version_stats": true,
+      "round_stats": [
+        {
+          "round": 0,
+          "roundLabel": "2-1",
+          "sampleCount": 987,
+          "playRate": 0.03,
+          "avgPlacement": 4.29,
+          "top4Rate": 53.8,
+          "topRate": 15.7
+        },
+        {
+          "round": 1,
+          "roundLabel": "3-2",
+          "sampleCount": 1043,
+          "playRate": 0.03,
+          "avgPlacement": 4.51,
+          "top4Rate": 48.71,
+          "topRate": 16.4
+        }
+      ]
+    },
+    {
+      "id": "3270",
+      "name": "活体锻炉",
+      "level": 3,
+      "description": "立刻以及之后的每10个玩家对战回合后获得1个【神器锻造器】。  神器是可以提供独特效果的强力装备。",
+      "icon": "https://img.dataj.cc/images/hex/livingforge3.png",
+      "catalog_metadata": {
+        "setId": "18",
+        "season": "S19",
+        "version": "18.18.1b"
+      },
+      "has_version_stats": true,
+      "round_stats": [
+        {
+          "round": 0,
+          "roundLabel": "2-1",
+          "sampleCount": 1548,
+          "playRate": 0.05,
+          "avgPlacement": 4.81,
+          "top4Rate": 43.35,
+          "topRate": 8.14
+        }
+      ]
+    },
+    {
+      "id": "3276",
+      "name": "幸运手套+",
+      "level": 3,
+      "description": "【秘法手套】总会为你的弈子们提供推荐装备。即刻获得2个【拳套】，然后在4场玩家对战后获得另一个。",
+      "icon": "https://img.dataj.cc/images/hex/luckygloves3.png",
+      "catalog_metadata": {
+        "setId": "18",
+        "season": "S19",
+        "version": "18.18.1"
+      },
+      "has_version_stats": true,
+      "round_stats": [
+        {
+          "round": 1,
+          "roundLabel": "3-2",
+          "sampleCount": 705,
+          "playRate": 0.02,
+          "avgPlacement": 4.79,
+          "top4Rate": 44.4,
+          "topRate": 7.8
+        },
+        {
+          "round": 2,
+          "roundLabel": "4-2",
+          "sampleCount": 896,
+          "playRate": 0.03,
+          "avgPlacement": 4.59,
+          "top4Rate": 49.55,
+          "topRate": 9.26
+        }
+      ]
+    },
+    {
+      "id": "3486",
+      "name": "珍藏财宝III",
+      "level": 3,
+      "description": "立刻以及接下来的6个回合开始时，获得1件随机基础装备。",
+      "icon": "https://img.dataj.cc/images/hex/buriedtreasureslegend3.png",
+      "catalog_metadata": {
+        "setId": "18",
+        "season": "S19",
+        "version": "18.18.1b"
+      },
+      "has_version_stats": true,
+      "round_stats": [
+        {
+          "round": 0,
+          "roundLabel": "2-1",
+          "sampleCount": 671,
+          "playRate": 0.02,
+          "avgPlacement": 4.07,
+          "top4Rate": 59.17,
+          "topRate": 10.73
+        }
+      ]
+    },
+    {
+      "id": "3627",
+      "name": "交给运气",
+      "level": 3,
+      "description": "获得1个【光明秘法手套】。每回合装备2件随机的临时光明武器。  光明武器是各个成装的超级加强版。",
+      "icon": "https://img.dataj.cc/images/hex/rollthedice3.png",
+      "catalog_metadata": {
+        "setId": "18",
+        "season": "S19",
+        "version": "18.18.1"
+      },
+      "has_version_stats": true,
+      "round_stats": [
+        {
+          "round": 1,
+          "roundLabel": "3-2",
+          "sampleCount": 523,
+          "playRate": 0.02,
+          "avgPlacement": 4.45,
+          "top4Rate": 51.24,
+          "topRate": 12.43
+        },
+        {
+          "round": 2,
+          "roundLabel": "4-2",
+          "sampleCount": 505,
+          "playRate": 0.02,
+          "avgPlacement": 4.26,
+          "top4Rate": 55.64,
+          "topRate": 14.85
+        }
+      ]
+    },
+    {
+      "id": "3695",
+      "name": "成吨的伤害",
+      "level": 3,
+      "description": "获得1个【三相之力】。在5个玩家对战回合后，获得另一个【三相之力】。  【三相之力】：一件神器，可以提供成吨的攻击和防御属性。",
+      "icon": "https://img.dataj.cc/images/hex/phreakyfriday3.png",
+      "catalog_metadata": {
+        "setId": "18",
+        "season": "S19",
+        "version": "18.18.1"
+      },
+      "has_version_stats": false,
+      "round_stats": []
+    },
+    {
+      "id": "3705",
+      "name": "成吨的属性！",
+      "level": 3,
+      "description": "你的弈子们获得88生命值、8%物理加成、8%法术加成、8护甲、8魔抗、8%攻击速度和8法力值。",
+      "icon": "https://img.dataj.cc/images/hex/tonsofstats3.png",
+      "catalog_metadata": {
+        "setId": "18",
+        "season": "S19",
+        "version": "18.18.1"
+      },
+      "has_version_stats": false,
+      "round_stats": []
+    },
+    {
+      "id": "3804",
+      "name": "英勇福袋+",
+      "level": 2,
+      "description": "获得2个【次级英雄复制器】和8金币。  这个物品允许你能复制一个3费或以下的弈子。",
+      "icon": "https://img.dataj.cc/images/hex/heroicgrabbag2.png",
+      "catalog_metadata": {
+        "setId": "18",
+        "season": "S19",
+        "version": "18.18.1"
+      },
+      "has_version_stats": true,
+      "round_stats": [
+        {
+          "round": 1,
+          "roundLabel": "3-2",
+          "sampleCount": 3634,
+          "playRate": 0.11,
+          "avgPlacement": 4.59,
+          "top4Rate": 48.76,
+          "topRate": 8.86
+        }
+      ]
+    },
+    {
+      "id": "3809",
+      "name": "遥遥领先",
+      "level": 3,
+      "description": "你不再获得利息。即刻获得10金币。在你的回合开始时，获得4经验。  利息是你每储存10金币时获得的额外金币。",
+      "icon": "https://img.dataj.cc/images/hex/goinglong3.png",
+      "catalog_metadata": {
+        "setId": "18",
+        "season": "S19",
+        "version": "18.18.1"
+      },
+      "has_version_stats": true,
+      "round_stats": [
+        {
+          "round": 0,
+          "roundLabel": "2-1",
+          "sampleCount": 644,
+          "playRate": 0.02,
+          "avgPlacement": 4.64,
+          "top4Rate": 46.27,
+          "topRate": 7.45
+        }
+      ]
+    },
+    {
+      "id": "3851",
+      "name": "混沌召唤",
+      "level": 3,
+      "description": "获得一个强大的随机奖励。(52金币，58经验值，1件成装锻造器和金蛋，36次免费刷新，3件幸运装备推荐器和1件装备拆卸器，金铲铲和金锅锅和2件基础装备锻造器，光明版幸运装备宝箱和8金币和1件装备拆卸器，3个秘法手套和1个拆卸器，6件不同的基础装备，带1件光明装备、神器装备、成装的魔像)",
+      "icon": "https://img.dataj.cc/images/hex/calltochaos3.png",
+      "catalog_metadata": {
+        "setId": "18",
+        "season": "S19",
+        "version": "18.18.1"
+      },
+      "has_version_stats": true,
+      "round_stats": [
+        {
+          "round": 2,
+          "roundLabel": "4-2",
+          "sampleCount": 7452,
+          "playRate": 0.23,
+          "avgPlacement": 4.47,
+          "top4Rate": 50.23,
+          "topRate": 13.7
+        }
+      ]
+    },
+    {
+      "id": "3896",
+      "name": "新纪元+",
+      "level": 2,
+      "description": "现在以及每个阶段开始时，获得8经验值和2次免费刷新。",
+      "icon": "https://img.dataj.cc/images/hex/epoch2.png",
+      "catalog_metadata": {
+        "setId": "18",
+        "season": "S19",
+        "version": "18.18.1"
+      },
+      "has_version_stats": true,
+      "round_stats": [
+        {
+          "round": 1,
+          "roundLabel": "3-2",
+          "sampleCount": 1845,
+          "playRate": 0.06,
+          "avgPlacement": 4.68,
+          "top4Rate": 46.4,
+          "topRate": 13.88
+        }
+      ]
+    },
+    {
+      "id": "3917",
+      "name": "物尽其用+",
+      "level": 2,
+      "description": "立刻获得4金币和10经验值。每个玩家对战回合结束时，如果你的备战席没有任何装备(消耗品除外)，则获得2经验值。",
+      "icon": "https://img.dataj.cc/images/hex/slammin2.png",
+      "catalog_metadata": {
+        "setId": "18",
+        "season": "S19",
+        "version": "18.18.1"
+      },
+      "has_version_stats": true,
+      "round_stats": [
+        {
+          "round": 1,
+          "roundLabel": "3-2",
+          "sampleCount": 2964,
+          "playRate": 0.09,
+          "avgPlacement": 4.55,
+          "top4Rate": 48.41,
+          "topRate": 13.8
+        }
+      ]
+    },
+    {
+      "id": "4066",
+      "name": "新人入队+",
+      "level": 3,
+      "description": "获得+1最大队伍规模和2个4费弈子。",
+      "icon": "https://img.dataj.cc/images/hex/newrecruit3.png",
+      "catalog_metadata": {
+        "setId": "18",
+        "season": "S19",
+        "version": "18.18.1"
+      },
+      "has_version_stats": false,
+      "round_stats": []
+    },
+    {
+      "id": "4069",
+      "name": "大买特买",
+      "level": 3,
+      "description": "在你升级时，获得相当于你等级数+1的免费商店刷新次数。获得6金币。",
+      "icon": "https://img.dataj.cc/images/hex/trade3.png",
+      "catalog_metadata": {
+        "setId": "18",
+        "season": "S19",
+        "version": "18.18.1b"
+      },
+      "has_version_stats": true,
+      "round_stats": [
+        {
+          "round": 0,
+          "roundLabel": "2-1",
+          "sampleCount": 1877,
+          "playRate": 0.06,
+          "avgPlacement": 4.47,
+          "top4Rate": 50.77,
+          "topRate": 15.08
+        }
+      ]
+    },
+    {
+      "id": "4158",
+      "name": "节外生枝+",
+      "level": 1,
+      "description": "获得1个随机【纹章】和1个【装备重铸器】。  【装备重铸器】允许你将任一装备随机成另一件装备。",
+      "icon": "https://img.dataj.cc/images/hex/branchingout1.png",
+      "catalog_metadata": {
+        "setId": "18",
+        "season": "S19",
+        "version": "18.18.1"
+      },
+      "has_version_stats": true,
+      "round_stats": [
+        {
+          "round": 1,
+          "roundLabel": "3-2",
+          "sampleCount": 7296,
+          "playRate": 0.22,
+          "avgPlacement": 4.49,
+          "top4Rate": 49.74,
+          "topRate": 15.06
+        }
+      ]
+    },
+    {
+      "id": "4695",
+      "name": "成吨的伤害+",
+      "level": 3,
+      "description": "获得1个【三相之力】。在3个玩家对战回合后，获得另一个【三相之力】。  【三相之力】：一件神器，可以提供成吨的攻击和防御属性。",
+      "icon": "https://img.dataj.cc/images/hex/phreakyfriday3.png",
+      "catalog_metadata": {
+        "setId": "18",
+        "season": "S19",
+        "version": "18.18.1"
+      },
+      "has_version_stats": false,
+      "round_stats": []
+    },
+    {
+      "id": "4804",
+      "name": "英勇福袋++",
+      "level": 2,
+      "description": "获得2个【次级英雄复制器】和14金币。  这个物品允许你能复制一个3费或以下的弈子。",
+      "icon": "https://img.dataj.cc/images/hex/heroicgrabbag2.png",
+      "catalog_metadata": {
+        "setId": "18",
+        "season": "S19",
+        "version": "18.18.1"
+      },
+      "has_version_stats": true,
+      "round_stats": [
+        {
+          "round": 2,
+          "roundLabel": "4-2",
+          "sampleCount": 8653,
+          "playRate": 0.27,
+          "avgPlacement": 4.47,
+          "top4Rate": 50.96,
+          "topRate": 10.47
+        }
+      ]
+    },
+    {
+      "id": "10004",
+      "name": "进攻宣告",
+      "level": 1,
+      "description": "将你的连胜数设为4。获得4金币。",
+      "icon": "https://img.dataj.cc/images/hex/calledshot1.png",
+      "catalog_metadata": {
+        "setId": "18",
+        "season": "S19",
+        "version": "18.18.1"
+      },
+      "has_version_stats": true,
+      "round_stats": [
+        {
+          "round": 0,
+          "roundLabel": "2-1",
+          "sampleCount": 213,
+          "playRate": 0.01,
+          "avgPlacement": 4.32,
+          "top4Rate": 52.11,
+          "topRate": 12.68
+        }
+      ]
+    },
+    {
+      "id": "10011",
+      "name": "耐心是一种美德",
+      "level": 1,
+      "description": "立刻获得4次刷新。每回合，如果你在上一回合未购买任何弈子，则会获得1次免费刷新。",
+      "icon": "https://img.dataj.cc/images/hex/patienceisavirtue1.png",
+      "catalog_metadata": {
+        "setId": "18",
+        "season": "S19",
+        "version": "18.18.1"
+      },
+      "has_version_stats": true,
+      "round_stats": [
+        {
+          "round": 0,
+          "roundLabel": "2-1",
+          "sampleCount": 803,
+          "playRate": 0.02,
+          "avgPlacement": 4.75,
+          "top4Rate": 46.33,
+          "topRate": 11.08
+        }
+      ]
+    },
+    {
+      "id": "10048",
+      "name": "核心位的觉悟",
+      "level": 1,
+      "description": "在战斗开始时处在最前排中心的那个己方弈子获得15%伤害增幅和25%最大生命值。",
+      "icon": "https://img.dataj.cc/images/hex/findyourcenter1.png",
+      "catalog_metadata": {
+        "setId": "18",
+        "season": "S19",
+        "version": "18.18.1"
+      },
+      "has_version_stats": true,
+      "round_stats": [
+        {
+          "round": 1,
+          "roundLabel": "3-2",
+          "sampleCount": 1114,
+          "playRate": 0.03,
+          "avgPlacement": 4.4,
+          "top4Rate": 52.51,
+          "topRate": 13.11
+        },
+        {
+          "round": 2,
+          "roundLabel": "4-2",
+          "sampleCount": 456,
+          "playRate": 0.01,
+          "avgPlacement": 4.38,
+          "top4Rate": 53.51,
+          "topRate": 15.35
+        }
+      ]
+    },
+    {
+      "id": "10196",
+      "name": "弑君突刺",
+      "level": 1,
+      "description": "在赢得玩家对战回合后，获得1金币。如果该玩家的生命值高于你，则获得6金币作为替代。即刻获得1金币。",
+      "icon": "https://img.dataj.cc/images/hex/kingslayer1.png",
+      "catalog_metadata": {
+        "setId": "18",
+        "season": "S19",
+        "version": "18.18.1"
+      },
+      "has_version_stats": true,
+      "round_stats": [
+        {
+          "round": 0,
+          "roundLabel": "2-1",
+          "sampleCount": 993,
+          "playRate": 0.03,
+          "avgPlacement": 4.53,
+          "top4Rate": 49.45,
+          "topRate": 16.52
+        },
+        {
+          "round": 1,
+          "roundLabel": "3-2",
+          "sampleCount": 2971,
+          "playRate": 0.09,
+          "avgPlacement": 4.9,
+          "top4Rate": 43.25,
+          "topRate": 14.2
+        }
+      ]
+    },
+    {
+      "id": "10214",
+      "name": "精心打造",
+      "level": 1,
+      "description": "每当你合成一件成装时，获得2次刷新。",
+      "icon": "https://img.dataj.cc/images/hex/craftedcrafting1.png",
+      "catalog_metadata": {
+        "setId": "18",
+        "season": "S19",
+        "version": "18.18.1"
+      },
+      "has_version_stats": true,
+      "round_stats": [
+        {
+          "round": 0,
+          "roundLabel": "2-1",
+          "sampleCount": 271,
+          "playRate": 0.01,
+          "avgPlacement": 4.37,
+          "top4Rate": 53.14,
+          "topRate": 11.81
+        }
+      ]
+    },
+    {
+      "id": "10236",
+      "name": "假人化",
+      "level": 1,
+      "description": "失去你场上和备战席上的所有弈子。获得1个【训练假人】，其生命值为失去所有弈子的60%总生命值。这个假人每阶段获得1150生命值。获得1个非坦克的2星2费弈子。",
+      "icon": "https://img.dataj.cc/images/hex/dummify1.png",
+      "catalog_metadata": {
+        "setId": "18",
+        "season": "S19",
+        "version": "18.18.2"
+      },
+      "has_version_stats": true,
+      "round_stats": [
+        {
+          "round": 1,
+          "roundLabel": "3-2",
+          "sampleCount": 175,
+          "playRate": 0.01,
+          "avgPlacement": 5.67,
+          "top4Rate": 29.14,
+          "topRate": 4
+        }
+      ]
+    },
+    {
+      "id": "10242",
+      "name": "终身黄铜 I",
+      "level": 2,
+      "description": "每拥有一个黄铜级特质/职业，己方弈子们就会获得2.5%伤害增幅。  伤害增幅加成：0.0%",
+      "icon": "https://img.dataj.cc/images/hex/bronzeforlifei2.png",
+      "catalog_metadata": {
+        "setId": "18",
+        "season": "S19",
+        "version": "18.18.1b"
+      },
+      "has_version_stats": true,
+      "round_stats": [
+        {
+          "round": 1,
+          "roundLabel": "3-2",
+          "sampleCount": 613,
+          "playRate": 0.02,
+          "avgPlacement": 4.94,
+          "top4Rate": 43.23,
+          "topRate": 7.5
+        },
+        {
+          "round": 2,
+          "roundLabel": "4-2",
+          "sampleCount": 1092,
+          "playRate": 0.03,
+          "avgPlacement": 4.61,
+          "top4Rate": 49.91,
+          "topRate": 7.33
+        }
+      ]
+    },
+    {
+      "id": "10252",
+      "name": "腐蚀",
+      "level": 1,
+      "description": "前两排的敌方弈子们每2秒损失4护甲和魔抗。",
+      "icon": "https://img.dataj.cc/images/hex/corrosion1.png",
+      "catalog_metadata": {
+        "setId": "18",
+        "season": "S19",
+        "version": "18.18.1"
+      },
+      "has_version_stats": true,
+      "round_stats": [
+        {
+          "round": 1,
+          "roundLabel": "3-2",
+          "sampleCount": 451,
+          "playRate": 0.01,
+          "avgPlacement": 4.33,
+          "top4Rate": 54.77,
+          "topRate": 13.08
+        }
+      ]
+    },
+    {
+      "id": "10253",
+      "name": "玻璃大炮 I",
+      "level": 1,
+      "description": "在后排开始战斗的己方弈子，在战斗开始时的生命值为80%，但会获得16%的伤害增幅。",
+      "icon": "https://img.dataj.cc/images/hex/glasscannon1.png",
+      "catalog_metadata": {
+        "setId": "18",
+        "season": "S19",
+        "version": "18.18.1"
+      },
+      "has_version_stats": true,
+      "round_stats": [
+        {
+          "round": 1,
+          "roundLabel": "3-2",
+          "sampleCount": 904,
+          "playRate": 0.03,
+          "avgPlacement": 4.74,
+          "top4Rate": 46.57,
+          "topRate": 6.53
+        },
+        {
+          "round": 2,
+          "roundLabel": "4-2",
+          "sampleCount": 379,
+          "playRate": 0.01,
+          "avgPlacement": 4.62,
+          "top4Rate": 47.23,
+          "topRate": 7.92
+        }
+      ]
+    },
+    {
+      "id": "10495",
+      "name": "人生切片",
+      "level": 1,
+      "description": "每个阶段两次，获得一个随机弈子。它的费用会在每个阶段提升。这个效果会在收到1个5费弈子后结束。",
+      "icon": "https://img.dataj.cc/images/hex/sliceoflife1.png",
+      "catalog_metadata": {
+        "setId": "18",
+        "season": "S19",
+        "version": "18.18.1"
+      },
+      "has_version_stats": true,
+      "round_stats": [
+        {
+          "round": 0,
+          "roundLabel": "2-1",
+          "sampleCount": 1150,
+          "playRate": 0.04,
+          "avgPlacement": 4.45,
+          "top4Rate": 50.26,
+          "topRate": 13.3
+        }
+      ]
+    },
+    {
+      "id": "10571",
+      "name": "锻造挚友",
+      "level": 1,
+      "description": "你购买的下个1费弈子变为3星。获得5金币。",
+      "icon": "https://img.dataj.cc/images/hex/constructacompanion1.png",
+      "catalog_metadata": {
+        "setId": "18",
+        "season": "S19",
+        "version": "18.18.1"
+      },
+      "has_version_stats": true,
+      "round_stats": [
+        {
+          "round": 2,
+          "roundLabel": "4-2",
+          "sampleCount": 605,
+          "playRate": 0.02,
+          "avgPlacement": 4.43,
+          "top4Rate": 52.23,
+          "topRate": 12.4
+        }
+      ]
+    },
+    {
+      "id": "10707",
+      "name": "远征",
+      "level": 1,
+      "description": "每个回合开始时，损失备战席最右侧栏位的弈子。当你通过这种方式损失的弈子总价值达到33金币时，获得强力奖励。立刻获得1个3费弈子。(当前：0)",
+      "icon": "https://img.dataj.cc/images/hex/expedition1.png",
+      "catalog_metadata": {
+        "setId": "18",
+        "season": "S19",
+        "version": "18.18.1"
+      },
+      "has_version_stats": true,
+      "round_stats": [
+        {
+          "round": 0,
+          "roundLabel": "2-1",
+          "sampleCount": 1622,
+          "playRate": 0.05,
+          "avgPlacement": 4.83,
+          "top4Rate": 44.08,
+          "topRate": 13.32
+        }
+      ]
+    },
+    {
+      "id": "10708",
+      "name": "电火花 I",
+      "level": 1,
+      "description": "友军每受到4次攻击，会对附近的敌人造成30~90(基于当前阶段)魔法伤害(1秒冷却)。",
+      "icon": "https://img.dataj.cc/images/hex/electrocharging1.png",
+      "catalog_metadata": {
+        "setId": "18",
+        "season": "S19",
+        "version": "18.18.1"
+      },
+      "has_version_stats": true,
+      "round_stats": [
+        {
+          "round": 1,
+          "roundLabel": "3-2",
+          "sampleCount": 370,
+          "playRate": 0.01,
+          "avgPlacement": 4.61,
+          "top4Rate": 48.11,
+          "topRate": 11.08
+        }
+      ]
+    },
+    {
+      "id": "10731",
+      "name": "扩展包",
+      "level": 2,
+      "description": "获得价值12金币的随机弈子。(保证至少一个3费弈子！)  (每个弈子都有小几率拥有全息效果！)",
+      "icon": "https://img.dataj.cc/images/hex/boosterpack2.png",
+      "catalog_metadata": {
+        "setId": "18",
+        "season": "S19",
+        "version": "18.18.1"
+      },
+      "has_version_stats": false,
+      "round_stats": []
+    },
+    {
+      "id": "10744",
+      "name": "残留魔力",
+      "level": 1,
+      "description": "你的队伍获得60生命值。你每次购买【自然仙灵】，都会将该加成提升10。  当前生命值：60",
+      "icon": "https://img.dataj.cc/images/hex/residualmagic1.png",
+      "catalog_metadata": {
+        "setId": "18",
+        "season": "S19",
+        "version": "18.18.1"
+      },
+      "has_version_stats": true,
+      "round_stats": [
+        {
+          "round": 0,
+          "roundLabel": "2-1",
+          "sampleCount": 306,
+          "playRate": 0.01,
+          "avgPlacement": 4.87,
+          "top4Rate": 41.83,
+          "topRate": 10.46
+        }
+      ]
+    },
+    {
+      "id": "10746",
+      "name": "灌铅骰子",
+      "level": 1,
+      "description": "你在投掷骰子或抛掷硬币时总能相对幸运。 投掷1个骰子，获得与点数相等的金币。然后抛掷1枚硬币，如果硬币正面朝上，获得1金币。",
+      "icon": "https://img.dataj.cc/images/hex/loadeddice1.png",
+      "catalog_metadata": {
+        "setId": "18",
+        "season": "S19",
+        "version": "18.18.1"
+      },
+      "has_version_stats": true,
+      "round_stats": [
+        {
+          "round": 0,
+          "roundLabel": "2-1",
+          "sampleCount": 895,
+          "playRate": 0.03,
+          "avgPlacement": 4.65,
+          "top4Rate": 47.15,
+          "topRate": 10.84
+        }
+      ]
+    },
+    {
+      "id": "10750",
+      "name": "纵深 I",
+      "level": 1,
+      "description": "每有1名拥有相同特质/职业的友军，这些弈子们就会获得1.5%物理加成、1.5%法术加成、1.5护甲和1.5魔法抗性。",
+      "icon": "https://img.dataj.cc/images/hex/verticality1.png",
+      "catalog_metadata": {
+        "setId": "18",
+        "season": "S19",
+        "version": "18.18.1"
+      },
+      "has_version_stats": true,
+      "round_stats": [
+        {
+          "round": 1,
+          "roundLabel": "3-2",
+          "sampleCount": 2509,
+          "playRate": 0.08,
+          "avgPlacement": 4.14,
+          "top4Rate": 55.96,
+          "topRate": 14.87
+        },
+        {
+          "round": 2,
+          "roundLabel": "4-2",
+          "sampleCount": 597,
+          "playRate": 0.02,
+          "avgPlacement": 4.14,
+          "top4Rate": 56.11,
+          "topRate": 15.75
+        }
+      ]
+    },
+    {
+      "id": "10751",
+      "name": "弈子配送",
+      "level": 1,
+      "description": "获得3个2费弈子。在6个回合后，再获得3个。",
+      "icon": "https://img.dataj.cc/images/hex/champdelivery1.png",
+      "catalog_metadata": {
+        "setId": "18",
+        "season": "S19",
+        "version": "18.18.1"
+      },
+      "has_version_stats": true,
+      "round_stats": [
+        {
+          "round": 0,
+          "roundLabel": "2-1",
+          "sampleCount": 1367,
+          "playRate": 0.04,
+          "avgPlacement": 4.35,
+          "top4Rate": 54.65,
+          "topRate": 11.34
+        }
+      ]
+    },
+    {
+      "id": "10752",
+      "name": "弈子配送+",
+      "level": 1,
+      "description": "获得3个3费弈子。在6个回合后，再获得3个。",
+      "icon": "https://img.dataj.cc/images/hex/champdelivery1.png",
+      "catalog_metadata": {
+        "setId": "18",
+        "season": "S19",
+        "version": "18.18.1"
+      },
+      "has_version_stats": true,
+      "round_stats": [
+        {
+          "round": 1,
+          "roundLabel": "3-2",
+          "sampleCount": 5479,
+          "playRate": 0.17,
+          "avgPlacement": 4.39,
+          "top4Rate": 51.83,
+          "topRate": 13.21
+        }
+      ]
+    },
+    {
+      "id": "10753",
+      "name": "弈子配送++",
+      "level": 1,
+      "description": "获得3个4费弈子。在6个回合后，再获得3个。",
+      "icon": "https://img.dataj.cc/images/hex/champdelivery1.png",
+      "catalog_metadata": {
+        "setId": "18",
+        "season": "S19",
+        "version": "18.18.1"
+      },
+      "has_version_stats": true,
+      "round_stats": [
+        {
+          "round": 2,
+          "roundLabel": "4-2",
+          "sampleCount": 1980,
+          "playRate": 0.06,
+          "avgPlacement": 4.56,
+          "top4Rate": 48.59,
+          "topRate": 13.79
+        }
+      ]
+    },
+    {
+      "id": "10754",
+      "name": "高瞻远瞩",
+      "level": 1,
+      "description": "你失去20玩家生命值，但在5个玩家对战回合后，获得3个4费弈子和8金币。",
+      "icon": "https://img.dataj.cc/images/hex/futurefocused1.png",
+      "catalog_metadata": {
+        "setId": "18",
+        "season": "S19",
+        "version": "18.18.1"
+      },
+      "has_version_stats": true,
+      "round_stats": [
+        {
+          "round": 0,
+          "roundLabel": "2-1",
+          "sampleCount": 2973,
+          "playRate": 0.09,
+          "avgPlacement": 4.26,
+          "top4Rate": 55.23,
+          "topRate": 15.14
+        }
+      ]
+    },
+    {
+      "id": "10755",
+      "name": "资本利得 I",
+      "level": 1,
+      "description": "储存相当于你获得利息的金币。在3-3回合，获得相当于你100%已储存金币的金币。立刻获得1金币。  即将到来的金币：0",
+      "icon": "https://img.dataj.cc/images/hex/capitalgains1.png",
+      "catalog_metadata": {
+        "setId": "18",
+        "season": "S19",
+        "version": "18.18.1"
+      },
+      "has_version_stats": true,
+      "round_stats": [
+        {
+          "round": 0,
+          "roundLabel": "2-1",
+          "sampleCount": 2516,
+          "playRate": 0.08,
+          "avgPlacement": 4.21,
+          "top4Rate": 55.68,
+          "topRate": 16.73
+        }
+      ]
+    },
+    {
+      "id": "10756",
+      "name": "连败连胜才能连鸡",
+      "level": 1,
+      "description": "你现在赢得或输掉对战后，增加的连胜或连败数翻倍。获得2金币。",
+      "icon": "https://img.dataj.cc/images/hex/rapidstreaker1.png",
+      "catalog_metadata": {
+        "setId": "18",
+        "season": "S19",
+        "version": "18.18.1"
+      },
+      "has_version_stats": true,
+      "round_stats": [
+        {
+          "round": 0,
+          "roundLabel": "2-1",
+          "sampleCount": 1617,
+          "playRate": 0.05,
+          "avgPlacement": 4.55,
+          "top4Rate": 49.47,
+          "topRate": 12.93
+        }
+      ]
+    },
+    {
+      "id": "10766",
+      "name": "仙灵报恩",
+      "level": 1,
+      "description": "你每次购买【自然仙灵】，都会获得2金币。立刻获得4金币。",
+      "icon": "https://img.dataj.cc/images/hex/wisprebate1.png",
+      "catalog_metadata": {
+        "setId": "18",
+        "season": "S19",
+        "version": "18.18.1"
+      },
+      "has_version_stats": true,
+      "round_stats": [
+        {
+          "round": 1,
+          "roundLabel": "3-2",
+          "sampleCount": 2890,
+          "playRate": 0.09,
+          "avgPlacement": 4.42,
+          "top4Rate": 51.42,
+          "topRate": 15.47
+        }
+      ]
+    },
+    {
+      "id": "10771",
+      "name": "烧起来",
+      "level": 1,
+      "description": "在上场对战中造成最多伤害的【地狱火】弈子将会着火，获得40%攻击速度。获得1个【韦鲁斯】和1个【阿卡丽】。",
+      "icon": "https://img.dataj.cc/images/hex/infernoaugment1.png",
+      "catalog_metadata": {
+        "setId": "18",
+        "season": "S19",
+        "version": "18.18.1"
+      },
+      "has_version_stats": false,
+      "round_stats": []
+    },
+    {
+      "id": "10777",
+      "name": "绽灵花的约定",
+      "level": 2,
+      "description": "当你购买1个【自然仙灵】时，获得1个随机【灵魂莲华】弈子(基于【自然仙灵】的费用)。获得1个【芸阿娜】、1个【约里克】和1个【卡尔玛】。",
+      "icon": "https://img.dataj.cc/images/hex/wisprebate2.png",
+      "catalog_metadata": {
+        "setId": "18",
+        "season": "S19",
+        "version": "18.18.1"
+      },
+      "has_version_stats": true,
+      "round_stats": [
+        {
+          "round": 2,
+          "roundLabel": "4-2",
+          "sampleCount": 646,
+          "playRate": 0.02,
+          "avgPlacement": 5.17,
+          "top4Rate": 34.67,
+          "topRate": 17.18
+        }
+      ]
+    },
+    {
+      "id": "20009",
+      "name": "投资+",
+      "level": 3,
+      "description": "获得26金币。在每个回合开始时，在50金币之上，每拥有10金币就会获得1次永久的刷新(最多80金币)。",
+      "icon": "https://img.dataj.cc/images/hex/invested3.png",
+      "catalog_metadata": {
+        "setId": "18",
+        "season": "S19",
+        "version": "18.18.1"
+      },
+      "has_version_stats": true,
+      "round_stats": [
+        {
+          "round": 1,
+          "roundLabel": "3-2",
+          "sampleCount": 3917,
+          "playRate": 0.12,
+          "avgPlacement": 4.81,
+          "top4Rate": 44.4,
+          "topRate": 13.35
+        }
+      ]
+    },
+    {
+      "id": "20013",
+      "name": "挖角",
+      "level": 2,
+      "description": "每回合，获得你在上一场战斗中首先击败的那个弈子的一个1星版本。当你通过这种方式获得的弈子总价值达到21金币时，获得1个【秘法手套】。  (已转化：0/21金币) 若该弈子你未解锁，则将其转化为金币",
+      "icon": "https://img.dataj.cc/images/hex/pilfer2.png",
+      "catalog_metadata": {
+        "setId": "18",
+        "season": "S19",
+        "version": "18.18.1"
+      },
+      "has_version_stats": true,
+      "round_stats": [
+        {
+          "round": 1,
+          "roundLabel": "3-2",
+          "sampleCount": 1273,
+          "playRate": 0.04,
+          "avgPlacement": 4.4,
+          "top4Rate": 51.53,
+          "topRate": 17.91
+        }
+      ]
+    },
+    {
+      "id": "20015",
+      "name": "反响",
+      "level": 2,
+      "description": "在3件基础装备中选择1件。在接下来的2回合，获得1件该基础装备。",
+      "icon": "https://img.dataj.cc/images/hex/replication2.png",
+      "catalog_metadata": {
+        "setId": "18",
+        "season": "S19",
+        "version": "18.18.1"
+      },
+      "has_version_stats": true,
+      "round_stats": [
+        {
+          "round": 0,
+          "roundLabel": "2-1",
+          "sampleCount": 2859,
+          "playRate": 0.09,
+          "avgPlacement": 4.4,
+          "top4Rate": 52.71,
+          "topRate": 8.5
+        },
+        {
+          "round": 1,
+          "roundLabel": "3-2",
+          "sampleCount": 2669,
+          "playRate": 0.08,
+          "avgPlacement": 4.55,
+          "top4Rate": 50.17,
+          "topRate": 9.52
+        }
+      ]
+    },
+    {
+      "id": "20021",
+      "name": "值得等待",
+      "level": 2,
+      "description": "获得1个随机的1费弈子。每回合开始时都会获得该弈子的又一个1星版本，持续至本局游戏结束。（弈子：？？？）",
+      "icon": "https://img.dataj.cc/images/hex/worththewait2.png",
+      "catalog_metadata": {
+        "setId": "18",
+        "season": "S19",
+        "version": "18.18.1"
+      },
+      "has_version_stats": true,
+      "round_stats": [
+        {
+          "round": 0,
+          "roundLabel": "2-1",
+          "sampleCount": 1945,
+          "playRate": 0.06,
+          "avgPlacement": 5.08,
+          "top4Rate": 39.13,
+          "topRate": 6.79
+        }
+      ]
+    },
+    {
+      "id": "20027",
+      "name": "爆炸式增长",
+      "level": 2,
+      "description": "立刻以及接下来的3个回合开始时，获得7经验值。",
+      "icon": "https://img.dataj.cc/images/hex/explosivegrowth2.png",
+      "catalog_metadata": {
+        "setId": "18",
+        "season": "S19",
+        "version": "18.18.1"
+      },
+      "has_version_stats": true,
+      "round_stats": [
+        {
+          "round": 1,
+          "roundLabel": "3-2",
+          "sampleCount": 4252,
+          "playRate": 0.13,
+          "avgPlacement": 4.47,
+          "top4Rate": 50.42,
+          "topRate": 14.13
+        }
+      ]
+    },
+    {
+      "id": "20031",
+      "name": "发条增速器",
+      "level": 2,
+      "description": "你的弈子们在战斗中每过3秒就会获得10%攻击速度。",
+      "icon": "https://img.dataj.cc/images/hex/clockworkaccelerator2.png",
+      "catalog_metadata": {
+        "setId": "18",
+        "season": "S19",
+        "version": "18.18.1"
+      },
+      "has_version_stats": true,
+      "round_stats": [
+        {
+          "round": 1,
+          "roundLabel": "3-2",
+          "sampleCount": 651,
+          "playRate": 0.02,
+          "avgPlacement": 4.45,
+          "top4Rate": 52.53,
+          "topRate": 10.14
+        },
+        {
+          "round": 2,
+          "roundLabel": "4-2",
+          "sampleCount": 1655,
+          "playRate": 0.05,
+          "avgPlacement": 4.45,
+          "top4Rate": 51.48,
+          "topRate": 9.85
+        }
+      ]
+    },
+    {
+      "id": "20041",
+      "name": "双排",
+      "level": 2,
+      "description": "获得2个随机的5费弈子和2件相同的随机基础装备。",
+      "icon": "https://img.dataj.cc/images/hex/douqueue2.png",
+      "catalog_metadata": {
+        "setId": "18",
+        "season": "S19",
+        "version": "18.18.1"
+      },
+      "has_version_stats": true,
+      "round_stats": [
+        {
+          "round": 2,
+          "roundLabel": "4-2",
+          "sampleCount": 13019,
+          "playRate": 0.4,
+          "avgPlacement": 4.34,
+          "top4Rate": 52.32,
+          "topRate": 15.49
+        }
+      ]
+    },
+    {
+      "id": "20141",
+      "name": "专属定制",
+      "level": 2,
+      "description": "获得1个【幸运装备宝箱】和1个【装备拆卸器】和7金币。  对1个弈子使用【幸运装备宝箱】，即可从1个推荐装备武器库中进行选择！",
+      "icon": "https://img.dataj.cc/images/hex/exclusivecustomization2.png",
+      "catalog_metadata": {
+        "setId": "18",
+        "season": "S19",
+        "version": "18.18.1"
+      },
+      "has_version_stats": true,
+      "round_stats": [
+        {
+          "round": 1,
+          "roundLabel": "3-2",
+          "sampleCount": 4529,
+          "playRate": 0.14,
+          "avgPlacement": 4.37,
+          "top4Rate": 52.31,
+          "topRate": 10.97
+        },
+        {
+          "round": 2,
+          "roundLabel": "4-2",
+          "sampleCount": 9109,
+          "playRate": 0.28,
+          "avgPlacement": 4.72,
+          "top4Rate": 45.75,
+          "topRate": 9.75
+        }
+      ]
+    },
+    {
+      "id": "20205",
+      "name": "魔法投掷",
+      "level": 2,
+      "description": "投掷3个骰子，根据总点数获得奖励。",
+      "icon": "https://img.dataj.cc/images/hex/amagicalroll2.png",
+      "catalog_metadata": {
+        "setId": "18",
+        "season": "S19",
+        "version": "18.18.1"
+      },
+      "has_version_stats": true,
+      "round_stats": [
+        {
+          "round": 1,
+          "roundLabel": "3-2",
+          "sampleCount": 6051,
+          "playRate": 0.19,
+          "avgPlacement": 4.38,
+          "top4Rate": 52.57,
+          "topRate": 12.89
+        }
+      ]
+    },
+    {
+      "id": "20208",
+      "name": "征战之路",
+      "level": 2,
+      "description": "获得一个2星2费弈子。造成80玩家伤害后，获得一个装有高费弈子和装备的宝箱。 (当前：0)",
+      "icon": "https://img.dataj.cc/images/hex/warpath2.png",
+      "catalog_metadata": {
+        "setId": "18",
+        "season": "S19",
+        "version": "18.18.1"
+      },
+      "has_version_stats": true,
+      "round_stats": [
+        {
+          "round": 0,
+          "roundLabel": "2-1",
+          "sampleCount": 3218,
+          "playRate": 0.1,
+          "avgPlacement": 4.53,
+          "top4Rate": 46.64,
+          "topRate": 17.87
+        }
+      ]
+    },
+    {
+      "id": "20216",
+      "name": "不侦察，不变阵",
+      "level": 2,
+      "description": "参与玩家对战回合后，弈子无法再回到备战席或出售。在玩家对战回合后，你的队伍获得1%生命值、1.0%物理加成和法术加成。  当前：0%【生命上限】，0.0%【物理加成】【法术加成】",
+      "icon": "https://img.dataj.cc/images/hex/noscoutnopivot2.png",
+      "catalog_metadata": {
+        "setId": "18",
+        "season": "S19",
+        "version": "18.18.1"
+      },
+      "has_version_stats": true,
+      "round_stats": [
+        {
+          "round": 0,
+          "roundLabel": "2-1",
+          "sampleCount": 1582,
+          "playRate": 0.05,
+          "avgPlacement": 4.88,
+          "top4Rate": 44.12,
+          "topRate": 10.56
+        }
+      ]
+    },
+    {
+      "id": "20217",
+      "name": "投资策略 I",
+      "level": 2,
+      "description": "获得4金币。你每获得1利息，己方弈子们的最大生命值就永久提高8。",
+      "icon": "https://img.dataj.cc/images/hex/investmentstrategy2.png",
+      "catalog_metadata": {
+        "setId": "18",
+        "season": "S19",
+        "version": "18.18.1"
+      },
+      "has_version_stats": true,
+      "round_stats": [
+        {
+          "round": 0,
+          "roundLabel": "2-1",
+          "sampleCount": 508,
+          "playRate": 0.02,
+          "avgPlacement": 5.21,
+          "top4Rate": 37.2,
+          "topRate": 5.51
+        }
+      ]
+    },
+    {
+      "id": "20224",
+      "name": "强化之能量",
+      "level": 1,
+      "description": "你的下一个强化符文的位阶提高一阶。",
+      "icon": "https://img.dataj.cc/images/hex/powerup1.png",
+      "catalog_metadata": {
+        "setId": "18",
+        "season": "S19",
+        "version": "18.18.1"
+      },
+      "has_version_stats": true,
+      "round_stats": [
+        {
+          "round": 0,
+          "roundLabel": "2-1",
+          "sampleCount": 1733,
+          "playRate": 0.05,
+          "avgPlacement": 4.87,
+          "top4Rate": 43.1,
+          "topRate": 10.96
+        },
+        {
+          "round": 1,
+          "roundLabel": "3-2",
+          "sampleCount": 3997,
+          "playRate": 0.12,
+          "avgPlacement": 4.7,
+          "top4Rate": 46.33,
+          "topRate": 12.31
+        }
+      ]
+    },
+    {
+      "id": "20225",
+      "name": "金色炊具",
+      "level": 2,
+      "description": "在每回合开始时，所有持有【金锅锅】或【金铲铲】装备的己方弈子都会给最近的弈子提供60永久生命值。获得1个【金锅锅】。",
+      "icon": "https://img.dataj.cc/images/hex/cookingpot2.png",
+      "catalog_metadata": {
+        "setId": "18",
+        "season": "S19",
+        "version": "18.18.1"
+      },
+      "has_version_stats": true,
+      "round_stats": [
+        {
+          "round": 0,
+          "roundLabel": "2-1",
+          "sampleCount": 8051,
+          "playRate": 0.25,
+          "avgPlacement": 4.72,
+          "top4Rate": 46.35,
+          "topRate": 14.45
+        }
+      ]
+    },
+    {
+      "id": "20242",
+      "name": "终身黄铜 II",
+      "level": 3,
+      "description": "每拥有一个黄铜级的特质/职业，己方弈子们就会获得2.5%伤害增幅和4.0护甲与魔抗。  伤害增幅加成：0.0% 护甲与魔抗：0",
+      "icon": "https://img.dataj.cc/images/hex/bronzeforlifei3.png",
+      "catalog_metadata": {
+        "setId": "18",
+        "season": "S19",
+        "version": "18.18.1b"
+      },
+      "has_version_stats": true,
+      "round_stats": [
+        {
+          "round": 1,
+          "roundLabel": "3-2",
+          "sampleCount": 666,
+          "playRate": 0.02,
+          "avgPlacement": 4.63,
+          "top4Rate": 48.95,
+          "topRate": 9.16
+        },
+        {
+          "round": 2,
+          "roundLabel": "4-2",
+          "sampleCount": 542,
+          "playRate": 0.02,
+          "avgPlacement": 4.3,
+          "top4Rate": 53.51,
+          "topRate": 12.18
+        }
+      ]
+    },
+    {
+      "id": "20253",
+      "name": "玻璃大炮 II",
+      "level": 2,
+      "description": "在最后一排开始战斗的弈子，在战斗开始时的生命值为80%，但会获得25%的伤害增幅。",
+      "icon": "https://img.dataj.cc/images/hex/glasscannon2.png",
+      "catalog_metadata": {
+        "setId": "18",
+        "season": "S19",
+        "version": "18.18.1"
+      },
+      "has_version_stats": true,
+      "round_stats": [
+        {
+          "round": 1,
+          "roundLabel": "3-2",
+          "sampleCount": 823,
+          "playRate": 0.03,
+          "avgPlacement": 4.7,
+          "top4Rate": 47.39,
+          "topRate": 8.26
+        },
+        {
+          "round": 2,
+          "roundLabel": "4-2",
+          "sampleCount": 2043,
+          "playRate": 0.06,
+          "avgPlacement": 4.61,
+          "top4Rate": 48.41,
+          "topRate": 8.96
+        }
+      ]
+    },
+    {
+      "id": "20258",
+      "name": "恶意货币化",
+      "level": 2,
+      "description": "获得4金币。接下来的2个回合，敌方弈子在倒下时会掉落2金币。 累计获得金币：4",
+      "icon": "https://img.dataj.cc/images/hex/mirroredmonetization2.png",
+      "catalog_metadata": {
+        "setId": "18",
+        "season": "S19",
+        "version": "18.18.1"
+      },
+      "has_version_stats": true,
+      "round_stats": [
+        {
+          "round": 2,
+          "roundLabel": "4-2",
+          "sampleCount": 2650,
+          "playRate": 0.08,
+          "avgPlacement": 4.33,
+          "top4Rate": 52.79,
+          "topRate": 17.55
+        }
+      ]
+    },
+    {
+      "id": "20471",
+      "name": "泪流成河",
+      "level": 2,
+      "description": "获得1个【女神之泪】。你的队伍获得1法力回复。对战开始12秒后，该数值提升至4。",
+      "icon": "https://img.dataj.cc/images/hex/crymeariver2.png",
+      "catalog_metadata": {
+        "setId": "18",
+        "season": "S19",
+        "version": "18.18.1"
+      },
+      "has_version_stats": true,
+      "round_stats": [
+        {
+          "round": 0,
+          "roundLabel": "2-1",
+          "sampleCount": 840,
+          "playRate": 0.03,
+          "avgPlacement": 4.69,
+          "top4Rate": 45.95,
+          "topRate": 10.95
+        },
+        {
+          "round": 1,
+          "roundLabel": "3-2",
+          "sampleCount": 768,
+          "playRate": 0.02,
+          "avgPlacement": 4.5,
+          "top4Rate": 50.13,
+          "topRate": 11.46
+        }
+      ]
+    },
+    {
+      "id": "20480",
+      "name": "砍价高手",
+      "level": 2,
+      "description": "你无法选择你的选秀奖励。每次选秀回合获得额外的6玩家生命值和8金币。 当你没有选择一个选秀奖励时，你会被给予一个未被选择的弈子和其携带的装备。",
+      "icon": "https://img.dataj.cc/images/hex/hardbargain2.png",
+      "catalog_metadata": {
+        "setId": "18",
+        "season": "S19",
+        "version": "18.18.1"
+      },
+      "has_version_stats": true,
+      "round_stats": [
+        {
+          "round": 0,
+          "roundLabel": "2-1",
+          "sampleCount": 2327,
+          "playRate": 0.07,
+          "avgPlacement": 4.71,
+          "top4Rate": 46.97,
+          "topRate": 9.76
+        }
+      ]
+    },
+    {
+      "id": "20489",
+      "name": "应急护盾",
+      "level": 2,
+      "description": "你的队伍获得8护甲和魔法抗性。在生命值降至50%以下时，这个加成提升至40，持续到战斗结束。",
+      "icon": "https://img.dataj.cc/images/hex/plotarmor2.png",
+      "catalog_metadata": {
+        "setId": "18",
+        "season": "S19",
+        "version": "18.18.1"
+      },
+      "has_version_stats": true,
+      "round_stats": [
+        {
+          "round": 1,
+          "roundLabel": "3-2",
+          "sampleCount": 757,
+          "playRate": 0.02,
+          "avgPlacement": 4.72,
+          "top4Rate": 45.84,
+          "topRate": 8.72
+        },
+        {
+          "round": 2,
+          "roundLabel": "4-2",
+          "sampleCount": 2365,
+          "playRate": 0.07,
+          "avgPlacement": 4.67,
+          "top4Rate": 47.06,
+          "topRate": 10.06
+        }
+      ]
+    },
+    {
+      "id": "20496",
+      "name": "独自升级",
+      "level": 2,
+      "description": "在接下来的5个战斗回合，你的小队规模为1，但你登场的那个弈子拥有巨幅提升过的各属性。该弈子的每次击败都会使你获得1经验。在此之后，获得2件基础装备。",
+      "icon": "https://img.dataj.cc/images/hex/sololeveling2.png",
+      "catalog_metadata": {
+        "setId": "18",
+        "season": "S19",
+        "version": "18.18.1"
+      },
+      "has_version_stats": true,
+      "round_stats": [
+        {
+          "round": 0,
+          "roundLabel": "2-1",
+          "sampleCount": 2334,
+          "playRate": 0.07,
+          "avgPlacement": 4.18,
+          "top4Rate": 56.38,
+          "topRate": 13.67
+        }
+      ]
+    },
+    {
+      "id": "20498",
+      "name": "时间跳跃",
+      "level": 2,
+      "description": "在接下来的3个回合中禁用你的商店。然后获得32经验值。",
+      "icon": "https://img.dataj.cc/images/hex/timeskip2.png",
+      "catalog_metadata": {
+        "setId": "18",
+        "season": "S19",
+        "version": "18.18.1"
+      },
+      "has_version_stats": true,
+      "round_stats": [
+        {
+          "round": 0,
+          "roundLabel": "2-1",
+          "sampleCount": 5280,
+          "playRate": 0.16,
+          "avgPlacement": 4.48,
+          "top4Rate": 50.83,
+          "topRate": 10.93
+        }
+      ]
+    },
+    {
+      "id": "20503",
+      "name": "更要命的战刃",
+      "level": 3,
+      "description": "获得1个【锐利之刃】。【锐利之刃】的携带者每参与1次击败，【锐利之刃】永久获得1%物理加成。",
+      "icon": "https://img.dataj.cc/images/hex/deadlierblades3.png",
+      "catalog_metadata": {
+        "setId": "18",
+        "season": "S19",
+        "version": "18.18.1"
+      },
+      "has_version_stats": true,
+      "round_stats": [
+        {
+          "round": 0,
+          "roundLabel": "2-1",
+          "sampleCount": 3029,
+          "playRate": 0.09,
+          "avgPlacement": 4.26,
+          "top4Rate": 54.74,
+          "topRate": 13.44
+        }
+      ]
+    },
+    {
+      "id": "20708",
+      "name": "电火花 II",
+      "level": 2,
+      "description": "友军每受到4次攻击，会对附近的敌人造成50~140(基于当前阶段)魔法伤害(1秒冷却)。",
+      "icon": "https://img.dataj.cc/images/hex/electrocharging2.png",
+      "catalog_metadata": {
+        "setId": "18",
+        "season": "S19",
+        "version": "18.18.1"
+      },
+      "has_version_stats": true,
+      "round_stats": [
+        {
+          "round": 0,
+          "roundLabel": "2-1",
+          "sampleCount": 270,
+          "playRate": 0.01,
+          "avgPlacement": 4.74,
+          "top4Rate": 47.04,
+          "topRate": 3.7
+        },
+        {
+          "round": 1,
+          "roundLabel": "3-2",
+          "sampleCount": 297,
+          "playRate": 0.01,
+          "avgPlacement": 4.74,
+          "top4Rate": 44.78,
+          "topRate": 9.09
+        },
+        {
+          "round": 2,
+          "roundLabel": "4-2",
+          "sampleCount": 514,
+          "playRate": 0.02,
+          "avgPlacement": 4.85,
+          "top4Rate": 42.8,
+          "topRate": 7.78
+        }
+      ]
+    },
+    {
+      "id": "20721",
+      "name": "黄金赌约",
+      "level": 3,
+      "description": "获得2金币，并抛一枚硬币。如果硬币正面朝上，获得1个光明版幸运装备宝箱。如果硬币反面朝上，获得2个成装锻造器。  结果：正面朝上！结果：反面朝上！",
+      "icon": "https://img.dataj.cc/images/hex/goldengamble3.png",
+      "catalog_metadata": {
+        "setId": "18",
+        "season": "S19",
+        "version": "18.18.1"
+      },
+      "has_version_stats": true,
+      "round_stats": [
+        {
+          "round": 0,
+          "roundLabel": "2-1",
+          "sampleCount": 2093,
+          "playRate": 0.06,
+          "avgPlacement": 4.27,
+          "top4Rate": 55.95,
+          "topRate": 8.84
+        }
+      ]
+    },
+    {
+      "id": "20722",
+      "name": "黄金赌约+",
+      "level": 3,
+      "description": "获得3金币，并抛一枚硬币。如果硬币正面朝上，获得1个光明版幸运装备宝箱。如果硬币反面朝上，获得2个成装锻造器。  结果：正面朝上！结果：反面朝上！",
+      "icon": "https://img.dataj.cc/images/hex/goldengamble3.png",
+      "catalog_metadata": {
+        "setId": "18",
+        "season": "S19",
+        "version": "18.18.1"
+      },
+      "has_version_stats": true,
+      "round_stats": [
+        {
+          "round": 1,
+          "roundLabel": "3-2",
+          "sampleCount": 3556,
+          "playRate": 0.11,
+          "avgPlacement": 4.42,
+          "top4Rate": 51.74,
+          "topRate": 10.57
+        }
+      ]
+    },
+    {
+      "id": "20723",
+      "name": "黄金赌约++",
+      "level": 3,
+      "description": "获得6金币，并抛一枚硬币。如果硬币正面朝上，获得1个光明版幸运装备宝箱。如果硬币反面朝上，获得2个成装锻造器。  结果：正面朝上！结果：反面朝上！",
+      "icon": "https://img.dataj.cc/images/hex/goldengamble3.png",
+      "catalog_metadata": {
+        "setId": "18",
+        "season": "S19",
+        "version": "18.18.1"
+      },
+      "has_version_stats": true,
+      "round_stats": [
+        {
+          "round": 2,
+          "roundLabel": "4-2",
+          "sampleCount": 4110,
+          "playRate": 0.13,
+          "avgPlacement": 4.45,
+          "top4Rate": 51.24,
+          "topRate": 10.73
+        }
+      ]
+    },
+    {
+      "id": "20731",
+      "name": "扩展包+",
+      "level": 2,
+      "description": "获得价值18金币的随机弈子。(保证至少一个4费弈子！)  (每个弈子都有小几率拥有全息效果！)",
+      "icon": "https://img.dataj.cc/images/hex/boosterpack2.png",
+      "catalog_metadata": {
+        "setId": "18",
+        "season": "S19",
+        "version": "18.18.1"
+      },
+      "has_version_stats": false,
+      "round_stats": []
+    },
+    {
+      "id": "20733",
+      "name": "水乳交融",
+      "level": 3,
+      "description": "获得1个随机纹章和1个【成装锻造器】。与该纹章有同一特质/职业的己方弈子们获得30%攻击速度。  2025【双城之战2】全球总决赛",
+      "icon": "https://img.dataj.cc/images/hex/westicktogeter3.png",
+      "catalog_metadata": {
+        "setId": "18",
+        "season": "S19",
+        "version": "18.18.1"
+      },
+      "has_version_stats": false,
+      "round_stats": []
+    },
+    {
+      "id": "20742",
+      "name": "四之力",
+      "level": 2,
+      "description": "获得1个随机4费弈子。该弈子每携带1件装备，你的队伍获得100生命值。  弈子:[]。",
+      "icon": "https://img.dataj.cc/images/hex/fourcing2.png",
+      "catalog_metadata": {
+        "setId": "18",
+        "season": "S19",
+        "version": "18.18.1c"
+      },
+      "has_version_stats": true,
+      "round_stats": [
+        {
+          "round": 1,
+          "roundLabel": "3-2",
+          "sampleCount": 1926,
+          "playRate": 0.06,
+          "avgPlacement": 4.9,
+          "top4Rate": 43.35,
+          "topRate": 8.77
+        }
+      ]
+    },
+    {
+      "id": "20744",
+      "name": "残留魔力+",
+      "level": 1,
+      "description": "你的队伍获得75生命值。你每次购买【自然仙灵】，都会将该加成提升10。  当前生命值：75",
+      "icon": "https://img.dataj.cc/images/hex/residualmagic1.png",
+      "catalog_metadata": {
+        "setId": "18",
+        "season": "S19",
+        "version": "18.18.1"
+      },
+      "has_version_stats": true,
+      "round_stats": [
+        {
+          "round": 1,
+          "roundLabel": "3-2",
+          "sampleCount": 1333,
+          "playRate": 0.04,
+          "avgPlacement": 4.4,
+          "top4Rate": 51.01,
+          "topRate": 12.38
+        }
+      ]
+    },
+    {
+      "id": "20745",
+      "name": "亡眼射手",
+      "level": 2,
+      "description": "每4秒，所有【射手】对最低生命值的敌人发射1颗子弹，造成相当于他们130%攻击力的伤害。获得1个【射手】。",
+      "icon": "https://img.dataj.cc/images/hex/deadeye2.png",
+      "catalog_metadata": {
+        "setId": "18",
+        "season": "S19",
+        "version": "18.18.1"
+      },
+      "has_version_stats": false,
+      "round_stats": []
+    },
+    {
+      "id": "20750",
+      "name": "纵深 II",
+      "level": 2,
+      "description": "每有1名拥有相同特质/职业的友军，这些弈子们就会获得2%物理加成、2%法术加成、2护甲和2魔法抗性。",
+      "icon": "https://img.dataj.cc/images/hex/verticality2.png",
+      "catalog_metadata": {
+        "setId": "18",
+        "season": "S19",
+        "version": "18.18.1"
+      },
+      "has_version_stats": true,
+      "round_stats": [
+        {
+          "round": 1,
+          "roundLabel": "3-2",
+          "sampleCount": 2323,
+          "playRate": 0.07,
+          "avgPlacement": 4.39,
+          "top4Rate": 51.74,
+          "topRate": 11.58
+        },
+        {
+          "round": 2,
+          "roundLabel": "4-2",
+          "sampleCount": 4252,
+          "playRate": 0.13,
+          "avgPlacement": 4.23,
+          "top4Rate": 54.8,
+          "topRate": 12.46
+        }
+      ]
+    },
+    {
+      "id": "20755",
+      "name": "资本利得 II",
+      "level": 2,
+      "description": "储存相当于你获得利息的金币。在3-3回合，获得相当于你125%已储存金币的金币。立刻获得3金币。  即将到来的金币：0",
+      "icon": "https://img.dataj.cc/images/hex/capitalgains2.png",
+      "catalog_metadata": {
+        "setId": "18",
+        "season": "S19",
+        "version": "18.18.2"
+      },
+      "has_version_stats": true,
+      "round_stats": [
+        {
+          "round": 0,
+          "roundLabel": "2-1",
+          "sampleCount": 3886,
+          "playRate": 0.12,
+          "avgPlacement": 4.29,
+          "top4Rate": 53.65,
+          "topRate": 15.23
+        }
+      ]
+    },
+    {
+      "id": "20758",
+      "name": "等待得值",
+      "level": 2,
+      "description": "你首次将1个弈子升至3星时，在剩余游戏时间内的每回合都会获得1个其1星复制体。将与该弈子相同的弈子再次升至3星时，提供额外的1星复制体。获得1个【次级英雄复制器】和1个【微型英雄复制器】。",
+      "icon": "https://img.dataj.cc/images/hex/weighttheworth22.png",
+      "catalog_metadata": {
+        "setId": "18",
+        "season": "S19",
+        "version": "18.18.1"
+      },
+      "has_version_stats": true,
+      "round_stats": [
+        {
+          "round": 1,
+          "roundLabel": "3-2",
+          "sampleCount": 408,
+          "playRate": 0.01,
+          "avgPlacement": 4.93,
+          "top4Rate": 40.93,
+          "topRate": 10.29
+        }
+      ]
+    },
+    {
+      "id": "20759",
+      "name": "顶尖构筑",
+      "level": 2,
+      "description": "获得10次免费商店刷新。当你到达9级时，获得3次免费商店刷新和1个【英雄复制器】。  2020【银河战争】全球总决赛",
+      "icon": "https://img.dataj.cc/images/hex/maxbuild2.png",
+      "catalog_metadata": {
+        "setId": "18",
+        "season": "S19",
+        "version": "18.18.1"
+      },
+      "has_version_stats": true,
+      "round_stats": [
+        {
+          "round": 2,
+          "roundLabel": "4-2",
+          "sampleCount": 7166,
+          "playRate": 0.22,
+          "avgPlacement": 4.55,
+          "top4Rate": 48.34,
+          "topRate": 15.92
+        }
+      ]
+    },
+    {
+      "id": "20760",
+      "name": "致命丽花",
+      "level": 2,
+      "description": "获得1个【绝命花妖纹章】。携带该纹章的弈子通过【绝命花妖】获得150%额外加成。获得3金币。",
+      "icon": "https://img.dataj.cc/images/hex/florafatalisaugment2.png",
+      "catalog_metadata": {
+        "setId": "18",
+        "season": "S19",
+        "version": "18.18.2"
+      },
+      "has_version_stats": true,
+      "round_stats": [
+        {
+          "round": 0,
+          "roundLabel": "2-1",
+          "sampleCount": 1191,
+          "playRate": 0.04,
+          "avgPlacement": 4.95,
+          "top4Rate": 42.49,
+          "topRate": 7.3
+        },
+        {
+          "round": 1,
+          "roundLabel": "3-2",
+          "sampleCount": 301,
+          "playRate": 0.01,
+          "avgPlacement": 4.59,
+          "top4Rate": 48.5,
+          "topRate": 7.97
+        }
+      ]
+    },
+    {
+      "id": "20761",
+      "name": "装备提炼",
+      "level": 2,
+      "description": "你最初4次在【黑荆棘格】内献祭1个弈子时，获得1个其携带着的随机散件的复制品。获得1个【维迦】和1个【雷克塞】。",
+      "icon": "https://img.dataj.cc/images/hex/eldritchaugment2.png",
+      "catalog_metadata": {
+        "setId": "18",
+        "season": "S19",
+        "version": "18.18.1c"
+      },
+      "has_version_stats": true,
+      "round_stats": [
+        {
+          "round": 0,
+          "roundLabel": "2-1",
+          "sampleCount": 1519,
+          "playRate": 0.05,
+          "avgPlacement": 4.49,
+          "top4Rate": 49.37,
+          "topRate": 10.34
+        }
+      ]
+    },
+    {
+      "id": "20762",
+      "name": "世纪和解",
+      "level": 2,
+      "description": "你可以同时登场【雷恩加尔】和【卡兹克】且不触发【宿敌】羁绊的负面效果。他们会在彼此施放技能时获得加成。获得1个【雷恩加尔】和1个【卡兹克】。",
+      "icon": "https://img.dataj.cc/images/hex/rivalstofriends2.png",
+      "catalog_metadata": {
+        "setId": "18",
+        "season": "S19",
+        "version": "18.18.1"
+      },
+      "has_version_stats": true,
+      "round_stats": [
+        {
+          "round": 0,
+          "roundLabel": "2-1",
+          "sampleCount": 1462,
+          "playRate": 0.04,
+          "avgPlacement": 4.86,
+          "top4Rate": 43.5,
+          "topRate": 5.4
+        },
+        {
+          "round": 1,
+          "roundLabel": "3-2",
+          "sampleCount": 249,
+          "playRate": 0.01,
+          "avgPlacement": 5.78,
+          "top4Rate": 26.91,
+          "topRate": 4.02
+        }
+      ]
+    },
+    {
+      "id": "20763",
+      "name": "巨化术",
+      "level": 2,
+      "description": "【花仙子】弈子的【皮克斯仙灵】体型变大，并提供50%额外物理加成和法术加成。【花仙子】弈子们立刻获得10%物理加成和法术加成。获得1个【霞】和1个【洛】。",
+      "icon": "https://img.dataj.cc/images/hex/faeaugment2.png",
+      "catalog_metadata": {
+        "setId": "18",
+        "season": "S19",
+        "version": "18.18.1"
+      },
+      "has_version_stats": true,
+      "round_stats": [
+        {
+          "round": 0,
+          "roundLabel": "2-1",
+          "sampleCount": 183,
+          "playRate": 0.01,
+          "avgPlacement": 5.89,
+          "top4Rate": 24.59,
+          "topRate": 4.92
+        }
+      ]
+    },
+    {
+      "id": "20764",
+      "name": "兽性本能",
+      "level": 2,
+      "description": "【野兽之灵】额外提供一种【兽灵赐福】。立刻获得1个【蔚】，在3个回合后，获得1个【奈德丽】。  灵龟：每4秒，你的队伍治疗其4最大生命值。蛮熊：【野兽之灵】的伤害会处决生命值低于12的敌人。猛虎：在6秒后，【野兽之灵】弈子们获得35攻击速度，你的队伍获得15攻击速度。凤凰：【野兽之灵】每参与15次击杀，获得1件基础装备。至多获得4件。  参与击杀数：0",
+      "icon": "https://img.dataj.cc/images/hex/primalaugment2.png",
+      "catalog_metadata": {
+        "setId": "18",
+        "season": "S19",
+        "version": "18.18.1b"
+      },
+      "has_version_stats": false,
+      "round_stats": []
+    },
+    {
+      "id": "20766",
+      "name": "仙灵报恩+",
+      "level": 1,
+      "description": "你每次购买【自然仙灵】，都会获得2金币。立刻获得8金币。",
+      "icon": "https://img.dataj.cc/images/hex/wisprebate1.png",
+      "catalog_metadata": {
+        "setId": "18",
+        "season": "S19",
+        "version": "18.18.1"
+      },
+      "has_version_stats": true,
+      "round_stats": [
+        {
+          "round": 2,
+          "roundLabel": "4-2",
+          "sampleCount": 956,
+          "playRate": 0.03,
+          "avgPlacement": 4.37,
+          "top4Rate": 52.72,
+          "topRate": 15.59
+        }
+      ]
+    },
+    {
+      "id": "20767",
+      "name": "欧米茄之怪",
+      "level": 2,
+      "description": "你现在可以选择第二个被【阿尔法印记】标记的【峡谷野怪】。获得1个【峡谷迅捷蟹】、1个【绯红树怪】和1个【苍蓝哨戒】。",
+      "icon": "https://img.dataj.cc/images/hex/riftbeastaugment22.png",
+      "catalog_metadata": {
+        "setId": "18",
+        "season": "S19",
+        "version": "18.18.1b"
+      },
+      "has_version_stats": true,
+      "round_stats": [
+        {
+          "round": 0,
+          "roundLabel": "2-1",
+          "sampleCount": 5276,
+          "playRate": 0.16,
+          "avgPlacement": 4.4,
+          "top4Rate": 51.8,
+          "topRate": 8.83
+        },
+        {
+          "round": 1,
+          "roundLabel": "3-2",
+          "sampleCount": 1595,
+          "playRate": 0.05,
+          "avgPlacement": 4.27,
+          "top4Rate": 54.04,
+          "topRate": 11.79
+        },
+        {
+          "round": 2,
+          "roundLabel": "4-2",
+          "sampleCount": 2910,
+          "playRate": 0.09,
+          "avgPlacement": 4.14,
+          "top4Rate": 56.6,
+          "topRate": 12.75
+        }
+      ]
+    },
+    {
+      "id": "20768",
+      "name": "自然庇护所",
+      "level": 2,
+      "description": "战斗开始时：位于【永恒之森】植物邻格的弈子们获得15%攻击速度，并且每2秒治疗其3%最大生命值。获得1个【阿利斯塔】、1个【奥恩】和1个【霞】。",
+      "icon": "https://img.dataj.cc/images/hex/elderwoodaugment2.png",
+      "catalog_metadata": {
+        "setId": "18",
+        "season": "S19",
+        "version": "18.18.1"
+      },
+      "has_version_stats": true,
+      "round_stats": [
+        {
+          "round": 0,
+          "roundLabel": "2-1",
+          "sampleCount": 799,
+          "playRate": 0.02,
+          "avgPlacement": 4.44,
+          "top4Rate": 51.06,
+          "topRate": 10.01
+        }
+      ]
+    },
+    {
+      "id": "20769",
+      "name": "女巫使魔",
+      "level": 2,
+      "description": "当你选择继续收集【魔女精粹】而非兑换时，治疗2玩家生命值。获得1个【卡蜜尔】、1个【伊莉丝】和1个【凯特琳】。",
+      "icon": "https://img.dataj.cc/images/hex/covenaugment2.png",
+      "catalog_metadata": {
+        "setId": "18",
+        "season": "S19",
+        "version": "18.18.1"
+      },
+      "has_version_stats": true,
+      "round_stats": [
+        {
+          "round": 0,
+          "roundLabel": "2-1",
+          "sampleCount": 1670,
+          "playRate": 0.05,
+          "avgPlacement": 4.99,
+          "top4Rate": 40.66,
+          "topRate": 7.19
+        }
+      ]
+    },
+    {
+      "id": "20770",
+      "name": "毛茸茸小朋友",
+      "level": 2,
+      "description": "当【约德尔人和他们的毛茸茸大朋友】羁绊激活时，获得第二个【毛茸茸大朋友】召唤物，但仅有原来的35%强度。获得1个【提莫】、1个【维迦】和1个【可酷伯】。",
+      "icon": "https://img.dataj.cc/images/hex/sprykinaugment2.png",
+      "catalog_metadata": {
+        "setId": "18",
+        "season": "S19",
+        "version": "18.18.1"
+      },
+      "has_version_stats": true,
+      "round_stats": []
+    },
+    {
+      "id": "20775",
+      "name": "意外之礼",
+      "level": 2,
+      "description": "每当你开启1个战利品法球时，你有25%几率获得1个灰色战利品法球。获得2个灰色战利品法球。",
+      "icon": "https://img.dataj.cc/images/hex/bonusgift2.png",
+      "catalog_metadata": {
+        "setId": "18",
+        "season": "S19",
+        "version": "18.18.1"
+      },
+      "has_version_stats": false,
+      "round_stats": []
+    },
+    {
+      "id": "20777",
+      "name": "太阳的抉择",
+      "level": 2,
+      "description": "获得1个【蕾欧娜】、1个【凯尔】和1个【瑟庄妮】。【蕾欧娜】每回合获得70永久最大生命值，每登场1名不同的3星弈子，该加成还会提升10。",
+      "icon": "https://img.dataj.cc/images/hex/solaraugment2.png",
+      "catalog_metadata": {
+        "setId": "18",
+        "season": "S19",
+        "version": "18.18.1c"
+      },
+      "has_version_stats": true,
+      "round_stats": [
+        {
+          "round": 0,
+          "roundLabel": "2-1",
+          "sampleCount": 718,
+          "playRate": 0.02,
+          "avgPlacement": 5.52,
+          "top4Rate": 31.34,
+          "topRate": 4.46
+        }
+      ]
+    },
+    {
+      "id": "20778",
+      "name": "黑暗仪式",
+      "level": 2,
+      "description": "【魔女】不再提供战利品！ 将【魔女精粹】兑换为奖励时，为【魔女】弈子们提供法术加成。获得1个【卡蜜尔】、1个【伊莉丝】和1个【凯特琳】。  已获得的法术加成：0%",
+      "icon": "https://img.dataj.cc/images/hex/covenaugment2.png",
+      "catalog_metadata": {
+        "setId": "18",
+        "season": "S19",
+        "version": "18.18.1c"
+      },
+      "has_version_stats": true,
+      "round_stats": [
+        {
+          "round": 0,
+          "roundLabel": "2-1",
+          "sampleCount": 4889,
+          "playRate": 0.15,
+          "avgPlacement": 4.25,
+          "top4Rate": 54.47,
+          "topRate": 22.95
+        }
+      ]
+    },
+    {
+      "id": "20779",
+      "name": "野兽出没",
+      "level": 2,
+      "description": "获得1个【苍蓝哨戒】、1个【绯红树怪】、1个【峡谷迅捷蟹】和1个【暗影狼】。每次你升级时，获得1个新的【峡谷野怪】和1金币。",
+      "icon": "https://img.dataj.cc/images/hex/riftbeastaugment2.png",
+      "catalog_metadata": {
+        "setId": "18",
+        "season": "S19",
+        "version": "18.18.1"
+      },
+      "has_version_stats": false,
+      "round_stats": []
+    },
+    {
+      "id": "20780",
+      "name": "日月同辉",
+      "level": 2,
+      "description": "每登场1个不同的【日蚀骑士】弈子，你的【月蚀骑士】弈子们获得100生命值和8%伤害增幅。获得1个【蕾欧娜】、1个【凯尔】和1个【厄斐琉斯】。",
+      "icon": "https://img.dataj.cc/images/hex/lunaraugment2.png",
+      "catalog_metadata": {
+        "setId": "18",
+        "season": "S19",
+        "version": "18.18.1"
+      },
+      "has_version_stats": false,
+      "round_stats": []
+    },
+    {
+      "id": "30009",
+      "name": "投资++",
+      "level": 3,
+      "description": "获得45金币。在每个回合开始时，在50金币之上，每拥有10金币就会获得1次永久的刷新(最多80金币)。",
+      "icon": "https://img.dataj.cc/images/hex/invested3.png",
+      "catalog_metadata": {
+        "setId": "18",
+        "season": "S19",
+        "version": "18.18.1"
+      },
+      "has_version_stats": true,
+      "round_stats": [
+        {
+          "round": 2,
+          "roundLabel": "4-2",
+          "sampleCount": 3645,
+          "playRate": 0.11,
+          "avgPlacement": 4.61,
+          "top4Rate": 47.24,
+          "topRate": 13.83
+        }
+      ]
+    },
+    {
+      "id": "30021",
+      "name": "值得等待 II",
+      "level": 3,
+      "description": "获得一个随机2费弈子的2个1星版本。每回合开始时都会获得该弈子的一个1星版本，持续至本局游戏结束。（弈子：？？？）",
+      "icon": "https://img.dataj.cc/images/hex/worththewait3.png",
+      "catalog_metadata": {
+        "setId": "18",
+        "season": "S19",
+        "version": "18.18.1"
+      },
+      "has_version_stats": true,
+      "round_stats": [
+        {
+          "round": 0,
+          "roundLabel": "2-1",
+          "sampleCount": 570,
+          "playRate": 0.02,
+          "avgPlacement": 4.72,
+          "top4Rate": 44.04,
+          "topRate": 10.18
+        }
+      ]
+    },
+    {
+      "id": "30027",
+      "name": "爆炸式增长+",
+      "level": 2,
+      "description": "立刻以及接下来的3个回合开始时，获得10经验值。",
+      "icon": "https://img.dataj.cc/images/hex/explosivegrowth2.png",
+      "catalog_metadata": {
+        "setId": "18",
+        "season": "S19",
+        "version": "18.18.1"
+      },
+      "has_version_stats": true,
+      "round_stats": [
+        {
+          "round": 2,
+          "roundLabel": "4-2",
+          "sampleCount": 5266,
+          "playRate": 0.16,
+          "avgPlacement": 4.23,
+          "top4Rate": 53.72,
+          "topRate": 17.83
+        }
+      ]
+    },
+    {
+      "id": "30028",
+      "name": "上进心",
+      "level": 3,
+      "description": "购买经验的费用降低1。每当你升级时，获得2生命值和1次免费刷新。",
+      "icon": "https://img.dataj.cc/images/hex/upwardmobility3.png",
+      "catalog_metadata": {
+        "setId": "18",
+        "season": "S19",
+        "version": "18.18.1"
+      },
+      "has_version_stats": true,
+      "round_stats": [
+        {
+          "round": 0,
+          "roundLabel": "2-1",
+          "sampleCount": 960,
+          "playRate": 0.03,
+          "avgPlacement": 5.15,
+          "top4Rate": 38.02,
+          "topRate": 9.58
+        }
+      ]
+    },
+    {
+      "id": "30034",
+      "name": "大而有力",
+      "level": 3,
+      "description": "你的队伍体型变大，获得200生命值和10%最大生命值。",
+      "icon": "https://img.dataj.cc/images/hex/giantandmighty3.png",
+      "catalog_metadata": {
+        "setId": "18",
+        "season": "S19",
+        "version": "18.18.1"
+      },
+      "has_version_stats": true,
+      "round_stats": [
+        {
+          "round": 1,
+          "roundLabel": "3-2",
+          "sampleCount": 946,
+          "playRate": 0.03,
+          "avgPlacement": 4.68,
+          "top4Rate": 48.41,
+          "topRate": 9.2
+        },
+        {
+          "round": 2,
+          "roundLabel": "4-2",
+          "sampleCount": 1671,
+          "playRate": 0.05,
+          "avgPlacement": 4.48,
+          "top4Rate": 50.51,
+          "topRate": 9.99
+        }
+      ]
+    },
+    {
+      "id": "30045",
+      "name": "金鳞精粹",
+      "level": 3,
+      "description": "获得1个【大亨之铠】。在8个玩家对战回合后，获得1个【投机者之刃】。这些装备会在提供战斗力的同时给予金币。",
+      "icon": "https://img.dataj.cc/images/hex/shimmerscaleessence3.png",
+      "catalog_metadata": {
+        "setId": "18",
+        "season": "S19",
+        "version": "18.18.2"
+      },
+      "has_version_stats": true,
+      "round_stats": [
+        {
+          "round": 0,
+          "roundLabel": "2-1",
+          "sampleCount": 2210,
+          "playRate": 0.07,
+          "avgPlacement": 4.18,
+          "top4Rate": 56.74,
+          "topRate": 11.95
+        }
+      ]
+    },
+    {
+      "id": "30179",
+      "name": "加冕礼",
+      "level": 3,
+      "description": "获得1个【金铲铲冠冕】。【金铲铲冠冕】、【金锅锅冠冕】和【金锅铲冠冕】将为携带者提供额外的20%攻击速度、25%物理加成和30%法术加成。",
+      "icon": "https://img.dataj.cc/images/hex/coronation3.png",
+      "catalog_metadata": {
+        "setId": "18",
+        "season": "S19",
+        "version": "18.18.1"
+      },
+      "has_version_stats": true,
+      "round_stats": [
+        {
+          "round": 1,
+          "roundLabel": "3-2",
+          "sampleCount": 3754,
+          "playRate": 0.12,
+          "avgPlacement": 4.21,
+          "top4Rate": 55.7,
+          "topRate": 13.51
+        },
+        {
+          "round": 2,
+          "roundLabel": "4-2",
+          "sampleCount": 4687,
+          "playRate": 0.14,
+          "avgPlacement": 4.39,
+          "top4Rate": 51.95,
+          "topRate": 12.03
+        }
+      ]
+    },
+    {
+      "id": "30180",
+      "name": "腰带溢流",
+      "level": 3,
+      "description": "获得4个【巨人腰带】。你的【巨人腰带】提供+85额外生命值。",
+      "icon": "https://img.dataj.cc/images/hex/beltoverflow3.png",
+      "catalog_metadata": {
+        "setId": "18",
+        "season": "S19",
+        "version": "18.18.1"
+      },
+      "has_version_stats": true,
+      "round_stats": [
+        {
+          "round": 1,
+          "roundLabel": "3-2",
+          "sampleCount": 1791,
+          "playRate": 0.05,
+          "avgPlacement": 4.48,
+          "top4Rate": 49.92,
+          "topRate": 10.39
+        },
+        {
+          "round": 2,
+          "roundLabel": "4-2",
+          "sampleCount": 2014,
+          "playRate": 0.06,
+          "avgPlacement": 4.71,
+          "top4Rate": 46.52,
+          "topRate": 8.59
+        }
+      ]
+    },
+    {
+      "id": "30181",
+      "name": "法杖溢流",
+      "level": 3,
+      "description": "获得4个【无用大棒】。你的【无用大棒】提供+5%攻击速度。",
+      "icon": "https://img.dataj.cc/images/hex/wandoverflow3.png",
+      "catalog_metadata": {
+        "setId": "18",
+        "season": "S19",
+        "version": "18.18.1"
+      },
+      "has_version_stats": true,
+      "round_stats": [
+        {
+          "round": 1,
+          "roundLabel": "3-2",
+          "sampleCount": 924,
+          "playRate": 0.03,
+          "avgPlacement": 4.56,
+          "top4Rate": 48.48,
+          "topRate": 9.52
+        },
+        {
+          "round": 2,
+          "roundLabel": "4-2",
+          "sampleCount": 917,
+          "playRate": 0.03,
+          "avgPlacement": 4.56,
+          "top4Rate": 51.15,
+          "topRate": 10.36
+        }
+      ]
+    },
+    {
+      "id": "30182",
+      "name": "大剑溢流",
+      "level": 3,
+      "description": "获得4个【暴风大剑】。你的【暴风大剑】提供+4%攻击速度。",
+      "icon": "https://img.dataj.cc/images/hex/bladeoverflow3.png",
+      "catalog_metadata": {
+        "setId": "18",
+        "season": "S19",
+        "version": "18.18.1"
+      },
+      "has_version_stats": true,
+      "round_stats": [
+        {
+          "round": 1,
+          "roundLabel": "3-2",
+          "sampleCount": 1437,
+          "playRate": 0.04,
+          "avgPlacement": 4.5,
+          "top4Rate": 50.45,
+          "topRate": 8.28
+        },
+        {
+          "round": 2,
+          "roundLabel": "4-2",
+          "sampleCount": 1380,
+          "playRate": 0.04,
+          "avgPlacement": 4.57,
+          "top4Rate": 49.86,
+          "topRate": 9.13
+        }
+      ]
+    },
+    {
+      "id": "30186",
+      "name": "1个霸符，2个霸符",
+      "level": 3,
+      "description": "获得1个【红霸符】、1个【蓝霸符】和1个【英雄复制器】。",
+      "icon": "https://img.dataj.cc/images/hex/onebufftwobuff3.png",
+      "catalog_metadata": {
+        "setId": "18",
+        "season": "S19",
+        "version": "18.18.1"
+      },
+      "has_version_stats": true,
+      "round_stats": [
+        {
+          "round": 1,
+          "roundLabel": "3-2",
+          "sampleCount": 1765,
+          "playRate": 0.05,
+          "avgPlacement": 4.53,
+          "top4Rate": 48.1,
+          "topRate": 15.13
+        },
+        {
+          "round": 2,
+          "roundLabel": "4-2",
+          "sampleCount": 2485,
+          "playRate": 0.08,
+          "avgPlacement": 4.44,
+          "top4Rate": 50.62,
+          "topRate": 13.68
+        }
+      ]
+    },
+    {
+      "id": "30187",
+      "name": "锅铲厨房",
+      "level": 3,
+      "description": "获得1个随机纹章。在3个回合后，获得1个【金锅铲冠冕】。",
+      "icon": "https://img.dataj.cc/images/hex/tacticianskitchen3.png",
+      "catalog_metadata": {
+        "setId": "18",
+        "season": "S19",
+        "version": "18.18.1"
+      },
+      "has_version_stats": true,
+      "round_stats": [
+        {
+          "round": 0,
+          "roundLabel": "2-1",
+          "sampleCount": 3723,
+          "playRate": 0.11,
+          "avgPlacement": 4.46,
+          "top4Rate": 50.36,
+          "topRate": 11.85
+        }
+      ]
+    },
+    {
+      "id": "30205",
+      "name": "意料之中的意外",
+      "level": 3,
+      "description": "现在以及下2个阶段开始时，投掷3个骰子。根据总点数获得各种奖励。",
+      "icon": "https://img.dataj.cc/images/hex/addictedtorolling3.png",
+      "catalog_metadata": {
+        "setId": "18",
+        "season": "S19",
+        "version": "18.18.1"
+      },
+      "has_version_stats": false,
+      "round_stats": []
+    },
+    {
+      "id": "30217",
+      "name": "投资策略 II",
+      "level": 3,
+      "description": "获得8金币。你每获得1利息，己方弈子们的最大生命值就永久提高10。你的最大利息增加2。",
+      "icon": "https://img.dataj.cc/images/hex/investmentstrategy3.png",
+      "catalog_metadata": {
+        "setId": "18",
+        "season": "S19",
+        "version": "18.18.2"
+      },
+      "has_version_stats": true,
+      "round_stats": [
+        {
+          "round": 0,
+          "roundLabel": "2-1",
+          "sampleCount": 418,
+          "playRate": 0.01,
+          "avgPlacement": 5.18,
+          "top4Rate": 38.28,
+          "topRate": 6.22
+        }
+      ]
+    },
+    {
+      "id": "30521",
+      "name": "坚守防线",
+      "level": 3,
+      "description": "战斗开始时，你的前排每有一名己方弈子，后两排的己方弈子就会获得10%法术加成和9%物理加成。",
+      "icon": "https://img.dataj.cc/images/hex/holdtheline3.png",
+      "catalog_metadata": {
+        "setId": "18",
+        "season": "S19",
+        "version": "18.18.2"
+      },
+      "has_version_stats": true,
+      "round_stats": [
+        {
+          "round": 1,
+          "roundLabel": "3-2",
+          "sampleCount": 667,
+          "playRate": 0.02,
+          "avgPlacement": 5.44,
+          "top4Rate": 32.53,
+          "topRate": 4.05
+        },
+        {
+          "round": 2,
+          "roundLabel": "4-2",
+          "sampleCount": 791,
+          "playRate": 0.02,
+          "avgPlacement": 4.99,
+          "top4Rate": 40.83,
+          "topRate": 6.45
+        }
+      ]
+    },
+    {
+      "id": "30705",
+      "name": "后排蓝图",
+      "level": 2,
+      "description": "获得1个3费非坦克弈子，以及一个与其最后列出特质/职业相匹配的纹章。",
+      "icon": "https://img.dataj.cc/images/hex/backlineblueprint2.png",
+      "catalog_metadata": {
+        "setId": "18",
+        "season": "S19",
+        "version": "18.18.1"
+      },
+      "has_version_stats": true,
+      "round_stats": [
+        {
+          "round": 0,
+          "roundLabel": "2-1",
+          "sampleCount": 6467,
+          "playRate": 0.2,
+          "avgPlacement": 4.83,
+          "top4Rate": 44.52,
+          "topRate": 7.47
+        }
+      ]
+    },
+    {
+      "id": "30706",
+      "name": "前线地基",
+      "level": 2,
+      "description": "获得1个2星1费坦克弈子，以及一个与其最后列出特质/职业相匹配的纹章。",
+      "icon": "https://img.dataj.cc/images/hex/frontlinefoundation2.png",
+      "catalog_metadata": {
+        "setId": "18",
+        "season": "S19",
+        "version": "18.18.1"
+      },
+      "has_version_stats": true,
+      "round_stats": [
+        {
+          "round": 0,
+          "roundLabel": "2-1",
+          "sampleCount": 4068,
+          "playRate": 0.12,
+          "avgPlacement": 4.75,
+          "top4Rate": 44.35,
+          "topRate": 8.11
+        }
+      ]
+    },
+    {
+      "id": "30731",
+      "name": "扩展包++",
+      "level": 2,
+      "description": "获得价值26金币的随机弈子。(保证至少一个5费弈子！)  (每个弈子都有小几率拥有全息效果！)",
+      "icon": "https://img.dataj.cc/images/hex/boosterpack2.png",
+      "catalog_metadata": {
+        "setId": "18",
+        "season": "S19",
+        "version": "18.18.1"
+      },
+      "has_version_stats": false,
+      "round_stats": []
+    },
+    {
+      "id": "30744",
+      "name": "残留魔力++",
+      "level": 1,
+      "description": "你的队伍获得90生命值。你每次购买【自然仙灵】，都会将该加成提升10。  当前生命值：90",
+      "icon": "https://img.dataj.cc/images/hex/residualmagic1.png",
+      "catalog_metadata": {
+        "setId": "18",
+        "season": "S19",
+        "version": "18.18.1"
+      },
+      "has_version_stats": true,
+      "round_stats": [
+        {
+          "round": 2,
+          "roundLabel": "4-2",
+          "sampleCount": 409,
+          "playRate": 0.01,
+          "avgPlacement": 4.18,
+          "top4Rate": 54.28,
+          "topRate": 13.94
+        }
+      ]
+    },
+    {
+      "id": "30747",
+      "name": "基础装备大冒险",
+      "level": 3,
+      "description": "获得1件随机基础装备和1金币。下7次你赢得玩家对战回合时，获得1件不同的随机基础装备。在此之后，获得5金币。",
+      "icon": "https://img.dataj.cc/images/hex/componentquest3.png",
+      "catalog_metadata": {
+        "setId": "18",
+        "season": "S19",
+        "version": "18.18.1b"
+      },
+      "has_version_stats": true,
+      "round_stats": [
+        {
+          "round": 0,
+          "roundLabel": "2-1",
+          "sampleCount": 1123,
+          "playRate": 0.03,
+          "avgPlacement": 3.91,
+          "top4Rate": 62.87,
+          "topRate": 15.23
+        }
+      ]
+    },
+    {
+      "id": "30749",
+      "name": "拼盘天梯",
+      "level": 3,
+      "description": "获得1个随机纹章。在1场玩家对战回合中登场2个非唯一特质/职业后，获得1个奖励。此后提高获得奖励所需的特质/职业数，以及奖励的规模。",
+      "icon": "https://img.dataj.cc/images/hex/traitladder3.png",
+      "catalog_metadata": {
+        "setId": "18",
+        "season": "S19",
+        "version": "18.18.1"
+      },
+      "has_version_stats": true,
+      "round_stats": [
+        {
+          "round": 0,
+          "roundLabel": "2-1",
+          "sampleCount": 1758,
+          "playRate": 0.05,
+          "avgPlacement": 4.45,
+          "top4Rate": 49.09,
+          "topRate": 21.9
+        }
+      ]
+    },
+    {
+      "id": "30750",
+      "name": "纵深 III",
+      "level": 3,
+      "description": "每有1名拥有相同特质/职业的友军，这些弈子们就会获得3.5%物理加成、3.5%法术加成、3.5护甲和3.5魔法抗性。",
+      "icon": "https://img.dataj.cc/images/hex/verticality3.png",
+      "catalog_metadata": {
+        "setId": "18",
+        "season": "S19",
+        "version": "18.18.1b"
+      },
+      "has_version_stats": true,
+      "round_stats": [
+        {
+          "round": 1,
+          "roundLabel": "3-2",
+          "sampleCount": 1932,
+          "playRate": 0.06,
+          "avgPlacement": 4.41,
+          "top4Rate": 50.78,
+          "topRate": 11.13
+        },
+        {
+          "round": 2,
+          "roundLabel": "4-2",
+          "sampleCount": 1794,
+          "playRate": 0.05,
+          "avgPlacement": 4.05,
+          "top4Rate": 57.64,
+          "topRate": 14.05
+        }
+      ]
+    },
+    {
+      "id": "30757",
+      "name": "锻造器套娃",
+      "level": 3,
+      "description": "获得1个【神器锻造器】。在你开启它之后，获得1个【基础装备锻造器】。开启这个【基础装备锻造器】后，又获得4金币。",
+      "icon": "https://img.dataj.cc/images/hex/nestinganvils3.png",
+      "catalog_metadata": {
+        "setId": "18",
+        "season": "S19",
+        "version": "18.18.1b"
+      },
+      "has_version_stats": true,
+      "round_stats": [
+        {
+          "round": 1,
+          "roundLabel": "3-2",
+          "sampleCount": 3375,
+          "playRate": 0.1,
+          "avgPlacement": 4.78,
+          "top4Rate": 45.01,
+          "topRate": 7.97
+        }
+      ]
+    },
+    {
+      "id": "30760",
+      "name": "致命丽花",
+      "level": 2,
+      "description": "获得1个【绝命花妖纹章】。携带该纹章的弈子通过【绝命花妖】获得150%额外加成。获得3金币。",
+      "icon": "https://img.dataj.cc/images/hex/florafatalisaugment22.png",
+      "catalog_metadata": {
+        "setId": "18",
+        "season": "S19",
+        "version": "18.18.2"
+      },
+      "has_version_stats": false,
+      "round_stats": []
+    },
+    {
+      "id": "30764",
+      "name": "兽性本能",
+      "level": 2,
+      "description": "【野兽之灵】额外提供一种【兽灵赐福】。立刻获得1个【蔚】，在3个回合后，获得1个【希维尔】。  灵龟：每4秒，你的队伍治疗其4最大生命值。蛮熊：【野兽之灵】的伤害会处决生命值低于12的敌人。猛虎：在6秒后，【野兽之灵】弈子们获得35攻击速度，你的队伍获得15攻击速度。凤凰：【野兽之灵】每参与15次击杀，获得1件基础装备。至多获得4件。  参与击杀数：0",
+      "icon": "https://img.dataj.cc/images/hex/primalaugment2.png",
+      "catalog_metadata": {
+        "setId": "18",
+        "season": "S19",
+        "version": "18.18.1b"
+      },
+      "has_version_stats": true,
+      "round_stats": [
+        {
+          "round": 1,
+          "roundLabel": "3-2",
+          "sampleCount": 4348,
+          "playRate": 0.13,
+          "avgPlacement": 4.52,
+          "top4Rate": 48.97,
+          "topRate": 13.98
+        }
+      ]
+    },
+    {
+      "id": "30772",
+      "name": "弈子套娃",
+      "level": 3,
+      "description": "当1个弈子在战斗中阵亡后，召唤1个降低1星的复制体，其生命值只有60%。获得3次免费刷新。",
+      "icon": "https://img.dataj.cc/images/hex/nestingdolls3.png",
+      "catalog_metadata": {
+        "setId": "18",
+        "season": "S19",
+        "version": "18.18.1b"
+      },
+      "has_version_stats": false,
+      "round_stats": []
+    },
+    {
+      "id": "30773",
+      "name": "弈子套娃",
+      "level": 3,
+      "description": "当1个弈子在战斗中阵亡后，召唤1个降低1星的复制体，其生命值只有60%。获得3次免费刷新。",
+      "icon": "https://img.dataj.cc/images/hex/nestingdolls3.png",
+      "catalog_metadata": {
+        "setId": "18",
+        "season": "S19",
+        "version": "18.18.1b"
+      },
+      "has_version_stats": false,
+      "round_stats": []
+    },
+    {
+      "id": "30774",
+      "name": "弈子套娃",
+      "level": 3,
+      "description": "当1个弈子在战斗中阵亡后，召唤1个降低1星的复制体，其生命值只有60%。获得3次免费刷新。",
+      "icon": "https://img.dataj.cc/images/hex/nestingdolls3.png",
+      "catalog_metadata": {
+        "setId": "18",
+        "season": "S19",
+        "version": "18.18.1b"
+      },
+      "has_version_stats": false,
+      "round_stats": []
+    },
+    {
+      "id": "30775",
+      "name": "意外之礼+",
+      "level": 2,
+      "description": "每当你开启1个战利品法球时，你有25%几率获得1个灰色战利品法球。获得3个灰色战利品法球。",
+      "icon": "https://img.dataj.cc/images/hex/bonusgift2.png",
+      "catalog_metadata": {
+        "setId": "18",
+        "season": "S19",
+        "version": "18.18.1"
+      },
+      "has_version_stats": false,
+      "round_stats": []
+    },
+    {
+      "id": "30780",
+      "name": "日月同辉+",
+      "level": 2,
+      "description": "每登场1个不同的【日蚀骑士】弈子，你的【月蚀骑士】弈子们获得100生命值和8%伤害增幅。获得1个1星【蕾欧娜】、1个【凯尔】和1个【厄斐琉斯】。",
+      "icon": "https://img.dataj.cc/images/hex/lunaraugment22.png",
+      "catalog_metadata": {
+        "setId": "18",
+        "season": "S19",
+        "version": "18.18.1"
+      },
+      "has_version_stats": false,
+      "round_stats": []
+    },
+    {
+      "id": "40006",
+      "name": "灵活摇摆",
+      "level": 3,
+      "description": "获得1个随机纹章。在每个阶段开始时，获得1个随机纹章。你的队伍每携带一个纹章，就会获得30生命值。",
+      "icon": "https://img.dataj.cc/images/hex/flexible3.png",
+      "catalog_metadata": {
+        "setId": "18",
+        "season": "S19",
+        "version": "18.18.1"
+      },
+      "has_version_stats": true,
+      "round_stats": [
+        {
+          "round": 0,
+          "roundLabel": "2-1",
+          "sampleCount": 3463,
+          "playRate": 0.11,
+          "avgPlacement": 4.39,
+          "top4Rate": 51.26,
+          "topRate": 18.22
+        }
+      ]
+    },
+    {
+      "id": "40008",
+      "name": "硬性承诺",
+      "level": 3,
+      "description": "获得1个随机纹章。立刻以及每阶段开始时，获得该特质/职业的1个1星弈子，且该弈子的费用相当于当前阶段数(最多为5)，并获得3金币。（纹章特质/职业：？？？）",
+      "icon": "https://img.dataj.cc/images/hex/hardcommit3.png",
+      "catalog_metadata": {
+        "setId": "18",
+        "season": "S19",
+        "version": "18.18.1b"
+      },
+      "has_version_stats": true,
+      "round_stats": [
+        {
+          "round": 0,
+          "roundLabel": "2-1",
+          "sampleCount": 1116,
+          "playRate": 0.03,
+          "avgPlacement": 4.73,
+          "top4Rate": 45.52,
+          "topRate": 9.5
+        }
+      ]
+    },
+    {
+      "id": "40757",
+      "name": "锻造器套娃+",
+      "level": 3,
+      "description": "获得1个【神器锻造器】。在你开启它之后，获得1个【基础装备锻造器】。开启这个【基础装备锻造器】后，又获得8金币。",
+      "icon": "https://img.dataj.cc/images/hex/nestinganvils3.png",
+      "catalog_metadata": {
+        "setId": "18",
+        "season": "S19",
+        "version": "18.18.1b"
+      },
+      "has_version_stats": true,
+      "round_stats": [
+        {
+          "round": 2,
+          "roundLabel": "4-2",
+          "sampleCount": 3456,
+          "playRate": 0.11,
+          "avgPlacement": 4.77,
+          "top4Rate": 44.62,
+          "topRate": 8.91
+        }
+      ]
+    },
+    {
+      "id": "40760",
+      "name": "吞噬花妖++",
+      "level": 2,
+      "description": "获得一个绝命花妖纹章。持有该纹章的英雄将获得绝命花妖特质/职业的双倍效果，并获得3点法力回复",
+      "icon": "https://img.dataj.cc/images/hex/florafatalisaugment22.png",
+      "catalog_metadata": {
+        "setId": "18",
+        "season": "S19",
+        "version": "18.18.1"
+      },
+      "has_version_stats": false,
+      "round_stats": []
+    },
+    {
+      "id": "40764",
+      "name": "兽性本能+",
+      "level": 2,
+      "description": "【野兽之灵】额外提供一种【兽灵赐福】。获得1个【蔚】和1个【奈德丽】。  灵龟：每4秒，你的队伍治疗其4最大生命值。蛮熊：【野兽之灵】的伤害会处决生命值低于12的敌人。猛虎：在6秒后，【野兽之灵】弈子们获得35攻击速度，你的队伍获得15攻击速度。凤凰：【野兽之灵】每参与15次击杀，获得1件基础装备。至多获得4件。  参与击杀数：0",
+      "icon": "https://img.dataj.cc/images/hex/primalaugment2.png",
+      "catalog_metadata": {
+        "setId": "18",
+        "season": "S19",
+        "version": "18.18.1b"
+      },
+      "has_version_stats": true,
+      "round_stats": [
+        {
+          "round": 2,
+          "roundLabel": "4-2",
+          "sampleCount": 4424,
+          "playRate": 0.14,
+          "avgPlacement": 4.15,
+          "top4Rate": 55.92,
+          "topRate": 17.7
+        }
+      ]
+    },
+    {
+      "id": "50764",
+      "name": "兽性本能+",
+      "level": 2,
+      "description": "【野兽之灵】额外提供一种【兽灵赐福】。获得1个【蔚】和1个【希维尔】。  灵龟：每4秒，你的队伍治疗其4最大生命值。蛮熊：【野兽之灵】的伤害会处决生命值低于12的敌人。猛虎：在6秒后，【野兽之灵】弈子们获得35攻击速度，你的队伍获得15攻击速度。凤凰：【野兽之灵】每参与15次击杀，获得1件基础装备。至多获得4件。  参与击杀数：0",
+      "icon": "https://img.dataj.cc/images/hex/primalaugment2.png",
+      "catalog_metadata": {
+        "setId": "18",
+        "season": "S19",
+        "version": "18.18.1b"
+      },
+      "has_version_stats": false,
+      "round_stats": []
+    },
+    {
+      "id": "1148",
+      "name": "潘朵拉的备战席",
+      "level": 1,
+      "description": "在每个回合开始时，处在备战席最右侧3个栏位的弈子变为随机的同费用弈子。获得4金币。",
+      "icon": "https://img.dataj.cc/images/hex/pandora_sbench1.png",
+      "catalog_metadata": {
+        "setId": "18",
+        "season": "S19",
+        "version": "18.18.1"
+      },
+      "has_version_stats": true,
+      "round_stats": [
+        {
+          "round": 0,
+          "roundLabel": "2-1",
+          "sampleCount": 1501,
+          "playRate": 0.05,
+          "avgPlacement": 4.68,
+          "top4Rate": 47.57,
+          "topRate": 11.59
+        },
+        {
+          "round": 1,
+          "roundLabel": "3-2",
+          "sampleCount": 2820,
+          "playRate": 0.09,
+          "avgPlacement": 4.86,
+          "top4Rate": 42.91,
+          "topRate": 11.84
+        }
+      ]
+    },
+    {
+      "id": "2018",
+      "name": "源计划植入",
+      "level": 2,
+      "description": "你的弈子们只要携带了1件装备，就会获得100生命值和15%物理加成。获得1把【暴风大剑】",
+      "icon": "https://img.dataj.cc/images/hex/cybernetic2.png",
+      "catalog_metadata": {
+        "setId": "18",
+        "season": "S19",
+        "version": "18.18.1b"
+      },
+      "has_version_stats": true,
+      "round_stats": [
+        {
+          "round": 1,
+          "roundLabel": "3-2",
+          "sampleCount": 919,
+          "playRate": 0.03,
+          "avgPlacement": 4.31,
+          "top4Rate": 53.32,
+          "topRate": 11.97
+        },
+        {
+          "round": 2,
+          "roundLabel": "4-2",
+          "sampleCount": 1833,
+          "playRate": 0.06,
+          "avgPlacement": 4.49,
+          "top4Rate": 51.23,
+          "topRate": 10.26
+        }
+      ]
+    },
+    {
+      "id": "2110",
+      "name": "源计划上行链路",
+      "level": 2,
+      "description": "你的弈子们只要携带了1件装备，就会获得100生命值和2.0法力回复。获得1个【女神之泪】。",
+      "icon": "https://img.dataj.cc/images/hex/cyberneticuplink2.png",
+      "catalog_metadata": {
+        "setId": "18",
+        "season": "S19",
+        "version": "18.18.1b"
+      },
+      "has_version_stats": true,
+      "round_stats": [
+        {
+          "round": 1,
+          "roundLabel": "3-2",
+          "sampleCount": 890,
+          "playRate": 0.03,
+          "avgPlacement": 4.46,
+          "top4Rate": 51.35,
+          "topRate": 12.47
+        },
+        {
+          "round": 2,
+          "roundLabel": "4-2",
+          "sampleCount": 2159,
+          "playRate": 0.07,
+          "avgPlacement": 4.35,
+          "top4Rate": 52.11,
+          "topRate": 15.52
+        }
+      ]
+    },
+    {
+      "id": "3852",
+      "name": "来个好伙计！",
+      "level": 3,
+      "description": "获得1个随机3星1费弈子和6金币。",
+      "icon": "https://img.dataj.cc/images/hex/constructacompanion3.png",
+      "catalog_metadata": {
+        "setId": "18",
+        "season": "S19",
+        "version": "18.18.1b"
+      },
+      "has_version_stats": true,
+      "round_stats": [
+        {
+          "round": 0,
+          "roundLabel": "2-1",
+          "sampleCount": 728,
+          "playRate": 0.02,
+          "avgPlacement": 5.12,
+          "top4Rate": 38.05,
+          "topRate": 4.95
+        }
+      ]
+    },
+    {
+      "id": "10559",
+      "name": "轻量魔法投掷",
+      "level": 1,
+      "description": "投掷一个骰子。根据总点数获得奖励。",
+      "icon": "https://img.dataj.cc/images/hex/slightlymagicroll1.png",
+      "catalog_metadata": {
+        "setId": "18",
+        "season": "S19",
+        "version": "18.18.1"
+      },
+      "has_version_stats": true,
+      "round_stats": [
+        {
+          "round": 0,
+          "roundLabel": "2-1",
+          "sampleCount": 4989,
+          "playRate": 0.15,
+          "avgPlacement": 4.36,
+          "top4Rate": 51.95,
+          "topRate": 14.65
+        }
+      ]
+    },
+    {
+      "id": "10573",
+      "name": "拳击课程",
+      "level": 1,
+      "description": "战斗开始时，前排每有1个己方弈子，你的队伍获得30生命值。",
+      "icon": "https://img.dataj.cc/images/hex/boxinglessons1.png",
+      "catalog_metadata": {
+        "setId": "18",
+        "season": "S19",
+        "version": "18.18.1"
+      },
+      "has_version_stats": true,
+      "round_stats": [
+        {
+          "round": 1,
+          "roundLabel": "3-2",
+          "sampleCount": 781,
+          "playRate": 0.02,
+          "avgPlacement": 4.65,
+          "top4Rate": 46.61,
+          "topRate": 9.09
+        },
+        {
+          "round": 2,
+          "roundLabel": "4-2",
+          "sampleCount": 281,
+          "playRate": 0.01,
+          "avgPlacement": 4.65,
+          "top4Rate": 47.69,
+          "topRate": 12.81
+        }
+      ]
+    },
+    {
+      "id": "10579",
+      "name": "战时补给：巨人腰带",
+      "level": 1,
+      "description": "获得1个【巨人腰带】。在你的队伍承受75000伤害后，额外获得2个。  已承受的伤害：0",
+      "icon": "https://img.dataj.cc/images/hex/extrabuckles1.png",
+      "catalog_metadata": {
+        "setId": "18",
+        "season": "S19",
+        "version": "18.18.1"
+      },
+      "has_version_stats": true,
+      "round_stats": [
+        {
+          "round": 0,
+          "roundLabel": "2-1",
+          "sampleCount": 1182,
+          "playRate": 0.04,
+          "avgPlacement": 4.41,
+          "top4Rate": 52.03,
+          "topRate": 11.42
+        }
+      ]
+    },
+    {
+      "id": "10580",
+      "name": "战时补给：无用大棒",
+      "level": 1,
+      "description": "获得1个【无用大棒】。在你的队伍造成42000魔法伤害后，额外获得2个。  已造成的伤害：0",
+      "icon": "https://img.dataj.cc/images/hex/hyperbolicrodextender1.png",
+      "catalog_metadata": {
+        "setId": "18",
+        "season": "S19",
+        "version": "18.18.1"
+      },
+      "has_version_stats": true,
+      "round_stats": [
+        {
+          "round": 0,
+          "roundLabel": "2-1",
+          "sampleCount": 926,
+          "playRate": 0.03,
+          "avgPlacement": 4.46,
+          "top4Rate": 51.94,
+          "topRate": 12.31
+        }
+      ]
+    },
+    {
+      "id": "10582",
+      "name": "战时补给：暴风大剑",
+      "level": 1,
+      "description": "获得1个【暴风大剑】。在你的队伍造成65000物理伤害后，额外获得2个。  已造成的伤害：0",
+      "icon": "https://img.dataj.cc/images/hex/carveapath1.png",
+      "catalog_metadata": {
+        "setId": "18",
+        "season": "S19",
+        "version": "18.18.1"
+      },
+      "has_version_stats": true,
+      "round_stats": [
+        {
+          "round": 0,
+          "roundLabel": "2-1",
+          "sampleCount": 1187,
+          "playRate": 0.04,
+          "avgPlacement": 4.42,
+          "top4Rate": 51.73,
+          "topRate": 12.3
+        }
+      ]
+    },
+    {
+      "id": "10583",
+      "name": "战时补给：反曲之弓",
+      "level": 1,
+      "description": "获得1个【反曲之弓】。在你的队伍攻击1000次后，额外获得2个。  攻击次数：0",
+      "icon": "https://img.dataj.cc/images/hex/recurvewrecker1.png",
+      "catalog_metadata": {
+        "setId": "18",
+        "season": "S19",
+        "version": "18.18.1"
+      },
+      "has_version_stats": true,
+      "round_stats": [
+        {
+          "round": 0,
+          "roundLabel": "2-1",
+          "sampleCount": 1421,
+          "playRate": 0.04,
+          "avgPlacement": 4.26,
+          "top4Rate": 54.47,
+          "topRate": 12.24
+        }
+      ]
+    },
+    {
+      "id": "10584",
+      "name": "认知税",
+      "level": 1,
+      "description": "获得8金币和1经验值。",
+      "icon": "https://img.dataj.cc/images/hex/cognitivetax1.png",
+      "catalog_metadata": {
+        "setId": "18",
+        "season": "S19",
+        "version": "18.18.1"
+      },
+      "has_version_stats": true,
+      "round_stats": [
+        {
+          "round": 0,
+          "roundLabel": "2-1",
+          "sampleCount": 373,
+          "playRate": 0.01,
+          "avgPlacement": 4.62,
+          "top4Rate": 45.58,
+          "topRate": 10.19
+        }
+      ]
+    },
+    {
+      "id": "10585",
+      "name": "认知税+",
+      "level": 1,
+      "description": "获得12金币和3经验值。",
+      "icon": "https://img.dataj.cc/images/hex/cognitivetax1.png",
+      "catalog_metadata": {
+        "setId": "18",
+        "season": "S19",
+        "version": "18.18.1"
+      },
+      "has_version_stats": true,
+      "round_stats": [
+        {
+          "round": 1,
+          "roundLabel": "3-2",
+          "sampleCount": 2682,
+          "playRate": 0.08,
+          "avgPlacement": 4.54,
+          "top4Rate": 48.4,
+          "topRate": 12.6
+        }
+      ]
+    },
+    {
+      "id": "10586",
+      "name": "博弈开启",
+      "level": 1,
+      "description": "获得1个随机2星2费弈子和1金币。",
+      "icon": "https://img.dataj.cc/images/hex/kickstart1.png",
+      "catalog_metadata": {
+        "setId": "18",
+        "season": "S19",
+        "version": "18.18.1"
+      },
+      "has_version_stats": true,
+      "round_stats": [
+        {
+          "round": 0,
+          "roundLabel": "2-1",
+          "sampleCount": 1567,
+          "playRate": 0.05,
+          "avgPlacement": 4.63,
+          "top4Rate": 47.22,
+          "topRate": 9.13
+        }
+      ]
+    },
+    {
+      "id": "10587",
+      "name": "高塔",
+      "level": 1,
+      "description": "获得1个拥有额外生命值(随阶段提升)的巨大训练假人。每4秒，电击距离最近的3个敌人，造成5%最大生命值的真实伤害。",
+      "icon": "https://img.dataj.cc/images/hex/thetower1.png",
+      "catalog_metadata": {
+        "setId": "18",
+        "season": "S19",
+        "version": "18.18.1"
+      },
+      "has_version_stats": true,
+      "round_stats": [
+        {
+          "round": 0,
+          "roundLabel": "2-1",
+          "sampleCount": 228,
+          "playRate": 0.01,
+          "avgPlacement": 4.02,
+          "top4Rate": 63.16,
+          "topRate": 13.16
+        },
+        {
+          "round": 1,
+          "roundLabel": "3-2",
+          "sampleCount": 769,
+          "playRate": 0.02,
+          "avgPlacement": 4.32,
+          "top4Rate": 53.71,
+          "topRate": 11.7
+        },
+        {
+          "round": 2,
+          "roundLabel": "4-2",
+          "sampleCount": 258,
+          "playRate": 0.01,
+          "avgPlacement": 4.43,
+          "top4Rate": 53.1,
+          "topRate": 10.47
+        }
+      ]
+    },
+    {
+      "id": "10614",
+      "name": "手气不错",
+      "level": 1,
+      "description": "获得12金币，随后掷一枚硬币，如果是正面，再获得4金币。  结果：正面朝上！结果：反面朝上！",
+      "icon": "https://img.dataj.cc/images/hex/feelinglucky1.png",
+      "catalog_metadata": {
+        "setId": "18",
+        "season": "S19",
+        "version": "18.18.1"
+      },
+      "has_version_stats": true,
+      "round_stats": [
+        {
+          "round": 1,
+          "roundLabel": "3-2",
+          "sampleCount": 4671,
+          "playRate": 0.14,
+          "avgPlacement": 4.57,
+          "top4Rate": 48.17,
+          "topRate": 12.22
+        }
+      ]
+    },
+    {
+      "id": "10615",
+      "name": "拥抱 I",
+      "level": 1,
+      "description": "战斗开始时：弈子为其他邻格弈子提供6护甲和魔法抗性。此效果可叠加。",
+      "icon": "https://img.dataj.cc/images/hex/grouphugi1.png",
+      "catalog_metadata": {
+        "setId": "18",
+        "season": "S19",
+        "version": "18.18.1"
+      },
+      "has_version_stats": true,
+      "round_stats": [
+        {
+          "round": 1,
+          "roundLabel": "3-2",
+          "sampleCount": 434,
+          "playRate": 0.01,
+          "avgPlacement": 4.63,
+          "top4Rate": 47,
+          "topRate": 11.06
+        },
+        {
+          "round": 2,
+          "roundLabel": "4-2",
+          "sampleCount": 189,
+          "playRate": 0.01,
+          "avgPlacement": 4.61,
+          "top4Rate": 49.74,
+          "topRate": 12.7
+        }
+      ]
+    },
+    {
+      "id": "10616",
+      "name": "拥抱 II",
+      "level": 2,
+      "description": "战斗开始时：弈子为其他邻格弈子提供9护甲和魔法抗性。此效果可叠加。",
+      "icon": "https://img.dataj.cc/images/hex/grouphugii2.png",
+      "catalog_metadata": {
+        "setId": "18",
+        "season": "S19",
+        "version": "18.18.1"
+      },
+      "has_version_stats": true,
+      "round_stats": [
+        {
+          "round": 0,
+          "roundLabel": "2-1",
+          "sampleCount": 273,
+          "playRate": 0.01,
+          "avgPlacement": 5.12,
+          "top4Rate": 38.1,
+          "topRate": 6.23
+        },
+        {
+          "round": 1,
+          "roundLabel": "3-2",
+          "sampleCount": 415,
+          "playRate": 0.01,
+          "avgPlacement": 4.67,
+          "top4Rate": 46.51,
+          "topRate": 12.29
+        },
+        {
+          "round": 2,
+          "roundLabel": "4-2",
+          "sampleCount": 866,
+          "playRate": 0.03,
+          "avgPlacement": 4.56,
+          "top4Rate": 48.73,
+          "topRate": 11.55
+        }
+      ]
+    },
+    {
+      "id": "10631",
+      "name": "小小福袋",
+      "level": 1,
+      "description": "提供2件随机基础装备",
+      "icon": "https://img.dataj.cc/images/hex/smallgrabbag1.png",
+      "catalog_metadata": {
+        "setId": "18",
+        "season": "S19",
+        "version": "18.18.1"
+      },
+      "has_version_stats": true,
+      "round_stats": [
+        {
+          "round": 1,
+          "roundLabel": "3-2",
+          "sampleCount": 6399,
+          "playRate": 0.2,
+          "avgPlacement": 4.44,
+          "top4Rate": 51.09,
+          "topRate": 11.72
+        },
+        {
+          "round": 2,
+          "roundLabel": "4-2",
+          "sampleCount": 1375,
+          "playRate": 0.04,
+          "avgPlacement": 4.52,
+          "top4Rate": 49.02,
+          "topRate": 11.13
+        }
+      ]
+    },
+    {
+      "id": "10632",
+      "name": "双子守护神",
+      "level": 1,
+      "description": "如果你的第一排有且只有2个弈子，为他们提供100额外生命值、35护甲和35魔抗。",
+      "icon": "https://img.dataj.cc/images/hex/twinguardians1.png",
+      "catalog_metadata": {
+        "setId": "18",
+        "season": "S19",
+        "version": "18.18.1"
+      },
+      "has_version_stats": true,
+      "round_stats": [
+        {
+          "round": 1,
+          "roundLabel": "3-2",
+          "sampleCount": 2207,
+          "playRate": 0.07,
+          "avgPlacement": 4.23,
+          "top4Rate": 54.15,
+          "topRate": 14.09
+        },
+        {
+          "round": 2,
+          "roundLabel": "4-2",
+          "sampleCount": 715,
+          "playRate": 0.02,
+          "avgPlacement": 4.37,
+          "top4Rate": 52.73,
+          "topRate": 13.57
+        }
+      ]
+    },
+    {
+      "id": "10784",
+      "name": "别再错过",
+      "level": 1,
+      "description": "获得每个1费弈子各1个。",
+      "icon": "https://img.dataj.cc/images/hex/missedconnections1.png",
+      "catalog_metadata": {
+        "setId": "18",
+        "season": "S19",
+        "version": "18.18.1"
+      },
+      "has_version_stats": false,
+      "round_stats": []
+    },
+    {
+      "id": "20477",
+      "name": "黄金命运",
+      "level": 2,
+      "description": "获得1个随机黄金阶强化符文和3金币。",
+      "icon": "https://img.dataj.cc/images/hex/silverdestinygoldendestinyprismaticdestiny2.png",
+      "catalog_metadata": {
+        "setId": "18",
+        "season": "S19",
+        "version": "18.18.1"
+      },
+      "has_version_stats": true,
+      "round_stats": [
+        {
+          "round": 0,
+          "roundLabel": "2-1",
+          "sampleCount": 5781,
+          "playRate": 0.18,
+          "avgPlacement": 4.48,
+          "top4Rate": 50.67,
+          "topRate": 12.61
+        }
+      ]
+    },
+    {
+      "id": "20478",
+      "name": "黄金命运+",
+      "level": 2,
+      "description": "获得1个随机黄金阶强化符文和5金币。",
+      "icon": "https://img.dataj.cc/images/hex/silverdestinygoldendestinyprismaticdestiny2.png",
+      "catalog_metadata": {
+        "setId": "18",
+        "season": "S19",
+        "version": "18.18.2"
+      },
+      "has_version_stats": true,
+      "round_stats": [
+        {
+          "round": 1,
+          "roundLabel": "3-2",
+          "sampleCount": 4363,
+          "playRate": 0.13,
+          "avgPlacement": 4.51,
+          "top4Rate": 50.15,
+          "topRate": 12.86
+        }
+      ]
+    },
+    {
+      "id": "20494",
+      "name": "白银命运+",
+      "level": 1,
+      "description": "获得1个随机白银阶强化符文和4金币。",
+      "icon": "https://img.dataj.cc/images/hex/silverdestinygoldendestinyprismaticdestiny1.png",
+      "catalog_metadata": {
+        "setId": "18",
+        "season": "S19",
+        "version": "18.18.1"
+      },
+      "has_version_stats": true,
+      "round_stats": [
+        {
+          "round": 1,
+          "roundLabel": "3-2",
+          "sampleCount": 4227,
+          "playRate": 0.13,
+          "avgPlacement": 4.44,
+          "top4Rate": 50.53,
+          "topRate": 13.15
+        }
+      ]
+    },
+    {
+      "id": "20502",
+      "name": "更要命的帽子",
+      "level": 3,
+      "description": "获得1个【班克斯的魔法帽】。【班克斯的魔法帽】提供1法力回复，并且它的携带者每参与击败一次，它就会永久获得1%法术加成。",
+      "icon": "https://img.dataj.cc/images/hex/deadliercaps3.png",
+      "catalog_metadata": {
+        "setId": "18",
+        "season": "S19",
+        "version": "18.18.1"
+      },
+      "has_version_stats": true,
+      "round_stats": [
+        {
+          "round": 0,
+          "roundLabel": "2-1",
+          "sampleCount": 2600,
+          "playRate": 0.08,
+          "avgPlacement": 4.36,
+          "top4Rate": 51.85,
+          "topRate": 17.77
+        }
+      ]
+    },
+    {
+      "id": "20575",
+      "name": "救赎盔甲",
+      "level": 2,
+      "description": "获得1个【振奋盔甲】。每5秒，【振奋盔甲】会治疗1格内的己方弈子7.5%已损失生命值。",
+      "icon": "https://img.dataj.cc/images/hex/spiritofredemption2.png",
+      "catalog_metadata": {
+        "setId": "18",
+        "season": "S19",
+        "version": "18.18.1"
+      },
+      "has_version_stats": true,
+      "round_stats": [
+        {
+          "round": 0,
+          "roundLabel": "2-1",
+          "sampleCount": 1069,
+          "playRate": 0.03,
+          "avgPlacement": 4.75,
+          "top4Rate": 46.49,
+          "topRate": 5.71
+        },
+        {
+          "round": 1,
+          "roundLabel": "3-2",
+          "sampleCount": 1045,
+          "playRate": 0.03,
+          "avgPlacement": 4.83,
+          "top4Rate": 43.44,
+          "topRate": 8.23
+        }
+      ]
+    },
+    {
+      "id": "20577",
+      "name": "承诺之护",
+      "level": 2,
+      "description": "获得1个【圣盾使的誓约】。【圣盾使的誓约】为其携带者提供自所有来源的20%额外法力值与提供200点最大生命值上限。",
+      "icon": "https://img.dataj.cc/images/hex/promisedprotection2.png",
+      "catalog_metadata": {
+        "setId": "18",
+        "season": "S19",
+        "version": "18.18.1"
+      },
+      "has_version_stats": true,
+      "round_stats": [
+        {
+          "round": 0,
+          "roundLabel": "2-1",
+          "sampleCount": 731,
+          "playRate": 0.02,
+          "avgPlacement": 4.68,
+          "top4Rate": 45.28,
+          "topRate": 8.76
+        },
+        {
+          "round": 1,
+          "roundLabel": "3-2",
+          "sampleCount": 903,
+          "playRate": 0.03,
+          "avgPlacement": 4.51,
+          "top4Rate": 50.83,
+          "topRate": 10.19
+        }
+      ]
+    },
+    {
+      "id": "20578",
+      "name": "心之钢",
+      "level": 2,
+      "description": "获得1个【坚定之心】。【坚定之心】的携带者每存活10秒，【坚定之心】就会额外获得16永久最大生命值。 已获得：0永久最大生命值",
+      "icon": "https://img.dataj.cc/images/hex/healthygains2.png",
+      "catalog_metadata": {
+        "setId": "18",
+        "season": "S19",
+        "version": "18.18.1"
+      },
+      "has_version_stats": true,
+      "round_stats": [
+        {
+          "round": 0,
+          "roundLabel": "2-1",
+          "sampleCount": 1011,
+          "playRate": 0.03,
+          "avgPlacement": 5.07,
+          "top4Rate": 40.06,
+          "topRate": 5.14
+        }
+      ]
+    },
+    {
+      "id": "20584",
+      "name": "高级贷款+",
+      "level": 2,
+      "description": "获得33金币。你的下一个强化符文阶位降低一级。",
+      "icon": "https://img.dataj.cc/images/hex/advancedloanplus2.png",
+      "catalog_metadata": {
+        "setId": "18",
+        "season": "S19",
+        "version": "18.18.1"
+      },
+      "has_version_stats": true,
+      "round_stats": [
+        {
+          "round": 1,
+          "roundLabel": "3-2",
+          "sampleCount": 2841,
+          "playRate": 0.09,
+          "avgPlacement": 4.49,
+          "top4Rate": 50.86,
+          "topRate": 11.79
+        }
+      ]
+    },
+    {
+      "id": "20586",
+      "name": "炽天使之拥",
+      "level": 2,
+      "description": "获得1个【大天使之杖】。如果【大天使之杖】的携带者拥有90%或以上的法术加成，【大天使之杖】还会为其额外提供2法力回复。",
+      "icon": "https://img.dataj.cc/images/hex/seraphimsstaff2.png",
+      "catalog_metadata": {
+        "setId": "18",
+        "season": "S19",
+        "version": "18.18.1"
+      },
+      "has_version_stats": true,
+      "round_stats": [
+        {
+          "round": 0,
+          "roundLabel": "2-1",
+          "sampleCount": 6691,
+          "playRate": 0.21,
+          "avgPlacement": 4.51,
+          "top4Rate": 50.5,
+          "topRate": 9.3
+        },
+        {
+          "round": 1,
+          "roundLabel": "3-2",
+          "sampleCount": 2233,
+          "playRate": 0.07,
+          "avgPlacement": 4.6,
+          "top4Rate": 47.34,
+          "topRate": 10.03
+        }
+      ]
+    },
+    {
+      "id": "20593",
+      "name": "单身板甲",
+      "level": 2,
+      "description": "获得1个【石像鬼石板甲】。战斗开始时：携带了【石像鬼石板甲】并且独自站一排的那些己方弈子获得17%最大生命值。",
+      "icon": "https://img.dataj.cc/images/hex/soloplate2.png",
+      "catalog_metadata": {
+        "setId": "18",
+        "season": "S19",
+        "version": "18.18.1"
+      },
+      "has_version_stats": true,
+      "round_stats": [
+        {
+          "round": 0,
+          "roundLabel": "2-1",
+          "sampleCount": 3330,
+          "playRate": 0.1,
+          "avgPlacement": 4.46,
+          "top4Rate": 50.99,
+          "topRate": 9.52
+        },
+        {
+          "round": 1,
+          "roundLabel": "3-2",
+          "sampleCount": 2569,
+          "playRate": 0.08,
+          "avgPlacement": 4.33,
+          "top4Rate": 53.41,
+          "topRate": 12.14
+        }
+      ]
+    },
+    {
+      "id": "20612",
+      "name": "三相庇护",
+      "level": 2,
+      "description": "立刻获得3金币。在阶段3-7，获得1个【三相之力】。【三相之力】为同一排的己方弈子们提供一个12%生命值护盾。  2023【怪兽来袭】全球总决赛",
+      "icon": "https://img.dataj.cc/images/hex/infinityprotection2.png",
+      "catalog_metadata": {
+        "setId": "18",
+        "season": "S19",
+        "version": "18.18.1"
+      },
+      "has_version_stats": true,
+      "round_stats": [
+        {
+          "round": 0,
+          "roundLabel": "2-1",
+          "sampleCount": 270,
+          "playRate": 0.01,
+          "avgPlacement": 4.7,
+          "top4Rate": 50.74,
+          "topRate": 8.89
+        }
+      ]
+    },
+    {
+      "id": "20613",
+      "name": "认知过载",
+      "level": 2,
+      "description": "获得7金币、1个2星1费弈子、1个2费弈子、2个3费弈子、1经验值和1次商店刷新次数。",
+      "icon": "https://img.dataj.cc/images/hex/cognitiveoverload2.png",
+      "catalog_metadata": {
+        "setId": "18",
+        "season": "S19",
+        "version": "18.18.1"
+      },
+      "has_version_stats": true,
+      "round_stats": [
+        {
+          "round": 1,
+          "roundLabel": "3-2",
+          "sampleCount": 1535,
+          "playRate": 0.05,
+          "avgPlacement": 4.7,
+          "top4Rate": 46.51,
+          "topRate": 9.19
+        }
+      ]
+    },
+    {
+      "id": "20616",
+      "name": "利落保镖",
+      "level": 2,
+      "description": "己方弈子们获得15护甲和魔法抗性，每次玩家升级会提升该加成2。  2022【双城之战】全球总决赛",
+      "icon": "https://img.dataj.cc/images/hex/bodyguardstraining2.png",
+      "catalog_metadata": {
+        "setId": "18",
+        "season": "S19",
+        "version": "18.18.1"
+      },
+      "has_version_stats": true,
+      "round_stats": [
+        {
+          "round": 0,
+          "roundLabel": "2-1",
+          "sampleCount": 1389,
+          "playRate": 0.04,
+          "avgPlacement": 4.63,
+          "top4Rate": 47.73,
+          "topRate": 10.37
+        }
+      ]
+    },
+    {
+      "id": "20619",
+      "name": "双城赢家",
+      "level": 2,
+      "description": "在战斗环节开始8秒后，晕眩所有敌方弈子1.5秒。在战斗18秒后，重复该效果。  2024云顶之弈澳门公开赛",
+      "icon": "https://img.dataj.cc/images/hex/arcaneviktory2.png",
+      "catalog_metadata": {
+        "setId": "18",
+        "season": "S19",
+        "version": "18.18.1"
+      },
+      "has_version_stats": true,
+      "round_stats": [
+        {
+          "round": 1,
+          "roundLabel": "3-2",
+          "sampleCount": 6521,
+          "playRate": 0.2,
+          "avgPlacement": 4.71,
+          "top4Rate": 46.24,
+          "topRate": 9.81
+        },
+        {
+          "round": 2,
+          "roundLabel": "4-2",
+          "sampleCount": 17977,
+          "playRate": 0.55,
+          "avgPlacement": 4.55,
+          "top4Rate": 49.05,
+          "topRate": 10.75
+        }
+      ]
+    },
+    {
+      "id": "20624",
+      "name": "生日聚会",
+      "level": 2,
+      "description": "获得1个随机2星2费弈子。在6级时，获得1件【随机散件】。在9级时，获得1个随机2星5费弈子。  2024【画中灵】全球总决赛",
+      "icon": "https://img.dataj.cc/images/hex/birthdayreunion2.png",
+      "catalog_metadata": {
+        "setId": "18",
+        "season": "S19",
+        "version": "18.18.1"
+      },
+      "has_version_stats": true,
+      "round_stats": [
+        {
+          "round": 0,
+          "roundLabel": "2-1",
+          "sampleCount": 4319,
+          "playRate": 0.13,
+          "avgPlacement": 4.87,
+          "top4Rate": 42.56,
+          "topRate": 11.11
+        }
+      ]
+    },
+    {
+      "id": "20625",
+      "name": "宝宝学院",
+      "level": 2,
+      "description": "你的队伍获得5%物理加成和法术加成。每场玩家对战回合结束后，该加成提升1%。1费弈子们获得双倍该加成。 物理加成和法术加成：5% 2023云顶之弈拉斯维加斯公开赛",
+      "icon": "https://img.dataj.cc/images/hex/earlylearning2.png",
+      "catalog_metadata": {
+        "setId": "18",
+        "season": "S19",
+        "version": "18.18.1"
+      },
+      "has_version_stats": true,
+      "round_stats": [
+        {
+          "round": 0,
+          "roundLabel": "2-1",
+          "sampleCount": 1946,
+          "playRate": 0.06,
+          "avgPlacement": 4.24,
+          "top4Rate": 56.22,
+          "topRate": 12.59
+        }
+      ]
+    },
+    {
+      "id": "20626",
+      "name": "8级嘀干的传说",
+      "level": 2,
+      "description": "在你到达8级时，获得20次商店刷新。  2023【符文大陆传说】全球总决赛",
+      "icon": "https://img.dataj.cc/images/hex/epicrolldown2.png",
+      "catalog_metadata": {
+        "setId": "18",
+        "season": "S19",
+        "version": "18.18.1"
+      },
+      "has_version_stats": true,
+      "round_stats": [
+        {
+          "round": 1,
+          "roundLabel": "3-2",
+          "sampleCount": 4358,
+          "playRate": 0.13,
+          "avgPlacement": 4.53,
+          "top4Rate": 49.27,
+          "topRate": 13.47
+        }
+      ]
+    },
+    {
+      "id": "20628",
+      "name": "三幻神",
+      "level": 2,
+      "description": "获得1个随机纹章。你的3费弈子和携带着【纹章】的已方弈子获得150生命值和12%攻击速度。  《光明与黑暗》赛季-2021",
+      "icon": "https://img.dataj.cc/images/hex/legionofthrees2.png",
+      "catalog_metadata": {
+        "setId": "18",
+        "season": "S19",
+        "version": "18.18.1"
+      },
+      "has_version_stats": true,
+      "round_stats": [
+        {
+          "round": 0,
+          "roundLabel": "2-1",
+          "sampleCount": 6203,
+          "playRate": 0.19,
+          "avgPlacement": 4.48,
+          "top4Rate": 50.39,
+          "topRate": 11.95
+        }
+      ]
+    },
+    {
+      "id": "20629",
+      "name": "杖之工匠",
+      "level": 2,
+      "description": "获得2个由【无用大棒】合成的随机成装。",
+      "icon": "https://img.dataj.cc/images/hex/rodsmith2.png",
+      "catalog_metadata": {
+        "setId": "18",
+        "season": "S19",
+        "version": "18.18.1"
+      },
+      "has_version_stats": true,
+      "round_stats": [
+        {
+          "round": 2,
+          "roundLabel": "4-2",
+          "sampleCount": 6704,
+          "playRate": 0.21,
+          "avgPlacement": 4.42,
+          "top4Rate": 52.09,
+          "topRate": 12.29
+        }
+      ]
+    },
+    {
+      "id": "20630",
+      "name": "剑之工匠",
+      "level": 2,
+      "description": "获得2个由【暴风大剑】合成的随机成装。",
+      "icon": "https://img.dataj.cc/images/hex/swordsmith2.png",
+      "catalog_metadata": {
+        "setId": "18",
+        "season": "S19",
+        "version": "18.18.1"
+      },
+      "has_version_stats": true,
+      "round_stats": [
+        {
+          "round": 2,
+          "roundLabel": "4-2",
+          "sampleCount": 6895,
+          "playRate": 0.21,
+          "avgPlacement": 4.34,
+          "top4Rate": 53.11,
+          "topRate": 12.95
+        }
+      ]
+    },
+    {
+      "id": "20633",
+      "name": "蔓延之根",
+      "level": 2,
+      "description": "获得1个随机纹章。3回合后再获得1个随机纹章",
+      "icon": "https://img.dataj.cc/images/hex/spreadingroots2.png",
+      "catalog_metadata": {
+        "setId": "18",
+        "season": "S19",
+        "version": "18.18.2"
+      },
+      "has_version_stats": true,
+      "round_stats": [
+        {
+          "round": 0,
+          "roundLabel": "2-1",
+          "sampleCount": 11381,
+          "playRate": 0.35,
+          "avgPlacement": 4.59,
+          "top4Rate": 48.15,
+          "topRate": 13.62
+        }
+      ]
+    },
+    {
+      "id": "20642",
+      "name": "摇钱树",
+      "level": 3,
+      "description": "立刻并在剩余游戏时间内每回合获得7金币。",
+      "icon": "https://img.dataj.cc/images/hex/money-monsoon3.png",
+      "catalog_metadata": {
+        "setId": "18",
+        "season": "S19",
+        "version": "18.18.1"
+      },
+      "has_version_stats": true,
+      "round_stats": [
+        {
+          "round": 2,
+          "roundLabel": "4-2",
+          "sampleCount": 3790,
+          "playRate": 0.12,
+          "avgPlacement": 4.83,
+          "top4Rate": 42.8,
+          "topRate": 14.46
+        }
+      ]
+    },
+    {
+      "id": "20649",
+      "name": "挑战者的优雅",
+      "level": 2,
+      "description": "在战斗环节开始时，友军们会获得25%攻击速度，持续3秒。在参与击败后，友军们向他们的下一个目标冲刺，并再次获得此加成。",
+      "icon": "https://img.dataj.cc/images/hex/combatgrace2.png",
+      "catalog_metadata": {
+        "setId": "18",
+        "season": "S19",
+        "version": "18.18.1"
+      },
+      "has_version_stats": true,
+      "round_stats": [
+        {
+          "round": 1,
+          "roundLabel": "3-2",
+          "sampleCount": 537,
+          "playRate": 0.02,
+          "avgPlacement": 4.91,
+          "top4Rate": 43.2,
+          "topRate": 9.12
+        },
+        {
+          "round": 2,
+          "roundLabel": "4-2",
+          "sampleCount": 1386,
+          "playRate": 0.04,
+          "avgPlacement": 4.77,
+          "top4Rate": 45.38,
+          "topRate": 8.44
+        }
+      ]
+    },
+    {
+      "id": "20651",
+      "name": "金霖龙",
+      "level": 2,
+      "description": "获得1个【大亨之铠】。携带【大亨之铠】的弈子占用2个弈子栏位，但获得600生命值和15%伤害减免。  【大亨之铠】提供金币，以及战斗力。 2022【巨龙之境】全球总决赛",
+      "icon": "https://img.dataj.cc/images/hex/thegoldendragon2.png",
+      "catalog_metadata": {
+        "setId": "18",
+        "season": "S19",
+        "version": "18.18.2"
+      },
+      "has_version_stats": true,
+      "round_stats": [
+        {
+          "round": 1,
+          "roundLabel": "3-2",
+          "sampleCount": 1412,
+          "playRate": 0.04,
+          "avgPlacement": 4.68,
+          "top4Rate": 46.03,
+          "topRate": 11.33
+        }
+      ]
+    },
+    {
+      "id": "20654",
+      "name": "获得21金币",
+      "level": 2,
+      "description": "获得21金币。",
+      "icon": "https://img.dataj.cc/images/hex/windfall2.png",
+      "catalog_metadata": {
+        "setId": "18",
+        "season": "S19",
+        "version": "18.18.1"
+      },
+      "has_version_stats": true,
+      "round_stats": [
+        {
+          "round": 1,
+          "roundLabel": "3-2",
+          "sampleCount": 3468,
+          "playRate": 0.11,
+          "avgPlacement": 4.7,
+          "top4Rate": 45.73,
+          "topRate": 10.96
+        }
+      ]
+    },
+    {
+      "id": "20661",
+      "name": "后期收益",
+      "level": 2,
+      "description": "每个玩家战斗回合开始时，获得2经验值。你的5费弈子们获得12%生命值和12%攻击速度  2025【赛博之城】全球总决赛",
+      "icon": "https://img.dataj.cc/images/hex/lategamescaling2.png",
+      "catalog_metadata": {
+        "setId": "18",
+        "season": "S19",
+        "version": "18.18.1"
+      },
+      "has_version_stats": true,
+      "round_stats": [
+        {
+          "round": 0,
+          "roundLabel": "2-1",
+          "sampleCount": 2539,
+          "playRate": 0.08,
+          "avgPlacement": 4.71,
+          "top4Rate": 45.69,
+          "topRate": 17.84
+        }
+      ]
+    },
+    {
+      "id": "20673",
+      "name": "纺织魔法",
+      "level": 2,
+      "description": "获得1件随机基础装备。你的小队每消耗2200法力值，就会提供1个额外基础装备(装备获得进度0/3)。  已消耗的法力值：0/2200",
+      "icon": "https://img.dataj.cc/images/hex/wovenmagicthevidalion2.png",
+      "catalog_metadata": {
+        "setId": "18",
+        "season": "S19",
+        "version": "18.18.1"
+      },
+      "has_version_stats": true,
+      "round_stats": [
+        {
+          "round": 0,
+          "roundLabel": "2-1",
+          "sampleCount": 1406,
+          "playRate": 0.04,
+          "avgPlacement": 4.53,
+          "top4Rate": 49.93,
+          "topRate": 9.03
+        }
+      ]
+    },
+    {
+      "id": "20675",
+      "name": "一波带走俩",
+      "level": 2,
+      "description": "获得1个【鬼索的狂暴之刃】。当2名玩家淘汰后，获得40金币。  2021【命运之轮】全球总决赛",
+      "icon": "https://img.dataj.cc/images/hex/speedydoublekill2.png",
+      "catalog_metadata": {
+        "setId": "18",
+        "season": "S19",
+        "version": "18.18.1"
+      },
+      "has_version_stats": true,
+      "round_stats": [
+        {
+          "round": 0,
+          "roundLabel": "2-1",
+          "sampleCount": 6338,
+          "playRate": 0.19,
+          "avgPlacement": 4.46,
+          "top4Rate": 50.65,
+          "topRate": 11.27
+        }
+      ]
+    },
+    {
+      "id": "20681",
+      "name": "蔓延之根+",
+      "level": 2,
+      "description": "获得2个随机纹章和2金币。",
+      "icon": "https://img.dataj.cc/images/hex/spreadingroots2.png",
+      "catalog_metadata": {
+        "setId": "18",
+        "season": "S19",
+        "version": "18.18.2"
+      },
+      "has_version_stats": true,
+      "round_stats": [
+        {
+          "round": 1,
+          "roundLabel": "3-2",
+          "sampleCount": 6899,
+          "playRate": 0.21,
+          "avgPlacement": 4.38,
+          "top4Rate": 51.5,
+          "topRate": 17.21
+        }
+      ]
+    },
+    {
+      "id": "20698",
+      "name": "镀金钢铁",
+      "level": 2,
+      "description": "获得2个5费弈子。如果你登场了至少一个5费弈子，你的1至4费弈子们获得8%伤害减免。  2025【天下无双格斗大赛】全球总决赛",
+      "icon": "https://img.dataj.cc/images/hex/gildedsteel2.png",
+      "catalog_metadata": {
+        "setId": "18",
+        "season": "S19",
+        "version": "18.18.1"
+      },
+      "has_version_stats": true,
+      "round_stats": [
+        {
+          "round": 2,
+          "roundLabel": "4-2",
+          "sampleCount": 10738,
+          "playRate": 0.33,
+          "avgPlacement": 4.45,
+          "top4Rate": 50.81,
+          "topRate": 14.9
+        }
+      ]
+    },
+    {
+      "id": "20701",
+      "name": "贪财",
+      "level": 2,
+      "description": "立刻获得7金币，然后在每个阶段开始时获得7金币。拾取金币会令你的小小英雄变大。",
+      "icon": "https://img.dataj.cc/images/hex/moneyhungry2.png",
+      "catalog_metadata": {
+        "setId": "18",
+        "season": "S19",
+        "version": "18.18.1"
+      },
+      "has_version_stats": true,
+      "round_stats": [
+        {
+          "round": 0,
+          "roundLabel": "2-1",
+          "sampleCount": 1944,
+          "playRate": 0.06,
+          "avgPlacement": 4.71,
+          "top4Rate": 46.86,
+          "topRate": 11.11
+        }
+      ]
+    },
+    {
+      "id": "20771",
+      "name": "烧起来",
+      "level": 1,
+      "description": "在上场对战中造成最多伤害的【地狱火】弈子将会着火，获得40%攻击速度。获得1个【韦鲁斯】和1个【阿卡丽】。",
+      "icon": "https://img.dataj.cc/images/hex/infernoaugment1.png",
+      "catalog_metadata": {
+        "setId": "18",
+        "season": "S19",
+        "version": "18.18.1"
+      },
+      "has_version_stats": false,
+      "round_stats": []
+    },
+    {
+      "id": "20783",
+      "name": "是我，宝贝！",
+      "level": 2,
+      "description": "棋盘的右下角出现1顶【聚光灯】。在其中的弈子获得15%伤害增幅和15%攻击速度，并且其每参与5次击杀就会掉落1金币。  2026【英雄联盟传奇】全球总决赛",
+      "icon": "https://img.dataj.cc/images/hex/itsmebaby2.png",
+      "catalog_metadata": {
+        "setId": "18",
+        "season": "S19",
+        "version": "18.18.1b"
+      },
+      "has_version_stats": true,
+      "round_stats": [
+        {
+          "round": 2,
+          "roundLabel": "4-2",
+          "sampleCount": 4399,
+          "playRate": 0.13,
+          "avgPlacement": 4.58,
+          "top4Rate": 48.85,
+          "topRate": 10.3
+        }
+      ]
+    },
+    {
+      "id": "30491",
+      "name": "棱彩命运",
+      "level": 3,
+      "description": "获得1个随机的棱彩阶强化符文和3金币。",
+      "icon": "https://img.dataj.cc/images/hex/silverdestinygoldendestinyprismaticdestiny3.png",
+      "catalog_metadata": {
+        "setId": "18",
+        "season": "S19",
+        "version": "18.18.1"
+      },
+      "has_version_stats": true,
+      "round_stats": [
+        {
+          "round": 0,
+          "roundLabel": "2-1",
+          "sampleCount": 3420,
+          "playRate": 0.1,
+          "avgPlacement": 4.44,
+          "top4Rate": 51.61,
+          "topRate": 12.11
+        }
+      ]
+    },
+    {
+      "id": "30494",
+      "name": "白银命运++",
+      "level": 1,
+      "description": "获得1个随机白银阶强化符文和7金币。",
+      "icon": "https://img.dataj.cc/images/hex/silverdestinygoldendestinyprismaticdestiny1.png",
+      "catalog_metadata": {
+        "setId": "18",
+        "season": "S19",
+        "version": "18.18.1"
+      },
+      "has_version_stats": true,
+      "round_stats": [
+        {
+          "round": 2,
+          "roundLabel": "4-2",
+          "sampleCount": 1373,
+          "playRate": 0.04,
+          "avgPlacement": 4.3,
+          "top4Rate": 53.61,
+          "topRate": 15.15
+        }
+      ]
+    },
+    {
+      "id": "30584",
+      "name": "高级贷款",
+      "level": 2,
+      "description": "获得20金币。你的下一个强化符文阶位降低一级。",
+      "icon": "https://img.dataj.cc/images/hex/advancedloan2.png",
+      "catalog_metadata": {
+        "setId": "18",
+        "season": "S19",
+        "version": "18.18.1"
+      },
+      "has_version_stats": true,
+      "round_stats": [
+        {
+          "round": 0,
+          "roundLabel": "2-1",
+          "sampleCount": 1157,
+          "playRate": 0.04,
+          "avgPlacement": 4.99,
+          "top4Rate": 40.45,
+          "topRate": 7.26
+        }
+      ]
+    },
+    {
+      "id": "30599",
+      "name": "灵魂唤醒",
+      "level": 3,
+      "description": "战斗开始时：你的队伍每秒获得1.5%物理加成和法术加成，持续10秒。在最大层数时，造成12%额外真实伤害。",
+      "icon": "https://img.dataj.cc/images/hex/awakenedsoul3.png",
+      "catalog_metadata": {
+        "setId": "18",
+        "season": "S19",
+        "version": "18.18.1"
+      },
+      "has_version_stats": true,
+      "round_stats": [
+        {
+          "round": 1,
+          "roundLabel": "3-2",
+          "sampleCount": 1707,
+          "playRate": 0.05,
+          "avgPlacement": 4.49,
+          "top4Rate": 50.56,
+          "topRate": 9.9
+        },
+        {
+          "round": 2,
+          "roundLabel": "4-2",
+          "sampleCount": 2733,
+          "playRate": 0.08,
+          "avgPlacement": 4.33,
+          "top4Rate": 53.82,
+          "topRate": 10.57
+        }
+      ]
+    },
+    {
+      "id": "30613",
+      "name": "正义报复",
+      "level": 3,
+      "description": "获得2个【正义之手】。装备【正义之手】的友方额外获得25%暴击几率与【技能暴击】。  技能暴击：技能伤害可产生暴击。额外的【技能暴击】提供10%暴击伤害。",
+      "icon": "https://img.dataj.cc/images/hex/retribution3.png",
+      "catalog_metadata": {
+        "setId": "18",
+        "season": "S19",
+        "version": "18.18.1"
+      },
+      "has_version_stats": true,
+      "round_stats": [
+        {
+          "round": 1,
+          "roundLabel": "3-2",
+          "sampleCount": 1358,
+          "playRate": 0.04,
+          "avgPlacement": 3.71,
+          "top4Rate": 65.91,
+          "topRate": 18.48
+        },
+        {
+          "round": 2,
+          "roundLabel": "4-2",
+          "sampleCount": 1370,
+          "playRate": 0.04,
+          "avgPlacement": 4.03,
+          "top4Rate": 60.15,
+          "topRate": 15.69
+        }
+      ]
+    },
+    {
+      "id": "30617",
+      "name": "男爵幻域",
+      "level": 3,
+      "description": "获得一件随机坦克装备。在战斗开始8秒后，你的弈子们会在战斗环节的剩余时间里每秒获得4%额外物理加成和法术加成，持续至战斗环节结束。  2025云顶之弈巴黎公开赛",
+      "icon": "https://img.dataj.cc/images/hex/thebaronslair3.png",
+      "catalog_metadata": {
+        "setId": "18",
+        "season": "S19",
+        "version": "18.18.2"
+      },
+      "has_version_stats": true,
+      "round_stats": [
+        {
+          "round": 1,
+          "roundLabel": "3-2",
+          "sampleCount": 3951,
+          "playRate": 0.12,
+          "avgPlacement": 4.52,
+          "top4Rate": 49.76,
+          "topRate": 8.55
+        },
+        {
+          "round": 2,
+          "roundLabel": "4-2",
+          "sampleCount": 4984,
+          "playRate": 0.15,
+          "avgPlacement": 4.52,
+          "top4Rate": 50.44,
+          "topRate": 8.75
+        }
+      ]
+    },
+    {
+      "id": "30634",
+      "name": "纹章树",
+      "level": 3,
+      "description": "获得3个随机纹章和2金币",
+      "icon": "https://img.dataj.cc/images/hex/thetraittree3.png",
+      "catalog_metadata": {
+        "setId": "18",
+        "season": "S19",
+        "version": "18.18.1"
+      },
+      "has_version_stats": true,
+      "round_stats": [
+        {
+          "round": 0,
+          "roundLabel": "2-1",
+          "sampleCount": 5979,
+          "playRate": 0.18,
+          "avgPlacement": 4.45,
+          "top4Rate": 51.1,
+          "topRate": 13.33
+        }
+      ]
+    },
+    {
+      "id": "30637",
+      "name": "可大可小",
+      "level": 3,
+      "description": "获得1个【金制拆卸器】和4个随机基础装备。  【金制拆卸器】是一个拥有无限使用次数的【装备拆卸器】。",
+      "icon": "https://img.dataj.cc/images/hex/minmax3.png",
+      "catalog_metadata": {
+        "setId": "18",
+        "season": "S19",
+        "version": "18.18.1"
+      },
+      "has_version_stats": true,
+      "round_stats": [
+        {
+          "round": 1,
+          "roundLabel": "3-2",
+          "sampleCount": 2128,
+          "playRate": 0.07,
+          "avgPlacement": 4.69,
+          "top4Rate": 47.04,
+          "topRate": 10.01
+        }
+      ]
+    },
+    {
+      "id": "30655",
+      "name": "棱彩命运+",
+      "level": 3,
+      "description": "获得1个随机的棱彩阶强化符文和7金币。",
+      "icon": "https://img.dataj.cc/images/hex/silverdestinygoldendestinyprismaticdestiny3.png",
+      "catalog_metadata": {
+        "setId": "18",
+        "season": "S19",
+        "version": "18.18.2"
+      },
+      "has_version_stats": true,
+      "round_stats": [
+        {
+          "round": 1,
+          "roundLabel": "3-2",
+          "sampleCount": 4646,
+          "playRate": 0.14,
+          "avgPlacement": 4.43,
+          "top4Rate": 51.21,
+          "topRate": 12.72
+        }
+      ]
+    },
+    {
+      "id": "30656",
+      "name": "贸易中心",
+      "level": 3,
+      "description": "立刻获得16次免费商店刷新，并在剩余游戏时间内每回合获得3次免费商店刷新。",
+      "icon": "https://img.dataj.cc/images/hex/trade3.png",
+      "catalog_metadata": {
+        "setId": "18",
+        "season": "S19",
+        "version": "18.18.1"
+      },
+      "has_version_stats": true,
+      "round_stats": [
+        {
+          "round": 2,
+          "roundLabel": "4-2",
+          "sampleCount": 5104,
+          "playRate": 0.16,
+          "avgPlacement": 4.69,
+          "top4Rate": 45.38,
+          "topRate": 15.18
+        }
+      ]
+    },
+    {
+      "id": "30665",
+      "name": "甜点",
+      "level": 3,
+      "description": "获得1个【神器锻造器】。弈子每携带1个装备，你的队伍就获得16生命值。  已获得的生命值：0  2024【魔法大乱斗】全球总决赛",
+      "icon": "https://img.dataj.cc/images/hex/sweettreats3.png",
+      "catalog_metadata": {
+        "setId": "18",
+        "season": "S19",
+        "version": "18.18.1"
+      },
+      "has_version_stats": true,
+      "round_stats": [
+        {
+          "round": 1,
+          "roundLabel": "3-2",
+          "sampleCount": 1272,
+          "playRate": 0.04,
+          "avgPlacement": 4.83,
+          "top4Rate": 43.79,
+          "topRate": 7.63
+        },
+        {
+          "round": 2,
+          "roundLabel": "4-2",
+          "sampleCount": 1440,
+          "playRate": 0.04,
+          "avgPlacement": 4.66,
+          "top4Rate": 46.46,
+          "topRate": 10.35
+        }
+      ]
+    },
+    {
+      "id": "30668",
+      "name": "厨神阿福",
+      "level": 2,
+      "description": "获得1个【金铲铲】。携带了【金铲铲】或【金锅锅】系装备的弈子们获得20%攻击速度和3法力回复。",
+      "icon": "https://img.dataj.cc/images/hex/ultrarapidfire2.png",
+      "catalog_metadata": {
+        "setId": "18",
+        "season": "S19",
+        "version": "18.18.1"
+      },
+      "has_version_stats": true,
+      "round_stats": [
+        {
+          "round": 0,
+          "roundLabel": "2-1",
+          "sampleCount": 14863,
+          "playRate": 0.46,
+          "avgPlacement": 3.65,
+          "top4Rate": 64.66,
+          "topRate": 25.61
+        },
+        {
+          "round": 1,
+          "roundLabel": "3-2",
+          "sampleCount": 5631,
+          "playRate": 0.17,
+          "avgPlacement": 3.97,
+          "top4Rate": 58.73,
+          "topRate": 24.17
+        },
+        {
+          "round": 2,
+          "roundLabel": "4-2",
+          "sampleCount": 5773,
+          "playRate": 0.18,
+          "avgPlacement": 4.08,
+          "top4Rate": 56.4,
+          "topRate": 22.24
+        }
+      ]
+    },
+    {
+      "id": "30678",
+      "name": "秘法帮派 II+",
+      "level": 3,
+      "description": "获得2个【秘法手套】。在5场玩家对战回合后，获得另一个。",
+      "icon": "https://img.dataj.cc/images/hex/bandthieves3.png",
+      "catalog_metadata": {
+        "setId": "18",
+        "season": "S19",
+        "version": "18.18.1"
+      },
+      "has_version_stats": true,
+      "round_stats": [
+        {
+          "round": 1,
+          "roundLabel": "3-2",
+          "sampleCount": 265,
+          "playRate": 0.01,
+          "avgPlacement": 4.54,
+          "top4Rate": 50.19,
+          "topRate": 10.94
+        }
+      ]
+    },
+    {
+      "id": "30679",
+      "name": "秘法帮派 II++",
+      "level": 3,
+      "description": "获得2个【秘法手套】。在3场玩家对战回合后，获得另一个。",
+      "icon": "https://img.dataj.cc/images/hex/bandthieves3.png",
+      "catalog_metadata": {
+        "setId": "18",
+        "season": "S19",
+        "version": "18.18.1"
+      },
+      "has_version_stats": true,
+      "round_stats": [
+        {
+          "round": 2,
+          "roundLabel": "4-2",
+          "sampleCount": 333,
+          "playRate": 0.01,
+          "avgPlacement": 4.7,
+          "top4Rate": 47.75,
+          "topRate": 9.61
+        }
+      ]
+    },
+    {
+      "id": "30680",
+      "name": "奢侈品订购",
+      "level": 3,
+      "description": "获得1个包裹，包含1个5费弈子、1个2星1费弈子和3金币。  在接下来的2个阶段开始时，再次获得该包裹。（弈子：？？？）",
+      "icon": "https://img.dataj.cc/images/hex/luxurysubscription3.png",
+      "catalog_metadata": {
+        "setId": "18",
+        "season": "S19",
+        "version": "18.18.1"
+      },
+      "has_version_stats": true,
+      "round_stats": [
+        {
+          "round": 1,
+          "roundLabel": "3-2",
+          "sampleCount": 2800,
+          "playRate": 0.09,
+          "avgPlacement": 4.92,
+          "top4Rate": 42.54,
+          "topRate": 11.71
+        }
+      ]
+    },
+    {
+      "id": "30682",
+      "name": "纹章树+",
+      "level": 3,
+      "description": "获得3个随机纹章、一个【装备重铸器】和4金币。",
+      "icon": "https://img.dataj.cc/images/hex/thetraittree3.png",
+      "catalog_metadata": {
+        "setId": "18",
+        "season": "S19",
+        "version": "18.18.1"
+      },
+      "has_version_stats": true,
+      "round_stats": [
+        {
+          "round": 1,
+          "roundLabel": "3-2",
+          "sampleCount": 5722,
+          "playRate": 0.18,
+          "avgPlacement": 4.18,
+          "top4Rate": 54.67,
+          "topRate": 19.22
+        }
+      ]
+    },
+    {
+      "id": "30701",
+      "name": "贪财+",
+      "level": 2,
+      "description": "立刻获得13金币，然后在每个阶段开始时获得7金币。拾取金币会令你的小小英雄变大。",
+      "icon": "https://img.dataj.cc/images/hex/moneyhungry2.png",
+      "catalog_metadata": {
+        "setId": "18",
+        "season": "S19",
+        "version": "18.18.1b"
+      },
+      "has_version_stats": true,
+      "round_stats": [
+        {
+          "round": 1,
+          "roundLabel": "3-2",
+          "sampleCount": 2902,
+          "playRate": 0.09,
+          "avgPlacement": 4.74,
+          "top4Rate": 44.73,
+          "topRate": 10.68
+        }
+      ]
+    },
+    {
+      "id": "30767",
+      "name": "欧米茄之怪",
+      "level": 2,
+      "description": "你现在可以选择第二个被【阿尔法印记】标记的【峡谷野怪】。获得1个【峡谷迅捷蟹】、1个【绯红树怪】和1个【苍蓝哨戒】。",
+      "icon": "https://img.dataj.cc/images/hex/riftbeastaugment22.png",
+      "catalog_metadata": {
+        "setId": "18",
+        "season": "S19",
+        "version": "18.18.1b"
+      },
+      "has_version_stats": false,
+      "round_stats": []
+    },
+    {
+      "id": "30768",
+      "name": "自然庇护所",
+      "level": 2,
+      "description": "战斗开始时：位于【永恒之森】植物邻格的弈子们获得15%攻击速度，并且每2秒治疗其3%最大生命值。获得1个【阿利斯塔】、1个【奥恩】和1个【霞】。",
+      "icon": "https://img.dataj.cc/images/hex/elderwoodaugment2.png",
+      "catalog_metadata": {
+        "setId": "18",
+        "season": "S19",
+        "version": "18.18.1"
+      },
+      "has_version_stats": false,
+      "round_stats": []
+    },
+    {
+      "id": "30770",
+      "name": "毛茸茸小朋友",
+      "level": 2,
+      "description": "当【约德尔人和他们的毛茸茸大朋友】羁绊激活时，获得第二个【毛茸茸大朋友】召唤物，但仅有原来的35%强度。获得1个【提莫】、1个【维迦】和1个【可酷伯】。",
+      "icon": "https://img.dataj.cc/images/hex/sprykinaugment2.png",
+      "catalog_metadata": {
+        "setId": "18",
+        "season": "S19",
+        "version": "18.18.1"
+      },
+      "has_version_stats": false,
+      "round_stats": []
+    },
+    {
+      "id": "30782",
+      "name": "创世神",
+      "level": 3,
+      "description": "开启1个武器库，并在3个特质选项中选择1个。获得1个该特质的【拉克丝】和1个【朔极之矛】。  你棋盘上的特质会更有可能出现在该武器库中。【拉克丝】为她选定的特质提供+2计数。",
+      "icon": "https://img.dataj.cc/images/hex/masterofallorigins3.png",
+      "catalog_metadata": {
+        "setId": "18",
+        "season": "S19",
+        "version": "18.18.1"
+      },
+      "has_version_stats": true,
+      "round_stats": [
+        {
+          "round": 2,
+          "roundLabel": "4-2",
+          "sampleCount": 1825,
+          "playRate": 0.06,
+          "avgPlacement": 3.67,
+          "top4Rate": 64.33,
+          "topRate": 27.34
+        }
+      ]
+    }
+  ]
+}

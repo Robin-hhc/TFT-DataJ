@@ -1,0 +1,584 @@
+{
+  "purpose": "Historical or season-unverified layout/OCR development results; NOT S18 recognition validation.",
+  "versions": {
+    "rapidocr": "3.9.2",
+    "onnxruntime": "1.22.1",
+    "numpy": "2.5.3",
+    "opencv-python": "4.14.0.94"
+  },
+  "crop_versions": {
+    "rapidocr": "3.9.2",
+    "onnxruntime": "1.22.1",
+    "numpy": "2.5.3",
+    "opencv-python": "4.14.0.94"
+  },
+  "engine_params": {
+    "Global.log_level": "warning",
+    "Global.use_cls": false,
+    "EngineConfig.onnxruntime.intra_op_num_threads": 2,
+    "EngineConfig.onnxruntime.inter_op_num_threads": 1
+  },
+  "models": [
+    {
+      "file": "PP-OCRv6_det_small.onnx",
+      "sha256": "090f04abcd9d9a7498bc4ebf677e4cb9bdce1fe4197ddb7e529f1ef44e1ff94f"
+    },
+    {
+      "file": "ch_ppocr_mobile_v2.0_cls_mobile.onnx",
+      "sha256": "e47acedf663230f8863ff1ab0e64dd2d82b838fceb5957146dab185a89d6215c"
+    },
+    {
+      "file": "PP-OCRv6_rec_small.onnx",
+      "sha256": "6f327246b50388f3c176ae304bd95767ea6dc0c9ae92153ef8cbe210b3c14884"
+    }
+  ],
+  "summary": {
+    "images": 4,
+    "rounds_correct": 4,
+    "full_correct_names": 10,
+    "names_total": 12,
+    "crop_correct_names": 10,
+    "negative_rejections": 2
+  },
+  "offline_query_demo": {
+    "warning": "Explicitly comparing names to a selected historical DataJ snapshot; not recommendations for these screenshots.",
+    "set_id": 18,
+    "version": "18.2a",
+    "snapshot_date": "2026-09-25",
+    "screenshot_version_verified": false,
+    "rows": [
+      {
+        "sample": "ordinary-20231030",
+        "entity": {
+          "id": "2634",
+          "name": "治疗法球 II"
+        },
+        "stage": "2-1",
+        "global": {
+          "status": "no_stage_data",
+          "avg_placement": null
+        },
+        "comp112": {
+          "status": "no_stage_data",
+          "avg_placement": null
+        }
+      },
+      {
+        "sample": "ornate-douyin",
+        "entity": {
+          "id": "30668",
+          "name": "厨神阿福"
+        },
+        "stage": "2-1",
+        "global": {
+          "status": "ok",
+          "avg_placement": 3.65,
+          "sample_count": 13240,
+          "stage": "2-1"
+        },
+        "comp112": {
+          "status": "ok",
+          "avg_placement": 3.52,
+          "sample_count": 11193,
+          "stage": "2-1"
+        }
+      }
+    ]
+  },
+  "model_init_ms": 672.59,
+  "samples": [
+    {
+      "id": "ordinary-20231030",
+      "image_sha256": "36efc13a0e05d55b42a83eeb2da95067ceca235a984730935bcd001a3294e66b",
+      "size": [
+        972,
+        727
+      ],
+      "full_ocr_ms": 1513.27,
+      "crop_replay_ms": 48.85,
+      "expected": {
+        "round": "2-1",
+        "names": [
+          "减益传播",
+          "辅助宝库",
+          "治疗法球 II"
+        ]
+      },
+      "prediction": {
+        "scene": "choice_candidates",
+        "round": "2-1",
+        "round_box": [
+          [
+            315.0,
+            1.0
+          ],
+          [
+            348.0,
+            1.0
+          ],
+          [
+            348.0,
+            24.0
+          ],
+          [
+            315.0,
+            24.0
+          ]
+        ],
+        "round_score": 0.99925,
+        "cards": [
+          {
+            "slot": 0,
+            "raw_text": "减益传播",
+            "normalized_text": "减益传播",
+            "score": 0.99985,
+            "box": [
+              [
+                233.0,
+                309.0
+              ],
+              [
+                296.0,
+                309.0
+              ],
+              [
+                296.0,
+                330.0
+              ],
+              [
+                233.0,
+                330.0
+              ]
+            ],
+            "needs_tier_review": false
+          },
+          {
+            "slot": 1,
+            "raw_text": "辅助宝库",
+            "normalized_text": "辅助宝库",
+            "score": 0.99991,
+            "box": [
+              [
+                455.0,
+                309.0
+              ],
+              [
+                520.0,
+                309.0
+              ],
+              [
+                520.0,
+                330.0
+              ],
+              [
+                455.0,
+                330.0
+              ]
+            ],
+            "needs_tier_review": false
+          },
+          {
+            "slot": 2,
+            "raw_text": "治疗法球Ⅱ",
+            "normalized_text": "治疗法球II",
+            "score": 0.99679,
+            "box": [
+              [
+                670.0,
+                308.0
+              ],
+              [
+                748.0,
+                308.0
+              ],
+              [
+                748.0,
+                329.0
+              ],
+              [
+                670.0,
+                329.0
+              ]
+            ],
+            "needs_tier_review": false
+          }
+        ],
+        "recommendation_allowed": false,
+        "reason": "public_image_game_mode_and_version_unverified"
+      },
+      "full_correct_names": 3,
+      "crop_correct_names": 3,
+      "round_correct": true
+    },
+    {
+      "id": "hero-20230821",
+      "image_sha256": "b272cbc4f4dd9aacbb524bc2499cc05df194b9cb6a11bf6bbd6e1649dc956f92",
+      "size": [
+        1316,
+        760
+      ],
+      "full_ocr_ms": 1540.58,
+      "crop_replay_ms": 49.54,
+      "expected": {
+        "round": "2-1",
+        "names": [
+          "吞噬灵魂",
+          "咒能高涨",
+          "无双挑战"
+        ]
+      },
+      "prediction": {
+        "scene": "choice_candidates",
+        "round": "2-1",
+        "round_box": [
+          [
+            369.0,
+            0.0
+          ],
+          [
+            418.0,
+            0.0
+          ],
+          [
+            418.0,
+            30.0
+          ],
+          [
+            369.0,
+            30.0
+          ]
+        ],
+        "round_score": 0.99994,
+        "cards": [
+          {
+            "slot": 0,
+            "raw_text": "吞噬灵魂",
+            "normalized_text": "吞噬灵魂",
+            "score": 0.99217,
+            "box": [
+              [
+                194.0,
+                465.0
+              ],
+              [
+                323.0,
+                465.0
+              ],
+              [
+                323.0,
+                506.0
+              ],
+              [
+                194.0,
+                506.0
+              ]
+            ],
+            "needs_tier_review": false
+          },
+          {
+            "slot": 1,
+            "raw_text": "咒能高涨",
+            "normalized_text": "咒能高涨",
+            "score": 0.99996,
+            "box": [
+              [
+                611.0,
+                464.0
+              ],
+              [
+                740.0,
+                464.0
+              ],
+              [
+                740.0,
+                506.0
+              ],
+              [
+                611.0,
+                506.0
+              ]
+            ],
+            "needs_tier_review": false
+          },
+          {
+            "slot": 2,
+            "raw_text": "无双挑战",
+            "normalized_text": "无双挑战",
+            "score": 0.99991,
+            "box": [
+              [
+                1028.0,
+                464.0
+              ],
+              [
+                1159.0,
+                464.0
+              ],
+              [
+                1159.0,
+                505.0
+              ],
+              [
+                1028.0,
+                505.0
+              ]
+            ],
+            "needs_tier_review": false
+          }
+        ],
+        "recommendation_allowed": false,
+        "reason": "public_image_game_mode_and_version_unverified"
+      },
+      "full_correct_names": 3,
+      "crop_correct_names": 3,
+      "round_correct": true
+    },
+    {
+      "id": "ornate-douyin",
+      "image_sha256": "677c36e268f9875d708e2cb75ecfba9637d5ac33f91634968862e4fc07a7dce1",
+      "size": [
+        950,
+        540
+      ],
+      "full_ocr_ms": 1771.09,
+      "crop_replay_ms": 48.0,
+      "expected": {
+        "round": "2-1",
+        "names": [
+          "举重比赛",
+          "猛将的荣耀",
+          "厨神阿福"
+        ]
+      },
+      "prediction": {
+        "scene": "choice_candidates",
+        "round": "2-1",
+        "round_box": [
+          [
+            329.0,
+            2.0
+          ],
+          [
+            367.0,
+            2.0
+          ],
+          [
+            367.0,
+            21.0
+          ],
+          [
+            329.0,
+            21.0
+          ]
+        ],
+        "round_score": 0.86142,
+        "cards": [
+          {
+            "slot": 0,
+            "raw_text": "举重比赛",
+            "normalized_text": "举重比赛",
+            "score": 0.99991,
+            "box": [
+              [
+                225.0,
+                220.0
+              ],
+              [
+                278.0,
+                220.0
+              ],
+              [
+                278.0,
+                238.0
+              ],
+              [
+                225.0,
+                238.0
+              ]
+            ],
+            "needs_tier_review": false
+          },
+          {
+            "slot": 1,
+            "raw_text": "猛将的荣耀",
+            "normalized_text": "猛将的荣耀",
+            "score": 0.99978,
+            "box": [
+              [
+                443.0,
+                221.0
+              ],
+              [
+                506.0,
+                221.0
+              ],
+              [
+                506.0,
+                238.0
+              ],
+              [
+                443.0,
+                238.0
+              ]
+            ],
+            "needs_tier_review": false
+          },
+          {
+            "slot": 2,
+            "raw_text": "厨神阿福",
+            "normalized_text": "厨神阿福",
+            "score": 0.99987,
+            "box": [
+              [
+                672.0,
+                220.0
+              ],
+              [
+                724.0,
+                220.0
+              ],
+              [
+                724.0,
+                238.0
+              ],
+              [
+                672.0,
+                238.0
+              ]
+            ],
+            "needs_tier_review": false
+          }
+        ],
+        "recommendation_allowed": false,
+        "reason": "public_image_game_mode_and_version_unverified"
+      },
+      "full_correct_names": 3,
+      "crop_correct_names": 3,
+      "round_correct": true
+    },
+    {
+      "id": "festival-20230111",
+      "image_sha256": "25978e36d7786e676f76eb4fefc45c973552ac7334a3fb1cc87e885b4dfb58ec",
+      "size": [
+        2400,
+        1080
+      ],
+      "full_ocr_ms": 2137.33,
+      "crop_replay_ms": 50.55,
+      "expected": {
+        "round": "3-2",
+        "names": [
+          "源计划上行链路 I",
+          "天选的青睐",
+          "秘法帮派 I"
+        ]
+      },
+      "prediction": {
+        "scene": "choice_candidates",
+        "round": "3-2",
+        "round_box": [
+          [
+            861.2903442382812,
+            0.0
+          ],
+          [
+            926.6129150390625,
+            0.0
+          ],
+          [
+            926.6129150390625,
+            36.16071701049805
+          ],
+          [
+            861.2903442382812,
+            36.16071701049805
+          ]
+        ],
+        "round_score": 0.99996,
+        "cards": [
+          {
+            "slot": 0,
+            "raw_text": "源计划上行链路1",
+            "normalized_text": "源计划上行链路1",
+            "score": 0.95658,
+            "box": [
+              [
+                563.709716796875,
+                579.7767944335938
+              ],
+              [
+                832.2581176757812,
+                579.7767944335938
+              ],
+              [
+                832.2581176757812,
+                620.7589721679688
+              ],
+              [
+                563.709716796875,
+                620.7589721679688
+              ]
+            ],
+            "needs_tier_review": true
+          },
+          {
+            "slot": 1,
+            "raw_text": "天选的青睐",
+            "normalized_text": "天选的青睐",
+            "score": 0.99828,
+            "box": [
+              [
+                1128.6290283203125,
+                578.5714721679688
+              ],
+              [
+                1311.2904052734375,
+                578.5714721679688
+              ],
+              [
+                1311.2904052734375,
+                623.169677734375
+              ],
+              [
+                1128.6290283203125,
+                623.169677734375
+              ]
+            ],
+            "needs_tier_review": false
+          },
+          {
+            "slot": 2,
+            "raw_text": "秘法帮派1",
+            "normalized_text": "秘法帮派1",
+            "score": 0.9345,
+            "box": [
+              [
+                1654.8387451171875,
+                578.5714721679688
+              ],
+              [
+                1826.6129150390625,
+                578.5714721679688
+              ],
+              [
+                1826.6129150390625,
+                623.169677734375
+              ],
+              [
+                1654.8387451171875,
+                623.169677734375
+              ]
+            ],
+            "needs_tier_review": true
+          }
+        ],
+        "recommendation_allowed": false,
+        "reason": "public_image_game_mode_and_version_unverified"
+      },
+      "full_correct_names": 1,
+      "crop_correct_names": 1,
+      "round_correct": true
+    }
+  ],
+  "s18_verified_images": 0
+}

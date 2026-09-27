@@ -1,0 +1,61 @@
+{
+  "purpose": "Historical or season-unverified layout/OCR development fixtures. EXCLUDED from S18 acceptance metrics.",
+  "samples": [
+    {
+      "id": "ordinary-20231030",
+      "image": "work/ocr-public-samples/augment-20231030.png",
+      "source_page": "https://game.3loumao.org/54479032",
+      "image_url": "https://imgheybox.max-c.com/web/2023/10/30/2c72ed5e5ff4aa15eb2a8abbf7cbf437/thumb.png",
+      "season": "unverified; historical image URL dated 2023-10-30",
+      "expected_round": "2-1",
+      "expected_names": [
+        "减益传播",
+        "辅助宝库",
+        "治疗法球 II"
+      ],
+      "s18_acceptance_eligible": false
+    },
+    {
+      "id": "hero-20230821",
+      "image": "work/ocr-public-samples/augment-20230821.jpg",
+      "source_page": "https://www.9game.cn/news/8618321.html",
+      "image_url": "https://media.9game.cn/gamebase/ieu-gdc-pre-process/images/20230821/12/12/3707b3f3ca8b9a02d9c43b7ac881d3c5.jpg",
+      "season": "source title says S8.5; not independently verified",
+      "expected_round": "2-1",
+      "expected_names": [
+        "吞噬灵魂",
+        "咒能高涨",
+        "无双挑战"
+      ],
+      "s18_acceptance_eligible": false
+    },
+    {
+      "id": "ornate-douyin",
+      "image": "work/ocr-public-samples/augment-douyin-inferno.jpg",
+      "source_page": "https://www.douyin.com/shipin/7592448868885874715",
+      "image_url": "https://p9-pc-sign.douyinpic.com/obj/tos-cn-p-0015/owQiT19DTrAIVB0BiC514acNtmII2wPPAAzVI?from=1516005123&x-expires=2083230000&x-signature=wSho87VBYvKerI1nNpH6fmVUJUU%3D",
+      "season": "unverified",
+      "expected_round": "2-1",
+      "expected_names": [
+        "举重比赛",
+        "猛将的荣耀",
+        "厨神阿福"
+      ],
+      "s18_acceptance_eligible": false
+    },
+    {
+      "id": "festival-20230111",
+      "image": "work/ocr-public-samples/augment-20230111.jpg",
+      "source_page": "https://www.dailiantong.com/news/content_170340.html",
+      "image_url": "https://img001.dailiantong.com/News/20230111/zty_20230111113052205.jpg",
+      "season": "unverified; historical image URL dated 2023-01-11",
+      "expected_round": "3-2",
+      "expected_names": [
+        "源计划上行链路 I",
+        "天选的青睐",
+        "秘法帮派 I"
+      ],
+      "s18_acceptance_eligible": false
+    }
+  ]
+}

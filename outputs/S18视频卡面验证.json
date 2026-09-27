@@ -1,0 +1,111 @@
+{
+  "kind": "edited-video-card-art OCR; not gameplay screenshot evaluation",
+  "distinct_videos": 1,
+  "real_gameplay_choice_events": 0,
+  "round_detection_tested": false,
+  "patch_verified": false,
+  "three_name_layout_tested": false,
+  "models": [
+    {
+      "file": "PP-OCRv6_det_small.onnx",
+      "sha256": "090f04abcd9d9a7498bc4ebf677e4cb9bdce1fe4197ddb7e529f1ef44e1ff94f"
+    },
+    {
+      "file": "ch_ppocr_mobile_v2.0_cls_mobile.onnx",
+      "sha256": "e47acedf663230f8863ff1ab0e64dd2d82b838fceb5957146dab185a89d6215c"
+    },
+    {
+      "file": "PP-OCRv6_rec_small.onnx",
+      "sha256": "6f327246b50388f3c176ae304bd95767ea6dc0c9ae92153ef8cbe210b3c14884"
+    }
+  ],
+  "versions": {
+    "rapidocr": "3.9.2",
+    "onnxruntime": "1.22.1",
+    "numpy": "2.5.3",
+    "opencv-python": "4.14.0.94"
+  },
+  "rows": [
+    {
+      "frame": "1123570210-054s.jpg",
+      "timestamp_seconds": 54,
+      "source_page": "https://www.huya.com/video/play/1123570210.html",
+      "expected_name": "活体锻炉",
+      "roi": [
+        140,
+        642,
+        387,
+        698
+      ],
+      "crop": "name-054.png",
+      "frame_sha256": "0880af944ae24d920d2627dd0c91529e8c98d5bcc5d636f0a8fe97616b66f28e",
+      "sample_kind": "edited-video-card-art",
+      "s18_evidence": "source title and in-frame S18 caption; patch unverified",
+      "end_to_end_eligible": false,
+      "recognized": "活体锻炉",
+      "correct": true,
+      "matches": [
+        {
+          "id": "3270",
+          "name": "活体锻炉"
+        }
+      ],
+      "crop_sha256": "49b69754919f70f937c72b988c16e8e71a32f10598a218ab8b153f75b37fd0e2",
+      "ocr_ms": 1810.79
+    },
+    {
+      "frame": "1123570210-078s.jpg",
+      "timestamp_seconds": 78,
+      "source_page": "https://www.huya.com/video/play/1123570210.html",
+      "expected_name": "更要命的战刃",
+      "roi": [
+        140,
+        642,
+        387,
+        698
+      ],
+      "crop": "name-078.png",
+      "frame_sha256": "874c98acb16c3dbf57d4f2ddf958149919853ebdfc9b5558096a3e2fc784bbd0",
+      "sample_kind": "edited-video-card-art",
+      "s18_evidence": "source title and in-frame S18 caption; patch unverified",
+      "end_to_end_eligible": false,
+      "recognized": "更要命的战刃",
+      "correct": true,
+      "matches": [
+        {
+          "id": "20503",
+          "name": "更要命的战刃"
+        }
+      ],
+      "crop_sha256": "327cf90ff000d314f8c30db7262a4277150d78074611712c9b72e5ade628f8f3",
+      "ocr_ms": 1655.53
+    },
+    {
+      "frame": "1123570210-096s.jpg",
+      "timestamp_seconds": 96,
+      "source_page": "https://www.huya.com/video/play/1123570210.html",
+      "expected_name": "金鳞精粹",
+      "roi": [
+        140,
+        642,
+        387,
+        698
+      ],
+      "crop": "name-096.png",
+      "frame_sha256": "b8e4b65da559a6fe75dfc24c7efa9434fb00c0c976ce951cf6cbae8d9f118429",
+      "sample_kind": "edited-video-card-art",
+      "s18_evidence": "source title and in-frame S18 caption; patch unverified",
+      "end_to_end_eligible": false,
+      "recognized": "金鳞精粹",
+      "correct": true,
+      "matches": [
+        {
+          "id": "30045",
+          "name": "金鳞精粹"
+        }
+      ],
+      "crop_sha256": "39cec51adac9cfaedabea2cdc16f859b96e60a17b71ea619dd76da9e76cc1712",
+      "ocr_ms": 1606.82
+    }
+  ]
+}

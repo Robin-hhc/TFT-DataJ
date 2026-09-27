@@ -1,0 +1,20 @@
+# Local runtimes, models, caches, logs, and private game samples
+/work/
+/migration-copy.log
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+*.pfx
+*.sqlite
+*.sqlite3
+*.db
+*.log
+# Generated UI captures stay local; the recognition template is source input.
+/outputs/ui-preview/
+/outputs/Companion界面.png

@@ -1,0 +1,9173 @@
+{
+  "kind": "synthetic-name-crop-development-test",
+  "real_game_images": 0,
+  "scope": {
+    "set_id": 18,
+    "stats_version": "18.2a",
+    "snapshot_date": "2026-09-26"
+  },
+  "limitations": [
+    "Synthetic text crops, not game UI accuracy.",
+    "Known crop recognition only; no scene/round/card detection.",
+    "Two transforms of each name are correlated, not independent matches.",
+    "All 263 catalog rows included, even those without version statistics."
+  ],
+  "input_sha256": {
+    "catalog": "0338c0734fc0faec4cbd8d34bc1ffed1d77fae49169855536b4630097730d9c2",
+    "stats": "0f9528e1c7fcf1b51c139394c3d7bac71407dc16e83d1fb1870da8b9b364c4aa"
+  },
+  "font": {
+    "name": "msyhbd.ttc",
+    "sha256": "4508821b3dffe01f0ef5e5326a3e60df705a44633858811f67b6982dce3f6ee6",
+    "size": 32
+  },
+  "versions": {
+    "rapidocr": "3.9.2",
+    "onnxruntime": "1.22.1",
+    "numpy": "2.5.3",
+    "opencv-python": "4.14.0.94",
+    "Pillow": "11.3.0"
+  },
+  "engine_params": {
+    "Global.log_level": "warning",
+    "Global.use_cls": false,
+    "EngineConfig.onnxruntime.intra_op_num_threads": 2,
+    "EngineConfig.onnxruntime.inter_op_num_threads": 1
+  },
+  "models": [
+    {
+      "file": "PP-OCRv6_det_small.onnx",
+      "sha256": "090f04abcd9d9a7498bc4ebf677e4cb9bdce1fe4197ddb7e529f1ef44e1ff94f"
+    },
+    {
+      "file": "ch_ppocr_mobile_v2.0_cls_mobile.onnx",
+      "sha256": "e47acedf663230f8863ff1ab0e64dd2d82b838fceb5957146dab185a89d6215c"
+    },
+    {
+      "file": "PP-OCRv6_rec_small.onnx",
+      "sha256": "6f327246b50388f3c176ae304bd95767ea6dc0c9ae92153ef8cbe210b3c14884"
+    }
+  ],
+  "data_audit": {
+    "catalog_rows": 263,
+    "stat_rows": 229,
+    "stage_lookups": 789,
+    "lookup_statuses": {
+      "missing_or_ambiguous_entity": 102,
+      "ok": 314,
+      "no_stage_data": 373
+    },
+    "duplicate_normalized_names": {
+      "别再错过": [
+        "1625",
+        "10784"
+      ],
+      "成吨的属性!": [
+        "2705",
+        "3705"
+      ],
+      "烧起来": [
+        "10771",
+        "20771"
+      ],
+      "致命丽花": [
+        "20760",
+        "30760"
+      ],
+      "兽性本能": [
+        "20764",
+        "30764"
+      ],
+      "欧米茄之怪": [
+        "20767",
+        "30767"
+      ],
+      "自然庇护所": [
+        "20768",
+        "30768"
+      ],
+      "毛茸茸小朋友": [
+        "20770",
+        "30770"
+      ],
+      "弈子套娃": [
+        "30772",
+        "30773",
+        "30774"
+      ],
+      "兽性本能+": [
+        "40764",
+        "50764"
+      ]
+    },
+    "errors": []
+  },
+  "synthetic_summary": {
+    "clean32": {
+      "cases": 263,
+      "correct_text": 247,
+      "correct_unique_id": 226,
+      "wrong_unique_id": 0
+    },
+    "halfsize_jpeg55": {
+      "cases": 263,
+      "correct_text": 248,
+      "correct_unique_id": 227,
+      "wrong_unique_id": 0
+    }
+  },
+  "cases": [
+    {
+      "id": "1002",
+      "variant": "clean32",
+      "expected": "存心失利",
+      "predicted": "存心失利",
+      "score": 0.95758,
+      "text_correct": true,
+      "id_correct": true,
+      "wrong_unique_id": false,
+      "matches": [
+        {
+          "id": "1002",
+          "name": "存心失利"
+        }
+      ],
+      "ms": 20.07
+    },
+    {
+      "id": "1003",
+      "variant": "clean32",
+      "expected": "花到上头",
+      "predicted": "花到上头",
+      "score": 0.99984,
+      "text_correct": true,
+      "id_correct": true,
+      "wrong_unique_id": false,
+      "matches": [
+        {
+          "id": "1003",
+          "name": "花到上头"
+        }
+      ],
+      "ms": 12.87
+    },
+    {
+      "id": "1006",
+      "variant": "clean32",
+      "expected": "装备百宝袋 I",
+      "predicted": "装备百宝袋｜",
+      "score": 0.89254,
+      "text_correct": false,
+      "id_correct": false,
+      "wrong_unique_id": false,
+      "matches": [],
+      "ms": 13.18,
+      "failure_crop": "clean32-1006.png"
+    },
+    {
+      "id": "1007",
+      "variant": "clean32",
+      "expected": "潘朵拉的装备 I",
+      "predicted": "潘朵拉的装备｜",
+      "score": 0.93377,
+      "text_correct": false,
+      "id_correct": false,
+      "wrong_unique_id": false,
+      "matches": [],
+      "ms": 12.85,
+      "failure_crop": "clean32-1007.png"
+    },
+    {
+      "id": "1008",
+      "variant": "clean32",
+      "expected": "打捞桶",
+      "predicted": "打捞桶",
+      "score": 0.98865,
+      "text_correct": true,
+      "id_correct": true,
+      "wrong_unique_id": false,
+      "matches": [
+        {
+          "id": "1008",
+          "name": "打捞桶"
+        }
+      ],
+      "ms": 12.73
+    },
+    {
+      "id": "1011",
+      "variant": "clean32",
+      "expected": "清晰头脑",
+      "predicted": "清晰头脑",
+      "score": 0.99913,
+      "text_correct": true,
+      "id_correct": true,
+      "wrong_unique_id": false,
+      "matches": [
+        {
+          "id": "1011",
+          "name": "清晰头脑"
+        }
+      ],
+      "ms": 12.97
+    },
+    {
+      "id": "1019",
+      "variant": "clean32",
+      "expected": "并肩作战 I",
+      "predicted": "并肩作战",
+      "score": 0.99908,
+      "text_correct": false,
+      "id_correct": false,
+      "wrong_unique_id": false,
+      "matches": [],
+      "ms": 12.58,
+      "failure_crop": "clean32-1019.png"
+    },
+    {
+      "id": "1021",
+      "variant": "clean32",
+      "expected": "部分飞升",
+      "predicted": "部分飞升",
+      "score": 0.99964,
+      "text_correct": true,
+      "id_correct": true,
+      "wrong_unique_id": false,
+      "matches": [
+        {
+          "id": "1021",
+          "name": "部分飞升"
+        }
+      ],
+      "ms": 13.05
+    },
+    {
+      "id": "1023",
+      "variant": "clean32",
+      "expected": "应急护甲 I",
+      "predicted": "应急护甲！",
+      "score": 0.8452,
+      "text_correct": false,
+      "id_correct": false,
+      "wrong_unique_id": false,
+      "matches": [],
+      "ms": 12.8,
+      "failure_crop": "clean32-1023.png"
+    },
+    {
+      "id": "1068",
+      "variant": "clean32",
+      "expected": "秘法帮派",
+      "predicted": "秘法帮派",
+      "score": 0.99993,
+      "text_correct": true,
+      "id_correct": true,
+      "wrong_unique_id": false,
+      "matches": [
+        {
+          "id": "1068",
+          "name": "秘法帮派"
+        }
+      ],
+      "ms": 12.74
+    },
+    {
+      "id": "1093",
+      "variant": "clean32",
+      "expected": "休眠锻炉",
+      "predicted": "休眠锻炉",
+      "score": 0.9988,
+      "text_correct": true,
+      "id_correct": true,
+      "wrong_unique_id": false,
+      "matches": [
+        {
+          "id": "1093",
+          "name": "休眠锻炉"
+        }
+      ],
+      "ms": 12.78
+    },
+    {
+      "id": "1134",
+      "variant": "clean32",
+      "expected": "嘀个痛快！ I",
+      "predicted": "嘀个痛快！",
+      "score": 0.99774,
+      "text_correct": false,
+      "id_correct": false,
+      "wrong_unique_id": false,
+      "matches": [],
+      "ms": 13.33,
+      "failure_crop": "clean32-1134.png"
+    },
+    {
+      "id": "1147",
+      "variant": "clean32",
+      "expected": "后期专家",
+      "predicted": "后期专家",
+      "score": 0.99998,
+      "text_correct": true,
+      "id_correct": true,
+      "wrong_unique_id": false,
+      "matches": [
+        {
+          "id": "1147",
+          "name": "后期专家"
+        }
+      ],
+      "ms": 15.03
+    },
+    {
+      "id": "1158",
+      "variant": "clean32",
+      "expected": "节外生枝",
+      "predicted": "节外生枝",
+      "score": 0.99858,
+      "text_correct": true,
+      "id_correct": true,
+      "wrong_unique_id": false,
+      "matches": [
+        {
+          "id": "1158",
+          "name": "节外生枝"
+        }
+      ],
+      "ms": 14.73
+    },
+    {
+      "id": "1478",
+      "variant": "clean32",
+      "expected": "游神的盟友",
+      "predicted": "游神的盟友",
+      "score": 0.99983,
+      "text_correct": true,
+      "id_correct": true,
+      "wrong_unique_id": false,
+      "matches": [
+        {
+          "id": "1478",
+          "name": "游神的盟友"
+        }
+      ],
+      "ms": 12.79
+    },
+    {
+      "id": "1479",
+      "variant": "clean32",
+      "expected": "一，二，三",
+      "predicted": "一，二，三",
+      "score": 0.9468,
+      "text_correct": true,
+      "id_correct": true,
+      "wrong_unique_id": false,
+      "matches": [
+        {
+          "id": "1479",
+          "name": "一，二，三"
+        }
+      ],
+      "ms": 12.79
+    },
+    {
+      "id": "1625",
+      "variant": "clean32",
+      "expected": "别再错过",
+      "predicted": "别再错过",
+      "score": 0.9827,
+      "text_correct": true,
+      "id_correct": false,
+      "wrong_unique_id": false,
+      "matches": [
+        {
+          "id": "1625",
+          "name": "别再错过"
+        },
+        {
+          "id": "10784",
+          "name": "别再错过"
+        }
+      ],
+      "ms": 12.82,
+      "failure_crop": "clean32-1625.png"
+    },
+    {
+      "id": "1634",
+      "variant": "clean32",
+      "expected": "治疗法球 I",
+      "predicted": "治疗法球|",
+      "score": 0.91093,
+      "text_correct": false,
+      "id_correct": false,
+      "wrong_unique_id": false,
+      "matches": [],
+      "ms": 12.81,
+      "failure_crop": "clean32-1634.png"
+    },
+    {
+      "id": "1646",
+      "variant": "clean32",
+      "expected": "团队建设",
+      "predicted": "团队建设",
+      "score": 0.99972,
+      "text_correct": true,
+      "id_correct": true,
+      "wrong_unique_id": false,
+      "matches": [
+        {
+          "id": "1646",
+          "name": "团队建设"
+        }
+      ],
+      "ms": 12.72
+    },
+    {
+      "id": "1650",
+      "variant": "clean32",
+      "expected": "一，二，五！",
+      "predicted": "一，二，五！",
+      "score": 0.98216,
+      "text_correct": true,
+      "id_correct": true,
+      "wrong_unique_id": false,
+      "matches": [
+        {
+          "id": "1650",
+          "name": "一，二，五！"
+        }
+      ],
+      "ms": 12.92
+    },
+    {
+      "id": "1701",
+      "variant": "clean32",
+      "expected": "黑铁资产",
+      "predicted": "黑铁资产",
+      "score": 0.99967,
+      "text_correct": true,
+      "id_correct": true,
+      "wrong_unique_id": false,
+      "matches": [
+        {
+          "id": "1701",
+          "name": "黑铁资产"
+        }
+      ],
+      "ms": 12.74
+    },
+    {
+      "id": "1712",
+      "variant": "clean32",
+      "expected": "不拘一格",
+      "predicted": "不拘一格",
+      "score": 0.99899,
+      "text_correct": true,
+      "id_correct": true,
+      "wrong_unique_id": false,
+      "matches": [
+        {
+          "id": "1712",
+          "name": "不拘一格"
+        }
+      ],
+      "ms": 12.75
+    },
+    {
+      "id": "1713",
+      "variant": "clean32",
+      "expected": "对冲基金",
+      "predicted": "对冲基金",
+      "score": 0.99946,
+      "text_correct": true,
+      "id_correct": true,
+      "wrong_unique_id": false,
+      "matches": [
+        {
+          "id": "1713",
+          "name": "对冲基金"
+        }
+      ],
+      "ms": 12.62
+    },
+    {
+      "id": "1714",
+      "variant": "clean32",
+      "expected": "银汤匙",
+      "predicted": "银汤匙",
+      "score": 0.99949,
+      "text_correct": true,
+      "id_correct": true,
+      "wrong_unique_id": false,
+      "matches": [
+        {
+          "id": "1714",
+          "name": "银汤匙"
+        }
+      ],
+      "ms": 13.01
+    },
+    {
+      "id": "1718",
+      "variant": "clean32",
+      "expected": "基础装备自助餐",
+      "predicted": "基础装备自助餐",
+      "score": 0.99881,
+      "text_correct": true,
+      "id_correct": true,
+      "wrong_unique_id": false,
+      "matches": [
+        {
+          "id": "1718",
+          "name": "基础装备自助餐"
+        }
+      ],
+      "ms": 13.53
+    },
+    {
+      "id": "1789",
+      "variant": "clean32",
+      "expected": "有用之材 I",
+      "predicted": "有用之材！",
+      "score": 0.92819,
+      "text_correct": false,
+      "id_correct": false,
+      "wrong_unique_id": false,
+      "matches": [],
+      "ms": 13.5,
+      "failure_crop": "clean32-1789.png"
+    },
+    {
+      "id": "1895",
+      "variant": "clean32",
+      "expected": "四费增援",
+      "predicted": "四费增援",
+      "score": 0.99943,
+      "text_correct": true,
+      "id_correct": true,
+      "wrong_unique_id": false,
+      "matches": [
+        {
+          "id": "1895",
+          "name": "四费增援"
+        }
+      ],
+      "ms": 17.56
+    },
+    {
+      "id": "2007",
+      "variant": "clean32",
+      "expected": "潘朵拉的装备 II",
+      "predicted": "潘朵拉的装备Ⅱ",
+      "score": 0.99523,
+      "text_correct": true,
+      "id_correct": true,
+      "wrong_unique_id": false,
+      "matches": [
+        {
+          "id": "2007",
+          "name": "潘朵拉的装备 II"
+        }
+      ],
+      "ms": 14.32
+    },
+    {
+      "id": "2008",
+      "variant": "clean32",
+      "expected": "打捞桶+",
+      "predicted": "打捞桶+",
+      "score": 0.99122,
+      "text_correct": true,
+      "id_correct": true,
+      "wrong_unique_id": false,
+      "matches": [
+        {
+          "id": "2008",
+          "name": "打捞桶+"
+        }
+      ],
+      "ms": 12.61
+    },
+    {
+      "id": "2021",
+      "variant": "clean32",
+      "expected": "飞升",
+      "predicted": "飞升",
+      "score": 0.99058,
+      "text_correct": true,
+      "id_correct": true,
+      "wrong_unique_id": false,
+      "matches": [
+        {
+          "id": "2021",
+          "name": "飞升"
+        }
+      ],
+      "ms": 12.69
+    },
+    {
+      "id": "2022",
+      "variant": "clean32",
+      "expected": "星界赐福 II",
+      "predicted": "星界赐福Ⅱ",
+      "score": 0.9884,
+      "text_correct": true,
+      "id_correct": true,
+      "wrong_unique_id": false,
+      "matches": [
+        {
+          "id": "2022",
+          "name": "星界赐福 II"
+        }
+      ],
+      "ms": 12.74
+    },
+    {
+      "id": "2023",
+      "variant": "clean32",
+      "expected": "应急护甲 II",
+      "predicted": "应急护甲Ⅱ",
+      "score": 0.99695,
+      "text_correct": true,
+      "id_correct": true,
+      "wrong_unique_id": false,
+      "matches": [
+        {
+          "id": "2023",
+          "name": "应急护甲 II"
+        }
+      ],
+      "ms": 12.69
+    },
+    {
+      "id": "2069",
+      "variant": "clean32",
+      "expected": "嘀嘀街区",
+      "predicted": "嘀嘀街区",
+      "score": 0.99932,
+      "text_correct": true,
+      "id_correct": true,
+      "wrong_unique_id": false,
+      "matches": [
+        {
+          "id": "2069",
+          "name": "嘀嘀街区"
+        }
+      ],
+      "ms": 13.11
+    },
+    {
+      "id": "2127",
+      "variant": "clean32",
+      "expected": "变形重组器",
+      "predicted": "变形重组器",
+      "score": 0.99971,
+      "text_correct": true,
+      "id_correct": true,
+      "wrong_unique_id": false,
+      "matches": [
+        {
+          "id": "2127",
+          "name": "变形重组器"
+        }
+      ],
+      "ms": 12.85
+    },
+    {
+      "id": "2128",
+      "variant": "clean32",
+      "expected": "珠光莲花 I",
+      "predicted": "珠光莲花",
+      "score": 0.99985,
+      "text_correct": false,
+      "id_correct": false,
+      "wrong_unique_id": false,
+      "matches": [],
+      "ms": 12.62,
+      "failure_crop": "clean32-2128.png"
+    },
+    {
+      "id": "2133",
+      "variant": "clean32",
+      "expected": "好事成双 II",
+      "predicted": "好事成双Ⅱ",
+      "score": 0.97509,
+      "text_correct": true,
+      "id_correct": true,
+      "wrong_unique_id": false,
+      "matches": [
+        {
+          "id": "2133",
+          "name": "好事成双 II"
+        }
+      ],
+      "ms": 12.75
+    },
+    {
+      "id": "2184",
+      "variant": "clean32",
+      "expected": "大百宝袋",
+      "predicted": "大百宝袋",
+      "score": 0.99982,
+      "text_correct": true,
+      "id_correct": true,
+      "wrong_unique_id": false,
+      "matches": [
+        {
+          "id": "2184",
+          "name": "大百宝袋"
+        }
+      ],
+      "ms": 12.86
+    },
+    {
+      "id": "2185",
+      "variant": "clean32",
+      "expected": "阿福的百宝袋",
+      "predicted": "阿福的百宝袋",
+      "score": 0.99982,
+      "text_correct": true,
+      "id_correct": true,
+      "wrong_unique_id": false,
+      "matches": [
+        {
+          "id": "2185",
+          "name": "阿福的百宝袋"
+        }
+      ],
+      "ms": 12.77
+    },
+    {
+      "id": "2189",
+      "variant": "clean32",
+      "expected": "纷乱头脑",
+      "predicted": "纷乱头脑",
+      "score": 0.9996,
+      "text_correct": true,
+      "id_correct": true,
+      "wrong_unique_id": false,
+      "matches": [
+        {
+          "id": "2189",
+          "name": "纷乱头脑"
+        }
+      ],
+      "ms": 12.51
+    },
+    {
+      "id": "2276",
+      "variant": "clean32",
+      "expected": "幸运手套",
+      "predicted": "幸运手套",
+      "score": 0.99969,
+      "text_correct": true,
+      "id_correct": true,
+      "wrong_unique_id": false,
+      "matches": [
+        {
+          "id": "2276",
+          "name": "幸运手套"
+        }
+      ],
+      "ms": 12.78
+    },
+    {
+      "id": "2294",
+      "variant": "clean32",
+      "expected": "生日礼物",
+      "predicted": "生日礼物",
+      "score": 0.99849,
+      "text_correct": true,
+      "id_correct": true,
+      "wrong_unique_id": false,
+      "matches": [
+        {
+          "id": "2294",
+          "name": "生日礼物"
+        }
+      ],
+      "ms": 12.66
+    },
+    {
+      "id": "2478",
+      "variant": "clean32",
+      "expected": "游神的眷顾",
+      "predicted": "游神的眷顾",
+      "score": 0.99802,
+      "text_correct": true,
+      "id_correct": true,
+      "wrong_unique_id": false,
+      "matches": [
+        {
+          "id": "2478",
+          "name": "游神的眷顾"
+        }
+      ],
+      "ms": 13.0
+    },
+    {
+      "id": "2634",
+      "variant": "clean32",
+      "expected": "治疗法球 II",
+      "predicted": "治疗法球Ⅱ",
+      "score": 0.99687,
+      "text_correct": true,
+      "id_correct": true,
+      "wrong_unique_id": false,
+      "matches": [
+        {
+          "id": "2634",
+          "name": "治疗法球 II"
+        }
+      ],
+      "ms": 12.66
+    },
+    {
+      "id": "2640",
+      "variant": "clean32",
+      "expected": "了解你的敌人",
+      "predicted": "了解你的敌人",
+      "score": 0.99994,
+      "text_correct": true,
+      "id_correct": true,
+      "wrong_unique_id": false,
+      "matches": [
+        {
+          "id": "2640",
+          "name": "了解你的敌人"
+        }
+      ],
+      "ms": 12.77
+    },
+    {
+      "id": "2705",
+      "variant": "clean32",
+      "expected": "成吨的属性！",
+      "predicted": "成吨的属性！",
+      "score": 0.99392,
+      "text_correct": true,
+      "id_correct": false,
+      "wrong_unique_id": false,
+      "matches": [
+        {
+          "id": "2705",
+          "name": "成吨的属性！"
+        },
+        {
+          "id": "3705",
+          "name": "成吨的属性！"
+        }
+      ],
+      "ms": 12.62,
+      "failure_crop": "clean32-2705.png"
+    },
+    {
+      "id": "2804",
+      "variant": "clean32",
+      "expected": "英勇福袋",
+      "predicted": "英勇福袋",
+      "score": 0.99989,
+      "text_correct": true,
+      "id_correct": true,
+      "wrong_unique_id": false,
+      "matches": [
+        {
+          "id": "2804",
+          "name": "英勇福袋"
+        }
+      ],
+      "ms": 14.13
+    },
+    {
+      "id": "2917",
+      "variant": "clean32",
+      "expected": "物尽其用",
+      "predicted": "物尽其用",
+      "score": 0.99997,
+      "text_correct": true,
+      "id_correct": true,
+      "wrong_unique_id": false,
+      "matches": [
+        {
+          "id": "2917",
+          "name": "物尽其用"
+        }
+      ],
+      "ms": 12.75
+    },
+    {
+      "id": "3007",
+      "variant": "clean32",
+      "expected": "潘朵拉的装备 III",
+      "predicted": "潘朵拉的装备",
+      "score": 0.99737,
+      "text_correct": false,
+      "id_correct": false,
+      "wrong_unique_id": false,
+      "matches": [],
+      "ms": 12.79,
+      "failure_crop": "clean32-3007.png"
+    },
+    {
+      "id": "3008",
+      "variant": "clean32",
+      "expected": "升级咯！",
+      "predicted": "升级咯！",
+      "score": 0.99756,
+      "text_correct": true,
+      "id_correct": true,
+      "wrong_unique_id": false,
+      "matches": [
+        {
+          "id": "3008",
+          "name": "升级咯！"
+        }
+      ],
+      "ms": 12.91
+    },
+    {
+      "id": "3022",
+      "variant": "clean32",
+      "expected": "星界赐福 III",
+      "predicted": "星界赐福Ⅲ",
+      "score": 0.88801,
+      "text_correct": true,
+      "id_correct": true,
+      "wrong_unique_id": false,
+      "matches": [
+        {
+          "id": "3022",
+          "name": "星界赐福 III"
+        }
+      ],
+      "ms": 13.14
+    },
+    {
+      "id": "3065",
+      "variant": "clean32",
+      "expected": "棱彩门票",
+      "predicted": "棱彩门票",
+      "score": 0.99718,
+      "text_correct": true,
+      "id_correct": true,
+      "wrong_unique_id": false,
+      "matches": [
+        {
+          "id": "3065",
+          "name": "棱彩门票"
+        }
+      ],
+      "ms": 12.72
+    },
+    {
+      "id": "3066",
+      "variant": "clean32",
+      "expected": "新人入队",
+      "predicted": "新人入队",
+      "score": 0.9996,
+      "text_correct": true,
+      "id_correct": true,
+      "wrong_unique_id": false,
+      "matches": [
+        {
+          "id": "3066",
+          "name": "新人入队"
+        }
+      ],
+      "ms": 12.79
+    },
+    {
+      "id": "3068",
+      "variant": "clean32",
+      "expected": "秘法帮派 II",
+      "predicted": "秘法帮派ⅡI",
+      "score": 0.90478,
+      "text_correct": false,
+      "id_correct": false,
+      "wrong_unique_id": false,
+      "matches": [],
+      "ms": 12.67,
+      "failure_crop": "clean32-3068.png"
+    },
+    {
+      "id": "3069",
+      "variant": "clean32",
+      "expected": "嘀嘀街区加强版",
+      "predicted": "嘀嘀街区加强版",
+      "score": 0.99525,
+      "text_correct": true,
+      "id_correct": true,
+      "wrong_unique_id": false,
+      "matches": [
+        {
+          "id": "3069",
+          "name": "嘀嘀街区加强版"
+        }
+      ],
+      "ms": 12.87
+    },
+    {
+      "id": "3093",
+      "variant": "clean32",
+      "expected": "便携锻炉",
+      "predicted": "便携锻炉",
+      "score": 0.99685,
+      "text_correct": true,
+      "id_correct": true,
+      "wrong_unique_id": false,
+      "matches": [
+        {
+          "id": "3093",
+          "name": "便携锻炉"
+        }
+      ],
+      "ms": 12.57
+    },
+    {
+      "id": "3128",
+      "variant": "clean32",
+      "expected": "珠光莲花 II",
+      "predicted": "珠光莲花Ⅱ",
+      "score": 0.99578,
+      "text_correct": true,
+      "id_correct": true,
+      "wrong_unique_id": false,
+      "matches": [
+        {
+          "id": "3128",
+          "name": "珠光莲花 II"
+        }
+      ],
+      "ms": 12.77
+    },
+    {
+      "id": "3132",
+      "variant": "clean32",
+      "expected": "光明圣物",
+      "predicted": "光明圣物",
+      "score": 0.99995,
+      "text_correct": true,
+      "id_correct": true,
+      "wrong_unique_id": false,
+      "matches": [
+        {
+          "id": "3132",
+          "name": "光明圣物"
+        }
+      ],
+      "ms": 12.53
+    },
+    {
+      "id": "3137",
+      "variant": "clean32",
+      "expected": "金蛋",
+      "predicted": "金蛋",
+      "score": 0.98139,
+      "text_correct": true,
+      "id_correct": true,
+      "wrong_unique_id": false,
+      "matches": [
+        {
+          "id": "3137",
+          "name": "金蛋"
+        }
+      ],
+      "ms": 14.89
+    },
+    {
+      "id": "3158",
+      "variant": "clean32",
+      "expected": "耐心学习",
+      "predicted": "耐心学习",
+      "score": 0.99997,
+      "text_correct": true,
+      "id_correct": true,
+      "wrong_unique_id": false,
+      "matches": [
+        {
+          "id": "3158",
+          "name": "耐心学习"
+        }
+      ],
+      "ms": 12.76
+    },
+    {
+      "id": "3269",
+      "variant": "clean32",
+      "expected": "诅咒冠冕",
+      "predicted": "诅咒冠冕",
+      "score": 0.99934,
+      "text_correct": true,
+      "id_correct": true,
+      "wrong_unique_id": false,
+      "matches": [
+        {
+          "id": "3269",
+          "name": "诅咒冠冕"
+        }
+      ],
+      "ms": 12.78
+    },
+    {
+      "id": "3270",
+      "variant": "clean32",
+      "expected": "活体锻炉",
+      "predicted": "活体锻炉",
+      "score": 0.99909,
+      "text_correct": true,
+      "id_correct": true,
+      "wrong_unique_id": false,
+      "matches": [
+        {
+          "id": "3270",
+          "name": "活体锻炉"
+        }
+      ],
+      "ms": 12.63
+    },
+    {
+      "id": "3276",
+      "variant": "clean32",
+      "expected": "幸运手套+",
+      "predicted": "幸运手套+",
+      "score": 0.98553,
+      "text_correct": true,
+      "id_correct": true,
+      "wrong_unique_id": false,
+      "matches": [
+        {
+          "id": "3276",
+          "name": "幸运手套+"
+        }
+      ],
+      "ms": 13.25
+    },
+    {
+      "id": "3486",
+      "variant": "clean32",
+      "expected": "珍藏财宝III",
+      "predicted": "珍藏财宝Ⅲ",
+      "score": 0.8793,
+      "text_correct": true,
+      "id_correct": true,
+      "wrong_unique_id": false,
+      "matches": [
+        {
+          "id": "3486",
+          "name": "珍藏财宝III"
+        }
+      ],
+      "ms": 13.07
+    },
+    {
+      "id": "3627",
+      "variant": "clean32",
+      "expected": "交给运气",
+      "predicted": "交给运气",
+      "score": 0.99986,
+      "text_correct": true,
+      "id_correct": true,
+      "wrong_unique_id": false,
+      "matches": [
+        {
+          "id": "3627",
+          "name": "交给运气"
+        }
+      ],
+      "ms": 13.21
+    },
+    {
+      "id": "3695",
+      "variant": "clean32",
+      "expected": "成吨的伤害",
+      "predicted": "成吨的伤害",
+      "score": 0.98488,
+      "text_correct": true,
+      "id_correct": true,
+      "wrong_unique_id": false,
+      "matches": [
+        {
+          "id": "3695",
+          "name": "成吨的伤害"
+        }
+      ],
+      "ms": 13.1
+    },
+    {
+      "id": "3705",
+      "variant": "clean32",
+      "expected": "成吨的属性！",
+      "predicted": "成吨的属性！",
+      "score": 0.99392,
+      "text_correct": true,
+      "id_correct": false,
+      "wrong_unique_id": false,
+      "matches": [
+        {
+          "id": "2705",
+          "name": "成吨的属性！"
+        },
+        {
+          "id": "3705",
+          "name": "成吨的属性！"
+        }
+      ],
+      "ms": 13.11,
+      "failure_crop": "clean32-3705.png"
+    },
+    {
+      "id": "3804",
+      "variant": "clean32",
+      "expected": "英勇福袋+",
+      "predicted": "英勇福袋+",
+      "score": 0.98612,
+      "text_correct": true,
+      "id_correct": true,
+      "wrong_unique_id": false,
+      "matches": [
+        {
+          "id": "3804",
+          "name": "英勇福袋+"
+        }
+      ],
+      "ms": 16.53
+    },
+    {
+      "id": "3809",
+      "variant": "clean32",
+      "expected": "遥遥领先",
+      "predicted": "遥遥领先",
+      "score": 0.99987,
+      "text_correct": true,
+      "id_correct": true,
+      "wrong_unique_id": false,
+      "matches": [
+        {
+          "id": "3809",
+          "name": "遥遥领先"
+        }
+      ],
+      "ms": 18.86
+    },
+    {
+      "id": "3851",
+      "variant": "clean32",
+      "expected": "混沌召唤",
+      "predicted": "混沌召唤",
+      "score": 0.99536,
+      "text_correct": true,
+      "id_correct": true,
+      "wrong_unique_id": false,
+      "matches": [
+        {
+          "id": "3851",
+          "name": "混沌召唤"
+        }
+      ],
+      "ms": 13.31
+    },
+    {
+      "id": "3896",
+      "variant": "clean32",
+      "expected": "新纪元+",
+      "predicted": "新纪元+",
+      "score": 0.99884,
+      "text_correct": true,
+      "id_correct": true,
+      "wrong_unique_id": false,
+      "matches": [
+        {
+          "id": "3896",
+          "name": "新纪元+"
+        }
+      ],
+      "ms": 13.17
+    },
+    {
+      "id": "3917",
+      "variant": "clean32",
+      "expected": "物尽其用+",
+      "predicted": "物尽其用+",
+      "score": 0.99896,
+      "text_correct": true,
+      "id_correct": true,
+      "wrong_unique_id": false,
+      "matches": [
+        {
+          "id": "3917",
+          "name": "物尽其用+"
+        }
+      ],
+      "ms": 13.37
+    },
+    {
+      "id": "4066",
+      "variant": "clean32",
+      "expected": "新人入队+",
+      "predicted": "新人入队+",
+      "score": 0.98641,
+      "text_correct": true,
+      "id_correct": true,
+      "wrong_unique_id": false,
+      "matches": [
+        {
+          "id": "4066",
+          "name": "新人入队+"
+        }
+      ],
+      "ms": 13.04
+    },
+    {
+      "id": "4069",
+      "variant": "clean32",
+      "expected": "大买特买",
+      "predicted": "大买特买",
+      "score": 0.99997,
+      "text_correct": true,
+      "id_correct": true,
+      "wrong_unique_id": false,
+      "matches": [
+        {
+          "id": "4069",
+          "name": "大买特买"
+        }
+      ],
+      "ms": 13.13
+    },
+    {
+      "id": "4158",
+      "variant": "clean32",
+      "expected": "节外生枝+",
+      "predicted": "节外生枝+",
+      "score": 0.99848,
+      "text_correct": true,
+      "id_correct": true,
+      "wrong_unique_id": false,
+      "matches": [
+        {
+          "id": "4158",
+          "name": "节外生枝+"
+        }
+      ],
+      "ms": 12.85
+    },
+    {
+      "id": "4695",
+      "variant": "clean32",
+      "expected": "成吨的伤害+",
+      "predicted": "成吨的伤害+",
+      "score": 0.9894,
+      "text_correct": true,
+      "id_correct": true,
+      "wrong_unique_id": false,
+      "matches": [
+        {
+          "id": "4695",
+          "name": "成吨的伤害+"
+        }
+      ],
+      "ms": 13.22
+    },
+    {
+      "id": "4804",
+      "variant": "clean32",
+      "expected": "英勇福袋++",
+      "predicted": "英勇福袋++",
+      "score": 0.98105,
+      "text_correct": true,
+      "id_correct": true,
+      "wrong_unique_id": false,
+      "matches": [
+        {
+          "id": "4804",
+          "name": "英勇福袋++"
+        }
+      ],
+      "ms": 13.01
+    },
+    {
+      "id": "10004",
+      "variant": "clean32",
+      "expected": "进攻宣告",
+      "predicted": "进攻宣告",
+      "score": 0.99921,
+      "text_correct": true,
+      "id_correct": true,
+      "wrong_unique_id": false,
+      "matches": [
+        {
+          "id": "10004",
+          "name": "进攻宣告"
+        }
+      ],
+      "ms": 12.97
+    },
+    {
+      "id": "10011",
+      "variant": "clean32",
+      "expected": "耐心是一种美德",
+      "predicted": "耐心是一种美德",
+      "score": 0.99989,
+      "text_correct": true,
+      "id_correct": true,
+      "wrong_unique_id": false,
+      "matches": [
+        {
+          "id": "10011",
+          "name": "耐心是一种美德"
+        }
+      ],
+      "ms": 13.04
+    },
+    {
+      "id": "10048",
+      "variant": "clean32",
+      "expected": "核心位的觉悟",
+      "predicted": "核心位的觉悟",
+      "score": 0.99994,
+      "text_correct": true,
+      "id_correct": true,
+      "wrong_unique_id": false,
+      "matches": [
+        {
+          "id": "10048",
+          "name": "核心位的觉悟"
+        }
+      ],
+      "ms": 13.41
+    },
+    {
+      "id": "10196",
+      "variant": "clean32",
+      "expected": "弑君突刺",
+      "predicted": "弑君突刺",
+      "score": 0.89507,
+      "text_correct": true,
+      "id_correct": true,
+      "wrong_unique_id": false,
+      "matches": [
+        {
+          "id": "10196",
+          "name": "弑君突刺"
+        }
+      ],
+      "ms": 13.86
+    },
+    {
+      "id": "10214",
+      "variant": "clean32",
+      "expected": "精心打造",
+      "predicted": "精心打造",
+      "score": 0.99999,
+      "text_correct": true,
+      "id_correct": true,
+      "wrong_unique_id": false,
+      "matches": [
+        {
+          "id": "10214",
+          "name": "精心打造"
+        }
+      ],
+      "ms": 17.38
+    },
+    {
+      "id": "10236",
+      "variant": "clean32",
+      "expected": "假人化",
+      "predicted": "假人化",
+      "score": 0.99998,
+      "text_correct": true,
+      "id_correct": true,
+      "wrong_unique_id": false,
+      "matches": [
+        {
+          "id": "10236",
+          "name": "假人化"
+        }
+      ],
+      "ms": 13.34
+    },
+    {
+      "id": "10242",
+      "variant": "clean32",
+      "expected": "终身黄铜 I",
+      "predicted": "终身黄铜Ⅰ",
+      "score": 0.84985,
+      "text_correct": true,
+      "id_correct": true,
+      "wrong_unique_id": false,
+      "matches": [
+        {
+          "id": "10242",
+          "name": "终身黄铜 I"
+        }
+      ],
+      "ms": 13.12
+    },
+    {
+      "id": "10252",
+      "variant": "clean32",
+      "expected": "腐蚀",
+      "predicted": "腐蚀",
+      "score": 0.9998,
+      "text_correct": true,
+      "id_correct": true,
+      "wrong_unique_id": false,
+      "matches": [
+        {
+          "id": "10252",
+          "name": "腐蚀"
+        }
+      ],
+      "ms": 13.61
+    },
+    {
+      "id": "10253",
+      "variant": "clean32",
+      "expected": "玻璃大炮 I",
+      "predicted": "玻璃大炮｜",
+      "score": 0.83975,
+      "text_correct": false,
+      "id_correct": false,
+      "wrong_unique_id": false,
+      "matches": [],
+      "ms": 14.23,
+      "failure_crop": "clean32-10253.png"
+    },
+    {
+      "id": "10495",
+      "variant": "clean32",
+      "expected": "人生切片",
+      "predicted": "人生切片",
+      "score": 0.99994,
+      "text_correct": true,
+      "id_correct": true,
+      "wrong_unique_id": false,
+      "matches": [
+        {
+          "id": "10495",
+          "name": "人生切片"
+        }
+      ],
+      "ms": 13.92
+    },
+    {
+      "id": "10571",
+      "variant": "clean32",
+      "expected": "锻造挚友",
+      "predicted": "锻造挚友",
+      "score": 0.99764,
+      "text_correct": true,
+      "id_correct": true,
+      "wrong_unique_id": false,
+      "matches": [
+        {
+          "id": "10571",
+          "name": "锻造挚友"
+        }
+      ],
+      "ms": 13.5
+    },
+    {
+      "id": "10707",
+      "variant": "clean32",
+      "expected": "远征",
+      "predicted": "远征",
+      "score": 0.99988,
+      "text_correct": true,
+      "id_correct": true,
+      "wrong_unique_id": false,
+      "matches": [
+        {
+          "id": "10707",
+          "name": "远征"
+        }
+      ],
+      "ms": 13.22
+    },
+    {
+      "id": "10708",
+      "variant": "clean32",
+      "expected": "电火花 I",
+      "predicted": "电火花",
+      "score": 0.99993,
+      "text_correct": false,
+      "id_correct": false,
+      "wrong_unique_id": false,
+      "matches": [],
+      "ms": 13.75,
+      "failure_crop": "clean32-10708.png"
+    },
+    {
+      "id": "10731",
+      "variant": "clean32",
+      "expected": "扩展包",
+      "predicted": "扩展包",
+      "score": 0.99868,
+      "text_correct": true,
+      "id_correct": true,
+      "wrong_unique_id": false,
+      "matches": [
+        {
+          "id": "10731",
+          "name": "扩展包"
+        }
+      ],
+      "ms": 13.29
+    },
+    {
+      "id": "10744",
+      "variant": "clean32",
+      "expected": "残留魔力",
+      "predicted": "残留魔力",
+      "score": 0.99974,
+      "text_correct": true,
+      "id_correct": true,
+      "wrong_unique_id": false,
+      "matches": [
+        {
+          "id": "10744",
+          "name": "残留魔力"
+        }
+      ],
+      "ms": 13.14
+    },
+    {
+      "id": "10746",
+      "variant": "clean32",
+      "expected": "灌铅骰子",
+      "predicted": "灌铅骰子",
+      "score": 0.99922,
+      "text_correct": true,
+      "id_correct": true,
+      "wrong_unique_id": false,
+      "matches": [
+        {
+          "id": "10746",
+          "name": "灌铅骰子"
+        }
+      ],
+      "ms": 13.85
+    },
+    {
+      "id": "10750",
+      "variant": "clean32",
+      "expected": "纵深 I",
+      "predicted": "纵深Ⅰ",
+      "score": 0.74925,
+      "text_correct": true,
+      "id_correct": true,
+      "wrong_unique_id": false,
+      "matches": [
+        {
+          "id": "10750",
+          "name": "纵深 I"
+        }
+      ],
+      "ms": 13.24
+    },
+    {
+      "id": "10751",
+      "variant": "clean32",
+      "expected": "弈子配送",
+      "predicted": "弈子配送",
+      "score": 0.99955,
+      "text_correct": true,
+      "id_correct": true,
+      "wrong_unique_id": false,
+      "matches": [
+        {
+          "id": "10751",
+          "name": "弈子配送"
+        }
+      ],
+      "ms": 13.31
+    },
+    {
+      "id": "10752",
+      "variant": "clean32",
+      "expected": "弈子配送+",
+      "predicted": "弈子配送+",
+      "score": 0.99782,
+      "text_correct": true,
+      "id_correct": true,
+      "wrong_unique_id": false,
+      "matches": [
+        {
+          "id": "10752",
+          "name": "弈子配送+"
+        }
+      ],
+      "ms": 13.26
+    },
+    {
+      "id": "10753",
+      "variant": "clean32",
+      "expected": "弈子配送++",
+      "predicted": "弈子配送++",
+      "score": 0.95984,
+      "text_correct": true,
+      "id_correct": true,
+      "wrong_unique_id": false,
+      "matches": [
+        {
+          "id": "10753",
+          "name": "弈子配送++"
+        }
+      ],
+      "ms": 13.72
+    },
+    {
+      "id": "10754",
+      "variant": "clean32",
+      "expected": "高瞻远瞩",
+      "predicted": "高瞻远瞩",
+      "score": 0.98568,
+      "text_correct": true,
+      "id_correct": true,
+      "wrong_unique_id": false,
+      "matches": [
+        {
+          "id": "10754",
+          "name": "高瞻远瞩"
+        }
+      ],
+      "ms": 13.26
+    },
+    {
+      "id": "10755",
+      "variant": "clean32",
+      "expected": "资本利得 I",
+      "predicted": "资本利得|",
+      "score": 0.85527,
+      "text_correct": false,
+      "id_correct": false,
+      "wrong_unique_id": false,
+      "matches": [],
+      "ms": 13.36,
+      "failure_crop": "clean32-10755.png"
+    },
+    {
+      "id": "10756",
+      "variant": "clean32",
+      "expected": "连败连胜才能连鸡",
+      "predicted": "连败连胜才能连鸡",
+      "score": 0.99976,
+      "text_correct": true,
+      "id_correct": true,
+      "wrong_unique_id": false,
+      "matches": [
+        {
+          "id": "10756",
+          "name": "连败连胜才能连鸡"
+        }
+      ],
+      "ms": 19.83
+    },
+    {
+      "id": "10766",
+      "variant": "clean32",
+      "expected": "仙灵报恩",
+      "predicted": "仙灵报恩",
+      "score": 0.9999,
+      "text_correct": true,
+      "id_correct": true,
+      "wrong_unique_id": false,
+      "matches": [
+        {
+          "id": "10766",
+          "name": "仙灵报恩"
+        }
+      ],
+      "ms": 13.9
+    },
+    {
+      "id": "10771",
+      "variant": "clean32",
+      "expected": "烧起来",
+      "predicted": "烧起来",
+      "score": 0.99974,
+      "text_correct": true,
+      "id_correct": false,
+      "wrong_unique_id": false,
+      "matches": [
+        {
+          "id": "10771",
+          "name": "烧起来"
+        },
+        {
+          "id": "20771",
+          "name": "烧起来"
+        }
+      ],
+      "ms": 13.67,
+      "failure_crop": "clean32-10771.png"
+    },
+    {
+      "id": "10777",
+      "variant": "clean32",
+      "expected": "绽灵花的约定",
+      "predicted": "绽灵花的约定",
+      "score": 0.99956,
+      "text_correct": true,
+      "id_correct": true,
+      "wrong_unique_id": false,
+      "matches": [
+        {
+          "id": "10777",
+          "name": "绽灵花的约定"
+        }
+      ],
+      "ms": 12.45
+    },
+    {
+      "id": "20009",
+      "variant": "clean32",
+      "expected": "投资+",
+      "predicted": "投资+",
+      "score": 0.99748,
+      "text_correct": true,
+      "id_correct": true,
+      "wrong_unique_id": false,
+      "matches": [
+        {
+          "id": "20009",
+          "name": "投资+"
+        }
+      ],
+      "ms": 14.81
+    },
+    {
+      "id": "20013",
+      "variant": "clean32",
+      "expected": "挖角",
+      "predicted": "挖角",
+      "score": 0.99998,
+      "text_correct": true,
+      "id_correct": true,
+      "wrong_unique_id": false,
+      "matches": [
+        {
+          "id": "20013",
+          "name": "挖角"
+        }
+      ],
+      "ms": 13.56
+    },
+    {
+      "id": "20015",
+      "variant": "clean32",
+      "expected": "反响",
+      "predicted": "反响",
+      "score": 0.99924,
+      "text_correct": true,
+      "id_correct": true,
+      "wrong_unique_id": false,
+      "matches": [
+        {
+          "id": "20015",
+          "name": "反响"
+        }
+      ],
+      "ms": 14.24
+    },
+    {
+      "id": "20021",
+      "variant": "clean32",
+      "expected": "值得等待",
+      "predicted": "值得等待",
+      "score": 0.99906,
+      "text_correct": true,
+      "id_correct": true,
+      "wrong_unique_id": false,
+      "matches": [
+        {
+          "id": "20021",
+          "name": "值得等待"
+        }
+      ],
+      "ms": 13.72
+    },
+    {
+      "id": "20027",
+      "variant": "clean32",
+      "expected": "爆炸式增长",
+      "predicted": "爆炸式增长",
+      "score": 0.99315,
+      "text_correct": true,
+      "id_correct": true,
+      "wrong_unique_id": false,
+      "matches": [
+        {
+          "id": "20027",
+          "name": "爆炸式增长"
+        }
+      ],
+      "ms": 13.59
+    },
+    {
+      "id": "20031",
+      "variant": "clean32",
+      "expected": "发条增速器",
+      "predicted": "发条增速器",
+      "score": 0.99964,
+      "text_correct": true,
+      "id_correct": true,
+      "wrong_unique_id": false,
+      "matches": [
+        {
+          "id": "20031",
+          "name": "发条增速器"
+        }
+      ],
+      "ms": 13.25
+    },
+    {
+      "id": "20041",
+      "variant": "clean32",
+      "expected": "双排",
+      "predicted": "双排",
+      "score": 0.99994,
+      "text_correct": true,
+      "id_correct": true,
+      "wrong_unique_id": false,
+      "matches": [
+        {
+          "id": "20041",
+          "name": "双排"
+        }
+      ],
+      "ms": 13.79
+    },
+    {
+      "id": "20141",
+      "variant": "clean32",
+      "expected": "专属定制",
+      "predicted": "专属定制",
+      "score": 0.99995,
+      "text_correct": true,
+      "id_correct": true,
+      "wrong_unique_id": false,
+      "matches": [
+        {
+          "id": "20141",
+          "name": "专属定制"
+        }
+      ],
+      "ms": 12.89
+    },
+    {
+      "id": "20205",
+      "variant": "clean32",
+      "expected": "魔法投掷",
+      "predicted": "魔法投掷",
+      "score": 0.99979,
+      "text_correct": true,
+      "id_correct": true,
+      "wrong_unique_id": false,
+      "matches": [
+        {
+          "id": "20205",
+          "name": "魔法投掷"
+        }
+      ],
+      "ms": 13.19
+    },
+    {
+      "id": "20208",
+      "variant": "clean32",
+      "expected": "征战之路",
+      "predicted": "征战之路",
+      "score": 0.99996,
+      "text_correct": true,
+      "id_correct": true,
+      "wrong_unique_id": false,
+      "matches": [
+        {
+          "id": "20208",
+          "name": "征战之路"
+        }
+      ],
+      "ms": 12.95
+    },
+    {
+      "id": "20216",
+      "variant": "clean32",
+      "expected": "不侦察，不变阵",
+      "predicted": "不侦察，不变阵",
+      "score": 0.99982,
+      "text_correct": true,
+      "id_correct": true,
+      "wrong_unique_id": false,
+      "matches": [
+        {
+          "id": "20216",
+          "name": "不侦察，不变阵"
+        }
+      ],
+      "ms": 13.6
+    },
+    {
+      "id": "20217",
+      "variant": "clean32",
+      "expected": "投资策略 I",
+      "predicted": "投资策略｜",
+      "score": 0.8435,
+      "text_correct": false,
+      "id_correct": false,
+      "wrong_unique_id": false,
+      "matches": [],
+      "ms": 13.18,
+      "failure_crop": "clean32-20217.png"
+    },
+    {
+      "id": "20224",
+      "variant": "clean32",
+      "expected": "强化之能量",
+      "predicted": "强化之能量",
+      "score": 0.98009,
+      "text_correct": true,
+      "id_correct": true,
+      "wrong_unique_id": false,
+      "matches": [
+        {
+          "id": "20224",
+          "name": "强化之能量"
+        }
+      ],
+      "ms": 13.4
+    },
+    {
+      "id": "20225",
+      "variant": "clean32",
+      "expected": "金色炊具",
+      "predicted": "金色炊具",
+      "score": 0.99974,
+      "text_correct": true,
+      "id_correct": true,
+      "wrong_unique_id": false,
+      "matches": [
+        {
+          "id": "20225",
+          "name": "金色炊具"
+        }
+      ],
+      "ms": 13.26
+    },
+    {
+      "id": "20242",
+      "variant": "clean32",
+      "expected": "终身黄铜 II",
+      "predicted": "终身黄铜Ⅱ",
+      "score": 0.99708,
+      "text_correct": true,
+      "id_correct": true,
+      "wrong_unique_id": false,
+      "matches": [
+        {
+          "id": "20242",
+          "name": "终身黄铜 II"
+        }
+      ],
+      "ms": 15.47
+    },
+    {
+      "id": "20253",
+      "variant": "clean32",
+      "expected": "玻璃大炮 II",
+      "predicted": "玻璃大炮Ⅱ",
+      "score": 0.98747,
+      "text_correct": true,
+      "id_correct": true,
+      "wrong_unique_id": false,
+      "matches": [
+        {
+          "id": "20253",
+          "name": "玻璃大炮 II"
+        }
+      ],
+      "ms": 13.28
+    },
+    {
+      "id": "20258",
+      "variant": "clean32",
+      "expected": "恶意货币化",
+      "predicted": "恶意货币化",
+      "score": 0.99972,
+      "text_correct": true,
+      "id_correct": true,
+      "wrong_unique_id": false,
+      "matches": [
+        {
+          "id": "20258",
+          "name": "恶意货币化"
+        }
+      ],
+      "ms": 12.87
+    },
+    {
+      "id": "20471",
+      "variant": "clean32",
+      "expected": "泪流成河",
+      "predicted": "泪流成河",
+      "score": 0.99917,
+      "text_correct": true,
+      "id_correct": true,
+      "wrong_unique_id": false,
+      "matches": [
+        {
+          "id": "20471",
+          "name": "泪流成河"
+        }
+      ],
+      "ms": 12.54
+    },
+    {
+      "id": "20480",
+      "variant": "clean32",
+      "expected": "砍价高手",
+      "predicted": "砍价高手",
+      "score": 0.99937,
+      "text_correct": true,
+      "id_correct": true,
+      "wrong_unique_id": false,
+      "matches": [
+        {
+          "id": "20480",
+          "name": "砍价高手"
+        }
+      ],
+      "ms": 12.68
+    },
+    {
+      "id": "20489",
+      "variant": "clean32",
+      "expected": "应急护盾",
+      "predicted": "应急护盾",
+      "score": 0.99989,
+      "text_correct": true,
+      "id_correct": true,
+      "wrong_unique_id": false,
+      "matches": [
+        {
+          "id": "20489",
+          "name": "应急护盾"
+        }
+      ],
+      "ms": 12.59
+    },
+    {
+      "id": "20496",
+      "variant": "clean32",
+      "expected": "独自升级",
+      "predicted": "独自升级",
+      "score": 0.99969,
+      "text_correct": true,
+      "id_correct": true,
+      "wrong_unique_id": false,
+      "matches": [
+        {
+          "id": "20496",
+          "name": "独自升级"
+        }
+      ],
+      "ms": 12.72
+    },
+    {
+      "id": "20498",
+      "variant": "clean32",
+      "expected": "时间跳跃",
+      "predicted": "时间跳跃",
+      "score": 0.99949,
+      "text_correct": true,
+      "id_correct": true,
+      "wrong_unique_id": false,
+      "matches": [
+        {
+          "id": "20498",
+          "name": "时间跳跃"
+        }
+      ],
+      "ms": 13.04
+    },
+    {
+      "id": "20503",
+      "variant": "clean32",
+      "expected": "更要命的战刃",
+      "predicted": "更要命的战刃",
+      "score": 0.99976,
+      "text_correct": true,
+      "id_correct": true,
+      "wrong_unique_id": false,
+      "matches": [
+        {
+          "id": "20503",
+          "name": "更要命的战刃"
+        }
+      ],
+      "ms": 13.06
+    },
+    {
+      "id": "20708",
+      "variant": "clean32",
+      "expected": "电火花 II",
+      "predicted": "电火花Ⅱ",
+      "score": 0.99785,
+      "text_correct": true,
+      "id_correct": true,
+      "wrong_unique_id": false,
+      "matches": [
+        {
+          "id": "20708",
+          "name": "电火花 II"
+        }
+      ],
+      "ms": 12.46
+    },
+    {
+      "id": "20721",
+      "variant": "clean32",
+      "expected": "黄金赌约",
+      "predicted": "黄金赌约",
+      "score": 0.9919,
+      "text_correct": true,
+      "id_correct": true,
+      "wrong_unique_id": false,
+      "matches": [
+        {
+          "id": "20721",
+          "name": "黄金赌约"
+        }
+      ],
+      "ms": 12.68
+    },
+    {
+      "id": "20722",
+      "variant": "clean32",
+      "expected": "黄金赌约+",
+      "predicted": "黄金赌约+",
+      "score": 0.99345,
+      "text_correct": true,
+      "id_correct": true,
+      "wrong_unique_id": false,
+      "matches": [
+        {
+          "id": "20722",
+          "name": "黄金赌约+"
+        }
+      ],
+      "ms": 12.51
+    },
+    {
+      "id": "20723",
+      "variant": "clean32",
+      "expected": "黄金赌约++",
+      "predicted": "黄金赌约++",
+      "score": 0.98731,
+      "text_correct": true,
+      "id_correct": true,
+      "wrong_unique_id": false,
+      "matches": [
+        {
+          "id": "20723",
+          "name": "黄金赌约++"
+        }
+      ],
+      "ms": 13.12
+    },
+    {
+      "id": "20731",
+      "variant": "clean32",
+      "expected": "扩展包+",
+      "predicted": "扩展包+",
+      "score": 0.99833,
+      "text_correct": true,
+      "id_correct": true,
+      "wrong_unique_id": false,
+      "matches": [
+        {
+          "id": "20731",
+          "name": "扩展包+"
+        }
+      ],
+      "ms": 13.24
+    },
+    {
+      "id": "20733",
+      "variant": "clean32",
+      "expected": "水乳交融",
+      "predicted": "水乳交融",
+      "score": 0.99998,
+      "text_correct": true,
+      "id_correct": true,
+      "wrong_unique_id": false,
+      "matches": [
+        {
+          "id": "20733",
+          "name": "水乳交融"
+        }
+      ],
+      "ms": 13.42
+    },
+    {
+      "id": "20742",
+      "variant": "clean32",
+      "expected": "四之力",
+      "predicted": "四之力",
+      "score": 0.94877,
+      "text_correct": true,
+      "id_correct": true,
+      "wrong_unique_id": false,
+      "matches": [
+        {
+          "id": "20742",
+          "name": "四之力"
+        }
+      ],
+      "ms": 13.88
+    },
+    {
+      "id": "20744",
+      "variant": "clean32",
+      "expected": "残留魔力+",
+      "predicted": "残留魔力+",
+      "score": 0.99573,
+      "text_correct": true,
+      "id_correct": true,
+      "wrong_unique_id": false,
+      "matches": [
+        {
+          "id": "20744",
+          "name": "残留魔力+"
+        }
+      ],
+      "ms": 13.43
+    },
+    {
+      "id": "20745",
+      "variant": "clean32",
+      "expected": "亡眼射手",
+      "predicted": "亡眼射手",
+      "score": 0.99978,
+      "text_correct": true,
+      "id_correct": true,
+      "wrong_unique_id": false,
+      "matches": [
+        {
+          "id": "20745",
+          "name": "亡眼射手"
+        }
+      ],
+      "ms": 13.17
+    },
+    {
+      "id": "20750",
+      "variant": "clean32",
+      "expected": "纵深 II",
+      "predicted": "纵深Ⅱ",
+      "score": 0.99647,
+      "text_correct": true,
+      "id_correct": true,
+      "wrong_unique_id": false,
+      "matches": [
+        {
+          "id": "20750",
+          "name": "纵深 II"
+        }
+      ],
+      "ms": 13.23
+    },
+    {
+      "id": "20755",
+      "variant": "clean32",
+      "expected": "资本利得 II",
+      "predicted": "资本利得Ⅱ",
+      "score": 0.99493,
+      "text_correct": true,
+      "id_correct": true,
+      "wrong_unique_id": false,
+      "matches": [
+        {
+          "id": "20755",
+          "name": "资本利得 II"
+        }
+      ],
+      "ms": 13.5
+    },
+    {
+      "id": "20758",
+      "variant": "clean32",
+      "expected": "等待得值",
+      "predicted": "等待得值",
+      "score": 0.99895,
+      "text_correct": true,
+      "id_correct": true,
+      "wrong_unique_id": false,
+      "matches": [
+        {
+          "id": "20758",
+          "name": "等待得值"
+        }
+      ],
+      "ms": 13.12
+    },
+    {
+      "id": "20759",
+      "variant": "clean32",
+      "expected": "顶尖构筑",
+      "predicted": "顶尖构筑",
+      "score": 0.99992,
+      "text_correct": true,
+      "id_correct": true,
+      "wrong_unique_id": false,
+      "matches": [
+        {
+          "id": "20759",
+          "name": "顶尖构筑"
+        }
+      ],
+      "ms": 13.0
+    },
+    {
+      "id": "20760",
+      "variant": "clean32",
+      "expected": "致命丽花",
+      "predicted": "致命丽花",
+      "score": 0.99998,
+      "text_correct": true,
+      "id_correct": false,
+      "wrong_unique_id": false,
+      "matches": [
+        {
+          "id": "20760",
+          "name": "致命丽花"
+        },
+        {
+          "id": "30760",
+          "name": "致命丽花"
+        }
+      ],
+      "ms": 13.52,
+      "failure_crop": "clean32-20760.png"
+    },
+    {
+      "id": "20761",
+      "variant": "clean32",
+      "expected": "装备提炼",
+      "predicted": "装备提炼",
+      "score": 0.99941,
+      "text_correct": true,
+      "id_correct": true,
+      "wrong_unique_id": false,
+      "matches": [
+        {
+          "id": "20761",
+          "name": "装备提炼"
+        }
+      ],
+      "ms": 13.23
+    },
+    {
+      "id": "20762",
+      "variant": "clean32",
+      "expected": "世纪和解",
+      "predicted": "世纪和解",
+      "score": 0.99986,
+      "text_correct": true,
+      "id_correct": true,
+      "wrong_unique_id": false,
+      "matches": [
+        {
+          "id": "20762",
+          "name": "世纪和解"
+        }
+      ],
+      "ms": 13.2
+    },
+    {
+      "id": "20763",
+      "variant": "clean32",
+      "expected": "巨化术",
+      "predicted": "巨化术",
+      "score": 0.99989,
+      "text_correct": true,
+      "id_correct": true,
+      "wrong_unique_id": false,
+      "matches": [
+        {
+          "id": "20763",
+          "name": "巨化术"
+        }
+      ],
+      "ms": 13.12
+    },
+    {
+      "id": "20764",
+      "variant": "clean32",
+      "expected": "兽性本能",
+      "predicted": "兽性本能",
+      "score": 0.99958,
+      "text_correct": true,
+      "id_correct": false,
+      "wrong_unique_id": false,
+      "matches": [
+        {
+          "id": "20764",
+          "name": "兽性本能"
+        },
+        {
+          "id": "30764",
+          "name": "兽性本能"
+        }
+      ],
+      "ms": 13.52,
+      "failure_crop": "clean32-20764.png"
+    },
+    {
+      "id": "20766",
+      "variant": "clean32",
+      "expected": "仙灵报恩+",
+      "predicted": "仙灵报恩+",
+      "score": 0.98201,
+      "text_correct": true,
+      "id_correct": true,
+      "wrong_unique_id": false,
+      "matches": [
+        {
+          "id": "20766",
+          "name": "仙灵报恩+"
+        }
+      ],
+      "ms": 13.11
+    },
+    {
+      "id": "20767",
+      "variant": "clean32",
+      "expected": "欧米茄之怪",
+      "predicted": "欧米茄之怪",
+      "score": 0.99952,
+      "text_correct": true,
+      "id_correct": false,
+      "wrong_unique_id": false,
+      "matches": [
+        {
+          "id": "20767",
+          "name": "欧米茄之怪"
+        },
+        {
+          "id": "30767",
+          "name": "欧米茄之怪"
+        }
+      ],
+      "ms": 13.0,
+      "failure_crop": "clean32-20767.png"
+    },
+    {
+      "id": "20768",
+      "variant": "clean32",
+      "expected": "自然庇护所",
+      "predicted": "自然庇护所",
+      "score": 0.99915,
+      "text_correct": true,
+      "id_correct": false,
+      "wrong_unique_id": false,
+      "matches": [
+        {
+          "id": "20768",
+          "name": "自然庇护所"
+        },
+        {
+          "id": "30768",
+          "name": "自然庇护所"
+        }
+      ],
+      "ms": 13.08,
+      "failure_crop": "clean32-20768.png"
+    },
+    {
+      "id": "20769",
+      "variant": "clean32",
+      "expected": "女巫使魔",
+      "predicted": "女巫使魔",
+      "score": 0.99816,
+      "text_correct": true,
+      "id_correct": true,
+      "wrong_unique_id": false,
+      "matches": [
+        {
+          "id": "20769",
+          "name": "女巫使魔"
+        }
+      ],
+      "ms": 13.03
+    },
+    {
+      "id": "20770",
+      "variant": "clean32",
+      "expected": "毛茸茸小朋友",
+      "predicted": "毛茸茸小朋友",
+      "score": 0.99964,
+      "text_correct": true,
+      "id_correct": false,
+      "wrong_unique_id": false,
+      "matches": [
+        {
+          "id": "20770",
+          "name": "毛茸茸小朋友"
+        },
+        {
+          "id": "30770",
+          "name": "毛茸茸小朋友"
+        }
+      ],
+      "ms": 13.2,
+      "failure_crop": "clean32-20770.png"
+    },
+    {
+      "id": "20775",
+      "variant": "clean32",
+      "expected": "意外之礼",
+      "predicted": "意外之礼",
+      "score": 0.99974,
+      "text_correct": true,
+      "id_correct": true,
+      "wrong_unique_id": false,
+      "matches": [
+        {
+          "id": "20775",
+          "name": "意外之礼"
+        }
+      ],
+      "ms": 13.31
+    },
+    {
+      "id": "20777",
+      "variant": "clean32",
+      "expected": "太阳的抉择",
+      "predicted": "太阳的抉择",
+      "score": 0.99964,
+      "text_correct": true,
+      "id_correct": true,
+      "wrong_unique_id": false,
+      "matches": [
+        {
+          "id": "20777",
+          "name": "太阳的抉择"
+        }
+      ],
+      "ms": 12.83
+    },
+    {
+      "id": "20778",
+      "variant": "clean32",
+      "expected": "黑暗仪式",
+      "predicted": "黑暗仪式",
+      "score": 0.999,
+      "text_correct": true,
+      "id_correct": true,
+      "wrong_unique_id": false,
+      "matches": [
+        {
+          "id": "20778",
+          "name": "黑暗仪式"
+        }
+      ],
+      "ms": 13.55
+    },
+    {
+      "id": "20779",
+      "variant": "clean32",
+      "expected": "野兽出没",
+      "predicted": "野兽出没",
+      "score": 0.9986,
+      "text_correct": true,
+      "id_correct": true,
+      "wrong_unique_id": false,
+      "matches": [
+        {
+          "id": "20779",
+          "name": "野兽出没"
+        }
+      ],
+      "ms": 13.25
+    },
+    {
+      "id": "20780",
+      "variant": "clean32",
+      "expected": "日月同辉",
+      "predicted": "日月同辉",
+      "score": 0.99957,
+      "text_correct": true,
+      "id_correct": true,
+      "wrong_unique_id": false,
+      "matches": [
+        {
+          "id": "20780",
+          "name": "日月同辉"
+        }
+      ],
+      "ms": 12.56
+    },
+    {
+      "id": "30009",
+      "variant": "clean32",
+      "expected": "投资++",
+      "predicted": "投资++",
+      "score": 0.9927,
+      "text_correct": true,
+      "id_correct": true,
+      "wrong_unique_id": false,
+      "matches": [
+        {
+          "id": "30009",
+          "name": "投资++"
+        }
+      ],
+      "ms": 13.16
+    },
+    {
+      "id": "30021",
+      "variant": "clean32",
+      "expected": "值得等待 II",
+      "predicted": "值得等待Ⅱ",
+      "score": 0.9958,
+      "text_correct": true,
+      "id_correct": true,
+      "wrong_unique_id": false,
+      "matches": [
+        {
+          "id": "30021",
+          "name": "值得等待 II"
+        }
+      ],
+      "ms": 13.57
+    },
+    {
+      "id": "30027",
+      "variant": "clean32",
+      "expected": "爆炸式增长+",
+      "predicted": "爆炸式增长+",
+      "score": 0.99669,
+      "text_correct": true,
+      "id_correct": true,
+      "wrong_unique_id": false,
+      "matches": [
+        {
+          "id": "30027",
+          "name": "爆炸式增长+"
+        }
+      ],
+      "ms": 13.33
+    },
+    {
+      "id": "30028",
+      "variant": "clean32",
+      "expected": "上进心",
+      "predicted": "上进心",
+      "score": 0.99994,
+      "text_correct": true,
+      "id_correct": true,
+      "wrong_unique_id": false,
+      "matches": [
+        {
+          "id": "30028",
+          "name": "上进心"
+        }
+      ],
+      "ms": 12.94
+    },
+    {
+      "id": "30034",
+      "variant": "clean32",
+      "expected": "大而有力",
+      "predicted": "大而有力",
+      "score": 0.99412,
+      "text_correct": true,
+      "id_correct": true,
+      "wrong_unique_id": false,
+      "matches": [
+        {
+          "id": "30034",
+          "name": "大而有力"
+        }
+      ],
+      "ms": 13.1
+    },
+    {
+      "id": "30045",
+      "variant": "clean32",
+      "expected": "金鳞精粹",
+      "predicted": "金鳞精粹",
+      "score": 0.98682,
+      "text_correct": true,
+      "id_correct": true,
+      "wrong_unique_id": false,
+      "matches": [
+        {
+          "id": "30045",
+          "name": "金鳞精粹"
+        }
+      ],
+      "ms": 13.51
+    },
+    {
+      "id": "30179",
+      "variant": "clean32",
+      "expected": "加冕礼",
+      "predicted": "加冕礼",
+      "score": 0.99991,
+      "text_correct": true,
+      "id_correct": true,
+      "wrong_unique_id": false,
+      "matches": [
+        {
+          "id": "30179",
+          "name": "加冕礼"
+        }
+      ],
+      "ms": 13.16
+    },
+    {
+      "id": "30180",
+      "variant": "clean32",
+      "expected": "腰带溢流",
+      "predicted": "腰带溢流",
+      "score": 0.98491,
+      "text_correct": true,
+      "id_correct": true,
+      "wrong_unique_id": false,
+      "matches": [
+        {
+          "id": "30180",
+          "name": "腰带溢流"
+        }
+      ],
+      "ms": 13.12
+    },
+    {
+      "id": "30181",
+      "variant": "clean32",
+      "expected": "法杖溢流",
+      "predicted": "法杖溢流",
+      "score": 0.9952,
+      "text_correct": true,
+      "id_correct": true,
+      "wrong_unique_id": false,
+      "matches": [
+        {
+          "id": "30181",
+          "name": "法杖溢流"
+        }
+      ],
+      "ms": 13.06
+    },
+    {
+      "id": "30182",
+      "variant": "clean32",
+      "expected": "大剑溢流",
+      "predicted": "大剑溢流",
+      "score": 0.99968,
+      "text_correct": true,
+      "id_correct": true,
+      "wrong_unique_id": false,
+      "matches": [
+        {
+          "id": "30182",
+          "name": "大剑溢流"
+        }
+      ],
+      "ms": 13.42
+    },
+    {
+      "id": "30186",
+      "variant": "clean32",
+      "expected": "1个霸符，2个霸符",
+      "predicted": "1个霸符，2个霸符",
+      "score": 0.99953,
+      "text_correct": true,
+      "id_correct": true,
+      "wrong_unique_id": false,
+      "matches": [
+        {
+          "id": "30186",
+          "name": "1个霸符，2个霸符"
+        }
+      ],
+      "ms": 13.11
+    },
+    {
+      "id": "30187",
+      "variant": "clean32",
+      "expected": "锅铲厨房",
+      "predicted": "锅铲厨房",
+      "score": 0.99992,
+      "text_correct": true,
+      "id_correct": true,
+      "wrong_unique_id": false,
+      "matches": [
+        {
+          "id": "30187",
+          "name": "锅铲厨房"
+        }
+      ],
+      "ms": 13.17
+    },
+    {
+      "id": "30205",
+      "variant": "clean32",
+      "expected": "意料之中的意外",
+      "predicted": "意料之中的意外",
+      "score": 0.99998,
+      "text_correct": true,
+      "id_correct": true,
+      "wrong_unique_id": false,
+      "matches": [
+        {
+          "id": "30205",
+          "name": "意料之中的意外"
+        }
+      ],
+      "ms": 13.45
+    },
+    {
+      "id": "30217",
+      "variant": "clean32",
+      "expected": "投资策略 II",
+      "predicted": "投资策略Ⅱ",
+      "score": 0.9933,
+      "text_correct": true,
+      "id_correct": true,
+      "wrong_unique_id": false,
+      "matches": [
+        {
+          "id": "30217",
+          "name": "投资策略 II"
+        }
+      ],
+      "ms": 13.12
+    },
+    {
+      "id": "30521",
+      "variant": "clean32",
+      "expected": "坚守防线",
+      "predicted": "坚守防线",
+      "score": 0.99988,
+      "text_correct": true,
+      "id_correct": true,
+      "wrong_unique_id": false,
+      "matches": [
+        {
+          "id": "30521",
+          "name": "坚守防线"
+        }
+      ],
+      "ms": 13.05
+    },
+    {
+      "id": "30705",
+      "variant": "clean32",
+      "expected": "后排蓝图",
+      "predicted": "后排蓝图",
+      "score": 0.99966,
+      "text_correct": true,
+      "id_correct": true,
+      "wrong_unique_id": false,
+      "matches": [
+        {
+          "id": "30705",
+          "name": "后排蓝图"
+        }
+      ],
+      "ms": 13.26
+    },
+    {
+      "id": "30706",
+      "variant": "clean32",
+      "expected": "前线地基",
+      "predicted": "前线地基",
+      "score": 0.99998,
+      "text_correct": true,
+      "id_correct": true,
+      "wrong_unique_id": false,
+      "matches": [
+        {
+          "id": "30706",
+          "name": "前线地基"
+        }
+      ],
+      "ms": 14.08
+    },
+    {
+      "id": "30731",
+      "variant": "clean32",
+      "expected": "扩展包++",
+      "predicted": "扩展包++",
+      "score": 0.99116,
+      "text_correct": true,
+      "id_correct": true,
+      "wrong_unique_id": false,
+      "matches": [
+        {
+          "id": "30731",
+          "name": "扩展包++"
+        }
+      ],
+      "ms": 14.1
+    },
+    {
+      "id": "30744",
+      "variant": "clean32",
+      "expected": "残留魔力++",
+      "predicted": "残留魔力++",
+      "score": 0.97046,
+      "text_correct": true,
+      "id_correct": true,
+      "wrong_unique_id": false,
+      "matches": [
+        {
+          "id": "30744",
+          "name": "残留魔力++"
+        }
+      ],
+      "ms": 13.91
+    },
+    {
+      "id": "30747",
+      "variant": "clean32",
+      "expected": "基础装备大冒险",
+      "predicted": "基础装备大冒险",
+      "score": 0.9991,
+      "text_correct": true,
+      "id_correct": true,
+      "wrong_unique_id": false,
+      "matches": [
+        {
+          "id": "30747",
+          "name": "基础装备大冒险"
+        }
+      ],
+      "ms": 13.56
+    },
+    {
+      "id": "30749",
+      "variant": "clean32",
+      "expected": "拼盘天梯",
+      "predicted": "拼盘天梯",
+      "score": 0.99954,
+      "text_correct": true,
+      "id_correct": true,
+      "wrong_unique_id": false,
+      "matches": [
+        {
+          "id": "30749",
+          "name": "拼盘天梯"
+        }
+      ],
+      "ms": 13.22
+    },
+    {
+      "id": "30750",
+      "variant": "clean32",
+      "expected": "纵深 III",
+      "predicted": "纵深",
+      "score": 0.99998,
+      "text_correct": false,
+      "id_correct": false,
+      "wrong_unique_id": false,
+      "matches": [],
+      "ms": 13.24,
+      "failure_crop": "clean32-30750.png"
+    },
+    {
+      "id": "30757",
+      "variant": "clean32",
+      "expected": "锻造器套娃",
+      "predicted": "锻造器套娃",
+      "score": 0.99969,
+      "text_correct": true,
+      "id_correct": true,
+      "wrong_unique_id": false,
+      "matches": [
+        {
+          "id": "30757",
+          "name": "锻造器套娃"
+        }
+      ],
+      "ms": 12.76
+    },
+    {
+      "id": "30760",
+      "variant": "clean32",
+      "expected": "致命丽花",
+      "predicted": "致命丽花",
+      "score": 0.99998,
+      "text_correct": true,
+      "id_correct": false,
+      "wrong_unique_id": false,
+      "matches": [
+        {
+          "id": "20760",
+          "name": "致命丽花"
+        },
+        {
+          "id": "30760",
+          "name": "致命丽花"
+        }
+      ],
+      "ms": 12.66,
+      "failure_crop": "clean32-30760.png"
+    },
+    {
+      "id": "30764",
+      "variant": "clean32",
+      "expected": "兽性本能",
+      "predicted": "兽性本能",
+      "score": 0.99958,
+      "text_correct": true,
+      "id_correct": false,
+      "wrong_unique_id": false,
+      "matches": [
+        {
+          "id": "20764",
+          "name": "兽性本能"
+        },
+        {
+          "id": "30764",
+          "name": "兽性本能"
+        }
+      ],
+      "ms": 13.16,
+      "failure_crop": "clean32-30764.png"
+    },
+    {
+      "id": "30772",
+      "variant": "clean32",
+      "expected": "弈子套娃",
+      "predicted": "弈子套娃",
+      "score": 0.99963,
+      "text_correct": true,
+      "id_correct": false,
+      "wrong_unique_id": false,
+      "matches": [
+        {
+          "id": "30772",
+          "name": "弈子套娃"
+        },
+        {
+          "id": "30773",
+          "name": "弈子套娃"
+        },
+        {
+          "id": "30774",
+          "name": "弈子套娃"
+        }
+      ],
+      "ms": 13.2,
+      "failure_crop": "clean32-30772.png"
+    },
+    {
+      "id": "30773",
+      "variant": "clean32",
+      "expected": "弈子套娃",
+      "predicted": "弈子套娃",
+      "score": 0.99963,
+      "text_correct": true,
+      "id_correct": false,
+      "wrong_unique_id": false,
+      "matches": [
+        {
+          "id": "30772",
+          "name": "弈子套娃"
+        },
+        {
+          "id": "30773",
+          "name": "弈子套娃"
+        },
+        {
+          "id": "30774",
+          "name": "弈子套娃"
+        }
+      ],
+      "ms": 12.83,
+      "failure_crop": "clean32-30773.png"
+    },
+    {
+      "id": "30774",
+      "variant": "clean32",
+      "expected": "弈子套娃",
+      "predicted": "弈子套娃",
+      "score": 0.99963,
+      "text_correct": true,
+      "id_correct": false,
+      "wrong_unique_id": false,
+      "matches": [
+        {
+          "id": "30772",
+          "name": "弈子套娃"
+        },
+        {
+          "id": "30773",
+          "name": "弈子套娃"
+        },
+        {
+          "id": "30774",
+          "name": "弈子套娃"
+        }
+      ],
+      "ms": 12.7,
+      "failure_crop": "clean32-30774.png"
+    },
+    {
+      "id": "30775",
+      "variant": "clean32",
+      "expected": "意外之礼+",
+      "predicted": "意外之礼+",
+      "score": 0.99475,
+      "text_correct": true,
+      "id_correct": true,
+      "wrong_unique_id": false,
+      "matches": [
+        {
+          "id": "30775",
+          "name": "意外之礼+"
+        }
+      ],
+      "ms": 12.9
+    },
+    {
+      "id": "30780",
+      "variant": "clean32",
+      "expected": "日月同辉+",
+      "predicted": "日月同辉+",
+      "score": 0.99232,
+      "text_correct": true,
+      "id_correct": true,
+      "wrong_unique_id": false,
+      "matches": [
+        {
+          "id": "30780",
+          "name": "日月同辉+"
+        }
+      ],
+      "ms": 12.67
+    },
+    {
+      "id": "40006",
+      "variant": "clean32",
+      "expected": "灵活摇摆",
+      "predicted": "灵活摇摆",
+      "score": 0.98382,
+      "text_correct": true,
+      "id_correct": true,
+      "wrong_unique_id": false,
+      "matches": [
+        {
+          "id": "40006",
+          "name": "灵活摇摆"
+        }
+      ],
+      "ms": 12.73
+    },
+    {
+      "id": "40008",
+      "variant": "clean32",
+      "expected": "硬性承诺",
+      "predicted": "硬性承诺",
+      "score": 0.99986,
+      "text_correct": true,
+      "id_correct": true,
+      "wrong_unique_id": false,
+      "matches": [
+        {
+          "id": "40008",
+          "name": "硬性承诺"
+        }
+      ],
+      "ms": 12.67
+    },
+    {
+      "id": "40757",
+      "variant": "clean32",
+      "expected": "锻造器套娃+",
+      "predicted": "锻造器套娃+",
+      "score": 0.99745,
+      "text_correct": true,
+      "id_correct": true,
+      "wrong_unique_id": false,
+      "matches": [
+        {
+          "id": "40757",
+          "name": "锻造器套娃+"
+        }
+      ],
+      "ms": 12.77
+    },
+    {
+      "id": "40760",
+      "variant": "clean32",
+      "expected": "吞噬花妖++",
+      "predicted": "吞噬花妖++",
+      "score": 0.96403,
+      "text_correct": true,
+      "id_correct": true,
+      "wrong_unique_id": false,
+      "matches": [
+        {
+          "id": "40760",
+          "name": "吞噬花妖++"
+        }
+      ],
+      "ms": 13.39
+    },
+    {
+      "id": "40764",
+      "variant": "clean32",
+      "expected": "兽性本能+",
+      "predicted": "兽性本能+",
+      "score": 0.99146,
+      "text_correct": true,
+      "id_correct": false,
+      "wrong_unique_id": false,
+      "matches": [
+        {
+          "id": "40764",
+          "name": "兽性本能+"
+        },
+        {
+          "id": "50764",
+          "name": "兽性本能+"
+        }
+      ],
+      "ms": 13.46,
+      "failure_crop": "clean32-40764.png"
+    },
+    {
+      "id": "50764",
+      "variant": "clean32",
+      "expected": "兽性本能+",
+      "predicted": "兽性本能+",
+      "score": 0.99146,
+      "text_correct": true,
+      "id_correct": false,
+      "wrong_unique_id": false,
+      "matches": [
+        {
+          "id": "40764",
+          "name": "兽性本能+"
+        },
+        {
+          "id": "50764",
+          "name": "兽性本能+"
+        }
+      ],
+      "ms": 14.93,
+      "failure_crop": "clean32-50764.png"
+    },
+    {
+      "id": "1148",
+      "variant": "clean32",
+      "expected": "潘朵拉的备战席",
+      "predicted": "潘朵拉的备战席",
+      "score": 0.99977,
+      "text_correct": true,
+      "id_correct": true,
+      "wrong_unique_id": false,
+      "matches": [
+        {
+          "id": "1148",
+          "name": "潘朵拉的备战席"
+        }
+      ],
+      "ms": 13.44
+    },
+    {
+      "id": "2018",
+      "variant": "clean32",
+      "expected": "源计划植入",
+      "predicted": "源计划植入",
+      "score": 0.99895,
+      "text_correct": true,
+      "id_correct": true,
+      "wrong_unique_id": false,
+      "matches": [
+        {
+          "id": "2018",
+          "name": "源计划植入"
+        }
+      ],
+      "ms": 13.63
+    },
+    {
+      "id": "2110",
+      "variant": "clean32",
+      "expected": "源计划上行链路",
+      "predicted": "源计划上行链路",
+      "score": 0.9999,
+      "text_correct": true,
+      "id_correct": true,
+      "wrong_unique_id": false,
+      "matches": [
+        {
+          "id": "2110",
+          "name": "源计划上行链路"
+        }
+      ],
+      "ms": 13.49
+    },
+    {
+      "id": "3852",
+      "variant": "clean32",
+      "expected": "来个好伙计！",
+      "predicted": "来个好伙计！",
+      "score": 0.99932,
+      "text_correct": true,
+      "id_correct": true,
+      "wrong_unique_id": false,
+      "matches": [
+        {
+          "id": "3852",
+          "name": "来个好伙计！"
+        }
+      ],
+      "ms": 13.32
+    },
+    {
+      "id": "10559",
+      "variant": "clean32",
+      "expected": "轻量魔法投掷",
+      "predicted": "轻量魔法投掷",
+      "score": 0.99973,
+      "text_correct": true,
+      "id_correct": true,
+      "wrong_unique_id": false,
+      "matches": [
+        {
+          "id": "10559",
+          "name": "轻量魔法投掷"
+        }
+      ],
+      "ms": 13.78
+    },
+    {
+      "id": "10573",
+      "variant": "clean32",
+      "expected": "拳击课程",
+      "predicted": "拳击课程",
+      "score": 0.99982,
+      "text_correct": true,
+      "id_correct": true,
+      "wrong_unique_id": false,
+      "matches": [
+        {
+          "id": "10573",
+          "name": "拳击课程"
+        }
+      ],
+      "ms": 13.25
+    },
+    {
+      "id": "10579",
+      "variant": "clean32",
+      "expected": "战时补给：巨人腰带",
+      "predicted": "战时补给：巨人腰带",
+      "score": 0.99941,
+      "text_correct": true,
+      "id_correct": true,
+      "wrong_unique_id": false,
+      "matches": [
+        {
+          "id": "10579",
+          "name": "战时补给：巨人腰带"
+        }
+      ],
+      "ms": 13.31
+    },
+    {
+      "id": "10580",
+      "variant": "clean32",
+      "expected": "战时补给：无用大棒",
+      "predicted": "战时补给：无用大棒",
+      "score": 0.99979,
+      "text_correct": true,
+      "id_correct": true,
+      "wrong_unique_id": false,
+      "matches": [
+        {
+          "id": "10580",
+          "name": "战时补给：无用大棒"
+        }
+      ],
+      "ms": 13.05
+    },
+    {
+      "id": "10582",
+      "variant": "clean32",
+      "expected": "战时补给：暴风大剑",
+      "predicted": "战时补给：暴风大剑",
+      "score": 0.9998,
+      "text_correct": true,
+      "id_correct": true,
+      "wrong_unique_id": false,
+      "matches": [
+        {
+          "id": "10582",
+          "name": "战时补给：暴风大剑"
+        }
+      ],
+      "ms": 13.4
+    },
+    {
+      "id": "10583",
+      "variant": "clean32",
+      "expected": "战时补给：反曲之弓",
+      "predicted": "战时补给：反曲之弓",
+      "score": 0.9962,
+      "text_correct": true,
+      "id_correct": true,
+      "wrong_unique_id": false,
+      "matches": [
+        {
+          "id": "10583",
+          "name": "战时补给：反曲之弓"
+        }
+      ],
+      "ms": 13.13
+    },
+    {
+      "id": "10584",
+      "variant": "clean32",
+      "expected": "认知税",
+      "predicted": "认知税",
+      "score": 0.99943,
+      "text_correct": true,
+      "id_correct": true,
+      "wrong_unique_id": false,
+      "matches": [
+        {
+          "id": "10584",
+          "name": "认知税"
+        }
+      ],
+      "ms": 13.24
+    },
+    {
+      "id": "10585",
+      "variant": "clean32",
+      "expected": "认知税+",
+      "predicted": "认知税+",
+      "score": 0.99877,
+      "text_correct": true,
+      "id_correct": true,
+      "wrong_unique_id": false,
+      "matches": [
+        {
+          "id": "10585",
+          "name": "认知税+"
+        }
+      ],
+      "ms": 13.4
+    },
+    {
+      "id": "10586",
+      "variant": "clean32",
+      "expected": "博弈开启",
+      "predicted": "博弈开启",
+      "score": 0.99924,
+      "text_correct": true,
+      "id_correct": true,
+      "wrong_unique_id": false,
+      "matches": [
+        {
+          "id": "10586",
+          "name": "博弈开启"
+        }
+      ],
+      "ms": 13.38
+    },
+    {
+      "id": "10587",
+      "variant": "clean32",
+      "expected": "高塔",
+      "predicted": "高塔",
+      "score": 0.99972,
+      "text_correct": true,
+      "id_correct": true,
+      "wrong_unique_id": false,
+      "matches": [
+        {
+          "id": "10587",
+          "name": "高塔"
+        }
+      ],
+      "ms": 13.1
+    },
+    {
+      "id": "10614",
+      "variant": "clean32",
+      "expected": "手气不错",
+      "predicted": "手气不错",
+      "score": 0.99931,
+      "text_correct": true,
+      "id_correct": true,
+      "wrong_unique_id": false,
+      "matches": [
+        {
+          "id": "10614",
+          "name": "手气不错"
+        }
+      ],
+      "ms": 13.52
+    },
+    {
+      "id": "10615",
+      "variant": "clean32",
+      "expected": "拥抱 I",
+      "predicted": "拥抱",
+      "score": 0.9964,
+      "text_correct": false,
+      "id_correct": false,
+      "wrong_unique_id": false,
+      "matches": [],
+      "ms": 13.4,
+      "failure_crop": "clean32-10615.png"
+    },
+    {
+      "id": "10616",
+      "variant": "clean32",
+      "expected": "拥抱 II",
+      "predicted": "拥抱Ⅱ",
+      "score": 0.97858,
+      "text_correct": true,
+      "id_correct": true,
+      "wrong_unique_id": false,
+      "matches": [
+        {
+          "id": "10616",
+          "name": "拥抱 II"
+        }
+      ],
+      "ms": 13.04
+    },
+    {
+      "id": "10631",
+      "variant": "clean32",
+      "expected": "小小福袋",
+      "predicted": "小小福袋",
+      "score": 0.99977,
+      "text_correct": true,
+      "id_correct": true,
+      "wrong_unique_id": false,
+      "matches": [
+        {
+          "id": "10631",
+          "name": "小小福袋"
+        }
+      ],
+      "ms": 12.6
+    },
+    {
+      "id": "10632",
+      "variant": "clean32",
+      "expected": "双子守护神",
+      "predicted": "双子守护神",
+      "score": 0.99993,
+      "text_correct": true,
+      "id_correct": true,
+      "wrong_unique_id": false,
+      "matches": [
+        {
+          "id": "10632",
+          "name": "双子守护神"
+        }
+      ],
+      "ms": 12.61
+    },
+    {
+      "id": "10784",
+      "variant": "clean32",
+      "expected": "别再错过",
+      "predicted": "别再错过",
+      "score": 0.9827,
+      "text_correct": true,
+      "id_correct": false,
+      "wrong_unique_id": false,
+      "matches": [
+        {
+          "id": "1625",
+          "name": "别再错过"
+        },
+        {
+          "id": "10784",
+          "name": "别再错过"
+        }
+      ],
+      "ms": 12.73,
+      "failure_crop": "clean32-10784.png"
+    },
+    {
+      "id": "20477",
+      "variant": "clean32",
+      "expected": "黄金命运",
+      "predicted": "黄金命运",
+      "score": 0.98917,
+      "text_correct": true,
+      "id_correct": true,
+      "wrong_unique_id": false,
+      "matches": [
+        {
+          "id": "20477",
+          "name": "黄金命运"
+        }
+      ],
+      "ms": 12.76
+    },
+    {
+      "id": "20478",
+      "variant": "clean32",
+      "expected": "黄金命运+",
+      "predicted": "黄金命运+",
+      "score": 0.96023,
+      "text_correct": true,
+      "id_correct": true,
+      "wrong_unique_id": false,
+      "matches": [
+        {
+          "id": "20478",
+          "name": "黄金命运+"
+        }
+      ],
+      "ms": 12.75
+    },
+    {
+      "id": "20494",
+      "variant": "clean32",
+      "expected": "白银命运+",
+      "predicted": "白银命运+",
+      "score": 0.99605,
+      "text_correct": true,
+      "id_correct": true,
+      "wrong_unique_id": false,
+      "matches": [
+        {
+          "id": "20494",
+          "name": "白银命运+"
+        }
+      ],
+      "ms": 12.81
+    },
+    {
+      "id": "20502",
+      "variant": "clean32",
+      "expected": "更要命的帽子",
+      "predicted": "更要命的帽子",
+      "score": 0.99977,
+      "text_correct": true,
+      "id_correct": true,
+      "wrong_unique_id": false,
+      "matches": [
+        {
+          "id": "20502",
+          "name": "更要命的帽子"
+        }
+      ],
+      "ms": 12.72
+    },
+    {
+      "id": "20575",
+      "variant": "clean32",
+      "expected": "救赎盔甲",
+      "predicted": "救赎盔甲",
+      "score": 0.9997,
+      "text_correct": true,
+      "id_correct": true,
+      "wrong_unique_id": false,
+      "matches": [
+        {
+          "id": "20575",
+          "name": "救赎盔甲"
+        }
+      ],
+      "ms": 13.32
+    },
+    {
+      "id": "20577",
+      "variant": "clean32",
+      "expected": "承诺之护",
+      "predicted": "承诺之护",
+      "score": 0.9999,
+      "text_correct": true,
+      "id_correct": true,
+      "wrong_unique_id": false,
+      "matches": [
+        {
+          "id": "20577",
+          "name": "承诺之护"
+        }
+      ],
+      "ms": 12.76
+    },
+    {
+      "id": "20578",
+      "variant": "clean32",
+      "expected": "心之钢",
+      "predicted": "心之钢",
+      "score": 0.99996,
+      "text_correct": true,
+      "id_correct": true,
+      "wrong_unique_id": false,
+      "matches": [
+        {
+          "id": "20578",
+          "name": "心之钢"
+        }
+      ],
+      "ms": 12.74
+    },
+    {
+      "id": "20584",
+      "variant": "clean32",
+      "expected": "高级贷款+",
+      "predicted": "高级贷款+",
+      "score": 0.99768,
+      "text_correct": true,
+      "id_correct": true,
+      "wrong_unique_id": false,
+      "matches": [
+        {
+          "id": "20584",
+          "name": "高级贷款+"
+        }
+      ],
+      "ms": 12.76
+    },
+    {
+      "id": "20586",
+      "variant": "clean32",
+      "expected": "炽天使之拥",
+      "predicted": "炽天使之拥",
+      "score": 0.99947,
+      "text_correct": true,
+      "id_correct": true,
+      "wrong_unique_id": false,
+      "matches": [
+        {
+          "id": "20586",
+          "name": "炽天使之拥"
+        }
+      ],
+      "ms": 13.63
+    },
+    {
+      "id": "20593",
+      "variant": "clean32",
+      "expected": "单身板甲",
+      "predicted": "单身板甲",
+      "score": 0.99843,
+      "text_correct": true,
+      "id_correct": true,
+      "wrong_unique_id": false,
+      "matches": [
+        {
+          "id": "20593",
+          "name": "单身板甲"
+        }
+      ],
+      "ms": 13.29
+    },
+    {
+      "id": "20612",
+      "variant": "clean32",
+      "expected": "三相庇护",
+      "predicted": "三相庇护",
+      "score": 0.99324,
+      "text_correct": true,
+      "id_correct": true,
+      "wrong_unique_id": false,
+      "matches": [
+        {
+          "id": "20612",
+          "name": "三相庇护"
+        }
+      ],
+      "ms": 13.17
+    },
+    {
+      "id": "20613",
+      "variant": "clean32",
+      "expected": "认知过载",
+      "predicted": "认知过载",
+      "score": 0.99994,
+      "text_correct": true,
+      "id_correct": true,
+      "wrong_unique_id": false,
+      "matches": [
+        {
+          "id": "20613",
+          "name": "认知过载"
+        }
+      ],
+      "ms": 13.14
+    },
+    {
+      "id": "20616",
+      "variant": "clean32",
+      "expected": "利落保镖",
+      "predicted": "利落保镖",
+      "score": 0.99961,
+      "text_correct": true,
+      "id_correct": true,
+      "wrong_unique_id": false,
+      "matches": [
+        {
+          "id": "20616",
+          "name": "利落保镖"
+        }
+      ],
+      "ms": 13.45
+    },
+    {
+      "id": "20619",
+      "variant": "clean32",
+      "expected": "双城赢家",
+      "predicted": "双城赢家",
+      "score": 0.98072,
+      "text_correct": true,
+      "id_correct": true,
+      "wrong_unique_id": false,
+      "matches": [
+        {
+          "id": "20619",
+          "name": "双城赢家"
+        }
+      ],
+      "ms": 13.39
+    },
+    {
+      "id": "20624",
+      "variant": "clean32",
+      "expected": "生日聚会",
+      "predicted": "生日聚会",
+      "score": 0.99786,
+      "text_correct": true,
+      "id_correct": true,
+      "wrong_unique_id": false,
+      "matches": [
+        {
+          "id": "20624",
+          "name": "生日聚会"
+        }
+      ],
+      "ms": 13.11
+    },
+    {
+      "id": "20625",
+      "variant": "clean32",
+      "expected": "宝宝学院",
+      "predicted": "宝宝学院",
+      "score": 0.99999,
+      "text_correct": true,
+      "id_correct": true,
+      "wrong_unique_id": false,
+      "matches": [
+        {
+          "id": "20625",
+          "name": "宝宝学院"
+        }
+      ],
+      "ms": 13.68
+    },
+    {
+      "id": "20626",
+      "variant": "clean32",
+      "expected": "8级嘀干的传说",
+      "predicted": "8级嘀干的传说",
+      "score": 0.99853,
+      "text_correct": true,
+      "id_correct": true,
+      "wrong_unique_id": false,
+      "matches": [
+        {
+          "id": "20626",
+          "name": "8级嘀干的传说"
+        }
+      ],
+      "ms": 13.08
+    },
+    {
+      "id": "20628",
+      "variant": "clean32",
+      "expected": "三幻神",
+      "predicted": "三幻神",
+      "score": 0.99983,
+      "text_correct": true,
+      "id_correct": true,
+      "wrong_unique_id": false,
+      "matches": [
+        {
+          "id": "20628",
+          "name": "三幻神"
+        }
+      ],
+      "ms": 13.23
+    },
+    {
+      "id": "20629",
+      "variant": "clean32",
+      "expected": "杖之工匠",
+      "predicted": "杖之工匠",
+      "score": 0.99884,
+      "text_correct": true,
+      "id_correct": true,
+      "wrong_unique_id": false,
+      "matches": [
+        {
+          "id": "20629",
+          "name": "杖之工匠"
+        }
+      ],
+      "ms": 13.1
+    },
+    {
+      "id": "20630",
+      "variant": "clean32",
+      "expected": "剑之工匠",
+      "predicted": "剑之工匠",
+      "score": 0.99966,
+      "text_correct": true,
+      "id_correct": true,
+      "wrong_unique_id": false,
+      "matches": [
+        {
+          "id": "20630",
+          "name": "剑之工匠"
+        }
+      ],
+      "ms": 13.44
+    },
+    {
+      "id": "20633",
+      "variant": "clean32",
+      "expected": "蔓延之根",
+      "predicted": "蔓延之根",
+      "score": 0.99945,
+      "text_correct": true,
+      "id_correct": true,
+      "wrong_unique_id": false,
+      "matches": [
+        {
+          "id": "20633",
+          "name": "蔓延之根"
+        }
+      ],
+      "ms": 13.77
+    },
+    {
+      "id": "20642",
+      "variant": "clean32",
+      "expected": "摇钱树",
+      "predicted": "摇钱树",
+      "score": 0.99589,
+      "text_correct": true,
+      "id_correct": true,
+      "wrong_unique_id": false,
+      "matches": [
+        {
+          "id": "20642",
+          "name": "摇钱树"
+        }
+      ],
+      "ms": 20.24
+    },
+    {
+      "id": "20649",
+      "variant": "clean32",
+      "expected": "挑战者的优雅",
+      "predicted": "挑战者的优雅",
+      "score": 0.9999,
+      "text_correct": true,
+      "id_correct": true,
+      "wrong_unique_id": false,
+      "matches": [
+        {
+          "id": "20649",
+          "name": "挑战者的优雅"
+        }
+      ],
+      "ms": 13.48
+    },
+    {
+      "id": "20651",
+      "variant": "clean32",
+      "expected": "金霖龙",
+      "predicted": "金霖龙",
+      "score": 0.9995,
+      "text_correct": true,
+      "id_correct": true,
+      "wrong_unique_id": false,
+      "matches": [
+        {
+          "id": "20651",
+          "name": "金霖龙"
+        }
+      ],
+      "ms": 13.14
+    },
+    {
+      "id": "20654",
+      "variant": "clean32",
+      "expected": "获得21金币",
+      "predicted": "获得21金币",
+      "score": 0.99969,
+      "text_correct": true,
+      "id_correct": true,
+      "wrong_unique_id": false,
+      "matches": [
+        {
+          "id": "20654",
+          "name": "获得21金币"
+        }
+      ],
+      "ms": 13.09
+    },
+    {
+      "id": "20661",
+      "variant": "clean32",
+      "expected": "后期收益",
+      "predicted": "后期收益",
+      "score": 0.99999,
+      "text_correct": true,
+      "id_correct": true,
+      "wrong_unique_id": false,
+      "matches": [
+        {
+          "id": "20661",
+          "name": "后期收益"
+        }
+      ],
+      "ms": 13.31
+    },
+    {
+      "id": "20673",
+      "variant": "clean32",
+      "expected": "纺织魔法",
+      "predicted": "纺织魔法",
+      "score": 0.99983,
+      "text_correct": true,
+      "id_correct": true,
+      "wrong_unique_id": false,
+      "matches": [
+        {
+          "id": "20673",
+          "name": "纺织魔法"
+        }
+      ],
+      "ms": 13.15
+    },
+    {
+      "id": "20675",
+      "variant": "clean32",
+      "expected": "一波带走俩",
+      "predicted": "一波带走俩",
+      "score": 0.99568,
+      "text_correct": true,
+      "id_correct": true,
+      "wrong_unique_id": false,
+      "matches": [
+        {
+          "id": "20675",
+          "name": "一波带走俩"
+        }
+      ],
+      "ms": 12.98
+    },
+    {
+      "id": "20681",
+      "variant": "clean32",
+      "expected": "蔓延之根+",
+      "predicted": "蔓延之根+",
+      "score": 0.9794,
+      "text_correct": true,
+      "id_correct": true,
+      "wrong_unique_id": false,
+      "matches": [
+        {
+          "id": "20681",
+          "name": "蔓延之根+"
+        }
+      ],
+      "ms": 13.16
+    },
+    {
+      "id": "20698",
+      "variant": "clean32",
+      "expected": "镀金钢铁",
+      "predicted": "镀金钢铁",
+      "score": 0.99948,
+      "text_correct": true,
+      "id_correct": true,
+      "wrong_unique_id": false,
+      "matches": [
+        {
+          "id": "20698",
+          "name": "镀金钢铁"
+        }
+      ],
+      "ms": 13.54
+    },
+    {
+      "id": "20701",
+      "variant": "clean32",
+      "expected": "贪财",
+      "predicted": "贪财",
+      "score": 0.99911,
+      "text_correct": true,
+      "id_correct": true,
+      "wrong_unique_id": false,
+      "matches": [
+        {
+          "id": "20701",
+          "name": "贪财"
+        }
+      ],
+      "ms": 13.31
+    },
+    {
+      "id": "20771",
+      "variant": "clean32",
+      "expected": "烧起来",
+      "predicted": "烧起来",
+      "score": 0.99974,
+      "text_correct": true,
+      "id_correct": false,
+      "wrong_unique_id": false,
+      "matches": [
+        {
+          "id": "10771",
+          "name": "烧起来"
+        },
+        {
+          "id": "20771",
+          "name": "烧起来"
+        }
+      ],
+      "ms": 13.51,
+      "failure_crop": "clean32-20771.png"
+    },
+    {
+      "id": "20783",
+      "variant": "clean32",
+      "expected": "是我，宝贝！",
+      "predicted": "是我，宝贝！",
+      "score": 0.99972,
+      "text_correct": true,
+      "id_correct": true,
+      "wrong_unique_id": false,
+      "matches": [
+        {
+          "id": "20783",
+          "name": "是我，宝贝！"
+        }
+      ],
+      "ms": 15.37
+    },
+    {
+      "id": "30491",
+      "variant": "clean32",
+      "expected": "棱彩命运",
+      "predicted": "棱彩命运",
+      "score": 0.99979,
+      "text_correct": true,
+      "id_correct": true,
+      "wrong_unique_id": false,
+      "matches": [
+        {
+          "id": "30491",
+          "name": "棱彩命运"
+        }
+      ],
+      "ms": 14.35
+    },
+    {
+      "id": "30494",
+      "variant": "clean32",
+      "expected": "白银命运++",
+      "predicted": "白银命运++",
+      "score": 0.96908,
+      "text_correct": true,
+      "id_correct": true,
+      "wrong_unique_id": false,
+      "matches": [
+        {
+          "id": "30494",
+          "name": "白银命运++"
+        }
+      ],
+      "ms": 14.28
+    },
+    {
+      "id": "30584",
+      "variant": "clean32",
+      "expected": "高级贷款",
+      "predicted": "高级贷款",
+      "score": 0.99963,
+      "text_correct": true,
+      "id_correct": true,
+      "wrong_unique_id": false,
+      "matches": [
+        {
+          "id": "30584",
+          "name": "高级贷款"
+        }
+      ],
+      "ms": 13.08
+    },
+    {
+      "id": "30599",
+      "variant": "clean32",
+      "expected": "灵魂唤醒",
+      "predicted": "灵魂唤醒",
+      "score": 0.99867,
+      "text_correct": true,
+      "id_correct": true,
+      "wrong_unique_id": false,
+      "matches": [
+        {
+          "id": "30599",
+          "name": "灵魂唤醒"
+        }
+      ],
+      "ms": 13.13
+    },
+    {
+      "id": "30613",
+      "variant": "clean32",
+      "expected": "正义报复",
+      "predicted": "正义报复",
+      "score": 0.9996,
+      "text_correct": true,
+      "id_correct": true,
+      "wrong_unique_id": false,
+      "matches": [
+        {
+          "id": "30613",
+          "name": "正义报复"
+        }
+      ],
+      "ms": 13.81
+    },
+    {
+      "id": "30617",
+      "variant": "clean32",
+      "expected": "男爵幻域",
+      "predicted": "男爵幻域",
+      "score": 0.99999,
+      "text_correct": true,
+      "id_correct": true,
+      "wrong_unique_id": false,
+      "matches": [
+        {
+          "id": "30617",
+          "name": "男爵幻域"
+        }
+      ],
+      "ms": 14.29
+    },
+    {
+      "id": "30634",
+      "variant": "clean32",
+      "expected": "纹章树",
+      "predicted": "纹章树",
+      "score": 0.99995,
+      "text_correct": true,
+      "id_correct": true,
+      "wrong_unique_id": false,
+      "matches": [
+        {
+          "id": "30634",
+          "name": "纹章树"
+        }
+      ],
+      "ms": 13.29
+    },
+    {
+      "id": "30637",
+      "variant": "clean32",
+      "expected": "可大可小",
+      "predicted": "可大可小",
+      "score": 0.99994,
+      "text_correct": true,
+      "id_correct": true,
+      "wrong_unique_id": false,
+      "matches": [
+        {
+          "id": "30637",
+          "name": "可大可小"
+        }
+      ],
+      "ms": 13.43
+    },
+    {
+      "id": "30655",
+      "variant": "clean32",
+      "expected": "棱彩命运+",
+      "predicted": "棱彩命运+",
+      "score": 0.9891,
+      "text_correct": true,
+      "id_correct": true,
+      "wrong_unique_id": false,
+      "matches": [
+        {
+          "id": "30655",
+          "name": "棱彩命运+"
+        }
+      ],
+      "ms": 13.2
+    },
+    {
+      "id": "30656",
+      "variant": "clean32",
+      "expected": "贸易中心",
+      "predicted": "贸易中心",
+      "score": 0.9999,
+      "text_correct": true,
+      "id_correct": true,
+      "wrong_unique_id": false,
+      "matches": [
+        {
+          "id": "30656",
+          "name": "贸易中心"
+        }
+      ],
+      "ms": 13.18
+    },
+    {
+      "id": "30665",
+      "variant": "clean32",
+      "expected": "甜点",
+      "predicted": "甜点",
+      "score": 0.99998,
+      "text_correct": true,
+      "id_correct": true,
+      "wrong_unique_id": false,
+      "matches": [
+        {
+          "id": "30665",
+          "name": "甜点"
+        }
+      ],
+      "ms": 13.07
+    },
+    {
+      "id": "30668",
+      "variant": "clean32",
+      "expected": "厨神阿福",
+      "predicted": "厨神阿福",
+      "score": 0.99973,
+      "text_correct": true,
+      "id_correct": true,
+      "wrong_unique_id": false,
+      "matches": [
+        {
+          "id": "30668",
+          "name": "厨神阿福"
+        }
+      ],
+      "ms": 13.49
+    },
+    {
+      "id": "30678",
+      "variant": "clean32",
+      "expected": "秘法帮派 II+",
+      "predicted": "秘法帮派Ⅱ+",
+      "score": 0.96088,
+      "text_correct": true,
+      "id_correct": true,
+      "wrong_unique_id": false,
+      "matches": [
+        {
+          "id": "30678",
+          "name": "秘法帮派 II+"
+        }
+      ],
+      "ms": 13.13
+    },
+    {
+      "id": "30679",
+      "variant": "clean32",
+      "expected": "秘法帮派 II++",
+      "predicted": "秘法帮派Ⅱ++",
+      "score": 0.92953,
+      "text_correct": true,
+      "id_correct": true,
+      "wrong_unique_id": false,
+      "matches": [
+        {
+          "id": "30679",
+          "name": "秘法帮派 II++"
+        }
+      ],
+      "ms": 13.32
+    },
+    {
+      "id": "30680",
+      "variant": "clean32",
+      "expected": "奢侈品订购",
+      "predicted": "奢侈品订购",
+      "score": 0.99926,
+      "text_correct": true,
+      "id_correct": true,
+      "wrong_unique_id": false,
+      "matches": [
+        {
+          "id": "30680",
+          "name": "奢侈品订购"
+        }
+      ],
+      "ms": 12.69
+    },
+    {
+      "id": "30682",
+      "variant": "clean32",
+      "expected": "纹章树+",
+      "predicted": "纹章树+",
+      "score": 0.9991,
+      "text_correct": true,
+      "id_correct": true,
+      "wrong_unique_id": false,
+      "matches": [
+        {
+          "id": "30682",
+          "name": "纹章树+"
+        }
+      ],
+      "ms": 13.19
+    },
+    {
+      "id": "30701",
+      "variant": "clean32",
+      "expected": "贪财+",
+      "predicted": "贪财+",
+      "score": 0.99754,
+      "text_correct": true,
+      "id_correct": true,
+      "wrong_unique_id": false,
+      "matches": [
+        {
+          "id": "30701",
+          "name": "贪财+"
+        }
+      ],
+      "ms": 13.06
+    },
+    {
+      "id": "30767",
+      "variant": "clean32",
+      "expected": "欧米茄之怪",
+      "predicted": "欧米茄之怪",
+      "score": 0.99952,
+      "text_correct": true,
+      "id_correct": false,
+      "wrong_unique_id": false,
+      "matches": [
+        {
+          "id": "20767",
+          "name": "欧米茄之怪"
+        },
+        {
+          "id": "30767",
+          "name": "欧米茄之怪"
+        }
+      ],
+      "ms": 13.23,
+      "failure_crop": "clean32-30767.png"
+    },
+    {
+      "id": "30768",
+      "variant": "clean32",
+      "expected": "自然庇护所",
+      "predicted": "自然庇护所",
+      "score": 0.99915,
+      "text_correct": true,
+      "id_correct": false,
+      "wrong_unique_id": false,
+      "matches": [
+        {
+          "id": "20768",
+          "name": "自然庇护所"
+        },
+        {
+          "id": "30768",
+          "name": "自然庇护所"
+        }
+      ],
+      "ms": 13.39,
+      "failure_crop": "clean32-30768.png"
+    },
+    {
+      "id": "30770",
+      "variant": "clean32",
+      "expected": "毛茸茸小朋友",
+      "predicted": "毛茸茸小朋友",
+      "score": 0.99964,
+      "text_correct": true,
+      "id_correct": false,
+      "wrong_unique_id": false,
+      "matches": [
+        {
+          "id": "20770",
+          "name": "毛茸茸小朋友"
+        },
+        {
+          "id": "30770",
+          "name": "毛茸茸小朋友"
+        }
+      ],
+      "ms": 13.14,
+      "failure_crop": "clean32-30770.png"
+    },
+    {
+      "id": "30782",
+      "variant": "clean32",
+      "expected": "创世神",
+      "predicted": "创世神",
+      "score": 0.99991,
+      "text_correct": true,
+      "id_correct": true,
+      "wrong_unique_id": false,
+      "matches": [
+        {
+          "id": "30782",
+          "name": "创世神"
+        }
+      ],
+      "ms": 13.43
+    },
+    {
+      "id": "1002",
+      "variant": "halfsize_jpeg55",
+      "expected": "存心失利",
+      "predicted": "存心失利",
+      "score": 0.9857,
+      "text_correct": true,
+      "id_correct": true,
+      "wrong_unique_id": false,
+      "matches": [
+        {
+          "id": "1002",
+          "name": "存心失利"
+        }
+      ],
+      "ms": 13.33
+    },
+    {
+      "id": "1003",
+      "variant": "halfsize_jpeg55",
+      "expected": "花到上头",
+      "predicted": "花到上头",
+      "score": 0.99968,
+      "text_correct": true,
+      "id_correct": true,
+      "wrong_unique_id": false,
+      "matches": [
+        {
+          "id": "1003",
+          "name": "花到上头"
+        }
+      ],
+      "ms": 13.08
+    },
+    {
+      "id": "1006",
+      "variant": "halfsize_jpeg55",
+      "expected": "装备百宝袋 I",
+      "predicted": "装备百宝袋！",
+      "score": 0.87365,
+      "text_correct": false,
+      "id_correct": false,
+      "wrong_unique_id": false,
+      "matches": [],
+      "ms": 13.27,
+      "failure_crop": "halfsize_jpeg55-1006.png"
+    },
+    {
+      "id": "1007",
+      "variant": "halfsize_jpeg55",
+      "expected": "潘朵拉的装备 I",
+      "predicted": "潘朵拉的装备|",
+      "score": 0.89988,
+      "text_correct": false,
+      "id_correct": false,
+      "wrong_unique_id": false,
+      "matches": [],
+      "ms": 13.02,
+      "failure_crop": "halfsize_jpeg55-1007.png"
+    },
+    {
+      "id": "1008",
+      "variant": "halfsize_jpeg55",
+      "expected": "打捞桶",
+      "predicted": "打捞桶",
+      "score": 0.99946,
+      "text_correct": true,
+      "id_correct": true,
+      "wrong_unique_id": false,
+      "matches": [
+        {
+          "id": "1008",
+          "name": "打捞桶"
+        }
+      ],
+      "ms": 13.51
+    },
+    {
+      "id": "1011",
+      "variant": "halfsize_jpeg55",
+      "expected": "清晰头脑",
+      "predicted": "清晰头脑",
+      "score": 0.99981,
+      "text_correct": true,
+      "id_correct": true,
+      "wrong_unique_id": false,
+      "matches": [
+        {
+          "id": "1011",
+          "name": "清晰头脑"
+        }
+      ],
+      "ms": 13.05
+    },
+    {
+      "id": "1019",
+      "variant": "halfsize_jpeg55",
+      "expected": "并肩作战 I",
+      "predicted": "并肩作战！",
+      "score": 0.89658,
+      "text_correct": false,
+      "id_correct": false,
+      "wrong_unique_id": false,
+      "matches": [],
+      "ms": 13.39,
+      "failure_crop": "halfsize_jpeg55-1019.png"
+    },
+    {
+      "id": "1021",
+      "variant": "halfsize_jpeg55",
+      "expected": "部分飞升",
+      "predicted": "部分飞升",
+      "score": 0.99498,
+      "text_correct": true,
+      "id_correct": true,
+      "wrong_unique_id": false,
+      "matches": [
+        {
+          "id": "1021",
+          "name": "部分飞升"
+        }
+      ],
+      "ms": 13.14
+    },
+    {
+      "id": "1023",
+      "variant": "halfsize_jpeg55",
+      "expected": "应急护甲 I",
+      "predicted": "应急护甲1",
+      "score": 0.90826,
+      "text_correct": false,
+      "id_correct": false,
+      "wrong_unique_id": false,
+      "matches": [],
+      "ms": 13.24,
+      "failure_crop": "halfsize_jpeg55-1023.png"
+    },
+    {
+      "id": "1068",
+      "variant": "halfsize_jpeg55",
+      "expected": "秘法帮派",
+      "predicted": "秘法帮派",
+      "score": 0.99993,
+      "text_correct": true,
+      "id_correct": true,
+      "wrong_unique_id": false,
+      "matches": [
+        {
+          "id": "1068",
+          "name": "秘法帮派"
+        }
+      ],
+      "ms": 13.58
+    },
+    {
+      "id": "1093",
+      "variant": "halfsize_jpeg55",
+      "expected": "休眠锻炉",
+      "predicted": "休眠锻炉",
+      "score": 0.99914,
+      "text_correct": true,
+      "id_correct": true,
+      "wrong_unique_id": false,
+      "matches": [
+        {
+          "id": "1093",
+          "name": "休眠锻炉"
+        }
+      ],
+      "ms": 13.24
+    },
+    {
+      "id": "1134",
+      "variant": "halfsize_jpeg55",
+      "expected": "嘀个痛快！ I",
+      "predicted": "嘀个痛快！！",
+      "score": 0.91767,
+      "text_correct": false,
+      "id_correct": false,
+      "wrong_unique_id": false,
+      "matches": [],
+      "ms": 13.1,
+      "failure_crop": "halfsize_jpeg55-1134.png"
+    },
+    {
+      "id": "1147",
+      "variant": "halfsize_jpeg55",
+      "expected": "后期专家",
+      "predicted": "后期专家",
+      "score": 0.99997,
+      "text_correct": true,
+      "id_correct": true,
+      "wrong_unique_id": false,
+      "matches": [
+        {
+          "id": "1147",
+          "name": "后期专家"
+        }
+      ],
+      "ms": 13.65
+    },
+    {
+      "id": "1158",
+      "variant": "halfsize_jpeg55",
+      "expected": "节外生枝",
+      "predicted": "节外生枝",
+      "score": 0.99902,
+      "text_correct": true,
+      "id_correct": true,
+      "wrong_unique_id": false,
+      "matches": [
+        {
+          "id": "1158",
+          "name": "节外生枝"
+        }
+      ],
+      "ms": 12.62
+    },
+    {
+      "id": "1478",
+      "variant": "halfsize_jpeg55",
+      "expected": "游神的盟友",
+      "predicted": "游神的盟友",
+      "score": 0.99994,
+      "text_correct": true,
+      "id_correct": true,
+      "wrong_unique_id": false,
+      "matches": [
+        {
+          "id": "1478",
+          "name": "游神的盟友"
+        }
+      ],
+      "ms": 13.31
+    },
+    {
+      "id": "1479",
+      "variant": "halfsize_jpeg55",
+      "expected": "一，二，三",
+      "predicted": "一, 二, 三",
+      "score": 0.74643,
+      "text_correct": true,
+      "id_correct": true,
+      "wrong_unique_id": false,
+      "matches": [
+        {
+          "id": "1479",
+          "name": "一，二，三"
+        }
+      ],
+      "ms": 13.28
+    },
+    {
+      "id": "1625",
+      "variant": "halfsize_jpeg55",
+      "expected": "别再错过",
+      "predicted": "别再错过",
+      "score": 0.99897,
+      "text_correct": true,
+      "id_correct": false,
+      "wrong_unique_id": false,
+      "matches": [
+        {
+          "id": "1625",
+          "name": "别再错过"
+        },
+        {
+          "id": "10784",
+          "name": "别再错过"
+        }
+      ],
+      "ms": 13.24,
+      "failure_crop": "halfsize_jpeg55-1625.png"
+    },
+    {
+      "id": "1634",
+      "variant": "halfsize_jpeg55",
+      "expected": "治疗法球 I",
+      "predicted": "治疗法球1",
+      "score": 0.89664,
+      "text_correct": false,
+      "id_correct": false,
+      "wrong_unique_id": false,
+      "matches": [],
+      "ms": 13.04,
+      "failure_crop": "halfsize_jpeg55-1634.png"
+    },
+    {
+      "id": "1646",
+      "variant": "halfsize_jpeg55",
+      "expected": "团队建设",
+      "predicted": "团队建设",
+      "score": 0.99997,
+      "text_correct": true,
+      "id_correct": true,
+      "wrong_unique_id": false,
+      "matches": [
+        {
+          "id": "1646",
+          "name": "团队建设"
+        }
+      ],
+      "ms": 13.44
+    },
+    {
+      "id": "1650",
+      "variant": "halfsize_jpeg55",
+      "expected": "一，二，五！",
+      "predicted": "一， 二， 五!",
+      "score": 0.71023,
+      "text_correct": true,
+      "id_correct": true,
+      "wrong_unique_id": false,
+      "matches": [
+        {
+          "id": "1650",
+          "name": "一，二，五！"
+        }
+      ],
+      "ms": 13.07
+    },
+    {
+      "id": "1701",
+      "variant": "halfsize_jpeg55",
+      "expected": "黑铁资产",
+      "predicted": "黑铁资产",
+      "score": 0.99992,
+      "text_correct": true,
+      "id_correct": true,
+      "wrong_unique_id": false,
+      "matches": [
+        {
+          "id": "1701",
+          "name": "黑铁资产"
+        }
+      ],
+      "ms": 13.35
+    },
+    {
+      "id": "1712",
+      "variant": "halfsize_jpeg55",
+      "expected": "不拘一格",
+      "predicted": "不拘一格",
+      "score": 0.99961,
+      "text_correct": true,
+      "id_correct": true,
+      "wrong_unique_id": false,
+      "matches": [
+        {
+          "id": "1712",
+          "name": "不拘一格"
+        }
+      ],
+      "ms": 13.62
+    },
+    {
+      "id": "1713",
+      "variant": "halfsize_jpeg55",
+      "expected": "对冲基金",
+      "predicted": "对冲基金",
+      "score": 0.99986,
+      "text_correct": true,
+      "id_correct": true,
+      "wrong_unique_id": false,
+      "matches": [
+        {
+          "id": "1713",
+          "name": "对冲基金"
+        }
+      ],
+      "ms": 12.97
+    },
+    {
+      "id": "1714",
+      "variant": "halfsize_jpeg55",
+      "expected": "银汤匙",
+      "predicted": "银汤匙",
+      "score": 0.99955,
+      "text_correct": true,
+      "id_correct": true,
+      "wrong_unique_id": false,
+      "matches": [
+        {
+          "id": "1714",
+          "name": "银汤匙"
+        }
+      ],
+      "ms": 13.21
+    },
+    {
+      "id": "1718",
+      "variant": "halfsize_jpeg55",
+      "expected": "基础装备自助餐",
+      "predicted": "基础装备自助餐",
+      "score": 0.99987,
+      "text_correct": true,
+      "id_correct": true,
+      "wrong_unique_id": false,
+      "matches": [
+        {
+          "id": "1718",
+          "name": "基础装备自助餐"
+        }
+      ],
+      "ms": 13.58
+    },
+    {
+      "id": "1789",
+      "variant": "halfsize_jpeg55",
+      "expected": "有用之材 I",
+      "predicted": "有用之材！",
+      "score": 0.93635,
+      "text_correct": false,
+      "id_correct": false,
+      "wrong_unique_id": false,
+      "matches": [],
+      "ms": 13.2,
+      "failure_crop": "halfsize_jpeg55-1789.png"
+    },
+    {
+      "id": "1895",
+      "variant": "halfsize_jpeg55",
+      "expected": "四费增援",
+      "predicted": "四费增援",
+      "score": 0.99948,
+      "text_correct": true,
+      "id_correct": true,
+      "wrong_unique_id": false,
+      "matches": [
+        {
+          "id": "1895",
+          "name": "四费增援"
+        }
+      ],
+      "ms": 13.77
+    },
+    {
+      "id": "2007",
+      "variant": "halfsize_jpeg55",
+      "expected": "潘朵拉的装备 II",
+      "predicted": "潘朵拉的装备Ⅱ",
+      "score": 0.99911,
+      "text_correct": true,
+      "id_correct": true,
+      "wrong_unique_id": false,
+      "matches": [
+        {
+          "id": "2007",
+          "name": "潘朵拉的装备 II"
+        }
+      ],
+      "ms": 13.19
+    },
+    {
+      "id": "2008",
+      "variant": "halfsize_jpeg55",
+      "expected": "打捞桶+",
+      "predicted": "打捞桶+",
+      "score": 0.99784,
+      "text_correct": true,
+      "id_correct": true,
+      "wrong_unique_id": false,
+      "matches": [
+        {
+          "id": "2008",
+          "name": "打捞桶+"
+        }
+      ],
+      "ms": 13.09
+    },
+    {
+      "id": "2021",
+      "variant": "halfsize_jpeg55",
+      "expected": "飞升",
+      "predicted": "飞升",
+      "score": 0.98612,
+      "text_correct": true,
+      "id_correct": true,
+      "wrong_unique_id": false,
+      "matches": [
+        {
+          "id": "2021",
+          "name": "飞升"
+        }
+      ],
+      "ms": 13.46
+    },
+    {
+      "id": "2022",
+      "variant": "halfsize_jpeg55",
+      "expected": "星界赐福 II",
+      "predicted": "星界赐福Ⅱ",
+      "score": 0.99904,
+      "text_correct": true,
+      "id_correct": true,
+      "wrong_unique_id": false,
+      "matches": [
+        {
+          "id": "2022",
+          "name": "星界赐福 II"
+        }
+      ],
+      "ms": 13.32
+    },
+    {
+      "id": "2023",
+      "variant": "halfsize_jpeg55",
+      "expected": "应急护甲 II",
+      "predicted": "应急护甲Ⅱ",
+      "score": 0.99918,
+      "text_correct": true,
+      "id_correct": true,
+      "wrong_unique_id": false,
+      "matches": [
+        {
+          "id": "2023",
+          "name": "应急护甲 II"
+        }
+      ],
+      "ms": 12.98
+    },
+    {
+      "id": "2069",
+      "variant": "halfsize_jpeg55",
+      "expected": "嘀嘀街区",
+      "predicted": "嘀嘀街区",
+      "score": 0.99642,
+      "text_correct": true,
+      "id_correct": true,
+      "wrong_unique_id": false,
+      "matches": [
+        {
+          "id": "2069",
+          "name": "嘀嘀街区"
+        }
+      ],
+      "ms": 13.52
+    },
+    {
+      "id": "2127",
+      "variant": "halfsize_jpeg55",
+      "expected": "变形重组器",
+      "predicted": "变形重组器",
+      "score": 0.99995,
+      "text_correct": true,
+      "id_correct": true,
+      "wrong_unique_id": false,
+      "matches": [
+        {
+          "id": "2127",
+          "name": "变形重组器"
+        }
+      ],
+      "ms": 13.25
+    },
+    {
+      "id": "2128",
+      "variant": "halfsize_jpeg55",
+      "expected": "珠光莲花 I",
+      "predicted": "珠光莲花1",
+      "score": 0.8541,
+      "text_correct": false,
+      "id_correct": false,
+      "wrong_unique_id": false,
+      "matches": [],
+      "ms": 13.06,
+      "failure_crop": "halfsize_jpeg55-2128.png"
+    },
+    {
+      "id": "2133",
+      "variant": "halfsize_jpeg55",
+      "expected": "好事成双 II",
+      "predicted": "好事成双Ⅱ",
+      "score": 0.99778,
+      "text_correct": true,
+      "id_correct": true,
+      "wrong_unique_id": false,
+      "matches": [
+        {
+          "id": "2133",
+          "name": "好事成双 II"
+        }
+      ],
+      "ms": 13.57
+    },
+    {
+      "id": "2184",
+      "variant": "halfsize_jpeg55",
+      "expected": "大百宝袋",
+      "predicted": "大百宝袋",
+      "score": 0.99992,
+      "text_correct": true,
+      "id_correct": true,
+      "wrong_unique_id": false,
+      "matches": [
+        {
+          "id": "2184",
+          "name": "大百宝袋"
+        }
+      ],
+      "ms": 13.23
+    },
+    {
+      "id": "2185",
+      "variant": "halfsize_jpeg55",
+      "expected": "阿福的百宝袋",
+      "predicted": "阿福的百宝袋",
+      "score": 0.99986,
+      "text_correct": true,
+      "id_correct": true,
+      "wrong_unique_id": false,
+      "matches": [
+        {
+          "id": "2185",
+          "name": "阿福的百宝袋"
+        }
+      ],
+      "ms": 13.28
+    },
+    {
+      "id": "2189",
+      "variant": "halfsize_jpeg55",
+      "expected": "纷乱头脑",
+      "predicted": "纷乱头脑",
+      "score": 0.99962,
+      "text_correct": true,
+      "id_correct": true,
+      "wrong_unique_id": false,
+      "matches": [
+        {
+          "id": "2189",
+          "name": "纷乱头脑"
+        }
+      ],
+      "ms": 13.6
+    },
+    {
+      "id": "2276",
+      "variant": "halfsize_jpeg55",
+      "expected": "幸运手套",
+      "predicted": "幸运手套",
+      "score": 0.99977,
+      "text_correct": true,
+      "id_correct": true,
+      "wrong_unique_id": false,
+      "matches": [
+        {
+          "id": "2276",
+          "name": "幸运手套"
+        }
+      ],
+      "ms": 13.7
+    },
+    {
+      "id": "2294",
+      "variant": "halfsize_jpeg55",
+      "expected": "生日礼物",
+      "predicted": "生日礼物",
+      "score": 0.99946,
+      "text_correct": true,
+      "id_correct": true,
+      "wrong_unique_id": false,
+      "matches": [
+        {
+          "id": "2294",
+          "name": "生日礼物"
+        }
+      ],
+      "ms": 13.24
+    },
+    {
+      "id": "2478",
+      "variant": "halfsize_jpeg55",
+      "expected": "游神的眷顾",
+      "predicted": "游神的眷顾",
+      "score": 0.99473,
+      "text_correct": true,
+      "id_correct": true,
+      "wrong_unique_id": false,
+      "matches": [
+        {
+          "id": "2478",
+          "name": "游神的眷顾"
+        }
+      ],
+      "ms": 13.78
+    },
+    {
+      "id": "2634",
+      "variant": "halfsize_jpeg55",
+      "expected": "治疗法球 II",
+      "predicted": "治疗法球Ⅱ",
+      "score": 0.99636,
+      "text_correct": true,
+      "id_correct": true,
+      "wrong_unique_id": false,
+      "matches": [
+        {
+          "id": "2634",
+          "name": "治疗法球 II"
+        }
+      ],
+      "ms": 13.2
+    },
+    {
+      "id": "2640",
+      "variant": "halfsize_jpeg55",
+      "expected": "了解你的敌人",
+      "predicted": "了解你的敌人",
+      "score": 0.99996,
+      "text_correct": true,
+      "id_correct": true,
+      "wrong_unique_id": false,
+      "matches": [
+        {
+          "id": "2640",
+          "name": "了解你的敌人"
+        }
+      ],
+      "ms": 13.25
+    },
+    {
+      "id": "2705",
+      "variant": "halfsize_jpeg55",
+      "expected": "成吨的属性！",
+      "predicted": "成吨的属性！",
+      "score": 0.99051,
+      "text_correct": true,
+      "id_correct": false,
+      "wrong_unique_id": false,
+      "matches": [
+        {
+          "id": "2705",
+          "name": "成吨的属性！"
+        },
+        {
+          "id": "3705",
+          "name": "成吨的属性！"
+        }
+      ],
+      "ms": 13.23,
+      "failure_crop": "halfsize_jpeg55-2705.png"
+    },
+    {
+      "id": "2804",
+      "variant": "halfsize_jpeg55",
+      "expected": "英勇福袋",
+      "predicted": "英勇福袋",
+      "score": 0.99992,
+      "text_correct": true,
+      "id_correct": true,
+      "wrong_unique_id": false,
+      "matches": [
+        {
+          "id": "2804",
+          "name": "英勇福袋"
+        }
+      ],
+      "ms": 13.14
+    },
+    {
+      "id": "2917",
+      "variant": "halfsize_jpeg55",
+      "expected": "物尽其用",
+      "predicted": "物尽其用",
+      "score": 0.99992,
+      "text_correct": true,
+      "id_correct": true,
+      "wrong_unique_id": false,
+      "matches": [
+        {
+          "id": "2917",
+          "name": "物尽其用"
+        }
+      ],
+      "ms": 13.2
+    },
+    {
+      "id": "3007",
+      "variant": "halfsize_jpeg55",
+      "expected": "潘朵拉的装备 III",
+      "predicted": "潘朵拉的装备Ⅲ",
+      "score": 0.9668,
+      "text_correct": true,
+      "id_correct": true,
+      "wrong_unique_id": false,
+      "matches": [
+        {
+          "id": "3007",
+          "name": "潘朵拉的装备 III"
+        }
+      ],
+      "ms": 13.35
+    },
+    {
+      "id": "3008",
+      "variant": "halfsize_jpeg55",
+      "expected": "升级咯！",
+      "predicted": "升级咯！",
+      "score": 0.97014,
+      "text_correct": true,
+      "id_correct": true,
+      "wrong_unique_id": false,
+      "matches": [
+        {
+          "id": "3008",
+          "name": "升级咯！"
+        }
+      ],
+      "ms": 13.84
+    },
+    {
+      "id": "3022",
+      "variant": "halfsize_jpeg55",
+      "expected": "星界赐福 III",
+      "predicted": "星界赐福Ⅲ",
+      "score": 0.89123,
+      "text_correct": true,
+      "id_correct": true,
+      "wrong_unique_id": false,
+      "matches": [
+        {
+          "id": "3022",
+          "name": "星界赐福 III"
+        }
+      ],
+      "ms": 13.68
+    },
+    {
+      "id": "3065",
+      "variant": "halfsize_jpeg55",
+      "expected": "棱彩门票",
+      "predicted": "棱彩门票",
+      "score": 0.99846,
+      "text_correct": true,
+      "id_correct": true,
+      "wrong_unique_id": false,
+      "matches": [
+        {
+          "id": "3065",
+          "name": "棱彩门票"
+        }
+      ],
+      "ms": 13.21
+    },
+    {
+      "id": "3066",
+      "variant": "halfsize_jpeg55",
+      "expected": "新人入队",
+      "predicted": "新人入队",
+      "score": 0.99957,
+      "text_correct": true,
+      "id_correct": true,
+      "wrong_unique_id": false,
+      "matches": [
+        {
+          "id": "3066",
+          "name": "新人入队"
+        }
+      ],
+      "ms": 12.56
+    },
+    {
+      "id": "3068",
+      "variant": "halfsize_jpeg55",
+      "expected": "秘法帮派 II",
+      "predicted": "秘法帮派Ⅱ",
+      "score": 0.99721,
+      "text_correct": true,
+      "id_correct": true,
+      "wrong_unique_id": false,
+      "matches": [
+        {
+          "id": "3068",
+          "name": "秘法帮派 II"
+        }
+      ],
+      "ms": 12.58
+    },
+    {
+      "id": "3069",
+      "variant": "halfsize_jpeg55",
+      "expected": "嘀嘀街区加强版",
+      "predicted": "嘀嘀街区加强版",
+      "score": 0.99974,
+      "text_correct": true,
+      "id_correct": true,
+      "wrong_unique_id": false,
+      "matches": [
+        {
+          "id": "3069",
+          "name": "嘀嘀街区加强版"
+        }
+      ],
+      "ms": 13.08
+    },
+    {
+      "id": "3093",
+      "variant": "halfsize_jpeg55",
+      "expected": "便携锻炉",
+      "predicted": "便携锻炉",
+      "score": 0.99984,
+      "text_correct": true,
+      "id_correct": true,
+      "wrong_unique_id": false,
+      "matches": [
+        {
+          "id": "3093",
+          "name": "便携锻炉"
+        }
+      ],
+      "ms": 12.8
+    },
+    {
+      "id": "3128",
+      "variant": "halfsize_jpeg55",
+      "expected": "珠光莲花 II",
+      "predicted": "珠光莲花Ⅱ",
+      "score": 0.99912,
+      "text_correct": true,
+      "id_correct": true,
+      "wrong_unique_id": false,
+      "matches": [
+        {
+          "id": "3128",
+          "name": "珠光莲花 II"
+        }
+      ],
+      "ms": 12.82
+    },
+    {
+      "id": "3132",
+      "variant": "halfsize_jpeg55",
+      "expected": "光明圣物",
+      "predicted": "光明圣物",
+      "score": 0.99983,
+      "text_correct": true,
+      "id_correct": true,
+      "wrong_unique_id": false,
+      "matches": [
+        {
+          "id": "3132",
+          "name": "光明圣物"
+        }
+      ],
+      "ms": 12.72
+    },
+    {
+      "id": "3137",
+      "variant": "halfsize_jpeg55",
+      "expected": "金蛋",
+      "predicted": "金蛋",
+      "score": 0.99966,
+      "text_correct": true,
+      "id_correct": true,
+      "wrong_unique_id": false,
+      "matches": [
+        {
+          "id": "3137",
+          "name": "金蛋"
+        }
+      ],
+      "ms": 12.86
+    },
+    {
+      "id": "3158",
+      "variant": "halfsize_jpeg55",
+      "expected": "耐心学习",
+      "predicted": "耐心学习",
+      "score": 0.99991,
+      "text_correct": true,
+      "id_correct": true,
+      "wrong_unique_id": false,
+      "matches": [
+        {
+          "id": "3158",
+          "name": "耐心学习"
+        }
+      ],
+      "ms": 12.76
+    },
+    {
+      "id": "3269",
+      "variant": "halfsize_jpeg55",
+      "expected": "诅咒冠冕",
+      "predicted": "诅咒冠冕",
+      "score": 0.99057,
+      "text_correct": true,
+      "id_correct": true,
+      "wrong_unique_id": false,
+      "matches": [
+        {
+          "id": "3269",
+          "name": "诅咒冠冕"
+        }
+      ],
+      "ms": 12.76
+    },
+    {
+      "id": "3270",
+      "variant": "halfsize_jpeg55",
+      "expected": "活体锻炉",
+      "predicted": "活体锻炉",
+      "score": 0.99962,
+      "text_correct": true,
+      "id_correct": true,
+      "wrong_unique_id": false,
+      "matches": [
+        {
+          "id": "3270",
+          "name": "活体锻炉"
+        }
+      ],
+      "ms": 12.59
+    },
+    {
+      "id": "3276",
+      "variant": "halfsize_jpeg55",
+      "expected": "幸运手套+",
+      "predicted": "幸运手套+",
+      "score": 0.9991,
+      "text_correct": true,
+      "id_correct": true,
+      "wrong_unique_id": false,
+      "matches": [
+        {
+          "id": "3276",
+          "name": "幸运手套+"
+        }
+      ],
+      "ms": 12.98
+    },
+    {
+      "id": "3486",
+      "variant": "halfsize_jpeg55",
+      "expected": "珍藏财宝III",
+      "predicted": "珍藏财宝Ⅲ",
+      "score": 0.91668,
+      "text_correct": true,
+      "id_correct": true,
+      "wrong_unique_id": false,
+      "matches": [
+        {
+          "id": "3486",
+          "name": "珍藏财宝III"
+        }
+      ],
+      "ms": 16.14
+    },
+    {
+      "id": "3627",
+      "variant": "halfsize_jpeg55",
+      "expected": "交给运气",
+      "predicted": "交给运气",
+      "score": 0.99874,
+      "text_correct": true,
+      "id_correct": true,
+      "wrong_unique_id": false,
+      "matches": [
+        {
+          "id": "3627",
+          "name": "交给运气"
+        }
+      ],
+      "ms": 12.87
+    },
+    {
+      "id": "3695",
+      "variant": "halfsize_jpeg55",
+      "expected": "成吨的伤害",
+      "predicted": "成吨的伤害",
+      "score": 0.9997,
+      "text_correct": true,
+      "id_correct": true,
+      "wrong_unique_id": false,
+      "matches": [
+        {
+          "id": "3695",
+          "name": "成吨的伤害"
+        }
+      ],
+      "ms": 12.79
+    },
+    {
+      "id": "3705",
+      "variant": "halfsize_jpeg55",
+      "expected": "成吨的属性！",
+      "predicted": "成吨的属性！",
+      "score": 0.99051,
+      "text_correct": true,
+      "id_correct": false,
+      "wrong_unique_id": false,
+      "matches": [
+        {
+          "id": "2705",
+          "name": "成吨的属性！"
+        },
+        {
+          "id": "3705",
+          "name": "成吨的属性！"
+        }
+      ],
+      "ms": 12.82,
+      "failure_crop": "halfsize_jpeg55-3705.png"
+    },
+    {
+      "id": "3804",
+      "variant": "halfsize_jpeg55",
+      "expected": "英勇福袋+",
+      "predicted": "英勇福袋+",
+      "score": 0.99979,
+      "text_correct": true,
+      "id_correct": true,
+      "wrong_unique_id": false,
+      "matches": [
+        {
+          "id": "3804",
+          "name": "英勇福袋+"
+        }
+      ],
+      "ms": 13.02
+    },
+    {
+      "id": "3809",
+      "variant": "halfsize_jpeg55",
+      "expected": "遥遥领先",
+      "predicted": "遥遥领先",
+      "score": 0.99969,
+      "text_correct": true,
+      "id_correct": true,
+      "wrong_unique_id": false,
+      "matches": [
+        {
+          "id": "3809",
+          "name": "遥遥领先"
+        }
+      ],
+      "ms": 12.77
+    },
+    {
+      "id": "3851",
+      "variant": "halfsize_jpeg55",
+      "expected": "混沌召唤",
+      "predicted": "混沌召唤",
+      "score": 0.99817,
+      "text_correct": true,
+      "id_correct": true,
+      "wrong_unique_id": false,
+      "matches": [
+        {
+          "id": "3851",
+          "name": "混沌召唤"
+        }
+      ],
+      "ms": 12.65
+    },
+    {
+      "id": "3896",
+      "variant": "halfsize_jpeg55",
+      "expected": "新纪元+",
+      "predicted": "新纪元+",
+      "score": 0.99912,
+      "text_correct": true,
+      "id_correct": true,
+      "wrong_unique_id": false,
+      "matches": [
+        {
+          "id": "3896",
+          "name": "新纪元+"
+        }
+      ],
+      "ms": 12.68
+    },
+    {
+      "id": "3917",
+      "variant": "halfsize_jpeg55",
+      "expected": "物尽其用+",
+      "predicted": "物尽其用+",
+      "score": 0.99964,
+      "text_correct": true,
+      "id_correct": true,
+      "wrong_unique_id": false,
+      "matches": [
+        {
+          "id": "3917",
+          "name": "物尽其用+"
+        }
+      ],
+      "ms": 12.76
+    },
+    {
+      "id": "4066",
+      "variant": "halfsize_jpeg55",
+      "expected": "新人入队+",
+      "predicted": "新人入队+",
+      "score": 0.99731,
+      "text_correct": true,
+      "id_correct": true,
+      "wrong_unique_id": false,
+      "matches": [
+        {
+          "id": "4066",
+          "name": "新人入队+"
+        }
+      ],
+      "ms": 13.04
+    },
+    {
+      "id": "4069",
+      "variant": "halfsize_jpeg55",
+      "expected": "大买特买",
+      "predicted": "大买特买",
+      "score": 0.99996,
+      "text_correct": true,
+      "id_correct": true,
+      "wrong_unique_id": false,
+      "matches": [
+        {
+          "id": "4069",
+          "name": "大买特买"
+        }
+      ],
+      "ms": 12.72
+    },
+    {
+      "id": "4158",
+      "variant": "halfsize_jpeg55",
+      "expected": "节外生枝+",
+      "predicted": "节外生枝+",
+      "score": 0.99771,
+      "text_correct": true,
+      "id_correct": true,
+      "wrong_unique_id": false,
+      "matches": [
+        {
+          "id": "4158",
+          "name": "节外生枝+"
+        }
+      ],
+      "ms": 12.58
+    },
+    {
+      "id": "4695",
+      "variant": "halfsize_jpeg55",
+      "expected": "成吨的伤害+",
+      "predicted": "成吨的伤害+",
+      "score": 0.99907,
+      "text_correct": true,
+      "id_correct": true,
+      "wrong_unique_id": false,
+      "matches": [
+        {
+          "id": "4695",
+          "name": "成吨的伤害+"
+        }
+      ],
+      "ms": 12.79
+    },
+    {
+      "id": "4804",
+      "variant": "halfsize_jpeg55",
+      "expected": "英勇福袋++",
+      "predicted": "英勇福袋++",
+      "score": 0.99926,
+      "text_correct": true,
+      "id_correct": true,
+      "wrong_unique_id": false,
+      "matches": [
+        {
+          "id": "4804",
+          "name": "英勇福袋++"
+        }
+      ],
+      "ms": 12.89
+    },
+    {
+      "id": "10004",
+      "variant": "halfsize_jpeg55",
+      "expected": "进攻宣告",
+      "predicted": "进攻宣告",
+      "score": 0.99978,
+      "text_correct": true,
+      "id_correct": true,
+      "wrong_unique_id": false,
+      "matches": [
+        {
+          "id": "10004",
+          "name": "进攻宣告"
+        }
+      ],
+      "ms": 12.92
+    },
+    {
+      "id": "10011",
+      "variant": "halfsize_jpeg55",
+      "expected": "耐心是一种美德",
+      "predicted": "耐心是一种美德",
+      "score": 0.9999,
+      "text_correct": true,
+      "id_correct": true,
+      "wrong_unique_id": false,
+      "matches": [
+        {
+          "id": "10011",
+          "name": "耐心是一种美德"
+        }
+      ],
+      "ms": 12.6
+    },
+    {
+      "id": "10048",
+      "variant": "halfsize_jpeg55",
+      "expected": "核心位的觉悟",
+      "predicted": "核心位的觉悟",
+      "score": 0.99988,
+      "text_correct": true,
+      "id_correct": true,
+      "wrong_unique_id": false,
+      "matches": [
+        {
+          "id": "10048",
+          "name": "核心位的觉悟"
+        }
+      ],
+      "ms": 12.89
+    },
+    {
+      "id": "10196",
+      "variant": "halfsize_jpeg55",
+      "expected": "弑君突刺",
+      "predicted": "弑君突刺",
+      "score": 0.87024,
+      "text_correct": true,
+      "id_correct": true,
+      "wrong_unique_id": false,
+      "matches": [
+        {
+          "id": "10196",
+          "name": "弑君突刺"
+        }
+      ],
+      "ms": 12.8
+    },
+    {
+      "id": "10214",
+      "variant": "halfsize_jpeg55",
+      "expected": "精心打造",
+      "predicted": "精心打造",
+      "score": 0.99997,
+      "text_correct": true,
+      "id_correct": true,
+      "wrong_unique_id": false,
+      "matches": [
+        {
+          "id": "10214",
+          "name": "精心打造"
+        }
+      ],
+      "ms": 12.93
+    },
+    {
+      "id": "10236",
+      "variant": "halfsize_jpeg55",
+      "expected": "假人化",
+      "predicted": "假人化",
+      "score": 0.99996,
+      "text_correct": true,
+      "id_correct": true,
+      "wrong_unique_id": false,
+      "matches": [
+        {
+          "id": "10236",
+          "name": "假人化"
+        }
+      ],
+      "ms": 12.65
+    },
+    {
+      "id": "10242",
+      "variant": "halfsize_jpeg55",
+      "expected": "终身黄铜 I",
+      "predicted": "终身黄铜1",
+      "score": 0.8929,
+      "text_correct": false,
+      "id_correct": false,
+      "wrong_unique_id": false,
+      "matches": [],
+      "ms": 12.87,
+      "failure_crop": "halfsize_jpeg55-10242.png"
+    },
+    {
+      "id": "10252",
+      "variant": "halfsize_jpeg55",
+      "expected": "腐蚀",
+      "predicted": "腐蚀",
+      "score": 0.99976,
+      "text_correct": true,
+      "id_correct": true,
+      "wrong_unique_id": false,
+      "matches": [
+        {
+          "id": "10252",
+          "name": "腐蚀"
+        }
+      ],
+      "ms": 12.74
+    },
+    {
+      "id": "10253",
+      "variant": "halfsize_jpeg55",
+      "expected": "玻璃大炮 I",
+      "predicted": "玻璃大炮1",
+      "score": 0.89416,
+      "text_correct": false,
+      "id_correct": false,
+      "wrong_unique_id": false,
+      "matches": [],
+      "ms": 12.79,
+      "failure_crop": "halfsize_jpeg55-10253.png"
+    },
+    {
+      "id": "10495",
+      "variant": "halfsize_jpeg55",
+      "expected": "人生切片",
+      "predicted": "人生切片",
+      "score": 0.98624,
+      "text_correct": true,
+      "id_correct": true,
+      "wrong_unique_id": false,
+      "matches": [
+        {
+          "id": "10495",
+          "name": "人生切片"
+        }
+      ],
+      "ms": 12.66
+    },
+    {
+      "id": "10571",
+      "variant": "halfsize_jpeg55",
+      "expected": "锻造挚友",
+      "predicted": "锻造挚友",
+      "score": 0.99746,
+      "text_correct": true,
+      "id_correct": true,
+      "wrong_unique_id": false,
+      "matches": [
+        {
+          "id": "10571",
+          "name": "锻造挚友"
+        }
+      ],
+      "ms": 13.0
+    },
+    {
+      "id": "10707",
+      "variant": "halfsize_jpeg55",
+      "expected": "远征",
+      "predicted": "远征",
+      "score": 0.99998,
+      "text_correct": true,
+      "id_correct": true,
+      "wrong_unique_id": false,
+      "matches": [
+        {
+          "id": "10707",
+          "name": "远征"
+        }
+      ],
+      "ms": 12.71
+    },
+    {
+      "id": "10708",
+      "variant": "halfsize_jpeg55",
+      "expected": "电火花 I",
+      "predicted": "电火花！",
+      "score": 0.84019,
+      "text_correct": false,
+      "id_correct": false,
+      "wrong_unique_id": false,
+      "matches": [],
+      "ms": 12.73,
+      "failure_crop": "halfsize_jpeg55-10708.png"
+    },
+    {
+      "id": "10731",
+      "variant": "halfsize_jpeg55",
+      "expected": "扩展包",
+      "predicted": "扩展包",
+      "score": 0.9997,
+      "text_correct": true,
+      "id_correct": true,
+      "wrong_unique_id": false,
+      "matches": [
+        {
+          "id": "10731",
+          "name": "扩展包"
+        }
+      ],
+      "ms": 12.7
+    },
+    {
+      "id": "10744",
+      "variant": "halfsize_jpeg55",
+      "expected": "残留魔力",
+      "predicted": "残留魔力",
+      "score": 0.99971,
+      "text_correct": true,
+      "id_correct": true,
+      "wrong_unique_id": false,
+      "matches": [
+        {
+          "id": "10744",
+          "name": "残留魔力"
+        }
+      ],
+      "ms": 13.04
+    },
+    {
+      "id": "10746",
+      "variant": "halfsize_jpeg55",
+      "expected": "灌铅骰子",
+      "predicted": "灌铅骰子",
+      "score": 0.99977,
+      "text_correct": true,
+      "id_correct": true,
+      "wrong_unique_id": false,
+      "matches": [
+        {
+          "id": "10746",
+          "name": "灌铅骰子"
+        }
+      ],
+      "ms": 19.37
+    },
+    {
+      "id": "10750",
+      "variant": "halfsize_jpeg55",
+      "expected": "纵深 I",
+      "predicted": "纵深1",
+      "score": 0.80481,
+      "text_correct": false,
+      "id_correct": false,
+      "wrong_unique_id": false,
+      "matches": [],
+      "ms": 12.78,
+      "failure_crop": "halfsize_jpeg55-10750.png"
+    },
+    {
+      "id": "10751",
+      "variant": "halfsize_jpeg55",
+      "expected": "弈子配送",
+      "predicted": "弈子配送",
+      "score": 0.97182,
+      "text_correct": true,
+      "id_correct": true,
+      "wrong_unique_id": false,
+      "matches": [
+        {
+          "id": "10751",
+          "name": "弈子配送"
+        }
+      ],
+      "ms": 13.03
+    },
+    {
+      "id": "10752",
+      "variant": "halfsize_jpeg55",
+      "expected": "弈子配送+",
+      "predicted": "弈子配送+",
+      "score": 0.99243,
+      "text_correct": true,
+      "id_correct": true,
+      "wrong_unique_id": false,
+      "matches": [
+        {
+          "id": "10752",
+          "name": "弈子配送+"
+        }
+      ],
+      "ms": 15.51
+    },
+    {
+      "id": "10753",
+      "variant": "halfsize_jpeg55",
+      "expected": "弈子配送++",
+      "predicted": "弈子配送++",
+      "score": 0.9297,
+      "text_correct": true,
+      "id_correct": true,
+      "wrong_unique_id": false,
+      "matches": [
+        {
+          "id": "10753",
+          "name": "弈子配送++"
+        }
+      ],
+      "ms": 13.06
+    },
+    {
+      "id": "10754",
+      "variant": "halfsize_jpeg55",
+      "expected": "高瞻远瞩",
+      "predicted": "高瞻远瞩",
+      "score": 0.9864,
+      "text_correct": true,
+      "id_correct": true,
+      "wrong_unique_id": false,
+      "matches": [
+        {
+          "id": "10754",
+          "name": "高瞻远瞩"
+        }
+      ],
+      "ms": 12.85
+    },
+    {
+      "id": "10755",
+      "variant": "halfsize_jpeg55",
+      "expected": "资本利得 I",
+      "predicted": "资本利得1",
+      "score": 0.88778,
+      "text_correct": false,
+      "id_correct": false,
+      "wrong_unique_id": false,
+      "matches": [],
+      "ms": 20.97,
+      "failure_crop": "halfsize_jpeg55-10755.png"
+    },
+    {
+      "id": "10756",
+      "variant": "halfsize_jpeg55",
+      "expected": "连败连胜才能连鸡",
+      "predicted": "连败连胜才能连鸡",
+      "score": 0.99994,
+      "text_correct": true,
+      "id_correct": true,
+      "wrong_unique_id": false,
+      "matches": [
+        {
+          "id": "10756",
+          "name": "连败连胜才能连鸡"
+        }
+      ],
+      "ms": 13.26
+    },
+    {
+      "id": "10766",
+      "variant": "halfsize_jpeg55",
+      "expected": "仙灵报恩",
+      "predicted": "仙灵报恩",
+      "score": 0.99996,
+      "text_correct": true,
+      "id_correct": true,
+      "wrong_unique_id": false,
+      "matches": [
+        {
+          "id": "10766",
+          "name": "仙灵报恩"
+        }
+      ],
+      "ms": 13.04
+    },
+    {
+      "id": "10771",
+      "variant": "halfsize_jpeg55",
+      "expected": "烧起来",
+      "predicted": "烧起来",
+      "score": 0.99998,
+      "text_correct": true,
+      "id_correct": false,
+      "wrong_unique_id": false,
+      "matches": [
+        {
+          "id": "10771",
+          "name": "烧起来"
+        },
+        {
+          "id": "20771",
+          "name": "烧起来"
+        }
+      ],
+      "ms": 13.07,
+      "failure_crop": "halfsize_jpeg55-10771.png"
+    },
+    {
+      "id": "10777",
+      "variant": "halfsize_jpeg55",
+      "expected": "绽灵花的约定",
+      "predicted": "绽灵花的约定",
+      "score": 0.99957,
+      "text_correct": true,
+      "id_correct": true,
+      "wrong_unique_id": false,
+      "matches": [
+        {
+          "id": "10777",
+          "name": "绽灵花的约定"
+        }
+      ],
+      "ms": 12.87
+    },
+    {
+      "id": "20009",
+      "variant": "halfsize_jpeg55",
+      "expected": "投资+",
+      "predicted": "投资+",
+      "score": 0.99914,
+      "text_correct": true,
+      "id_correct": true,
+      "wrong_unique_id": false,
+      "matches": [
+        {
+          "id": "20009",
+          "name": "投资+"
+        }
+      ],
+      "ms": 19.08
+    },
+    {
+      "id": "20013",
+      "variant": "halfsize_jpeg55",
+      "expected": "挖角",
+      "predicted": "挖角",
+      "score": 0.99999,
+      "text_correct": true,
+      "id_correct": true,
+      "wrong_unique_id": false,
+      "matches": [
+        {
+          "id": "20013",
+          "name": "挖角"
+        }
+      ],
+      "ms": 12.82
+    },
+    {
+      "id": "20015",
+      "variant": "halfsize_jpeg55",
+      "expected": "反响",
+      "predicted": "反响",
+      "score": 0.99982,
+      "text_correct": true,
+      "id_correct": true,
+      "wrong_unique_id": false,
+      "matches": [
+        {
+          "id": "20015",
+          "name": "反响"
+        }
+      ],
+      "ms": 14.08
+    },
+    {
+      "id": "20021",
+      "variant": "halfsize_jpeg55",
+      "expected": "值得等待",
+      "predicted": "值得等待",
+      "score": 0.99992,
+      "text_correct": true,
+      "id_correct": true,
+      "wrong_unique_id": false,
+      "matches": [
+        {
+          "id": "20021",
+          "name": "值得等待"
+        }
+      ],
+      "ms": 14.02
+    },
+    {
+      "id": "20027",
+      "variant": "halfsize_jpeg55",
+      "expected": "爆炸式增长",
+      "predicted": "爆炸式增长",
+      "score": 0.99909,
+      "text_correct": true,
+      "id_correct": true,
+      "wrong_unique_id": false,
+      "matches": [
+        {
+          "id": "20027",
+          "name": "爆炸式增长"
+        }
+      ],
+      "ms": 12.85
+    },
+    {
+      "id": "20031",
+      "variant": "halfsize_jpeg55",
+      "expected": "发条增速器",
+      "predicted": "发条增速器",
+      "score": 0.99986,
+      "text_correct": true,
+      "id_correct": true,
+      "wrong_unique_id": false,
+      "matches": [
+        {
+          "id": "20031",
+          "name": "发条增速器"
+        }
+      ],
+      "ms": 16.66
+    },
+    {
+      "id": "20041",
+      "variant": "halfsize_jpeg55",
+      "expected": "双排",
+      "predicted": "双排",
+      "score": 0.99998,
+      "text_correct": true,
+      "id_correct": true,
+      "wrong_unique_id": false,
+      "matches": [
+        {
+          "id": "20041",
+          "name": "双排"
+        }
+      ],
+      "ms": 12.81
+    },
+    {
+      "id": "20141",
+      "variant": "halfsize_jpeg55",
+      "expected": "专属定制",
+      "predicted": "专属定制",
+      "score": 0.99999,
+      "text_correct": true,
+      "id_correct": true,
+      "wrong_unique_id": false,
+      "matches": [
+        {
+          "id": "20141",
+          "name": "专属定制"
+        }
+      ],
+      "ms": 12.84
+    },
+    {
+      "id": "20205",
+      "variant": "halfsize_jpeg55",
+      "expected": "魔法投掷",
+      "predicted": "魔法投掷",
+      "score": 0.99977,
+      "text_correct": true,
+      "id_correct": true,
+      "wrong_unique_id": false,
+      "matches": [
+        {
+          "id": "20205",
+          "name": "魔法投掷"
+        }
+      ],
+      "ms": 12.77
+    },
+    {
+      "id": "20208",
+      "variant": "halfsize_jpeg55",
+      "expected": "征战之路",
+      "predicted": "征战之路",
+      "score": 0.99997,
+      "text_correct": true,
+      "id_correct": true,
+      "wrong_unique_id": false,
+      "matches": [
+        {
+          "id": "20208",
+          "name": "征战之路"
+        }
+      ],
+      "ms": 18.53
+    },
+    {
+      "id": "20216",
+      "variant": "halfsize_jpeg55",
+      "expected": "不侦察，不变阵",
+      "predicted": "不侦察，不变阵",
+      "score": 0.9996,
+      "text_correct": true,
+      "id_correct": true,
+      "wrong_unique_id": false,
+      "matches": [
+        {
+          "id": "20216",
+          "name": "不侦察，不变阵"
+        }
+      ],
+      "ms": 12.82
+    },
+    {
+      "id": "20217",
+      "variant": "halfsize_jpeg55",
+      "expected": "投资策略 I",
+      "predicted": "投资策略1",
+      "score": 0.90678,
+      "text_correct": false,
+      "id_correct": false,
+      "wrong_unique_id": false,
+      "matches": [],
+      "ms": 12.86,
+      "failure_crop": "halfsize_jpeg55-20217.png"
+    },
+    {
+      "id": "20224",
+      "variant": "halfsize_jpeg55",
+      "expected": "强化之能量",
+      "predicted": "强化之能量",
+      "score": 0.99941,
+      "text_correct": true,
+      "id_correct": true,
+      "wrong_unique_id": false,
+      "matches": [
+        {
+          "id": "20224",
+          "name": "强化之能量"
+        }
+      ],
+      "ms": 12.94
+    },
+    {
+      "id": "20225",
+      "variant": "halfsize_jpeg55",
+      "expected": "金色炊具",
+      "predicted": "金色炊具",
+      "score": 0.99987,
+      "text_correct": true,
+      "id_correct": true,
+      "wrong_unique_id": false,
+      "matches": [
+        {
+          "id": "20225",
+          "name": "金色炊具"
+        }
+      ],
+      "ms": 13.06
+    },
+    {
+      "id": "20242",
+      "variant": "halfsize_jpeg55",
+      "expected": "终身黄铜 II",
+      "predicted": "终身黄铜Ⅱ",
+      "score": 0.99906,
+      "text_correct": true,
+      "id_correct": true,
+      "wrong_unique_id": false,
+      "matches": [
+        {
+          "id": "20242",
+          "name": "终身黄铜 II"
+        }
+      ],
+      "ms": 12.91
+    },
+    {
+      "id": "20253",
+      "variant": "halfsize_jpeg55",
+      "expected": "玻璃大炮 II",
+      "predicted": "玻璃大炮Ⅱ",
+      "score": 0.99843,
+      "text_correct": true,
+      "id_correct": true,
+      "wrong_unique_id": false,
+      "matches": [
+        {
+          "id": "20253",
+          "name": "玻璃大炮 II"
+        }
+      ],
+      "ms": 13.08
+    },
+    {
+      "id": "20258",
+      "variant": "halfsize_jpeg55",
+      "expected": "恶意货币化",
+      "predicted": "恶意货币化",
+      "score": 0.999,
+      "text_correct": true,
+      "id_correct": true,
+      "wrong_unique_id": false,
+      "matches": [
+        {
+          "id": "20258",
+          "name": "恶意货币化"
+        }
+      ],
+      "ms": 14.36
+    },
+    {
+      "id": "20471",
+      "variant": "halfsize_jpeg55",
+      "expected": "泪流成河",
+      "predicted": "泪流成河",
+      "score": 0.9989,
+      "text_correct": true,
+      "id_correct": true,
+      "wrong_unique_id": false,
+      "matches": [
+        {
+          "id": "20471",
+          "name": "泪流成河"
+        }
+      ],
+      "ms": 16.99
+    },
+    {
+      "id": "20480",
+      "variant": "halfsize_jpeg55",
+      "expected": "砍价高手",
+      "predicted": "砍价高手",
+      "score": 0.99962,
+      "text_correct": true,
+      "id_correct": true,
+      "wrong_unique_id": false,
+      "matches": [
+        {
+          "id": "20480",
+          "name": "砍价高手"
+        }
+      ],
+      "ms": 13.46
+    },
+    {
+      "id": "20489",
+      "variant": "halfsize_jpeg55",
+      "expected": "应急护盾",
+      "predicted": "应急护盾",
+      "score": 0.99996,
+      "text_correct": true,
+      "id_correct": true,
+      "wrong_unique_id": false,
+      "matches": [
+        {
+          "id": "20489",
+          "name": "应急护盾"
+        }
+      ],
+      "ms": 12.49
+    },
+    {
+      "id": "20496",
+      "variant": "halfsize_jpeg55",
+      "expected": "独自升级",
+      "predicted": "独自升级",
+      "score": 0.99997,
+      "text_correct": true,
+      "id_correct": true,
+      "wrong_unique_id": false,
+      "matches": [
+        {
+          "id": "20496",
+          "name": "独自升级"
+        }
+      ],
+      "ms": 13.24
+    },
+    {
+      "id": "20498",
+      "variant": "halfsize_jpeg55",
+      "expected": "时间跳跃",
+      "predicted": "时间跳跃",
+      "score": 0.99994,
+      "text_correct": true,
+      "id_correct": true,
+      "wrong_unique_id": false,
+      "matches": [
+        {
+          "id": "20498",
+          "name": "时间跳跃"
+        }
+      ],
+      "ms": 12.74
+    },
+    {
+      "id": "20503",
+      "variant": "halfsize_jpeg55",
+      "expected": "更要命的战刃",
+      "predicted": "更要命的战刃",
+      "score": 0.99958,
+      "text_correct": true,
+      "id_correct": true,
+      "wrong_unique_id": false,
+      "matches": [
+        {
+          "id": "20503",
+          "name": "更要命的战刃"
+        }
+      ],
+      "ms": 12.83
+    },
+    {
+      "id": "20708",
+      "variant": "halfsize_jpeg55",
+      "expected": "电火花 II",
+      "predicted": "电火花Ⅱ",
+      "score": 0.99952,
+      "text_correct": true,
+      "id_correct": true,
+      "wrong_unique_id": false,
+      "matches": [
+        {
+          "id": "20708",
+          "name": "电火花 II"
+        }
+      ],
+      "ms": 12.8
+    },
+    {
+      "id": "20721",
+      "variant": "halfsize_jpeg55",
+      "expected": "黄金赌约",
+      "predicted": "黄金赌约",
+      "score": 0.99684,
+      "text_correct": true,
+      "id_correct": true,
+      "wrong_unique_id": false,
+      "matches": [
+        {
+          "id": "20721",
+          "name": "黄金赌约"
+        }
+      ],
+      "ms": 13.08
+    },
+    {
+      "id": "20722",
+      "variant": "halfsize_jpeg55",
+      "expected": "黄金赌约+",
+      "predicted": "黄金赌约+",
+      "score": 0.99685,
+      "text_correct": true,
+      "id_correct": true,
+      "wrong_unique_id": false,
+      "matches": [
+        {
+          "id": "20722",
+          "name": "黄金赌约+"
+        }
+      ],
+      "ms": 12.67
+    },
+    {
+      "id": "20723",
+      "variant": "halfsize_jpeg55",
+      "expected": "黄金赌约++",
+      "predicted": "黄金赌约++",
+      "score": 0.99768,
+      "text_correct": true,
+      "id_correct": true,
+      "wrong_unique_id": false,
+      "matches": [
+        {
+          "id": "20723",
+          "name": "黄金赌约++"
+        }
+      ],
+      "ms": 13.36
+    },
+    {
+      "id": "20731",
+      "variant": "halfsize_jpeg55",
+      "expected": "扩展包+",
+      "predicted": "扩展包+",
+      "score": 0.99885,
+      "text_correct": true,
+      "id_correct": true,
+      "wrong_unique_id": false,
+      "matches": [
+        {
+          "id": "20731",
+          "name": "扩展包+"
+        }
+      ],
+      "ms": 12.74
+    },
+    {
+      "id": "20733",
+      "variant": "halfsize_jpeg55",
+      "expected": "水乳交融",
+      "predicted": "水乳交融",
+      "score": 0.99995,
+      "text_correct": true,
+      "id_correct": true,
+      "wrong_unique_id": false,
+      "matches": [
+        {
+          "id": "20733",
+          "name": "水乳交融"
+        }
+      ],
+      "ms": 13.11
+    },
+    {
+      "id": "20742",
+      "variant": "halfsize_jpeg55",
+      "expected": "四之力",
+      "predicted": "四之力",
+      "score": 0.9963,
+      "text_correct": true,
+      "id_correct": true,
+      "wrong_unique_id": false,
+      "matches": [
+        {
+          "id": "20742",
+          "name": "四之力"
+        }
+      ],
+      "ms": 12.68
+    },
+    {
+      "id": "20744",
+      "variant": "halfsize_jpeg55",
+      "expected": "残留魔力+",
+      "predicted": "残留魔力+",
+      "score": 0.99927,
+      "text_correct": true,
+      "id_correct": true,
+      "wrong_unique_id": false,
+      "matches": [
+        {
+          "id": "20744",
+          "name": "残留魔力+"
+        }
+      ],
+      "ms": 13.01
+    },
+    {
+      "id": "20745",
+      "variant": "halfsize_jpeg55",
+      "expected": "亡眼射手",
+      "predicted": "亡眼射手",
+      "score": 0.99992,
+      "text_correct": true,
+      "id_correct": true,
+      "wrong_unique_id": false,
+      "matches": [
+        {
+          "id": "20745",
+          "name": "亡眼射手"
+        }
+      ],
+      "ms": 12.73
+    },
+    {
+      "id": "20750",
+      "variant": "halfsize_jpeg55",
+      "expected": "纵深 II",
+      "predicted": "纵深Ⅱ",
+      "score": 0.99885,
+      "text_correct": true,
+      "id_correct": true,
+      "wrong_unique_id": false,
+      "matches": [
+        {
+          "id": "20750",
+          "name": "纵深 II"
+        }
+      ],
+      "ms": 12.96
+    },
+    {
+      "id": "20755",
+      "variant": "halfsize_jpeg55",
+      "expected": "资本利得 II",
+      "predicted": "资本利得Ⅱ",
+      "score": 0.99854,
+      "text_correct": true,
+      "id_correct": true,
+      "wrong_unique_id": false,
+      "matches": [
+        {
+          "id": "20755",
+          "name": "资本利得 II"
+        }
+      ],
+      "ms": 12.63
+    },
+    {
+      "id": "20758",
+      "variant": "halfsize_jpeg55",
+      "expected": "等待得值",
+      "predicted": "等待得值",
+      "score": 0.99978,
+      "text_correct": true,
+      "id_correct": true,
+      "wrong_unique_id": false,
+      "matches": [
+        {
+          "id": "20758",
+          "name": "等待得值"
+        }
+      ],
+      "ms": 12.76
+    },
+    {
+      "id": "20759",
+      "variant": "halfsize_jpeg55",
+      "expected": "顶尖构筑",
+      "predicted": "顶尖构筑",
+      "score": 0.9999,
+      "text_correct": true,
+      "id_correct": true,
+      "wrong_unique_id": false,
+      "matches": [
+        {
+          "id": "20759",
+          "name": "顶尖构筑"
+        }
+      ],
+      "ms": 13.15
+    },
+    {
+      "id": "20760",
+      "variant": "halfsize_jpeg55",
+      "expected": "致命丽花",
+      "predicted": "致命丽花",
+      "score": 0.99998,
+      "text_correct": true,
+      "id_correct": false,
+      "wrong_unique_id": false,
+      "matches": [
+        {
+          "id": "20760",
+          "name": "致命丽花"
+        },
+        {
+          "id": "30760",
+          "name": "致命丽花"
+        }
+      ],
+      "ms": 13.95,
+      "failure_crop": "halfsize_jpeg55-20760.png"
+    },
+    {
+      "id": "20761",
+      "variant": "halfsize_jpeg55",
+      "expected": "装备提炼",
+      "predicted": "装备提炼",
+      "score": 0.99972,
+      "text_correct": true,
+      "id_correct": true,
+      "wrong_unique_id": false,
+      "matches": [
+        {
+          "id": "20761",
+          "name": "装备提炼"
+        }
+      ],
+      "ms": 12.64
+    },
+    {
+      "id": "20762",
+      "variant": "halfsize_jpeg55",
+      "expected": "世纪和解",
+      "predicted": "世纪和解",
+      "score": 0.99975,
+      "text_correct": true,
+      "id_correct": true,
+      "wrong_unique_id": false,
+      "matches": [
+        {
+          "id": "20762",
+          "name": "世纪和解"
+        }
+      ],
+      "ms": 13.23
+    },
+    {
+      "id": "20763",
+      "variant": "halfsize_jpeg55",
+      "expected": "巨化术",
+      "predicted": "巨化术",
+      "score": 0.99993,
+      "text_correct": true,
+      "id_correct": true,
+      "wrong_unique_id": false,
+      "matches": [
+        {
+          "id": "20763",
+          "name": "巨化术"
+        }
+      ],
+      "ms": 12.88
+    },
+    {
+      "id": "20764",
+      "variant": "halfsize_jpeg55",
+      "expected": "兽性本能",
+      "predicted": "兽性本能",
+      "score": 0.99991,
+      "text_correct": true,
+      "id_correct": false,
+      "wrong_unique_id": false,
+      "matches": [
+        {
+          "id": "20764",
+          "name": "兽性本能"
+        },
+        {
+          "id": "30764",
+          "name": "兽性本能"
+        }
+      ],
+      "ms": 12.84,
+      "failure_crop": "halfsize_jpeg55-20764.png"
+    },
+    {
+      "id": "20766",
+      "variant": "halfsize_jpeg55",
+      "expected": "仙灵报恩+",
+      "predicted": "仙灵报恩+",
+      "score": 0.99978,
+      "text_correct": true,
+      "id_correct": true,
+      "wrong_unique_id": false,
+      "matches": [
+        {
+          "id": "20766",
+          "name": "仙灵报恩+"
+        }
+      ],
+      "ms": 12.62
+    },
+    {
+      "id": "20767",
+      "variant": "halfsize_jpeg55",
+      "expected": "欧米茄之怪",
+      "predicted": "欧米茄之怪",
+      "score": 0.99947,
+      "text_correct": true,
+      "id_correct": false,
+      "wrong_unique_id": false,
+      "matches": [
+        {
+          "id": "20767",
+          "name": "欧米茄之怪"
+        },
+        {
+          "id": "30767",
+          "name": "欧米茄之怪"
+        }
+      ],
+      "ms": 13.23,
+      "failure_crop": "halfsize_jpeg55-20767.png"
+    },
+    {
+      "id": "20768",
+      "variant": "halfsize_jpeg55",
+      "expected": "自然庇护所",
+      "predicted": "自然庇护所",
+      "score": 0.98321,
+      "text_correct": true,
+      "id_correct": false,
+      "wrong_unique_id": false,
+      "matches": [
+        {
+          "id": "20768",
+          "name": "自然庇护所"
+        },
+        {
+          "id": "30768",
+          "name": "自然庇护所"
+        }
+      ],
+      "ms": 16.42,
+      "failure_crop": "halfsize_jpeg55-20768.png"
+    },
+    {
+      "id": "20769",
+      "variant": "halfsize_jpeg55",
+      "expected": "女巫使魔",
+      "predicted": "女巫使魔",
+      "score": 0.99935,
+      "text_correct": true,
+      "id_correct": true,
+      "wrong_unique_id": false,
+      "matches": [
+        {
+          "id": "20769",
+          "name": "女巫使魔"
+        }
+      ],
+      "ms": 13.53
+    },
+    {
+      "id": "20770",
+      "variant": "halfsize_jpeg55",
+      "expected": "毛茸茸小朋友",
+      "predicted": "毛茸茸小朋友",
+      "score": 0.99973,
+      "text_correct": true,
+      "id_correct": false,
+      "wrong_unique_id": false,
+      "matches": [
+        {
+          "id": "20770",
+          "name": "毛茸茸小朋友"
+        },
+        {
+          "id": "30770",
+          "name": "毛茸茸小朋友"
+        }
+      ],
+      "ms": 12.94,
+      "failure_crop": "halfsize_jpeg55-20770.png"
+    },
+    {
+      "id": "20775",
+      "variant": "halfsize_jpeg55",
+      "expected": "意外之礼",
+      "predicted": "意外之礼",
+      "score": 0.99953,
+      "text_correct": true,
+      "id_correct": true,
+      "wrong_unique_id": false,
+      "matches": [
+        {
+          "id": "20775",
+          "name": "意外之礼"
+        }
+      ],
+      "ms": 12.97
+    },
+    {
+      "id": "20777",
+      "variant": "halfsize_jpeg55",
+      "expected": "太阳的抉择",
+      "predicted": "太阳的抉择",
+      "score": 0.99926,
+      "text_correct": true,
+      "id_correct": true,
+      "wrong_unique_id": false,
+      "matches": [
+        {
+          "id": "20777",
+          "name": "太阳的抉择"
+        }
+      ],
+      "ms": 12.8
+    },
+    {
+      "id": "20778",
+      "variant": "halfsize_jpeg55",
+      "expected": "黑暗仪式",
+      "predicted": "黑暗仪式",
+      "score": 0.99959,
+      "text_correct": true,
+      "id_correct": true,
+      "wrong_unique_id": false,
+      "matches": [
+        {
+          "id": "20778",
+          "name": "黑暗仪式"
+        }
+      ],
+      "ms": 12.77
+    },
+    {
+      "id": "20779",
+      "variant": "halfsize_jpeg55",
+      "expected": "野兽出没",
+      "predicted": "野兽出没",
+      "score": 0.99985,
+      "text_correct": true,
+      "id_correct": true,
+      "wrong_unique_id": false,
+      "matches": [
+        {
+          "id": "20779",
+          "name": "野兽出没"
+        }
+      ],
+      "ms": 12.89
+    },
+    {
+      "id": "20780",
+      "variant": "halfsize_jpeg55",
+      "expected": "日月同辉",
+      "predicted": "日月同辉",
+      "score": 0.99974,
+      "text_correct": true,
+      "id_correct": true,
+      "wrong_unique_id": false,
+      "matches": [
+        {
+          "id": "20780",
+          "name": "日月同辉"
+        }
+      ],
+      "ms": 12.83
+    },
+    {
+      "id": "30009",
+      "variant": "halfsize_jpeg55",
+      "expected": "投资++",
+      "predicted": "投资++",
+      "score": 0.99515,
+      "text_correct": true,
+      "id_correct": true,
+      "wrong_unique_id": false,
+      "matches": [
+        {
+          "id": "30009",
+          "name": "投资++"
+        }
+      ],
+      "ms": 12.72
+    },
+    {
+      "id": "30021",
+      "variant": "halfsize_jpeg55",
+      "expected": "值得等待 II",
+      "predicted": "值得等待Ⅱ",
+      "score": 0.9973,
+      "text_correct": true,
+      "id_correct": true,
+      "wrong_unique_id": false,
+      "matches": [
+        {
+          "id": "30021",
+          "name": "值得等待 II"
+        }
+      ],
+      "ms": 12.82
+    },
+    {
+      "id": "30027",
+      "variant": "halfsize_jpeg55",
+      "expected": "爆炸式增长+",
+      "predicted": "爆炸式增长+",
+      "score": 0.99844,
+      "text_correct": true,
+      "id_correct": true,
+      "wrong_unique_id": false,
+      "matches": [
+        {
+          "id": "30027",
+          "name": "爆炸式增长+"
+        }
+      ],
+      "ms": 12.88
+    },
+    {
+      "id": "30028",
+      "variant": "halfsize_jpeg55",
+      "expected": "上进心",
+      "predicted": "上进心",
+      "score": 0.99994,
+      "text_correct": true,
+      "id_correct": true,
+      "wrong_unique_id": false,
+      "matches": [
+        {
+          "id": "30028",
+          "name": "上进心"
+        }
+      ],
+      "ms": 12.81
+    },
+    {
+      "id": "30034",
+      "variant": "halfsize_jpeg55",
+      "expected": "大而有力",
+      "predicted": "大而有力",
+      "score": 0.9995,
+      "text_correct": true,
+      "id_correct": true,
+      "wrong_unique_id": false,
+      "matches": [
+        {
+          "id": "30034",
+          "name": "大而有力"
+        }
+      ],
+      "ms": 12.72
+    },
+    {
+      "id": "30045",
+      "variant": "halfsize_jpeg55",
+      "expected": "金鳞精粹",
+      "predicted": "金鳞精粹",
+      "score": 0.9899,
+      "text_correct": true,
+      "id_correct": true,
+      "wrong_unique_id": false,
+      "matches": [
+        {
+          "id": "30045",
+          "name": "金鳞精粹"
+        }
+      ],
+      "ms": 12.75
+    },
+    {
+      "id": "30179",
+      "variant": "halfsize_jpeg55",
+      "expected": "加冕礼",
+      "predicted": "加冕礼",
+      "score": 0.99988,
+      "text_correct": true,
+      "id_correct": true,
+      "wrong_unique_id": false,
+      "matches": [
+        {
+          "id": "30179",
+          "name": "加冕礼"
+        }
+      ],
+      "ms": 12.84
+    },
+    {
+      "id": "30180",
+      "variant": "halfsize_jpeg55",
+      "expected": "腰带溢流",
+      "predicted": "腰带溢流",
+      "score": 0.99914,
+      "text_correct": true,
+      "id_correct": true,
+      "wrong_unique_id": false,
+      "matches": [
+        {
+          "id": "30180",
+          "name": "腰带溢流"
+        }
+      ],
+      "ms": 15.23
+    },
+    {
+      "id": "30181",
+      "variant": "halfsize_jpeg55",
+      "expected": "法杖溢流",
+      "predicted": "法杖溢流",
+      "score": 0.99924,
+      "text_correct": true,
+      "id_correct": true,
+      "wrong_unique_id": false,
+      "matches": [
+        {
+          "id": "30181",
+          "name": "法杖溢流"
+        }
+      ],
+      "ms": 12.75
+    },
+    {
+      "id": "30182",
+      "variant": "halfsize_jpeg55",
+      "expected": "大剑溢流",
+      "predicted": "大剑溢流",
+      "score": 0.99905,
+      "text_correct": true,
+      "id_correct": true,
+      "wrong_unique_id": false,
+      "matches": [
+        {
+          "id": "30182",
+          "name": "大剑溢流"
+        }
+      ],
+      "ms": 13.2
+    },
+    {
+      "id": "30186",
+      "variant": "halfsize_jpeg55",
+      "expected": "1个霸符，2个霸符",
+      "predicted": "1个霸符，2个霸符",
+      "score": 0.99963,
+      "text_correct": true,
+      "id_correct": true,
+      "wrong_unique_id": false,
+      "matches": [
+        {
+          "id": "30186",
+          "name": "1个霸符，2个霸符"
+        }
+      ],
+      "ms": 13.0
+    },
+    {
+      "id": "30187",
+      "variant": "halfsize_jpeg55",
+      "expected": "锅铲厨房",
+      "predicted": "锅铲厨房",
+      "score": 0.99988,
+      "text_correct": true,
+      "id_correct": true,
+      "wrong_unique_id": false,
+      "matches": [
+        {
+          "id": "30187",
+          "name": "锅铲厨房"
+        }
+      ],
+      "ms": 12.9
+    },
+    {
+      "id": "30205",
+      "variant": "halfsize_jpeg55",
+      "expected": "意料之中的意外",
+      "predicted": "意料之中的意外",
+      "score": 0.99999,
+      "text_correct": true,
+      "id_correct": true,
+      "wrong_unique_id": false,
+      "matches": [
+        {
+          "id": "30205",
+          "name": "意料之中的意外"
+        }
+      ],
+      "ms": 12.99
+    },
+    {
+      "id": "30217",
+      "variant": "halfsize_jpeg55",
+      "expected": "投资策略 II",
+      "predicted": "投资策略Ⅱ",
+      "score": 0.99758,
+      "text_correct": true,
+      "id_correct": true,
+      "wrong_unique_id": false,
+      "matches": [
+        {
+          "id": "30217",
+          "name": "投资策略 II"
+        }
+      ],
+      "ms": 12.81
+    },
+    {
+      "id": "30521",
+      "variant": "halfsize_jpeg55",
+      "expected": "坚守防线",
+      "predicted": "坚守防线",
+      "score": 0.99982,
+      "text_correct": true,
+      "id_correct": true,
+      "wrong_unique_id": false,
+      "matches": [
+        {
+          "id": "30521",
+          "name": "坚守防线"
+        }
+      ],
+      "ms": 12.88
+    },
+    {
+      "id": "30705",
+      "variant": "halfsize_jpeg55",
+      "expected": "后排蓝图",
+      "predicted": "后排蓝图",
+      "score": 0.99948,
+      "text_correct": true,
+      "id_correct": true,
+      "wrong_unique_id": false,
+      "matches": [
+        {
+          "id": "30705",
+          "name": "后排蓝图"
+        }
+      ],
+      "ms": 12.74
+    },
+    {
+      "id": "30706",
+      "variant": "halfsize_jpeg55",
+      "expected": "前线地基",
+      "predicted": "前线地基",
+      "score": 0.99994,
+      "text_correct": true,
+      "id_correct": true,
+      "wrong_unique_id": false,
+      "matches": [
+        {
+          "id": "30706",
+          "name": "前线地基"
+        }
+      ],
+      "ms": 13.05
+    },
+    {
+      "id": "30731",
+      "variant": "halfsize_jpeg55",
+      "expected": "扩展包++",
+      "predicted": "扩展包++",
+      "score": 0.99333,
+      "text_correct": true,
+      "id_correct": true,
+      "wrong_unique_id": false,
+      "matches": [
+        {
+          "id": "30731",
+          "name": "扩展包++"
+        }
+      ],
+      "ms": 12.75
+    },
+    {
+      "id": "30744",
+      "variant": "halfsize_jpeg55",
+      "expected": "残留魔力++",
+      "predicted": "残留魔力++",
+      "score": 0.93523,
+      "text_correct": true,
+      "id_correct": true,
+      "wrong_unique_id": false,
+      "matches": [
+        {
+          "id": "30744",
+          "name": "残留魔力++"
+        }
+      ],
+      "ms": 12.79
+    },
+    {
+      "id": "30747",
+      "variant": "halfsize_jpeg55",
+      "expected": "基础装备大冒险",
+      "predicted": "基础装备大冒险",
+      "score": 0.99979,
+      "text_correct": true,
+      "id_correct": true,
+      "wrong_unique_id": false,
+      "matches": [
+        {
+          "id": "30747",
+          "name": "基础装备大冒险"
+        }
+      ],
+      "ms": 12.69
+    },
+    {
+      "id": "30749",
+      "variant": "halfsize_jpeg55",
+      "expected": "拼盘天梯",
+      "predicted": "拼盘天梯",
+      "score": 0.99994,
+      "text_correct": true,
+      "id_correct": true,
+      "wrong_unique_id": false,
+      "matches": [
+        {
+          "id": "30749",
+          "name": "拼盘天梯"
+        }
+      ],
+      "ms": 12.82
+    },
+    {
+      "id": "30750",
+      "variant": "halfsize_jpeg55",
+      "expected": "纵深 III",
+      "predicted": "纵深Ⅲ",
+      "score": 0.97956,
+      "text_correct": true,
+      "id_correct": true,
+      "wrong_unique_id": false,
+      "matches": [
+        {
+          "id": "30750",
+          "name": "纵深 III"
+        }
+      ],
+      "ms": 12.81
+    },
+    {
+      "id": "30757",
+      "variant": "halfsize_jpeg55",
+      "expected": "锻造器套娃",
+      "predicted": "锻造器套娃",
+      "score": 0.99995,
+      "text_correct": true,
+      "id_correct": true,
+      "wrong_unique_id": false,
+      "matches": [
+        {
+          "id": "30757",
+          "name": "锻造器套娃"
+        }
+      ],
+      "ms": 12.8
+    },
+    {
+      "id": "30760",
+      "variant": "halfsize_jpeg55",
+      "expected": "致命丽花",
+      "predicted": "致命丽花",
+      "score": 0.99998,
+      "text_correct": true,
+      "id_correct": false,
+      "wrong_unique_id": false,
+      "matches": [
+        {
+          "id": "20760",
+          "name": "致命丽花"
+        },
+        {
+          "id": "30760",
+          "name": "致命丽花"
+        }
+      ],
+      "ms": 17.89,
+      "failure_crop": "halfsize_jpeg55-30760.png"
+    },
+    {
+      "id": "30764",
+      "variant": "halfsize_jpeg55",
+      "expected": "兽性本能",
+      "predicted": "兽性本能",
+      "score": 0.99991,
+      "text_correct": true,
+      "id_correct": false,
+      "wrong_unique_id": false,
+      "matches": [
+        {
+          "id": "20764",
+          "name": "兽性本能"
+        },
+        {
+          "id": "30764",
+          "name": "兽性本能"
+        }
+      ],
+      "ms": 12.78,
+      "failure_crop": "halfsize_jpeg55-30764.png"
+    },
+    {
+      "id": "30772",
+      "variant": "halfsize_jpeg55",
+      "expected": "弈子套娃",
+      "predicted": "弈子套娃",
+      "score": 0.9887,
+      "text_correct": true,
+      "id_correct": false,
+      "wrong_unique_id": false,
+      "matches": [
+        {
+          "id": "30772",
+          "name": "弈子套娃"
+        },
+        {
+          "id": "30773",
+          "name": "弈子套娃"
+        },
+        {
+          "id": "30774",
+          "name": "弈子套娃"
+        }
+      ],
+      "ms": 12.89,
+      "failure_crop": "halfsize_jpeg55-30772.png"
+    },
+    {
+      "id": "30773",
+      "variant": "halfsize_jpeg55",
+      "expected": "弈子套娃",
+      "predicted": "弈子套娃",
+      "score": 0.9887,
+      "text_correct": true,
+      "id_correct": false,
+      "wrong_unique_id": false,
+      "matches": [
+        {
+          "id": "30772",
+          "name": "弈子套娃"
+        },
+        {
+          "id": "30773",
+          "name": "弈子套娃"
+        },
+        {
+          "id": "30774",
+          "name": "弈子套娃"
+        }
+      ],
+      "ms": 12.85,
+      "failure_crop": "halfsize_jpeg55-30773.png"
+    },
+    {
+      "id": "30774",
+      "variant": "halfsize_jpeg55",
+      "expected": "弈子套娃",
+      "predicted": "弈子套娃",
+      "score": 0.9887,
+      "text_correct": true,
+      "id_correct": false,
+      "wrong_unique_id": false,
+      "matches": [
+        {
+          "id": "30772",
+          "name": "弈子套娃"
+        },
+        {
+          "id": "30773",
+          "name": "弈子套娃"
+        },
+        {
+          "id": "30774",
+          "name": "弈子套娃"
+        }
+      ],
+      "ms": 12.99,
+      "failure_crop": "halfsize_jpeg55-30774.png"
+    },
+    {
+      "id": "30775",
+      "variant": "halfsize_jpeg55",
+      "expected": "意外之礼+",
+      "predicted": "意外之礼+",
+      "score": 0.99511,
+      "text_correct": true,
+      "id_correct": true,
+      "wrong_unique_id": false,
+      "matches": [
+        {
+          "id": "30775",
+          "name": "意外之礼+"
+        }
+      ],
+      "ms": 12.8
+    },
+    {
+      "id": "30780",
+      "variant": "halfsize_jpeg55",
+      "expected": "日月同辉+",
+      "predicted": "日月同辉+",
+      "score": 0.99961,
+      "text_correct": true,
+      "id_correct": true,
+      "wrong_unique_id": false,
+      "matches": [
+        {
+          "id": "30780",
+          "name": "日月同辉+"
+        }
+      ],
+      "ms": 12.81
+    },
+    {
+      "id": "40006",
+      "variant": "halfsize_jpeg55",
+      "expected": "灵活摇摆",
+      "predicted": "灵活摇摆",
+      "score": 0.98981,
+      "text_correct": true,
+      "id_correct": true,
+      "wrong_unique_id": false,
+      "matches": [
+        {
+          "id": "40006",
+          "name": "灵活摇摆"
+        }
+      ],
+      "ms": 12.77
+    },
+    {
+      "id": "40008",
+      "variant": "halfsize_jpeg55",
+      "expected": "硬性承诺",
+      "predicted": "硬性承诺",
+      "score": 0.99998,
+      "text_correct": true,
+      "id_correct": true,
+      "wrong_unique_id": false,
+      "matches": [
+        {
+          "id": "40008",
+          "name": "硬性承诺"
+        }
+      ],
+      "ms": 13.14
+    },
+    {
+      "id": "40757",
+      "variant": "halfsize_jpeg55",
+      "expected": "锻造器套娃+",
+      "predicted": "锻造器套娃+",
+      "score": 0.99953,
+      "text_correct": true,
+      "id_correct": true,
+      "wrong_unique_id": false,
+      "matches": [
+        {
+          "id": "40757",
+          "name": "锻造器套娃+"
+        }
+      ],
+      "ms": 12.76
+    },
+    {
+      "id": "40760",
+      "variant": "halfsize_jpeg55",
+      "expected": "吞噬花妖++",
+      "predicted": "吞噬花妖++",
+      "score": 0.99031,
+      "text_correct": true,
+      "id_correct": true,
+      "wrong_unique_id": false,
+      "matches": [
+        {
+          "id": "40760",
+          "name": "吞噬花妖++"
+        }
+      ],
+      "ms": 12.72
+    },
+    {
+      "id": "40764",
+      "variant": "halfsize_jpeg55",
+      "expected": "兽性本能+",
+      "predicted": "兽性本能+",
+      "score": 0.99941,
+      "text_correct": true,
+      "id_correct": false,
+      "wrong_unique_id": false,
+      "matches": [
+        {
+          "id": "40764",
+          "name": "兽性本能+"
+        },
+        {
+          "id": "50764",
+          "name": "兽性本能+"
+        }
+      ],
+      "ms": 12.78,
+      "failure_crop": "halfsize_jpeg55-40764.png"
+    },
+    {
+      "id": "50764",
+      "variant": "halfsize_jpeg55",
+      "expected": "兽性本能+",
+      "predicted": "兽性本能+",
+      "score": 0.99941,
+      "text_correct": true,
+      "id_correct": false,
+      "wrong_unique_id": false,
+      "matches": [
+        {
+          "id": "40764",
+          "name": "兽性本能+"
+        },
+        {
+          "id": "50764",
+          "name": "兽性本能+"
+        }
+      ],
+      "ms": 12.97,
+      "failure_crop": "halfsize_jpeg55-50764.png"
+    },
+    {
+      "id": "1148",
+      "variant": "halfsize_jpeg55",
+      "expected": "潘朵拉的备战席",
+      "predicted": "潘朵拉的备战席",
+      "score": 0.99995,
+      "text_correct": true,
+      "id_correct": true,
+      "wrong_unique_id": false,
+      "matches": [
+        {
+          "id": "1148",
+          "name": "潘朵拉的备战席"
+        }
+      ],
+      "ms": 13.79
+    },
+    {
+      "id": "2018",
+      "variant": "halfsize_jpeg55",
+      "expected": "源计划植入",
+      "predicted": "源计划植入",
+      "score": 0.99914,
+      "text_correct": true,
+      "id_correct": true,
+      "wrong_unique_id": false,
+      "matches": [
+        {
+          "id": "2018",
+          "name": "源计划植入"
+        }
+      ],
+      "ms": 13.76
+    },
+    {
+      "id": "2110",
+      "variant": "halfsize_jpeg55",
+      "expected": "源计划上行链路",
+      "predicted": "源计划上行链路",
+      "score": 0.99993,
+      "text_correct": true,
+      "id_correct": true,
+      "wrong_unique_id": false,
+      "matches": [
+        {
+          "id": "2110",
+          "name": "源计划上行链路"
+        }
+      ],
+      "ms": 13.44
+    },
+    {
+      "id": "3852",
+      "variant": "halfsize_jpeg55",
+      "expected": "来个好伙计！",
+      "predicted": "来个好伙计！",
+      "score": 0.99415,
+      "text_correct": true,
+      "id_correct": true,
+      "wrong_unique_id": false,
+      "matches": [
+        {
+          "id": "3852",
+          "name": "来个好伙计！"
+        }
+      ],
+      "ms": 12.69
+    },
+    {
+      "id": "10559",
+      "variant": "halfsize_jpeg55",
+      "expected": "轻量魔法投掷",
+      "predicted": "轻量魔法投掷",
+      "score": 0.99977,
+      "text_correct": true,
+      "id_correct": true,
+      "wrong_unique_id": false,
+      "matches": [
+        {
+          "id": "10559",
+          "name": "轻量魔法投掷"
+        }
+      ],
+      "ms": 12.91
+    },
+    {
+      "id": "10573",
+      "variant": "halfsize_jpeg55",
+      "expected": "拳击课程",
+      "predicted": "拳击课程",
+      "score": 0.99983,
+      "text_correct": true,
+      "id_correct": true,
+      "wrong_unique_id": false,
+      "matches": [
+        {
+          "id": "10573",
+          "name": "拳击课程"
+        }
+      ],
+      "ms": 13.08
+    },
+    {
+      "id": "10579",
+      "variant": "halfsize_jpeg55",
+      "expected": "战时补给：巨人腰带",
+      "predicted": "战时补给：巨人腰带",
+      "score": 0.9996,
+      "text_correct": true,
+      "id_correct": true,
+      "wrong_unique_id": false,
+      "matches": [
+        {
+          "id": "10579",
+          "name": "战时补给：巨人腰带"
+        }
+      ],
+      "ms": 12.7
+    },
+    {
+      "id": "10580",
+      "variant": "halfsize_jpeg55",
+      "expected": "战时补给：无用大棒",
+      "predicted": "战时补给：无用大棒",
+      "score": 0.99966,
+      "text_correct": true,
+      "id_correct": true,
+      "wrong_unique_id": false,
+      "matches": [
+        {
+          "id": "10580",
+          "name": "战时补给：无用大棒"
+        }
+      ],
+      "ms": 13.06
+    },
+    {
+      "id": "10582",
+      "variant": "halfsize_jpeg55",
+      "expected": "战时补给：暴风大剑",
+      "predicted": "战时补给：暴风大剑",
+      "score": 0.99933,
+      "text_correct": true,
+      "id_correct": true,
+      "wrong_unique_id": false,
+      "matches": [
+        {
+          "id": "10582",
+          "name": "战时补给：暴风大剑"
+        }
+      ],
+      "ms": 12.78
+    },
+    {
+      "id": "10583",
+      "variant": "halfsize_jpeg55",
+      "expected": "战时补给：反曲之弓",
+      "predicted": "战时补给：反曲之弓",
+      "score": 0.99794,
+      "text_correct": true,
+      "id_correct": true,
+      "wrong_unique_id": false,
+      "matches": [
+        {
+          "id": "10583",
+          "name": "战时补给：反曲之弓"
+        }
+      ],
+      "ms": 12.86
+    },
+    {
+      "id": "10584",
+      "variant": "halfsize_jpeg55",
+      "expected": "认知税",
+      "predicted": "认知税",
+      "score": 0.99941,
+      "text_correct": true,
+      "id_correct": true,
+      "wrong_unique_id": false,
+      "matches": [
+        {
+          "id": "10584",
+          "name": "认知税"
+        }
+      ],
+      "ms": 12.63
+    },
+    {
+      "id": "10585",
+      "variant": "halfsize_jpeg55",
+      "expected": "认知税+",
+      "predicted": "认知税+",
+      "score": 0.99939,
+      "text_correct": true,
+      "id_correct": true,
+      "wrong_unique_id": false,
+      "matches": [
+        {
+          "id": "10585",
+          "name": "认知税+"
+        }
+      ],
+      "ms": 13.41
+    },
+    {
+      "id": "10586",
+      "variant": "halfsize_jpeg55",
+      "expected": "博弈开启",
+      "predicted": "博弈开启",
+      "score": 0.99866,
+      "text_correct": true,
+      "id_correct": true,
+      "wrong_unique_id": false,
+      "matches": [
+        {
+          "id": "10586",
+          "name": "博弈开启"
+        }
+      ],
+      "ms": 12.95
+    },
+    {
+      "id": "10587",
+      "variant": "halfsize_jpeg55",
+      "expected": "高塔",
+      "predicted": "高塔",
+      "score": 0.99989,
+      "text_correct": true,
+      "id_correct": true,
+      "wrong_unique_id": false,
+      "matches": [
+        {
+          "id": "10587",
+          "name": "高塔"
+        }
+      ],
+      "ms": 12.72
+    },
+    {
+      "id": "10614",
+      "variant": "halfsize_jpeg55",
+      "expected": "手气不错",
+      "predicted": "手气不错",
+      "score": 0.99986,
+      "text_correct": true,
+      "id_correct": true,
+      "wrong_unique_id": false,
+      "matches": [
+        {
+          "id": "10614",
+          "name": "手气不错"
+        }
+      ],
+      "ms": 12.96
+    },
+    {
+      "id": "10615",
+      "variant": "halfsize_jpeg55",
+      "expected": "拥抱 I",
+      "predicted": "拥抱！",
+      "score": 0.83696,
+      "text_correct": false,
+      "id_correct": false,
+      "wrong_unique_id": false,
+      "matches": [],
+      "ms": 13.05,
+      "failure_crop": "halfsize_jpeg55-10615.png"
+    },
+    {
+      "id": "10616",
+      "variant": "halfsize_jpeg55",
+      "expected": "拥抱 II",
+      "predicted": "拥抱Ⅱ",
+      "score": 0.99529,
+      "text_correct": true,
+      "id_correct": true,
+      "wrong_unique_id": false,
+      "matches": [
+        {
+          "id": "10616",
+          "name": "拥抱 II"
+        }
+      ],
+      "ms": 13.08
+    },
+    {
+      "id": "10631",
+      "variant": "halfsize_jpeg55",
+      "expected": "小小福袋",
+      "predicted": "小小福袋",
+      "score": 0.99963,
+      "text_correct": true,
+      "id_correct": true,
+      "wrong_unique_id": false,
+      "matches": [
+        {
+          "id": "10631",
+          "name": "小小福袋"
+        }
+      ],
+      "ms": 12.88
+    },
+    {
+      "id": "10632",
+      "variant": "halfsize_jpeg55",
+      "expected": "双子守护神",
+      "predicted": "双子守护神",
+      "score": 0.9998,
+      "text_correct": true,
+      "id_correct": true,
+      "wrong_unique_id": false,
+      "matches": [
+        {
+          "id": "10632",
+          "name": "双子守护神"
+        }
+      ],
+      "ms": 13.28
+    },
+    {
+      "id": "10784",
+      "variant": "halfsize_jpeg55",
+      "expected": "别再错过",
+      "predicted": "别再错过",
+      "score": 0.99897,
+      "text_correct": true,
+      "id_correct": false,
+      "wrong_unique_id": false,
+      "matches": [
+        {
+          "id": "1625",
+          "name": "别再错过"
+        },
+        {
+          "id": "10784",
+          "name": "别再错过"
+        }
+      ],
+      "ms": 12.89,
+      "failure_crop": "halfsize_jpeg55-10784.png"
+    },
+    {
+      "id": "20477",
+      "variant": "halfsize_jpeg55",
+      "expected": "黄金命运",
+      "predicted": "黄金命运",
+      "score": 0.99492,
+      "text_correct": true,
+      "id_correct": true,
+      "wrong_unique_id": false,
+      "matches": [
+        {
+          "id": "20477",
+          "name": "黄金命运"
+        }
+      ],
+      "ms": 12.86
+    },
+    {
+      "id": "20478",
+      "variant": "halfsize_jpeg55",
+      "expected": "黄金命运+",
+      "predicted": "黄金命运+",
+      "score": 0.99497,
+      "text_correct": true,
+      "id_correct": true,
+      "wrong_unique_id": false,
+      "matches": [
+        {
+          "id": "20478",
+          "name": "黄金命运+"
+        }
+      ],
+      "ms": 12.85
+    },
+    {
+      "id": "20494",
+      "variant": "halfsize_jpeg55",
+      "expected": "白银命运+",
+      "predicted": "白银命运+",
+      "score": 0.99951,
+      "text_correct": true,
+      "id_correct": true,
+      "wrong_unique_id": false,
+      "matches": [
+        {
+          "id": "20494",
+          "name": "白银命运+"
+        }
+      ],
+      "ms": 12.95
+    },
+    {
+      "id": "20502",
+      "variant": "halfsize_jpeg55",
+      "expected": "更要命的帽子",
+      "predicted": "更要命的帽子",
+      "score": 0.99976,
+      "text_correct": true,
+      "id_correct": true,
+      "wrong_unique_id": false,
+      "matches": [
+        {
+          "id": "20502",
+          "name": "更要命的帽子"
+        }
+      ],
+      "ms": 12.74
+    },
+    {
+      "id": "20575",
+      "variant": "halfsize_jpeg55",
+      "expected": "救赎盔甲",
+      "predicted": "救赎盔甲",
+      "score": 0.99923,
+      "text_correct": true,
+      "id_correct": true,
+      "wrong_unique_id": false,
+      "matches": [
+        {
+          "id": "20575",
+          "name": "救赎盔甲"
+        }
+      ],
+      "ms": 12.96
+    },
+    {
+      "id": "20577",
+      "variant": "halfsize_jpeg55",
+      "expected": "承诺之护",
+      "predicted": "承诺之护",
+      "score": 0.99999,
+      "text_correct": true,
+      "id_correct": true,
+      "wrong_unique_id": false,
+      "matches": [
+        {
+          "id": "20577",
+          "name": "承诺之护"
+        }
+      ],
+      "ms": 12.78
+    },
+    {
+      "id": "20578",
+      "variant": "halfsize_jpeg55",
+      "expected": "心之钢",
+      "predicted": "心之钢",
+      "score": 0.99993,
+      "text_correct": true,
+      "id_correct": true,
+      "wrong_unique_id": false,
+      "matches": [
+        {
+          "id": "20578",
+          "name": "心之钢"
+        }
+      ],
+      "ms": 13.06
+    },
+    {
+      "id": "20584",
+      "variant": "halfsize_jpeg55",
+      "expected": "高级贷款+",
+      "predicted": "高级贷款+",
+      "score": 0.99975,
+      "text_correct": true,
+      "id_correct": true,
+      "wrong_unique_id": false,
+      "matches": [
+        {
+          "id": "20584",
+          "name": "高级贷款+"
+        }
+      ],
+      "ms": 12.65
+    },
+    {
+      "id": "20586",
+      "variant": "halfsize_jpeg55",
+      "expected": "炽天使之拥",
+      "predicted": "炽天使之拥",
+      "score": 0.99947,
+      "text_correct": true,
+      "id_correct": true,
+      "wrong_unique_id": false,
+      "matches": [
+        {
+          "id": "20586",
+          "name": "炽天使之拥"
+        }
+      ],
+      "ms": 12.87
+    },
+    {
+      "id": "20593",
+      "variant": "halfsize_jpeg55",
+      "expected": "单身板甲",
+      "predicted": "单身板甲",
+      "score": 0.99976,
+      "text_correct": true,
+      "id_correct": true,
+      "wrong_unique_id": false,
+      "matches": [
+        {
+          "id": "20593",
+          "name": "单身板甲"
+        }
+      ],
+      "ms": 12.59
+    },
+    {
+      "id": "20612",
+      "variant": "halfsize_jpeg55",
+      "expected": "三相庇护",
+      "predicted": "三相庇护",
+      "score": 0.9768,
+      "text_correct": true,
+      "id_correct": true,
+      "wrong_unique_id": false,
+      "matches": [
+        {
+          "id": "20612",
+          "name": "三相庇护"
+        }
+      ],
+      "ms": 13.03
+    },
+    {
+      "id": "20613",
+      "variant": "halfsize_jpeg55",
+      "expected": "认知过载",
+      "predicted": "认知过载",
+      "score": 0.99988,
+      "text_correct": true,
+      "id_correct": true,
+      "wrong_unique_id": false,
+      "matches": [
+        {
+          "id": "20613",
+          "name": "认知过载"
+        }
+      ],
+      "ms": 12.68
+    },
+    {
+      "id": "20616",
+      "variant": "halfsize_jpeg55",
+      "expected": "利落保镖",
+      "predicted": "利落保镖",
+      "score": 0.99975,
+      "text_correct": true,
+      "id_correct": true,
+      "wrong_unique_id": false,
+      "matches": [
+        {
+          "id": "20616",
+          "name": "利落保镖"
+        }
+      ],
+      "ms": 12.92
+    },
+    {
+      "id": "20619",
+      "variant": "halfsize_jpeg55",
+      "expected": "双城赢家",
+      "predicted": "双城赢家",
+      "score": 0.99329,
+      "text_correct": true,
+      "id_correct": true,
+      "wrong_unique_id": false,
+      "matches": [
+        {
+          "id": "20619",
+          "name": "双城赢家"
+        }
+      ],
+      "ms": 13.01
+    },
+    {
+      "id": "20624",
+      "variant": "halfsize_jpeg55",
+      "expected": "生日聚会",
+      "predicted": "生日聚会",
+      "score": 0.99968,
+      "text_correct": true,
+      "id_correct": true,
+      "wrong_unique_id": false,
+      "matches": [
+        {
+          "id": "20624",
+          "name": "生日聚会"
+        }
+      ],
+      "ms": 13.69
+    },
+    {
+      "id": "20625",
+      "variant": "halfsize_jpeg55",
+      "expected": "宝宝学院",
+      "predicted": "宝宝学院",
+      "score": 0.99995,
+      "text_correct": true,
+      "id_correct": true,
+      "wrong_unique_id": false,
+      "matches": [
+        {
+          "id": "20625",
+          "name": "宝宝学院"
+        }
+      ],
+      "ms": 12.98
+    },
+    {
+      "id": "20626",
+      "variant": "halfsize_jpeg55",
+      "expected": "8级嘀干的传说",
+      "predicted": "8级嘀干的传说",
+      "score": 0.99803,
+      "text_correct": true,
+      "id_correct": true,
+      "wrong_unique_id": false,
+      "matches": [
+        {
+          "id": "20626",
+          "name": "8级嘀干的传说"
+        }
+      ],
+      "ms": 12.7
+    },
+    {
+      "id": "20628",
+      "variant": "halfsize_jpeg55",
+      "expected": "三幻神",
+      "predicted": "三幻神",
+      "score": 0.99925,
+      "text_correct": true,
+      "id_correct": true,
+      "wrong_unique_id": false,
+      "matches": [
+        {
+          "id": "20628",
+          "name": "三幻神"
+        }
+      ],
+      "ms": 12.8
+    },
+    {
+      "id": "20629",
+      "variant": "halfsize_jpeg55",
+      "expected": "杖之工匠",
+      "predicted": "杖之工匠",
+      "score": 0.99886,
+      "text_correct": true,
+      "id_correct": true,
+      "wrong_unique_id": false,
+      "matches": [
+        {
+          "id": "20629",
+          "name": "杖之工匠"
+        }
+      ],
+      "ms": 13.48
+    },
+    {
+      "id": "20630",
+      "variant": "halfsize_jpeg55",
+      "expected": "剑之工匠",
+      "predicted": "剑之工匠",
+      "score": 0.99894,
+      "text_correct": true,
+      "id_correct": true,
+      "wrong_unique_id": false,
+      "matches": [
+        {
+          "id": "20630",
+          "name": "剑之工匠"
+        }
+      ],
+      "ms": 13.29
+    },
+    {
+      "id": "20633",
+      "variant": "halfsize_jpeg55",
+      "expected": "蔓延之根",
+      "predicted": "蔓延之根",
+      "score": 0.99985,
+      "text_correct": true,
+      "id_correct": true,
+      "wrong_unique_id": false,
+      "matches": [
+        {
+          "id": "20633",
+          "name": "蔓延之根"
+        }
+      ],
+      "ms": 13.43
+    },
+    {
+      "id": "20642",
+      "variant": "halfsize_jpeg55",
+      "expected": "摇钱树",
+      "predicted": "摇钱树",
+      "score": 0.99353,
+      "text_correct": true,
+      "id_correct": true,
+      "wrong_unique_id": false,
+      "matches": [
+        {
+          "id": "20642",
+          "name": "摇钱树"
+        }
+      ],
+      "ms": 13.42
+    },
+    {
+      "id": "20649",
+      "variant": "halfsize_jpeg55",
+      "expected": "挑战者的优雅",
+      "predicted": "挑战者的优雅",
+      "score": 0.99992,
+      "text_correct": true,
+      "id_correct": true,
+      "wrong_unique_id": false,
+      "matches": [
+        {
+          "id": "20649",
+          "name": "挑战者的优雅"
+        }
+      ],
+      "ms": 25.05
+    },
+    {
+      "id": "20651",
+      "variant": "halfsize_jpeg55",
+      "expected": "金霖龙",
+      "predicted": "金霖龙",
+      "score": 0.99988,
+      "text_correct": true,
+      "id_correct": true,
+      "wrong_unique_id": false,
+      "matches": [
+        {
+          "id": "20651",
+          "name": "金霖龙"
+        }
+      ],
+      "ms": 13.54
+    },
+    {
+      "id": "20654",
+      "variant": "halfsize_jpeg55",
+      "expected": "获得21金币",
+      "predicted": "获得21金币",
+      "score": 0.99979,
+      "text_correct": true,
+      "id_correct": true,
+      "wrong_unique_id": false,
+      "matches": [
+        {
+          "id": "20654",
+          "name": "获得21金币"
+        }
+      ],
+      "ms": 13.28
+    },
+    {
+      "id": "20661",
+      "variant": "halfsize_jpeg55",
+      "expected": "后期收益",
+      "predicted": "后期收益",
+      "score": 0.99999,
+      "text_correct": true,
+      "id_correct": true,
+      "wrong_unique_id": false,
+      "matches": [
+        {
+          "id": "20661",
+          "name": "后期收益"
+        }
+      ],
+      "ms": 22.37
+    },
+    {
+      "id": "20673",
+      "variant": "halfsize_jpeg55",
+      "expected": "纺织魔法",
+      "predicted": "纺织魔法",
+      "score": 0.99983,
+      "text_correct": true,
+      "id_correct": true,
+      "wrong_unique_id": false,
+      "matches": [
+        {
+          "id": "20673",
+          "name": "纺织魔法"
+        }
+      ],
+      "ms": 13.06
+    },
+    {
+      "id": "20675",
+      "variant": "halfsize_jpeg55",
+      "expected": "一波带走俩",
+      "predicted": "一波带走俩",
+      "score": 0.99987,
+      "text_correct": true,
+      "id_correct": true,
+      "wrong_unique_id": false,
+      "matches": [
+        {
+          "id": "20675",
+          "name": "一波带走俩"
+        }
+      ],
+      "ms": 13.15
+    },
+    {
+      "id": "20681",
+      "variant": "halfsize_jpeg55",
+      "expected": "蔓延之根+",
+      "predicted": "蔓延之根+",
+      "score": 0.99933,
+      "text_correct": true,
+      "id_correct": true,
+      "wrong_unique_id": false,
+      "matches": [
+        {
+          "id": "20681",
+          "name": "蔓延之根+"
+        }
+      ],
+      "ms": 13.08
+    },
+    {
+      "id": "20698",
+      "variant": "halfsize_jpeg55",
+      "expected": "镀金钢铁",
+      "predicted": "镀金钢铁",
+      "score": 0.9999,
+      "text_correct": true,
+      "id_correct": true,
+      "wrong_unique_id": false,
+      "matches": [
+        {
+          "id": "20698",
+          "name": "镀金钢铁"
+        }
+      ],
+      "ms": 13.17
+    },
+    {
+      "id": "20701",
+      "variant": "halfsize_jpeg55",
+      "expected": "贪财",
+      "predicted": "贪财",
+      "score": 0.9807,
+      "text_correct": true,
+      "id_correct": true,
+      "wrong_unique_id": false,
+      "matches": [
+        {
+          "id": "20701",
+          "name": "贪财"
+        }
+      ],
+      "ms": 13.16
+    },
+    {
+      "id": "20771",
+      "variant": "halfsize_jpeg55",
+      "expected": "烧起来",
+      "predicted": "烧起来",
+      "score": 0.99998,
+      "text_correct": true,
+      "id_correct": false,
+      "wrong_unique_id": false,
+      "matches": [
+        {
+          "id": "10771",
+          "name": "烧起来"
+        },
+        {
+          "id": "20771",
+          "name": "烧起来"
+        }
+      ],
+      "ms": 13.0,
+      "failure_crop": "halfsize_jpeg55-20771.png"
+    },
+    {
+      "id": "20783",
+      "variant": "halfsize_jpeg55",
+      "expected": "是我，宝贝！",
+      "predicted": "是我，宝贝！",
+      "score": 0.99334,
+      "text_correct": true,
+      "id_correct": true,
+      "wrong_unique_id": false,
+      "matches": [
+        {
+          "id": "20783",
+          "name": "是我，宝贝！"
+        }
+      ],
+      "ms": 13.16
+    },
+    {
+      "id": "30491",
+      "variant": "halfsize_jpeg55",
+      "expected": "棱彩命运",
+      "predicted": "棱彩命运",
+      "score": 0.99909,
+      "text_correct": true,
+      "id_correct": true,
+      "wrong_unique_id": false,
+      "matches": [
+        {
+          "id": "30491",
+          "name": "棱彩命运"
+        }
+      ],
+      "ms": 12.93
+    },
+    {
+      "id": "30494",
+      "variant": "halfsize_jpeg55",
+      "expected": "白银命运++",
+      "predicted": "白银命运++",
+      "score": 0.99508,
+      "text_correct": true,
+      "id_correct": true,
+      "wrong_unique_id": false,
+      "matches": [
+        {
+          "id": "30494",
+          "name": "白银命运++"
+        }
+      ],
+      "ms": 13.08
+    },
+    {
+      "id": "30584",
+      "variant": "halfsize_jpeg55",
+      "expected": "高级贷款",
+      "predicted": "高级贷款",
+      "score": 0.99986,
+      "text_correct": true,
+      "id_correct": true,
+      "wrong_unique_id": false,
+      "matches": [
+        {
+          "id": "30584",
+          "name": "高级贷款"
+        }
+      ],
+      "ms": 14.47
+    },
+    {
+      "id": "30599",
+      "variant": "halfsize_jpeg55",
+      "expected": "灵魂唤醒",
+      "predicted": "灵魂唤醒",
+      "score": 0.99946,
+      "text_correct": true,
+      "id_correct": true,
+      "wrong_unique_id": false,
+      "matches": [
+        {
+          "id": "30599",
+          "name": "灵魂唤醒"
+        }
+      ],
+      "ms": 12.64
+    },
+    {
+      "id": "30613",
+      "variant": "halfsize_jpeg55",
+      "expected": "正义报复",
+      "predicted": "正义报复",
+      "score": 0.99984,
+      "text_correct": true,
+      "id_correct": true,
+      "wrong_unique_id": false,
+      "matches": [
+        {
+          "id": "30613",
+          "name": "正义报复"
+        }
+      ],
+      "ms": 12.8
+    },
+    {
+      "id": "30617",
+      "variant": "halfsize_jpeg55",
+      "expected": "男爵幻域",
+      "predicted": "男爵幻域",
+      "score": 0.99995,
+      "text_correct": true,
+      "id_correct": true,
+      "wrong_unique_id": false,
+      "matches": [
+        {
+          "id": "30617",
+          "name": "男爵幻域"
+        }
+      ],
+      "ms": 12.75
+    },
+    {
+      "id": "30634",
+      "variant": "halfsize_jpeg55",
+      "expected": "纹章树",
+      "predicted": "纹章树",
+      "score": 0.99984,
+      "text_correct": true,
+      "id_correct": true,
+      "wrong_unique_id": false,
+      "matches": [
+        {
+          "id": "30634",
+          "name": "纹章树"
+        }
+      ],
+      "ms": 12.73
+    },
+    {
+      "id": "30637",
+      "variant": "halfsize_jpeg55",
+      "expected": "可大可小",
+      "predicted": "可大可小",
+      "score": 0.99989,
+      "text_correct": true,
+      "id_correct": true,
+      "wrong_unique_id": false,
+      "matches": [
+        {
+          "id": "30637",
+          "name": "可大可小"
+        }
+      ],
+      "ms": 14.72
+    },
+    {
+      "id": "30655",
+      "variant": "halfsize_jpeg55",
+      "expected": "棱彩命运+",
+      "predicted": "棱彩命运+",
+      "score": 0.99913,
+      "text_correct": true,
+      "id_correct": true,
+      "wrong_unique_id": false,
+      "matches": [
+        {
+          "id": "30655",
+          "name": "棱彩命运+"
+        }
+      ],
+      "ms": 12.99
+    },
+    {
+      "id": "30656",
+      "variant": "halfsize_jpeg55",
+      "expected": "贸易中心",
+      "predicted": "贸易中心",
+      "score": 0.99985,
+      "text_correct": true,
+      "id_correct": true,
+      "wrong_unique_id": false,
+      "matches": [
+        {
+          "id": "30656",
+          "name": "贸易中心"
+        }
+      ],
+      "ms": 12.72
+    },
+    {
+      "id": "30665",
+      "variant": "halfsize_jpeg55",
+      "expected": "甜点",
+      "predicted": "甜点",
+      "score": 1.0,
+      "text_correct": true,
+      "id_correct": true,
+      "wrong_unique_id": false,
+      "matches": [
+        {
+          "id": "30665",
+          "name": "甜点"
+        }
+      ],
+      "ms": 12.5
+    },
+    {
+      "id": "30668",
+      "variant": "halfsize_jpeg55",
+      "expected": "厨神阿福",
+      "predicted": "厨神阿福",
+      "score": 0.99974,
+      "text_correct": true,
+      "id_correct": true,
+      "wrong_unique_id": false,
+      "matches": [
+        {
+          "id": "30668",
+          "name": "厨神阿福"
+        }
+      ],
+      "ms": 12.84
+    },
+    {
+      "id": "30678",
+      "variant": "halfsize_jpeg55",
+      "expected": "秘法帮派 II+",
+      "predicted": "秘法帮派Ⅱ+",
+      "score": 0.95568,
+      "text_correct": true,
+      "id_correct": true,
+      "wrong_unique_id": false,
+      "matches": [
+        {
+          "id": "30678",
+          "name": "秘法帮派 II+"
+        }
+      ],
+      "ms": 13.89
+    },
+    {
+      "id": "30679",
+      "variant": "halfsize_jpeg55",
+      "expected": "秘法帮派 II++",
+      "predicted": "秘法帮派Ⅱ++",
+      "score": 0.91179,
+      "text_correct": true,
+      "id_correct": true,
+      "wrong_unique_id": false,
+      "matches": [
+        {
+          "id": "30679",
+          "name": "秘法帮派 II++"
+        }
+      ],
+      "ms": 13.0
+    },
+    {
+      "id": "30680",
+      "variant": "halfsize_jpeg55",
+      "expected": "奢侈品订购",
+      "predicted": "奢侈品订购",
+      "score": 0.99971,
+      "text_correct": true,
+      "id_correct": true,
+      "wrong_unique_id": false,
+      "matches": [
+        {
+          "id": "30680",
+          "name": "奢侈品订购"
+        }
+      ],
+      "ms": 13.07
+    },
+    {
+      "id": "30682",
+      "variant": "halfsize_jpeg55",
+      "expected": "纹章树+",
+      "predicted": "纹章树+",
+      "score": 0.99882,
+      "text_correct": true,
+      "id_correct": true,
+      "wrong_unique_id": false,
+      "matches": [
+        {
+          "id": "30682",
+          "name": "纹章树+"
+        }
+      ],
+      "ms": 13.08
+    },
+    {
+      "id": "30701",
+      "variant": "halfsize_jpeg55",
+      "expected": "贪财+",
+      "predicted": "贪财+",
+      "score": 0.99138,
+      "text_correct": true,
+      "id_correct": true,
+      "wrong_unique_id": false,
+      "matches": [
+        {
+          "id": "30701",
+          "name": "贪财+"
+        }
+      ],
+      "ms": 13.44
+    },
+    {
+      "id": "30767",
+      "variant": "halfsize_jpeg55",
+      "expected": "欧米茄之怪",
+      "predicted": "欧米茄之怪",
+      "score": 0.99947,
+      "text_correct": true,
+      "id_correct": false,
+      "wrong_unique_id": false,
+      "matches": [
+        {
+          "id": "20767",
+          "name": "欧米茄之怪"
+        },
+        {
+          "id": "30767",
+          "name": "欧米茄之怪"
+        }
+      ],
+      "ms": 13.88,
+      "failure_crop": "halfsize_jpeg55-30767.png"
+    },
+    {
+      "id": "30768",
+      "variant": "halfsize_jpeg55",
+      "expected": "自然庇护所",
+      "predicted": "自然庇护所",
+      "score": 0.98321,
+      "text_correct": true,
+      "id_correct": false,
+      "wrong_unique_id": false,
+      "matches": [
+        {
+          "id": "20768",
+          "name": "自然庇护所"
+        },
+        {
+          "id": "30768",
+          "name": "自然庇护所"
+        }
+      ],
+      "ms": 14.45,
+      "failure_crop": "halfsize_jpeg55-30768.png"
+    },
+    {
+      "id": "30770",
+      "variant": "halfsize_jpeg55",
+      "expected": "毛茸茸小朋友",
+      "predicted": "毛茸茸小朋友",
+      "score": 0.99973,
+      "text_correct": true,
+      "id_correct": false,
+      "wrong_unique_id": false,
+      "matches": [
+        {
+          "id": "20770",
+          "name": "毛茸茸小朋友"
+        },
+        {
+          "id": "30770",
+          "name": "毛茸茸小朋友"
+        }
+      ],
+      "ms": 13.7,
+      "failure_crop": "halfsize_jpeg55-30770.png"
+    },
+    {
+      "id": "30782",
+      "variant": "halfsize_jpeg55",
+      "expected": "创世神",
+      "predicted": "创世神",
+      "score": 0.99946,
+      "text_correct": true,
+      "id_correct": true,
+      "wrong_unique_id": false,
+      "matches": [
+        {
+          "id": "30782",
+          "name": "创世神"
+        }
+      ],
+      "ms": 13.39
+    }
+  ]
+}
