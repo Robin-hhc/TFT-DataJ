@@ -29,6 +29,9 @@ class FrozenSource:
         assert kind=='equip' and str(entity['id'])=='41806'
         return self.read('explorer-inferno.json')
 
+    def comps(self):
+        return json.loads((ROOT/'work/comp-browser/rank.json').read_text(encoding='utf-8'))
+
 
 def main():
     app=QApplication([])
@@ -60,18 +63,21 @@ def main():
     checks.append('guide navigation updates browse address without repinning')
     equip=next(r for r in panel.catalog['equip'] if str(r['id'])=='41806')
     panel.run_explore('equip',equip);wait()
-    assert panel.explore_table.rowCount()==35
+    assert len(panel.browser.rows)==35
     assert panel.session.target=='112'
     checks.append('single condition explorer without changing pinned comp')
     panel.heroes.setCurrentIndex(panel.heroes.findData('4503'))
     panel.query_equipment();wait()
     assert panel.equip_table.rowCount()==103
+    assert panel.equip_table.item(0,1).foreground().color().getRgb()[:3]==(191,254,127)
     checks.append('hero ID equipment table')
     panel.run_explore('equip',equip);panel.clear_explorer();wait()
-    assert panel.explore_table.rowCount()==0
+    assert panel.browser.scope is None and len(panel.browser.rows)>0
     checks.append('late explorer result discarded')
     panel.manual_stats();panel.new_game();wait()
-    assert panel.session.target is None and panel.choice_table.rowCount()==0 and panel.resources.count()==0
+    assert panel.session.target is None and panel.choice_table.rowCount()==0 and panel.browser.scope is None
+    assert panel.stage.currentIndex()==-1 and all(p.currentData() is None for p in panel.picks)
+    panel.manual_stats();assert panel.session.stage is None
     checks.append('new game invalidates late stats and clears resources')
     panel.shutdown()
     (STATE_DIR/'integration-result.json').write_text(json.dumps({'fixture_only':True,'checks':checks},ensure_ascii=False,indent=2),encoding='utf-8')

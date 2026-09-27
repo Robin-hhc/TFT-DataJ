@@ -7,6 +7,13 @@ from stat_colors import placement_color
 
 STYLE = '''
 QWidget { color:#e8e8ee; font-family:"Microsoft YaHei UI"; font-size:13px; }
+QFrame#filterBox { background:#1b1b27; border:1px solid #353140; border-radius:10px; }
+QLabel#filterStatus { color:#e6c678; font-size:12px; }
+QFrame#compCard { background:#1b1b27; border:1px solid #34313f; border-radius:10px; }
+QFrame#compCard:hover { border-color:#8f784d; background:#242230; }
+QFrame#compCard[pinned="true"] { border:1px solid #e2b860; background:#29251f; }
+QPushButton#chooseComp { background:#30291d; color:#e9c674; border:1px solid #76603a; padding:6px 12px; }
+QLabel#emptyComps { color:#b4aabd; padding:35px; }
 QWidget#companion { background:#101016; }
 QFrame#sidebar { background:#14141e; border-right:1px solid #292935; }
 QLabel { background:transparent; }
@@ -21,6 +28,7 @@ QLabel#status { color:#b4afc2; font-size:11px; padding:6px 0; }
 QPushButton { background:#22212d; border:1px solid #363342; border-radius:7px; padding:8px 14px; color:#dedbe8; min-height:18px; }
 QPushButton:hover { background:#2d293b; border-color:#726044; }
 QPushButton:pressed { background:#393046; }
+QPushButton:checked { background:#393025; border-color:#c6a05a; }
 QPushButton:focus { border:1px solid #e0b85a; }
 QPushButton:disabled { color:#6f6b7d; background:#1b1a23; border-color:#2b2935; }
 QPushButton#primary { background:#dfb65d; border:1px solid #f2cd7a; color:#211b0e; font-size:15px; font-weight:700; padding:13px 22px; }

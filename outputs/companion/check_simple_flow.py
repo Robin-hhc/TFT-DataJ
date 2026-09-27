@@ -21,7 +21,7 @@ def main():
     with patch('app.win.enumerate_mumu',return_value=[]):panel.start_or_pause()
     assert panel.activity_code=='no_game' and not panel.automatic.isChecked()
     checks.append('missing game produces an actionable message')
-    binding=SimpleNamespace(hwnd=123,pid=456,process='MuMuNxDevice.exe',class_name='game',title='MuMu',rect=(0,0,640,360),dpi=96)
+    binding=SimpleNamespace(hwnd=123,pid=456,process='MuMuNxDevice.exe',class_name='game',title='MuMu',rect=(0,0,640,360),dpi=96,minimized=False)
     placed=[]
     for label in panel.overlays:label.place=lambda *args:placed.append(args)
     def wait():
@@ -49,10 +49,16 @@ def main():
         checks.append('pause clears results and disables capture')
         assert focus.call_count==1,'background callbacks must not activate game or panel'
         checks.append('no background focus stealing')
+        panel.set_activity('waiting_foreground','paused');panel.automatic.setChecked(True)
+        with patch.object(panel,'probe_stage'),patch.object(panel,'request_capture'):
+            panel.tick()
+        assert panel.activity_code=='watching_stage'
+        panel.automatic.setChecked(False)
+        checks.append('foreground resume restores visible status')
         scheduled=[];callbacks=[]
         with patch('app.QTimer.singleShot',side_effect=lambda ms,fn:scheduled.append(fn)),patch.object(panel,'submit',side_effect=lambda pool,job,done,failed:callbacks.append(failed)):
             panel.automatic.setChecked(True)
-            panel.request_capture();scheduled.pop()()
+            panel.request_capture()
             panel.start_or_pause()
             callbacks.pop()('late error')
         assert panel.activity_code=='paused'

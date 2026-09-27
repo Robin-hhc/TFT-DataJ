@@ -7,6 +7,7 @@ from datetime import datetime
 import json
 import os
 import html
+import re
 import sys
 import time
 from pathlib import Path
@@ -18,6 +19,7 @@ from dataj import DataJ
 from snapshot_stats import stage_stat, STAGES
 from vision import Vision, capture_image, capture_stage, tracked_signature, unchanged
 from floating_mark import FloatingMark
+from comp_browser import CompBrowser,HeroPortrait,portrait_catalog
 from mouse_shortcut import MouseShortcut
 from stat_colors import placement_color
 from ui_theme import STYLE, ResultCard, Rune, label
@@ -81,7 +83,7 @@ def fill_table(widget, rows):
             if '均排' in heading or '平均排名' in heading:
                 try:
                     average=float(str(value).split(' · ')[0])
-                    item.setForeground(QColor(placement_color(average)))
+                    item.setForeground(QColor(*map(int,re.findall(r'\d+',placement_color(average)))))
                     if isinstance(value,(int,float)):item.setText(f'{average:.2f}')
                 except ValueError:pass
             if col>0:item.setTextAlignment(Qt.AlignmentFlag.AlignCenter)
@@ -133,7 +135,7 @@ class Companion(QWidget):
         super().__init__()
         self.setWindowTitle('金铲铲 DataJ Companion · 本机试用版')
         self.setObjectName('companion');self.setStyleSheet(STYLE)
-        self.resize(1080,760);self.setMinimumSize(920,660)
+        self.resize(1140,860);self.setMinimumSize(920,660)
         self.session=Session()
         self.offline=offline
         self.frame_recorder=FrameRecorder()
@@ -179,16 +181,16 @@ class Companion(QWidget):
         self.recent=[]
         self.overlays=[CardOverlay() for _ in range(3)]
         shell=QHBoxLayout(self);shell.setContentsMargins(0,0,0,0);shell.setSpacing(0)
-        sidebar=QFrame();sidebar.setObjectName('sidebar');sidebar.setFixedWidth(188)
+        sidebar=QFrame();sidebar.setObjectName('sidebar');sidebar.setFixedWidth(156)
         rail=QVBoxLayout(sidebar);rail.setContentsMargins(16,28,16,20);rail.setSpacing(9)
         brand=QHBoxLayout();brand.addWidget(Rune());brand.addWidget(label('金铲铲\n助手','brand'));rail.addLayout(brand)
         rail.addWidget(label('DATAJ COMPANION','eyebrow'));rail.addSpacing(28)
         rail.addWidget(label('本局工具','muted'))
-        self.navigation=[]
+        self.navigation={}
         self.navigation_group=QButtonGroup(self);self.navigation_group.setExclusive(True)
-        for index,title in enumerate(['◇   局内辅助','⌕   条件选阵','▤   阵容攻略','▥   英雄出装']):
+        for index,title in [(1,'⌕   选阵容'),(2,'▤   本局攻略'),(3,'▥   英雄出装'),(0,'◇   强化 / 设置')]:
             nav=button(title,lambda checked=False,i=index:self.tabs.setCurrentIndex(i))
-            nav.setObjectName('nav');nav.setCheckable(True);rail.addWidget(nav);self.navigation.append(nav)
+            nav.setObjectName('nav');nav.setCheckable(True);rail.addWidget(nav);self.navigation[index]=nav
             self.navigation_group.addButton(nav,index)
         rail.addStretch();rail.addWidget(label('S18  自然之力','badge'));rail.addSpacing(8)
         rail.addWidget(label('统计来自 DataJ\n仅作局内查询参考','muted'))
@@ -204,13 +206,17 @@ class Companion(QWidget):
         header.addWidget(button('新的一局',self.new_game));header.addWidget(button('收起为小标记',self.return_to_game))
         root.addLayout(header)
         self.target_label=label('本局阵容：未固定','target')
-        root.addWidget(self.target_label)
+        target_row=QHBoxLayout();target_row.addWidget(self.target_label,1)
+        self.copy_button=button('复制主阵容码',self.copy_code);self.copy_button.setEnabled(False);target_row.addWidget(self.copy_button)
+        target_row.addWidget(button('换阵容',lambda:self.tabs.setCurrentIndex(1)))
+        root.addLayout(target_row)
         self.tabs=QTabWidget();self.tabs.tabBar().hide();root.addWidget(self.tabs,1)
         self.make_choices()
         self.make_explorer()
         self.make_guide()
         self.make_equipment()
-        self.tabs.currentChanged.connect(self.navigate);self.navigate(0)
+        self.tabs.currentChanged.connect(self.navigate);self.tabs.setCurrentIndex(1);self.navigate(1)
+        self.apply_display_preferences()
         self.status=label('Ctrl + Alt + F9 随时展开或收起助手。','status')
         self.status.setWordWrap(True);root.addWidget(self.status)
         root.addWidget(label('CTRL + ALT + F10   截图查均排     ·     F9 展开 / 收起     ·     F12 退出（均需 CTRL + ALT）','muted'))
@@ -224,11 +230,11 @@ class Companion(QWidget):
 
     def navigate(self,index):
         headings=[('海克斯助手','按快捷键查均排，也可开启低频阶段检查。'),
-                  ('条件选阵','从一件装备、一个转职或一个海克斯开始。'),
-                  ('阵容攻略','确定方向后，攻略和阵容统计一起跟随。'),
+                  ('选阵容','先选一个检索条件，再点击适合这局的阵容。'),
+                  ('本局攻略','阵容已固定，攻略、出装和强化查询一起跟随。'),
                   ('英雄出装','查看本局阵容下的装备表现，寻找替代选择。')]
         self.banner.setText(headings[index][0]);self.subtitle.setText(headings[index][1])
-        for i,nav in enumerate(self.navigation):nav.setChecked(i==index)
+        for i,nav in self.navigation.items():nav.setChecked(i==index)
 
     def add_page(self,page,title):
         page.layout().setContentsMargins(0,2,6,4);page.layout().setSpacing(14)
@@ -312,7 +318,32 @@ class Companion(QWidget):
             self.picks.append(combo);advanced.addWidget(combo)
         advanced.addWidget(QLabel('同名条目保留品质与 ID 供纠错；手动查询仅在面板显示。'))
         advanced.addWidget(button('查询手动选择的海克斯',self.manual_stats))
+        appearance=QHBoxLayout();appearance.addWidget(QLabel('界面大小'))
+        self.panel_size=QComboBox();self.panel_size.addItems(['紧凑','标准','宽屏']);self.panel_size.setCurrentIndex(1)
+        self.panel_size.activated.connect(self.resize_panel);appearance.addWidget(self.panel_size)
+        self.text_size=QComboBox();self.text_size.addItems(['标准字体','大字体']);self.text_size.activated.connect(self.change_text_size)
+        appearance.addWidget(self.text_size);appearance.addWidget(button('回到左上角',self.reset_position));advanced.addLayout(appearance)
         self.add_page(page,'海克斯')
+
+    def resize_panel(self,index):
+        self.resize(*[(1000,700),(1140,860),(1320,940)][index])
+
+    def change_text_size(self,index):
+        scale=1.12 if index else 1.0
+        self.setStyleSheet(re.sub(r'font-size:(\d+)px',lambda m:f'font-size:{round(int(m[1])*scale)}px',STYLE))
+        self.setMinimumWidth(1020 if index else 920)
+        if not self.offline:self.mouse_settings.setValue('large_text',index)
+
+    def apply_display_preferences(self):
+        if self.offline:return
+        saved=self.mouse_settings.value('panel_geometry')
+        if saved is not None:self.restoreGeometry(saved)
+        index=1 if str(self.mouse_settings.value('large_text',0))=='1' else 0
+        self.text_size.setCurrentIndex(index);self.change_text_size(index)
+
+    def reset_position(self):
+        area=QApplication.primaryScreen().availableGeometry()
+        self.move(area.left()+64,area.top()+12);self.mark.move(area.left()+12,area.top()+12)
 
     def toggle_advanced(self):
         opened=self.advanced.isHidden()
@@ -360,40 +391,25 @@ class Companion(QWidget):
         self.start_button.setText('截图查均排' if self.trigger_mode.currentIndex()==0 else '开启阶段触发')
 
     def make_explorer(self):
-        page=QWidget();layout=QVBoxLayout(page);columns=QHBoxLayout();columns.setSpacing(18)
-        filters=QWidget();filters.setFixedWidth(225);filter_layout=QVBoxLayout(filters)
-        filter_layout.setContentsMargins(0,0,0,0);filter_layout.setSpacing(10)
-        filter_layout.addWidget(label('选择查询条件','section'))
-        self.kind=QComboBox()
-        for kind_label,kind in [('海克斯','hex'),('装备 / 转职','equip'),('英雄','hero'),('羁绊档位','trait')]:self.kind.addItem(kind_label,kind)
-        self.search=QLineEdit();self.search.setPlaceholderText('输入名称搜索…')
-        self.search.textChanged.connect(self.filter_entities);self.kind.currentIndexChanged.connect(self.filter_entities)
-        filter_layout.addWidget(self.kind);filter_layout.addWidget(self.search)
-        self.entities=QListWidget();self.entities.setMinimumHeight(130);filter_layout.addWidget(self.entities,1)
-        query=button('查询这个条件',self.explore_selected);query.setObjectName('primary');filter_layout.addWidget(query)
-        self.resources=QListWidget();self.resources.setFixedHeight(66)
-        self.resources.itemDoubleClicked.connect(self.explore_resource)
-        filter_layout.addWidget(label('最近使用 · 双击再次查询','muted'));filter_layout.addWidget(self.resources)
-        remove=button('移除选中记录',lambda:self.resources.takeItem(self.resources.currentRow()));remove.setObjectName('subtle');filter_layout.addWidget(remove)
-        columns.addWidget(filters)
-        results=QWidget();result_layout=QVBoxLayout(results);result_layout.setContentsMargins(0,0,0,0);result_layout.setSpacing(12)
-        result_layout.addWidget(label('匹配阵容','section'))
-        self.explore_note=label('选择一个条件，查看它适合的阵容。','muted');result_layout.addWidget(self.explore_note)
-        self.explore_table=table(['阵容','条件内均排','样本','阵容 ID'])
-        self.explore_table.cellDoubleClicked.connect(self.browse_result)
-        self.explore_table.setMinimumHeight(270);result_layout.addWidget(self.explore_table,1)
-        result_layout.addWidget(label('双击阵容打开攻略，再决定是否固定。','muted'))
-        row=QHBoxLayout();row.addWidget(button('清空条件',self.clear_explorer))
-        row.addWidget(button('原站检索器  ↗',lambda:self.open_guide('https://www.dataj.cc/explorer')));result_layout.addLayout(row)
-        columns.addWidget(results,1);layout.addLayout(columns)
-        self.explore_table.hideColumn(3)
-        self.add_page(page,'单条件检索')
+        self.browser=CompBrowser(self.mouse_settings,self.offline)
+        self.browser.queryRequested.connect(self.load_comps)
+        self.browser.compSelected.connect(self.select_comp)
+        self.tabs.addTab(self.browser,'选阵容')
 
     def make_guide(self):
         page=QWidget();layout=QVBoxLayout(page)
-        row=QHBoxLayout();self.comp_url=QLineEdit();self.comp_url.setPlaceholderText('https://www.dataj.cc/comp/112')
-        row.addWidget(self.comp_url);row.addWidget(button('浏览攻略',self.browse_comp));layout.addLayout(row)
-        row=QHBoxLayout();row.addWidget(button('本局玩这个阵容',self.pin_comp));row.addWidget(button('取消定阵',self.unpin));row.addWidget(button('复制主阵容码',self.copy_code));layout.addLayout(row)
+        row=QHBoxLayout()
+        row.addWidget(button('攻略',lambda:self.tabs.setCurrentIndex(2)))
+        row.addWidget(button('出装',lambda:self.tabs.setCurrentIndex(3)))
+        row.addWidget(button('强化',lambda:self.tabs.setCurrentIndex(0)))
+        row.addStretch();row.addWidget(button('取消定阵',self.unpin));layout.addLayout(row)
+        self.guide_notice=label('先在阵容列表选择一套阵容。','muted');self.guide_notice.setWordWrap(True);layout.addWidget(self.guide_notice)
+        self.guide_retry=button('重试加载本局阵容',self.retry_comp);self.guide_retry.hide();layout.addWidget(self.guide_retry)
+        self.comp_url=QLineEdit();self.comp_url.setPlaceholderText('DataJ 阵容地址')
+        self.address_box=QWidget();address=QHBoxLayout(self.address_box);address.setContentsMargins(0,0,0,0)
+        address.addWidget(self.comp_url);address.addWidget(button('选择此阵容',self.pin_comp));address.addWidget(button('只浏览',self.browse_comp))
+        toggle=button('其他阵容地址 ▸',lambda:self.address_box.setVisible(not self.address_box.isVisible()));toggle.setObjectName('subtle')
+        layout.addWidget(toggle);layout.addWidget(self.address_box);self.address_box.hide()
         self.profile=QWebEngineProfile(self)
         self.profile.downloadRequested.connect(lambda item:item.cancel())
         self.web=QWebEngineView()
@@ -402,8 +418,8 @@ class Companion(QWidget):
         self.web.setPage(self.guide_page);self.guide_page.setBackgroundColor(QColor('#191922'))
         self.guide_empty=QFrame();self.guide_empty.setObjectName('hero');empty=QVBoxLayout(self.guide_empty)
         empty.setContentsMargins(30,40,30,40);empty.addWidget(label('先找到这局的方向','pageTitle'))
-        empty.addWidget(label('在条件选阵中打开一套阵容，或在上方粘贴 DataJ 阵容地址。\n点击「本局玩这个阵容」后，强化和出装统计会跟随它。','muted'))
-        empty.addSpacing(16);empty.addWidget(button('去条件选阵  →',lambda:self.tabs.setCurrentIndex(1)))
+        empty.addWidget(label('从阵容列表点击一套，立刻固定为本局目标。\n之后可以复制阵容码，并查看攻略、出装与强化统计。','muted'))
+        empty.addSpacing(16);empty.addWidget(button('去选阵容  →',lambda:self.tabs.setCurrentIndex(1)))
         layout.addWidget(self.guide_empty)
         self.web.setMinimumHeight(320);layout.addWidget(self.web);self.web.hide()
         self.web.urlChanged.connect(self.guide_url_changed)
@@ -411,18 +427,39 @@ class Companion(QWidget):
         self.add_page(page,'阵容攻略')
 
     def make_equipment(self):
-        page=QWidget();layout=QVBoxLayout(page);row=QHBoxLayout()
-        self.heroes=QComboBox();row.addWidget(self.heroes)
+        page=QWidget();layout=QVBoxLayout(page)
+        self.hero_buttons=[];hero_scroll=QScrollArea();hero_scroll.setWidgetResizable(True);hero_scroll.setFixedHeight(108)
+        hero_content=QWidget();self.hero_layout=QHBoxLayout(hero_content);self.hero_layout.setContentsMargins(0,0,0,0);self.hero_layout.addStretch()
+        hero_scroll.setWidget(hero_content);layout.addWidget(hero_scroll)
+        row=QHBoxLayout();self.heroes=QComboBox();self.heroes.hide()
         self.equip_form=QComboBox();self.equip_form.addItems(['单件','三件套']);row.addWidget(self.equip_form)
         self.equip_type=QComboBox();self.equip_type.addItems(['全部','成型装备','神器装备','光明武器','转职纹章','特殊装备']);row.addWidget(self.equip_type)
         row.addWidget(button('查询出装',self.query_equipment));layout.addLayout(row)
         self.equip_table=table(['装备（所选英雄在已固定阵容中）','平均排名','样本'])
         layout.addWidget(self.equip_table)
-        self.equip_note=label('先在「阵容攻略」中固定阵容，再选择要查询的英雄。','muted');layout.addWidget(self.equip_note)
-        self.equip_form.currentIndexChanged.connect(self.clear_equipment)
-        self.equip_type.currentIndexChanged.connect(self.clear_equipment)
+        self.equip_note=label('先选一套阵容，再点击英雄头像查看出装。','muted');layout.addWidget(self.equip_note)
+        self.equip_form.currentIndexChanged.connect(self.query_equipment)
+        self.equip_type.currentIndexChanged.connect(self.query_equipment)
         self.heroes.currentIndexChanged.connect(self.clear_equipment)
+        self.heroes.activated.connect(self.query_equipment)
         self.add_page(page,'阵容出装')
+
+    def populate_hero_buttons(self):
+        for item in self.hero_buttons:self.hero_layout.removeWidget(item);item.deleteLater()
+        self.hero_buttons=[]
+        heroes=(self.comp_detail or {}).get('heroes',[])
+        catalog=portrait_catalog(self.catalog.get('hero',[]))
+        for hero in heroes:
+            item=QPushButton();item.setCheckable(True);item.setFixedSize(78,84)
+            item.setToolTip(hero['heroName']);box=QVBoxLayout(item);box.setContentsMargins(4,3,4,3)
+            box.addWidget(HeroPortrait(hero,catalog,self.browser.portraits),0,Qt.AlignmentFlag.AlignCenter)
+            item.clicked.connect(lambda checked=False,id_=str(hero['heroId']):self.select_hero(id_))
+            self.hero_layout.insertWidget(len(self.hero_buttons),item);self.hero_buttons.append(item)
+
+    def select_hero(self,hero):
+        index=self.heroes.findData(hero);self.heroes.setCurrentIndex(index)
+        for i,item in enumerate(self.hero_buttons):item.setChecked(i==index)
+        self.query_equipment()
 
     def load_catalog(self):
         adapter=self.adapter
@@ -442,19 +479,27 @@ class Companion(QWidget):
                 combo.setItemData(combo.count()-1,row.get('descText',''),Qt.ItemDataRole.ToolTipRole)
             combo.blockSignals(False)
             combo.completer().setFilterMode(Qt.MatchFlag.MatchContains)
-        self.filter_entities()
+        self.browser.set_catalog(self.catalog)
         self.start_button.setEnabled(True)
         self.set_activity('ready','按所选鼠标侧键或 Ctrl+Alt+F10 查均排，空闲时不截图。')
         self.status.setText('离线演示已准备好。' if offline else '目录已准备好，正在后台预热识别与统计；首次查询可能稍慢。')
         if not offline:
-            self.submit(self.ocr_pool,self.vision.prepare,lambda _:None)
+            # Native OCR runtime initialization on a Qt worker crashes on first
+            # inference in this Windows runtime. Initialize on the GUI thread;
+            # subsequent recognition stays on the serialized OCR worker.
+            try:
+                self.vision.prepare()
+            except Exception:
+                self.set_activity('ocr_failed','OCR 初始化失败，请检查本机模型与运行环境。')
+                return
             self.submit(self.network,self.adapter.hexes,lambda _:None)
+            self.browser.retry()
 
     def change_patch(self):
         try:adapter=DataJ(patch=self.patch.text().strip())
         except ValueError as exc:self.status.setText(str(exc));return
         self.adapter=adapter;self.session.patch=adapter.patch;self.catalog={}
-        self.new_game();self.clear_explorer();self.load_catalog()
+        self.new_game();self.load_catalog()
         self.status.setText(f'当前统计版本 {adapter.patch}，请与游戏版本保持一致。')
 
     def refresh_windows(self):
@@ -497,7 +542,9 @@ class Companion(QWidget):
     def new_game(self):
         self.last_probe_stage=None;self.stage_window_until=0
         self.session.reset();self.comp_detail=None;self.heroes.clear();self.unpin()
-        self.resources.clear();self.clear_explorer()
+        self.stage.setCurrentIndex(-1)
+        for pick in self.picks:pick.setCurrentIndex(0)
+        self.browser.clear_filter();self.tabs.setCurrentIndex(1)
 
     def return_to_game(self):
         self.invalidate()
@@ -653,6 +700,8 @@ class Companion(QWidget):
         self.query_stats(ids,names,live)
 
     def manual_stats(self):
+        if self.stage.currentText() not in STAGES or not any(p.currentData() for p in self.picks):
+            self.status.setText('请先确认阶段并选择海克斯。');return
         ids=[p.currentData() if p.currentText()==p.itemText(p.currentIndex()) else None for p in self.picks]
         names=[p.currentText().split(' · ')[0] for p in self.picks]
         self.query_stats(ids,names,False)
@@ -752,6 +801,8 @@ class Companion(QWidget):
                 elif reason:self.set_activity('waiting_foreground','已暂停识别；回到 MuMu 后会自动继续。')
             return
         self.was_available=True
+        if self.automatic.isChecked() and self.activity_code=='waiting_foreground':
+            self.set_activity('watching_stage','已回到 MuMu，每 3 秒检查回合，等待海克斯阶段。')
         if self.once_active and time.monotonic()>self.once_deadline:
             self.once_active=False
             if not self.automatic.isChecked():self.invalidate()
@@ -764,54 +815,35 @@ class Companion(QWidget):
         if (stage_active or self.once_active) and time.monotonic()-self.last_capture>capture_interval:
             self.request_capture()
 
-    def filter_entities(self,*_):
-        if not hasattr(self,'entities'):return
-        self.entities.clear();kind=self.kind.currentData();query=self.search.text().strip()
-        names={}
-        for entity in self.catalog.get(kind,[]):
-            key=(entity['name'],entity.get('level'),entity.get('num') if kind=='trait' else None)
-            names[key]=names.get(key,0)+1
-        for entity in self.catalog.get(kind,[]):
-            if kind=='hero' and (entity.get('heroType')!=0 or float(entity.get('price') or 0)<=0):continue
-            label=(str(entity.get('num','')) if kind=='trait' else '')+entity['name']
-            if query and query not in label:continue
-            quality={1:'银色',2:'金色',3:'彩色'}.get(entity.get('level'),'') if kind=='hex' else ''
-            key=(entity['name'],entity.get('level'),entity.get('num') if kind=='trait' else None)
-            disambiguation=f" · 来源编号 {entity['id']}" if names[key]>1 else ''
-            item=QListWidgetItem(label+(f'   ·   {quality}' if quality else '')+disambiguation)
-            item.setData(Qt.ItemDataRole.UserRole,(kind,entity));item.setToolTip(str(entity.get('descText') or ''))
-            self.entities.addItem(item)
-
-    def explore_selected(self):
-        item=self.entities.currentItem()
-        if item:self.run_explore(*item.data(Qt.ItemDataRole.UserRole))
-
-    def explore_resource(self,item):
-        self.run_explore(*item.data(Qt.ItemDataRole.UserRole))
-
-    def clear_explorer(self):
-        self.explorer_generation+=1;self.explore_table.setRowCount(0);self.explore_note.setText('未选择条件')
-
-    def run_explore(self,kind,entity):
-        self.clear_explorer();generation=self.explorer_generation;adapter=self.adapter
-        self.explore_note.setText('本次仅使用：'+entity['name']+'（查询中）')
-        key=(kind,str(entity['id']))
-        if not any(self.resources.item(i).data(Qt.ItemDataRole.UserRole)[0]==kind and str(self.resources.item(i).data(Qt.ItemDataRole.UserRole)[1]['id'])==key[1] for i in range(self.resources.count())):
-            item=QListWidgetItem(entity['name']);item.setData(Qt.ItemDataRole.UserRole,(kind,entity));self.resources.addItem(item)
+    def load_comps(self,kind='',entity=None):
+        self.explorer_generation+=1;generation=self.explorer_generation;adapter=self.adapter
+        self.browser.set_loading()
         def done(result):
             if generation!=self.explorer_generation or adapter is not self.adapter:return
-            rows=result['data'].get('comps')
-            if not isinstance(rows,list):self.status.setText('检索结果结构变化');return
-            rows=sorted(rows,key=lambda r:r.get('avgPlacement') if isinstance(r.get('avgPlacement'),(int,float)) else 99)
-            fill_table(self.explore_table,[[r.get('name','—'),r.get('avgPlacement','—'),r.get('sampleCount','—'),r.get('compId','')] for r in rows])
-            self.explore_note.setText(f"仅条件 {entity['name']} · {adapter.patch} · {len(rows)} 个阵容；均排属于该条件内")
+            try:
+                rows=result['data']['comps'] if kind else result['data']
+                DataJ.validate_comps(rows)
+                self.browser.set_result(rows,adapter.patch)
+            except Exception:self.browser.set_error();return
         def failed(_):
-            if generation==self.explorer_generation:self.explore_note.setText('查询未完成，请稍后重试。')
-        self.submit(self.network,lambda:adapter.explore(kind,entity),done,failed)
+            if generation==self.explorer_generation and adapter is self.adapter:self.browser.set_error()
+        self.submit(self.network,lambda:adapter.explore(kind,entity) if kind else adapter.comps(),done,failed)
 
-    def browse_result(self,row,col):
-        item=self.explore_table.item(row,3)
-        if item:self.comp_url.setText('https://www.dataj.cc/comp/'+item.text());self.browse_comp()
+    def clear_explorer(self):self.browser.clear_filter()
+
+    def run_explore(self,kind,entity):self.browser.set_filter(kind,entity)
+
+    def select_comp(self,comp):
+        if self.session.target==str(comp) and self.comp_detail:
+            try:current=parse_comp_url(self.web.url().toString())
+            except ValueError:current=None
+            if current!=str(comp) and not self.offline:self.open_guide('https://www.dataj.cc/comp/'+str(comp))
+            self.tabs.setCurrentIndex(2);return
+        self.comp_url.setText('https://www.dataj.cc/comp/'+str(comp));self.pin_comp()
+        self.tabs.setCurrentIndex(2)
+
+    def retry_comp(self):
+        if self.session.target:self.select_comp(self.session.target)
 
     def browse_comp(self):
         try:parse_comp_url(self.comp_url.text())
@@ -830,22 +862,46 @@ class Companion(QWidget):
     def pin_comp(self):
         try:comp=parse_comp_url(self.comp_url.text())
         except ValueError as exc:self.status.setText(str(exc));return
-        self.session.set_target(comp);self.invalidate();self.clear_equipment();self.comp_detail=None;self.heroes.clear()
-        self.comp_generation+=1;generation=self.comp_generation;adapter=self.adapter
-        session_id=self.session.session_id
-        self.target_label.setText('本局阵容：正在读取 '+comp)
+        self.session.set_target(comp);self.invalidate();self.clear_equipment();self.comp_detail=None
+        self.heroes.blockSignals(True);self.heroes.clear();self.heroes.blockSignals(False)
+        self.populate_hero_buttons()
+        self.copy_button.setEnabled(False);self.web.stop();self.web.hide();self.web.setUrl(QUrl('about:blank'))
+        self.guide_empty.hide();self.guide_retry.hide();self.guide_notice.setText('已选择阵容，正在读取攻略和阵容码…')
+        self.browser.set_pinned(comp)
+        self.comp_generation+=1;generation=self.comp_generation;adapter=self.adapter;session_id=self.session.session_id
+        name=next((row['name'] for row in self.browser.rows if str(row['compId'])==comp),comp)
+        self.target_label.setText('本局阵容：'+name+' · 正在读取')
+        def current():
+            return generation==self.comp_generation and session_id==self.session.session_id and adapter is self.adapter
+        def failed(_):
+            if not current():return
+            self.guide_notice.setText('阵容详情暂时无法读取。请重试；旧阵容码与攻略已清除。');self.guide_retry.show()
+            self.target_label.setText('本局阵容：'+name+' · 加载失败')
         def done(result):
-            if generation!=self.comp_generation or session_id!=self.session.session_id or adapter is not self.adapter:return
+            if not current():return
             detail=result['data']
-            if not isinstance(detail,dict) or str(detail.get('compId'))!=comp:self.status.setText('阵容详情不一致');return
-            self.comp_detail=detail;self.target_label.setText('本局阵容：'+detail.get('name',comp))
+            if not isinstance(detail,dict) or str(detail.get('compId'))!=comp:failed('scope');return
+            self.comp_detail=detail;self.target_label.setText('本局阵容：'+detail.get('name',comp)+' · 已固定')
+            self.heroes.blockSignals(True)
             for hero in detail.get('heroes',[]):self.heroes.addItem(hero['heroName'],str(hero['heroId']))
-        self.submit(self.network,lambda:adapter.comp(comp),done)
+            self.heroes.blockSignals(False)
+            self.populate_hero_buttons()
+            code=detail.get('gameCode');self.copy_button.setEnabled(isinstance(code,str) and code.startswith('【阵容码】'))
+            self.guide_notice.setText('已固定 · 强化与出装查询会跟随本阵容。'+('复制按钮对应主阵容。' if self.copy_button.isEnabled() else '来源暂无主阵容码。'))
+            self.guide_empty.hide();self.web.show()
+            if not self.offline:self.web.setUrl(QUrl('https://www.dataj.cc/comp/'+comp))
+            self.status.setText('已固定 '+detail.get('name',comp))
+        self.submit(self.network,lambda:adapter.comp(comp),done,failed)
 
     def unpin(self):
         self.comp_generation+=1
         self.session.set_target(None);self.invalidate();self.comp_detail=None;self.target_label.setText('本局阵容：未固定')
-        self.heroes.clear();self.clear_equipment()
+        self.copy_button.setEnabled(False);self.browser.set_pinned(None)
+        self.heroes.blockSignals(True);self.heroes.clear();self.heroes.blockSignals(False);self.clear_equipment()
+        self.populate_hero_buttons()
+        self.equip_note.setText('先选一套阵容，再点击英雄头像查看出装。')
+        self.web.stop();self.web.setUrl(QUrl('about:blank'));self.web.hide();self.guide_empty.show();self.guide_retry.hide()
+        self.guide_notice.setText('先在阵容列表选择一套阵容。')
 
     def copy_code(self):
         code=self.comp_detail.get('gameCode') if self.comp_detail else None
@@ -856,11 +912,13 @@ class Companion(QWidget):
     def clear_equipment(self,*_):
         self.equip_generation+=1
         if hasattr(self,'equip_table'):self.equip_table.setRowCount(0)
+        if hasattr(self,'equip_note'):self.equip_note.setText('点击本局阵容的英雄头像查看出装。' if self.session.target else '先选一套阵容，再点击英雄头像查看出装。')
 
-    def query_equipment(self):
+    def query_equipment(self,*_):
         comp=self.session.target;hero=self.heroes.currentData()
         if not comp or not hero:self.status.setText('请先固定阵容并选择英雄');return
         self.clear_equipment();generation=self.equip_generation;adapter=self.adapter
+        self.equip_note.setText('正在读取本局阵容下 '+self.heroes.currentText()+' 的装备统计…')
         form=self.equip_form.currentText();kind=self.equip_type.currentText()
         hero_name=self.heroes.currentText();catalog={str(x['id']):x for x in self.catalog.get('equip',[])}
         def done(result):
@@ -876,9 +934,12 @@ class Companion(QWidget):
             selected.sort(key=lambda r:r[1] if isinstance(r[1],(int,float)) else 99)
             fill_table(self.equip_table,selected)
             self.equip_note.setText(f'{self.target_label.text()} · {hero_name} · {form} · {kind}（三件套按包含筛选） · {adapter.patch}')
-        self.submit(self.network,lambda:adapter.equipment(comp,hero),done)
+        self.submit(self.network,lambda:adapter.equipment(comp,hero),done,lambda _:self.equip_note.setText('出装读取失败，请重试。') if generation==self.equip_generation else None)
 
     def shutdown(self):
+        if not self.offline:
+            self.mouse_settings.setValue('panel_geometry',self.saveGeometry())
+            self.mouse_settings.setValue('mark_position',self.mark.pos());self.mouse_settings.sync()
         self.timer.stop();self.hide_overlays();self.mark.hide()
         for pool in (self.capture_pool,self.ocr_pool,self.network):pool.clear();pool.waitForDone()
 
@@ -909,7 +970,10 @@ def main():
         if not mouse.start():panel.status.setText('鼠标侧键监听不可用，请用截图按钮或 Ctrl+Alt+F10。')
         panel.setWindowFlag(Qt.WindowType.WindowStaysOnTopHint,True)
         area=app.primaryScreen().availableGeometry()
-        panel.move(area.left()+64,area.top()+12);panel.mark.move(area.left()+12,area.top()+12)
+        if panel.mouse_settings.value('panel_geometry') is None:panel.move(area.left()+64,area.top()+12)
+        saved_mark=panel.mouse_settings.value('mark_position')
+        if saved_mark is not None and area.contains(saved_mark):panel.mark.move(saved_mark)
+        else:panel.mark.move(area.left()+12,area.top()+12)
         panel.mark.show();panel.show()
     else:
         assert len(panel.catalog['hex'])==263

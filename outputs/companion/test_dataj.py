@@ -20,6 +20,17 @@ class AdapterTests(unittest.TestCase):
         data={'comps':[]} if request.url.path.endswith('/explorer/query') else []
         return httpx.Response(200,json={'code':200,'success':True,'data':data})
 
+    def test_comp_list_scope_and_malformed_response(self):
+        a=DataJ(db=self.db,transport=httpx.MockTransport(self.handle))
+        self.assertEqual(a.comps()['data'],[])
+        self.assertEqual(dict(self.calls[0].url.params),{'setId':'18','gameVersion':'18.2a','minSample':'50'})
+        with self.assertRaises(SourceError):DataJ.validate_comps([{'compId':'invalid','name':'x'}])
+        with self.assertRaises(SourceError):DataJ.validate_comps({'comps':[]})
+        for fields in [{'heroes':[None]},{'heroes':[{'heroName':42}]},{'traits':'invalid'}]:
+            with self.assertRaises(SourceError):DataJ.validate_comps([{'compId':112,'name':'x',**fields}])
+        rows=[{'compId':112,'name':'x','heroes':None}];DataJ.validate_comps(rows)
+        self.assertEqual(rows[0]['heroes'],[])
+
     def test_cache_separates_versions_and_comp(self):
         t = httpx.MockTransport(self.handle)
         a = DataJ(db=self.db, transport=t)

@@ -27,7 +27,7 @@ class DataJ:
             conn.execute('CREATE TABLE IF NOT EXISTS cache (key TEXT PRIMARY KEY, fetched REAL NOT NULL, body TEXT NOT NULL)')
 
     def request(self, path, body=None, ttl=900, **extra):
-        allowed = re.fullmatch(r'/gamedata|/stats/hex|/explorer/query|/comp/[1-9][0-9]*(?:/hexes|/hero-equips)?', path)
+        allowed = re.fullmatch(r'/gamedata|/stats/hex|/comp/rank|/explorer/query|/comp/[1-9][0-9]*(?:/hexes|/hero-equips)?', path)
         if not allowed:
             raise ValueError('unsupported DataJ endpoint')
         params = {'setId':self.set_id}
@@ -81,6 +81,24 @@ class DataJ:
             raise SourceError('强化统计字段变化')
         return {**result,'data':rows}
 
+    def comps(self):
+        result=self.request('/comp/rank', minSample=50)
+        self.validate_comps(result['data'])
+        return result
+
+    @staticmethod
+    def validate_comps(rows):
+        if not isinstance(rows,list) or any(not isinstance(row,dict)
+                or not re.fullmatch(r'[1-9][0-9]*',str(row.get('compId','')))
+                or not isinstance(row.get('name'),str) for row in rows):
+            raise SourceError('阵容列表字段变化')
+        for row in rows:
+            for key,name in [('heroes','heroName'),('traits','name')]:
+                items=row.get(key)
+                if items is None:row[key]=[];continue
+                if not isinstance(items,list) or any(not isinstance(item,dict) or not isinstance(item.get(name),str) for item in items):
+                    raise SourceError('阵容英雄或羁绊字段变化')
+
     def comp(self, comp):
         result=self.request(f'/comp/{comp}')
         if not isinstance(result['data'],dict) or str(result['data'].get('compId'))!=str(comp) or not isinstance(result['data'].get('heroes'),list):
@@ -108,4 +126,5 @@ class DataJ:
         result=self.request('/explorer/query', body=body)
         if not isinstance(result['data'],dict) or not isinstance(result['data'].get('comps'),list):
             raise SourceError('检索结果字段变化')
+        self.validate_comps(result['data']['comps'])
         return result
