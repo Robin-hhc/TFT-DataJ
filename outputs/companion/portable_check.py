@@ -15,6 +15,7 @@ def main():
     parser.add_argument('--image',type=Path)
     parser.add_argument('--catalog',type=Path)
     parser.add_argument('--explorer-fixture',type=Path)
+    parser.add_argument('--data-fixture',type=Path)
     parser.add_argument('--forbid-path',type=Path)
     args=parser.parse_args()
     from bootstrap import FROZEN,RESOURCE_DIR,STATE_DIR
@@ -53,6 +54,14 @@ def main():
             panel.tabs.setCurrentIndex(1)
             assert panel.grab().save(str(STATE_DIR/'portable-explorer.png'))
             report['checks'].append('dark ritual explorer excludes samples below 50')
+        if args.data_fixture:
+            from display_audit import run
+            result=run(args.data_fixture)
+            (STATE_DIR/'display-replay.json').write_text(json.dumps(result,ensure_ascii=False,indent=2),encoding='utf8')
+            report['data_display']={k:result[k] for k in ['passed','failed','gaps']}
+            assert result['failed']==0 and result['not_verified']==0 and not result['gaps'],report['data_display']
+            assert {r['domain'] for r in result['cases'] if r['status']=='pass'}=={'explorer','hero','hex','items'},'Missing display domain'
+            report['checks'].append('packaged explorer, hex, item overlays and hero equipment replay')
         panel.vision.engine,report['models']=build_engine()
         test_image=Image.new('RGB',(200,64),'black')
         font=ImageFont.truetype(str(Path(os.environ['WINDIR'])/'Fonts/arialbd.ttf'),42)

@@ -29,6 +29,10 @@ def verify(archive,root,online=False):
     env['LOCALAPPDATA']=str(state)
     env['PYTHONHOME']=str(sandbox/'未安装Python');env['PYTHONPATH']=str(sandbox/'无源码')
     command=[str(bundle/'TFT-DataJ.exe'),'--diagnose','--forbid-path',str(root)]
+    data_fixture=root/'outputs/companion/fixtures/data_display/matrix.json.gz'
+    assert data_fixture.is_file(),'Required display regression fixture missing'
+    shutil.copy2(data_fixture,sandbox/'数据显示.json.gz')
+    command+=['--data-fixture',str(sandbox/'数据显示.json.gz')]
     if online:command.append('--online')
     explorer_fixture=root/'outputs/companion/fixtures/explorer-dark-ritual.json'
     if explorer_fixture.is_file():
@@ -41,10 +45,11 @@ def verify(archive,root,online=False):
         shutil.copy2(real_frame,sandbox/'选择画面.png');shutil.copy2(catalog,sandbox/'目录.json')
         command+=['--image',str(sandbox/'选择画面.png'),'--catalog',str(sandbox/'目录.json')]
     start=time.monotonic()
-    result=subprocess.run(command,cwd=sandbox,env=env,timeout=75,capture_output=True)
+    result=subprocess.run(command,cwd=sandbox,env=env,timeout=300,capture_output=True)
     report_path=state/'TFT-DataJ/portable-check.json'
     report=json.loads(report_path.read_text(encoding='utf-8')) if report_path.exists() else {'status':'failed','error':'No diagnostic report'}
     output={'archive':str(archive),'sandbox':str(sandbox),'exit_code':result.returncode,
+            'sha256':hashlib.sha256(archive.read_bytes()).hexdigest(),'version':manifest['version'],
             'elapsed_seconds':round(time.monotonic()-start,2),'manifest_files_verified':len(manifest['files']),
             'report':report,'scope':'isolated paths and environment on build PC, not a separate physical PC'}
     archive.with_suffix('.validation.json').write_text(json.dumps(output,ensure_ascii=False,indent=2),encoding='utf-8')

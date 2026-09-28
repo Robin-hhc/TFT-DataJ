@@ -1,0 +1,24 @@
+name: Data display validation
+on:
+  push:
+  pull_request:
+  workflow_dispatch:
+jobs:
+  offline-data:
+    runs-on: windows-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+          cache: pip
+          cache-dependency-path: packaging/requirements-runtime.txt
+      - run: python -m pip install -r packaging/requirements-runtime.txt
+      - run: python -X utf8 tools/validate_data.py --release-gate --report work/data-validation/offline.json
+      - run: python -X utf8 tools/check_data_mutations.py
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: data-validation-report
+          path: work/data-validation/*.json

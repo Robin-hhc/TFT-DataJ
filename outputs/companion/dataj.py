@@ -103,6 +103,17 @@ class DataJ:
         rows = result['data'] if comp is None else result['data'].get('hexes')
         if not isinstance(rows,list) or any(not isinstance(r,dict) or 'hexId' not in r or not isinstance(r.get('roundStats'),list) for r in rows):
             raise SourceError('强化统计字段变化')
+        seen=set()
+        for row in rows:
+            identity=str(row['hexId'])
+            if not re.fullmatch(r'[1-9][0-9]*',identity) or identity in seen:raise SourceError('强化统计身份异常')
+            seen.add(identity);stages=set()
+            for part in row['roundStats']:
+                if not isinstance(part,dict):raise SourceError('强化阶段字段异常')
+                index=part.get('round')
+                if (type(index) is not int or index not in (0,1,2) or index in stages
+                    or part.get('roundLabel')!=('2-1','3-2','4-2')[index]):raise SourceError('强化阶段口径异常')
+                stages.add(index);self.validate_statistics(part,required=True)
         return {**result,'data':rows}
 
     def comps(self):
@@ -116,12 +127,27 @@ class DataJ:
                 or not re.fullmatch(r'[1-9][0-9]*',str(row.get('compId','')))
                 or not isinstance(row.get('name'),str) for row in rows):
             raise SourceError('阵容列表字段变化')
+        if len({str(row['compId']) for row in rows})!=len(rows):
+            raise SourceError('阵容列表身份重复')
         for row in rows:
+            DataJ.validate_statistics(row)
             for key,name in [('heroes','heroName'),('traits','name')]:
                 items=row.get(key)
                 if items is None:row[key]=[];continue
                 if not isinstance(items,list) or any(not isinstance(item,dict) or not isinstance(item.get(name),str) for item in items):
                     raise SourceError('阵容英雄或羁绊字段变化')
+
+    @staticmethod
+    def validate_statistics(row, required=False):
+        """Reject corrupt values; absent optional metrics remain unavailable."""
+        for key,low,high in [('avgPlacement',1,8),('top4Rate',0,100),('topRate',0,100)]:
+            if key not in row and not (required and key=='avgPlacement'):continue
+            value=row.get(key)
+            if type(value) not in (int,float) or not math.isfinite(value) or not low<=value<=high:
+                raise SourceError('统计数值异常：'+key)
+        if 'sampleCount' in row or required:
+            count=row.get('sampleCount')
+            if type(count) is not int or count<0:raise SourceError('统计样本异常')
 
     def comp(self, comp):
         result=self.request(f'/comp/{comp}')
@@ -136,6 +162,15 @@ class DataJ:
         data=result['data']
         if not isinstance(data,dict) or str(data.get('compId'))!=str(comp) or str(data.get('heroId'))!=str(hero) or not all(isinstance(data.get(k),list) for k in ('heroEquips','hero3Equips')):
             raise SourceError('英雄出装字段变化')
+        for key,size in [('heroEquips',1),('hero3Equips',3)]:
+            for row in data[key]:
+                if not isinstance(row,dict):raise SourceError('英雄出装行异常')
+                self.validate_statistics(row,required=True)
+                equips=row.get('equips')
+                if (not isinstance(equips,list) or len(equips)!=size or any(not isinstance(e,dict)
+                    or not re.fullmatch(r'[1-9][0-9]*',str(e.get('id','')))
+                    or not isinstance(e.get('name'),str) for e in equips)):
+                    raise SourceError('英雄出装装备身份异常')
         return result
 
     @staticmethod

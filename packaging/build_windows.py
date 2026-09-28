@@ -5,6 +5,7 @@ import json
 import os
 from pathlib import Path
 import platform
+import re
 import shutil
 import subprocess
 import sys
@@ -22,7 +23,12 @@ MODELS={
 
 def main():
     parser=argparse.ArgumentParser();parser.add_argument('--skip-build',action='store_true')
+    parser.add_argument('--version',default='0.2.2-data.1',help='New candidate version; existing ZIPs are never overwritten')
     args=parser.parse_args()
+    if not re.fullmatch(r'\d+\.\d+\.\d+(?:-[a-zA-Z0-9.]+)?',args.version):parser.error('Invalid version')
+    output=ROOT/'dist';output.mkdir(exist_ok=True)
+    archive=output/f'TFT-DataJ-{args.version}-windows-x64.zip'
+    if archive.exists():parser.error('Archive already exists; choose a new candidate version')
     assert sys.platform=='win32' and platform.machine().upper() in ('AMD64','X86_64')
     import rapidocr
     models=Path(rapidocr.__file__).parent/'models';models.mkdir(exist_ok=True)
@@ -36,24 +42,30 @@ def main():
         assert hashlib.sha256(path.read_bytes()).hexdigest()==digest,name
     work=(ROOT/'work/package-build').resolve()
     assert work.is_relative_to(ROOT.resolve()) and work!=ROOT.resolve()
+    sources=[*sorted((ROOT/'outputs/companion').glob('*.py')),*sorted((ROOT/'outputs/mumu-p0-probe').glob('*.py')),
+             ROOT/'outputs/companion/chevron-down.svg',ROOT/'outputs/companion/assets/refresh-glyph.png',
+             ROOT/'packaging/companion.spec',ROOT/'packaging/requirements-runtime.txt']
+    fingerprint={str(p.relative_to(ROOT)):hashlib.sha256(p.read_bytes()).hexdigest() for p in sources}
+    provenance=work/'build-provenance.json'
+    if args.skip_build:
+        assert provenance.exists() and json.loads(provenance.read_text(encoding='utf8'))==fingerprint,'Source changed; rebuild before packaging'
     if not args.skip_build:
         subprocess.run([sys.executable,'-m','PyInstaller','--noconfirm','--distpath',str(work/'dist'),
                         '--workpath',str(work/'build'),str(ROOT/'packaging/companion.spec')],cwd=ROOT,check=True)
+        provenance.write_text(json.dumps(fingerprint,sort_keys=True),encoding='utf8')
     bundle=work/'dist/TFT-DataJ'
     assert (bundle/'TFT-DataJ.exe').is_file()
     for filename in ('使用说明.txt','检查运行环境.cmd','THIRD-PARTY-NOTICES.txt'):
         shutil.copy2(ROOT/'packaging'/filename,bundle/filename)
     collect(bundle)
-    version='0.2.1'
+    version=args.version
     revision=subprocess.check_output(['git','rev-parse','HEAD'],cwd=ROOT,text=True).strip()
     dirty=bool(subprocess.check_output(['git','status','--porcelain'],cwd=ROOT,text=True).strip())
     manifest={'version':version,'target':'windows-x64','python':platform.python_version(),
-              'base_commit':revision,'working_changes':dirty,'models':{n:d for n,(_,d) in MODELS.items()},
+              'base_commit':revision,'working_changes':dirty,'source_hashes':fingerprint,'models':{n:d for n,(_,d) in MODELS.items()},
               'files':{str(p.relative_to(bundle)).replace('\\','/'):hashlib.sha256(p.read_bytes()).hexdigest()
                        for p in sorted(bundle.rglob('*')) if p.is_file() and p.name!='manifest.json'}}
     (bundle/'manifest.json').write_text(json.dumps(manifest,ensure_ascii=False,indent=2),encoding='utf-8')
-    output=ROOT/'dist';output.mkdir(exist_ok=True)
-    archive=output/f'TFT-DataJ-{version}-windows-x64.zip'
     with zipfile.ZipFile(archive,'w',compression=zipfile.ZIP_DEFLATED,compresslevel=6) as z:
         for p in sorted(bundle.rglob('*')):
             if p.is_file():z.write(p,Path('TFT-DataJ')/p.relative_to(bundle))

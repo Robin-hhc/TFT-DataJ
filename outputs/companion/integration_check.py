@@ -74,7 +74,9 @@ def main():
     checks.append('single condition explorer without changing pinned comp')
     panel.heroes.setCurrentIndex(panel.heroes.findData('4503'))
     panel.query_equipment();wait()
-    assert panel.equip_table.rowCount()==103
+    assert panel.equip_table.rowCount()==36
+    assert [panel.equip_table.item(0,j).text() for j in range(3)]==['光明版狂徒铠甲','3.12','104']
+    assert all(int(panel.equip_table.item(i,2).text())>=50 for i in range(panel.equip_table.rowCount()))
     assert panel.equip_table.item(0,1).foreground().color().getRgb()[:3]==(191,254,127)
     checks.append('hero ID equipment table')
     panel.run_explore('equip',equip);panel.clear_explorer();wait()

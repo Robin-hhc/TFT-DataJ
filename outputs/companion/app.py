@@ -15,7 +15,7 @@ from pathlib import Path
 from bootstrap import ROOT, STATE_DIR, RESOURCE_DIR
 import win_capture as win
 from core import Session, parse_comp_url
-from dataj import DataJ
+from dataj import DataJ, COMP_MIN_SAMPLE
 from snapshot_stats import stage_stat, STAGES
 from vision import Vision, capture_image, capture_stage, tracked_signature, unchanged
 from floating_mark import FloatingMark
@@ -93,7 +93,7 @@ def fill_table(widget, rows):
 
 def stat_text(row):
     if row['status']=='ok':
-        return f"{row['avg_placement']:.2f} · {row['sample_count']}局"
+        return f"{row['avg_placement']:.2f} · {row['sample_count']}局"+(' · 少' if row['sample_count']<50 else '')
     return '— 无该阶段数据' if row['status']=='no_stage_data' else '— 无数据/未识别'
 
 
@@ -1001,12 +1001,14 @@ class Companion(QWidget):
             rows=data.get('heroEquips' if form=='单件' else 'hero3Equips',[])
             selected=[]
             for row in rows:
+                count=row.get('sampleCount')
+                if type(count) is not int or count<COMP_MIN_SAMPLE:continue
                 equips=row.get('equips',[])
                 if kind!='全部' and not any(catalog.get(str(e['id']),{}).get('type')==kind for e in equips):continue
                 selected.append(['/'.join(e['name'] for e in equips),row.get('avgPlacement','—'),row.get('sampleCount','—')])
             selected.sort(key=lambda r:r[1] if isinstance(r[1],(int,float)) else 99)
             fill_table(self.equip_table,selected)
-            self.equip_note.setText(f'{self.target_label.text()} · {hero_name} · {form} · {kind}（三件套按包含筛选） · {adapter.patch}')
+            self.equip_note.setText(f'{self.target_label.text()} · {hero_name} · {form} · {kind}（三件套按包含筛选） · 样本≥{COMP_MIN_SAMPLE}局' + (' · 暂无达标数据' if not selected else ''))
         self.submit(self.network,lambda:adapter.equipment(comp,hero),done,lambda _:self.equip_note.setText('出装读取失败，请重试。') if generation==self.equip_generation else None)
 
     def shutdown(self):
