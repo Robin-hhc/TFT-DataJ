@@ -24,6 +24,7 @@ from mouse_shortcut import MouseShortcut
 from stat_colors import placement_color
 from ui_theme import STYLE, ResultCard, Rune, label
 from diagnostics import record, FrameRecorder
+from item_controller import ItemController
 from PySide6.QtCore import Qt, QTimer, QObject, Signal, QRunnable, QThreadPool, QUrl, QAbstractNativeEventFilter, QSettings
 from PySide6.QtGui import QDesktopServices,QColor
 from PySide6.QtWidgets import (QApplication, QWidget, QLabel, QPushButton, QComboBox, QLineEdit,
@@ -198,7 +199,7 @@ class Companion(QWidget):
 
         self.navigation={}
         self.navigation_group=QButtonGroup(self);self.navigation_group.setExclusive(True)
-        for index,title in [(1,'⌕   选阵容'),(2,'▤   本局攻略'),(3,'▥   英雄出装'),(0,'◇   强化 / 设置')]:
+        for index,title in [(1,'⌕   选阵容'),(2,'▤   本局攻略'),(3,'▥   英雄出装'),(0,'◇   识别 / 设置')]:
             nav=button(title,lambda checked=False,i=index:self.tabs.setCurrentIndex(i))
             nav.setObjectName('nav');nav.setCheckable(True);rail.addWidget(nav);self.navigation[index]=nav
             self.navigation_group.addButton(nav,index)
@@ -212,7 +213,7 @@ class Companion(QWidget):
         content=QWidget();root=QVBoxLayout(content);root.setContentsMargins(10,8,10,6);root.setSpacing(5)
         shell.addWidget(content,1)
         header=QHBoxLayout();headings=QVBoxLayout();headings.setSpacing(5)
-        self.banner=label('海克斯助手','pageTitle');headings.addWidget(self.banner)
+        self.banner=label('局内识别','pageTitle');headings.addWidget(self.banner)
         self.subtitle=label('','subtitle');self.subtitle.hide()
         header.addLayout(headings,1)
         self.banner.setToolTip('按住标题拖动窗口')
@@ -230,6 +231,7 @@ class Companion(QWidget):
         self.make_explorer()
         self.make_guide()
         self.make_equipment()
+        self.items=ItemController(self)
         self.tabs.currentChanged.connect(self.navigate);self.tabs.setCurrentIndex(1);self.navigate(1)
         self.apply_display_preferences()
         self.status=label('Ctrl + Alt + F9 随时展开或收起助手。','status')
@@ -256,7 +258,7 @@ class Companion(QWidget):
         self.latest_patch=versions[0]
 
     def navigate(self,index):
-        headings=[('海克斯助手','按快捷键查均排，也可开启低频阶段检查。'),
+        headings=[('局内识别','自动检查海克斯与装备选择，侧键随时补查。'),
                   ('选阵容','先选一个检索条件，再点击适合这局的阵容。'),
                   ('本局攻略','阵容已固定，攻略、出装和强化查询一起跟随。'),
                   ('英雄出装','查看本局阵容下的装备表现，寻找替代选择。')]
@@ -291,15 +293,15 @@ class Companion(QWidget):
         hero=QFrame();hero.setObjectName('hero');hero_layout=QHBoxLayout(hero)
         hero_layout.setContentsMargins(22,22,22,22);hero_layout.setSpacing(22)
         hero_text=QVBoxLayout();hero_text.setSpacing(9)
-        hero_text.addWidget(label('自动阶段识别 · 侧键随时补查','eyebrow'))
-        self.activity=label('正在准备海克斯数据…','activity');hero_text.addWidget(self.activity)
+        hero_text.addWidget(label('自动识别海克斯 / 装备 · 侧键随时补查','eyebrow'))
+        self.activity=label('正在准备局内数据…','activity');hero_text.addWidget(self.activity)
         hero_text.addWidget(label('鼠标侧键截图查均排 · Ctrl+Alt+F10 仍可使用','muted'))
         hero_layout.addLayout(hero_text,1)
         self.start_button=button('暂停自动识别',self.start_or_pause)
         self.start_button.setObjectName('primary');self.start_button.setMinimumWidth(150)
         self.start_button.setMinimumHeight(46);self.start_button.setEnabled(False)
         hero_layout.addWidget(self.start_button);layout.addWidget(hero)
-        layout.addWidget(label('默认每 3 秒检查回合；到 2-1、3-2、4-2 自动识别。鼠标侧键可随时补查。','muted'))
+        layout.addWidget(label('海克斯：每 3 秒检查阶段；装备：每 2 秒检查底部选择。侧键随时补查。','muted'))
         layout.addWidget(button('立即补查一次',self.capture_once))
         self.mouse_button=QComboBox()
         for title,value in [('后退侧键查均排（默认）',1),('前进侧键查均排',2),('关闭鼠标侧键',0)]:self.mouse_button.addItem(title,value)
@@ -504,7 +506,7 @@ class Companion(QWidget):
             combo.completer().setFilterMode(Qt.MatchFlag.MatchContains)
         self.browser.set_catalog(self.catalog)
         self.start_button.setEnabled(True)
-        self.set_activity('ready','收起面板后自动检查海克斯阶段，鼠标侧键可随时补查。' if self.automatic.isChecked() else '自动识别已暂停，鼠标侧键可随时补查。')
+        self.set_activity('ready','收起面板后自动检查海克斯与装备选择，侧键可随时补查。' if self.automatic.isChecked() else '自动识别已暂停，鼠标侧键可随时补查。')
         self.status.setText('离线演示已准备好。' if offline else '目录已准备好，正在后台预热识别与统计；首次查询可能稍慢。')
         if not offline:
             # Native OCR runtime initialization on a Qt worker crashes on first
@@ -517,6 +519,7 @@ class Companion(QWidget):
                 return
             self.submit(self.network,self.adapter.hexes,lambda _:None)
             self.browser.retry()
+            self.items.prewarm()
 
     def change_patch(self,*_):
         try:adapter=DataJ(patch=self.patch.currentText().strip())
@@ -535,13 +538,15 @@ class Companion(QWidget):
     def bind_window(self):
         item=self.windows.currentData()
         if item and win.same_target(item,win.describe(item.hwnd)):
-            self.binding=item;self.geometry=(item.rect,item.dpi);self.invalidate();self.status.setText('已绑定 MuMu。默认自动检查海克斯阶段，鼠标侧键可随时补查。')
+            self.binding=item;self.geometry=(item.rect,item.dpi);self.invalidate();self.status.setText('已绑定 MuMu。自动检查海克斯与装备选择，侧键可随时补查。')
         else:self.status.setText('没有有效 MuMu 游戏窗口')
 
     def hide_overlays(self):
         for label in self.overlays:label.hide()
+        if hasattr(self,'items'):self.items.hide()
 
     def invalidate(self):
+        if hasattr(self,'items'):self.items.reset()
         self.partial_retries=0
         self.stats_inflight_token=None
         self.session.invalidate();self.signature=None;self.stable=0;self.stats_payload=None;self.last_observation=None
@@ -554,7 +559,7 @@ class Companion(QWidget):
         for card in getattr(self,'result_cards',[]):card.clear(self.session.target is not None)
         if getattr(self,'activity_code',None) in ('results','partial_results','no_stage_data'):
             self.set_activity('waiting_choice' if self.automatic.isChecked() else 'ready',
-                              '等待新的海克斯选择。' if self.automatic.isChecked() else '按所选鼠标侧键或 Ctrl+Alt+F10 查均排，空闲时不截图。')
+                              '等待海克斯或装备选择。' if self.automatic.isChecked() else '按所选鼠标侧键或 Ctrl+Alt+F10 查均排，空闲时不截图。')
             self.choice_note.setText('候选已清空，等待下一次识别。')
 
     def clear_choice_result(self,*_):
@@ -678,6 +683,9 @@ class Companion(QWidget):
         image,binding=result
         if not self.offline:record('captured',width=image.width,height=image.height)
         if not self.binding or not win.same_target(self.binding,binding) or self.panel_open():return
+        if self.items.ingest(image,binding,force=once or self.once_ocr_pending):
+            self.once_ocr_pending=False
+            return
         if self.last_observation:
             signature=tracked_signature(image,self.last_observation)
             if not unchanged(signature,self.signature):self.invalidate()
@@ -823,7 +831,7 @@ class Companion(QWidget):
             label.place(self.binding,card['box'],f"{self.session.stage} · {html.escape(row[0])}<br>全局 {colored(row[1])}<br>阵容 {colored(row[2])}")
 
     def probe_stage(self):
-        if self.stage_probe_pending or self.ocr_busy:return
+        if self.stage_probe_pending or self.ocr_busy or self.capture_pending or self.items.active:return
         self.stage_probe_pending=True;self.last_stage_probe=time.monotonic()
         token=self.session.token();binding=self.binding
         def done(stage):
@@ -838,19 +846,19 @@ class Companion(QWidget):
         self.submit(self.ocr_pool,lambda:self.vision.read_round_crop(capture_stage(binding)),done,failed)
 
     def tick(self):
-        if not self.automatic.isChecked() and not self.once_active and not self.stats_payload:return
+        if not self.automatic.isChecked() and not self.once_active and not self.stats_payload and not self.items.active:return
         if self.automatic.isChecked() and not self.binding and not self.panel_open():
             if time.monotonic()-self.last_binding_probe<3:return
             self.last_binding_probe=time.monotonic()
             targets=game_windows();foreground=win.foreground_root()
             if len(targets)!=1 or targets[0].hwnd!=foreground:return
             self.binding=targets[0];self.geometry=(self.binding.rect,self.binding.dpi)
-            self.set_activity('watching_stage','自动识别已就绪；每 3 秒检查回合，侧键可随时补查。')
+            self.set_activity('watching_stage','自动识别已就绪；检查海克斯阶段与装备选择，侧键可随时补查。')
         current=win.describe(self.binding.hwnd) if self.binding else None
         reason=win.capture_block_reason(self.binding,current,win.foreground_root()) if self.binding else 'no_binding'
         if self.panel_open() or reason:
             self.hide_overlays()
-            if self.was_available or self.signature is not None or (self.ocr_busy and self.ocr_live) or self.once_active:self.invalidate()
+            if self.was_available or self.signature is not None or (self.ocr_busy and self.ocr_live) or self.once_active or self.items.active or self.items.recognizing:self.invalidate()
             self.was_available=False
             if self.automatic.isChecked() and not self.panel_open():
                 if reason=='target_changed_or_closed':
@@ -860,15 +868,17 @@ class Companion(QWidget):
             return
         self.was_available=True
         if self.automatic.isChecked() and self.activity_code=='waiting_foreground':
-            self.set_activity('watching_stage','已回到 MuMu，每 3 秒检查回合，等待海克斯阶段。')
+            self.set_activity('watching_stage','已回到 MuMu，继续检查海克斯与装备选择。')
         if self.once_active and time.monotonic()>self.once_deadline:
             self.once_active=False
             if not self.automatic.isChecked():self.invalidate()
         geometry=(current.rect,current.dpi)
         if geometry!=self.geometry:self.invalidate();self.geometry=geometry;self.binding=current
+        if self.automatic.isChecked() and not self.offline and time.monotonic()-self.last_stage_probe>=3:self.probe_stage()
+        if not self.once_ocr_pending and not self.offline:self.items.tick()
+        if self.items.active or self.items.recognizing:return
         if time.monotonic()-self.last_capture>1.5:self.hide_overlays()
         capture_interval=.5 if self.last_observation else 1.0
-        if self.automatic.isChecked() and not self.offline and time.monotonic()-self.last_stage_probe>=3:self.probe_stage()
         stage_active=self.automatic.isChecked() and (self.offline or time.monotonic()<self.stage_window_until)
         if (stage_active or self.once_active) and time.monotonic()-self.last_capture>capture_interval:
             self.request_capture()
@@ -953,6 +963,7 @@ class Companion(QWidget):
             self.guide_empty.hide();self.web.show()
             if not self.offline:self.open_guide('https://www.dataj.cc/comp/'+comp)
             self.status.setText('已固定 '+detail.get('name',comp))
+            self.items.prewarm(comp)
         self.submit(self.network,lambda:adapter.comp(comp),done,failed)
 
     def unpin(self):
@@ -1003,6 +1014,7 @@ class Companion(QWidget):
             self.mouse_settings.setValue('panel_geometry',self.saveGeometry())
             self.mouse_settings.setValue('mark_position',self.mark.pos());self.mouse_settings.sync()
         self.timer.stop();self.hide_overlays();self.mark.hide()
+        self.items.shutdown()
         for pool in (self.capture_pool,self.ocr_pool,self.network):pool.clear();pool.waitForDone()
 
 

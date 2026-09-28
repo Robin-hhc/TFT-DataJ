@@ -8,6 +8,12 @@ from bootstrap import ROOT,STATE_DIR
 
 class FrozenSource:
     patch='18.2a'
+    set_id=18
+
+    def item_stats(self,comp=None):
+        name='comp.json' if comp else 'global.json'
+        payload=json.loads((ROOT/'work/item-choice-probe'/name).read_text(encoding='utf-8'))
+        return {'data':payload['payload']['data'],'source':'frozen item table','fetched_at':0,'cached':True}
 
     def read(self,name):
         file=ROOT/'work/dataj-p0'/name

@@ -1,6 +1,7 @@
 """Small, serialized DataJ adapter. No per-frame network access or stale fallback."""
 from __future__ import annotations
 import json
+import math
 from contextlib import closing
 import re
 import sqlite3
@@ -27,7 +28,7 @@ class DataJ:
             conn.execute('CREATE TABLE IF NOT EXISTS cache (key TEXT PRIMARY KEY, fetched REAL NOT NULL, body TEXT NOT NULL)')
 
     def request(self, path, body=None, ttl=900, **extra):
-        allowed = re.fullmatch(r'/gamedata|/stats/hex|/comp/rank|/explorer/query|/comp/[1-9][0-9]*(?:/hexes|/hero-equips)?', path)
+        allowed = re.fullmatch(r'/gamedata|/stats/(?:hex|equip)|/stats/equip/[1-9][0-9]*/heroes|/comp/rank|/explorer/query|/comp/[1-9][0-9]*(?:/hexes|/hero-equips|/equips|/equip-heroes)?', path)
         if not allowed:
             raise ValueError('unsupported DataJ endpoint')
         params = {'setId':self.set_id}
@@ -132,6 +133,59 @@ class DataJ:
         data=result['data']
         if not isinstance(data,dict) or str(data.get('compId'))!=str(comp) or str(data.get('heroId'))!=str(hero) or not all(isinstance(data.get(k),list) for k in ('heroEquips','hero3Equips')):
             raise SourceError('英雄出装字段变化')
+        return result
+
+    @staticmethod
+    def entity_id(value):
+        value = str(value)
+        if not re.fullmatch(r'[1-9][0-9]*', value):
+            raise ValueError('invalid entity ID')
+        return value
+
+    @staticmethod
+    def validate_item_rows(rows, identity):
+        if not isinstance(rows, list):
+            raise SourceError('装备统计列表字段变化')
+        seen = set()
+        for row in rows:
+            if not isinstance(row, dict):
+                raise SourceError('装备统计行字段变化')
+            key = str(row.get(identity, ''))
+            average, count = row.get('avgPlacement'), row.get('sampleCount')
+            if (not re.fullmatch(r'[1-9][0-9]*', key) or key in seen
+                or type(average) not in (int, float) or not math.isfinite(average)
+                or not 1 <= average <= 8 or type(count) is not int or count < 0):
+                raise SourceError('装备统计数值或身份异常')
+            seen.add(key)
+
+    def item_stats(self, comp=None):
+        """Direct single-item aggregates; never average holder statistics."""
+        comp = self.entity_id(comp) if comp is not None else None
+        result = self.request(f'/comp/{comp}/equips' if comp else '/stats/equip')
+        data = result['data']
+        if comp:
+            if not isinstance(data, dict) or str(data.get('compId')) != comp:
+                raise SourceError('阵容装备统计范围变化')
+            rows = data.get('equips')
+        else:
+            rows = data
+        self.validate_item_rows(rows, 'equipId')
+        return result
+
+    def item_holders(self, equip, comp=None):
+        equip = self.entity_id(equip)
+        comp = self.entity_id(comp) if comp is not None else None
+        result = (self.request(f'/comp/{comp}/equip-heroes', equipId=equip) if comp
+                  else self.request(f'/stats/equip/{equip}/heroes'))
+        data = result['data']
+        if comp:
+            if (not isinstance(data, dict) or str(data.get('compId')) != comp
+                or str(data.get('equipId')) != equip):
+                raise SourceError('装备持有者统计范围变化')
+            rows = data.get('heroes')
+        else:
+            rows = data
+        self.validate_item_rows(rows, 'heroId')
         return result
 
     def explore(self, kind, entity):

@@ -4,6 +4,7 @@ Run in a fresh process: native heap corruption cannot be caught as a Python erro
 Requires the local work/ fixtures documented in README.
 """
 import json
+import sys
 import threading
 import time
 from unittest.mock import patch
@@ -17,6 +18,10 @@ class Source(FrozenSource):
     def catalog(self):
         return {'data':json.loads((ROOT/'work/s18-refresh-20260926/catalog.json').read_text(encoding='utf-8'))['data']}
 
+errors=[]
+def report_error(kind,value,traceback):
+    errors.append(str(value));sys.__excepthook__(kind,value,traceback)
+sys.excepthook=report_error
 qt=QApplication([])
 with patch('app.DataJ',Source),patch('app.win.enumerate_mumu',return_value=[]):
     panel=Companion()
@@ -27,6 +32,7 @@ def settle():
         qt.processEvents();time.sleep(.005)
     qt.processEvents()
     assert not panel.jobs,'background work did not finish'
+    assert not errors,errors
 try:
     settle()
     assert panel.vision.engine is not None,'startup did not initialize OCR'

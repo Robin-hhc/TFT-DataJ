@@ -7,6 +7,9 @@ from app import Companion,QApplication
 qt=QApplication([])
 with patch('app.win.enumerate_mumu',return_value=[]):panel=Companion(offline=True)
 panel.timer.stop();panel.hide();assert panel.automatic.isChecked()
+# Isolate the augment stage scheduler; item cadence and shared-pool behavior
+# have their own check_item_flow coverage.
+panel.items.tick=lambda:None
 binding=SimpleNamespace(hwnd=123,rect=(0,0,3840,2160),dpi=192)
 panel.binding=binding;panel.geometry=(binding.rect,binding.dpi);panel.offline=False
 pending=[];captures=[];panel.submit=lambda pool,fn,done,failed=None:pending.append((fn,done))
