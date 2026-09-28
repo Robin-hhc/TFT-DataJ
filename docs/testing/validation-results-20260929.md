@@ -20,7 +20,7 @@
 | 装备浮层 | 24 | 每组三件；成装/神器/光明各3件、两版本及四范围；直接统计、阵容缺项补查、持有者ID/名字/样本/头像地址 |
 | **总计** | **356** | **全部通过，未验证案例0** |
 
-两个旧目录的测试已统一。包含本机私有截图/OCR扩展的 **97项测试通过，无跳过**；原有9项整页流程检查通过。核心离线套件不读取这些私有资料；干净克隆检查见下方补充验收。
+两个旧目录的测试已统一。包含本机私有截图/OCR扩展的 **97项测试通过，无跳过**；原有9项整页流程检查通过。干净克隆核心套件 **84项通过，无跳过**，另外13项私有截图/OCR扩展明确列为未运行。
 
 六项故障注入全部被捕获：取消排行榜样本过滤、4-2取2-1统计、全局与阵容互换、跨版本复用装备缓存、交换装备槽位、停止更新实际海克斯面板。每次注入前先跑正常基线，防止将原本失败误报为成功拦截。
 
@@ -31,6 +31,7 @@
 - [运行方法](README.md)；[原批准方案](data-display-validation-plan.md)；[公开样例说明](../../outputs/companion/fixtures/data_display/README.md)。
 - `work/data-validation/with-private.json`：97项本机测试及356组显示检查。
 - `work/data-validation/mutations.json`：六种故障的具体失败断言。
+- `work/data-validation/clean-clone.json`、`clean-mutations.json`、`clean-checkout.json`：干净克隆的84项核心测试、356组显示回放、六项故障注入与源码提交记录。
 - `work/data-display-live-audit-final/report.json`：本轮新采集响应对实际助手的356组核对，差异0、来源缺口0。
 - `work/data-validation/screenshots/`：实际 Qt 面板、卡片、出装表及装备浮层截图。头像测试核对地址映射和图片回调，截图中的色块是合成占位，不冒充真实英雄图片下载验收。
 - 接受的 `matrix.json.gz` SHA-256：`dc645757901fed41c528b2e8fadd3ee515e3292c0226b948c3c02e43cb1a14b7`。
@@ -41,7 +42,9 @@
 
 候选ZIP SHA-256：`6dfd5a03e4e6f908e184436d20f2ce3706c3af6398b94694f52c8f1659b43363`。仅本地候选，未发布GitHub Release。
 
-v0.2.1原ZIP SHA-256仍为 `c00ec18fbefb1ba9a25b825a7534f316aaee07a5b769ee4d4851f066b36e2b5d`，未改标签或发布资产。干净克隆检查将在本轮最后记录。
+v0.2.1原ZIP SHA-256仍为 `c00ec18fbefb1ba9a25b825a7534f316aaee07a5b769ee4d4851f066b36e2b5d`，未改标签或发布资产。
+
+对实现提交 `1486a8b7aaf13becf5f51e854ed0d83f5aed0495` 在仓库外创建干净克隆，起始没有 `work/` 目录、缓存、录像或私人截图。使用现有Python依赖环境执行：84项核心检查和356组真实显示回放通过，耗时27.95秒，六种故障注入也全部被捕获。没有宣称另外创建了全新的Python安装环境。
 
 ## 结论范围
 
