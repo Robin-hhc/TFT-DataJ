@@ -9,6 +9,7 @@ from PySide6.QtNetwork import QNetworkAccessManager,QNetworkRequest,QNetworkDisk
 from PySide6.QtWidgets import (QWidget,QFrame,QLabel,QPushButton,QLineEdit,QComboBox,
     QVBoxLayout,QHBoxLayout,QGridLayout,QScrollArea,QCompleter)
 from bootstrap import STATE_DIR
+from dataj import COMP_MIN_SAMPLE
 from stat_colors import placement_color
 
 
@@ -19,6 +20,11 @@ def text_label(text,kind='muted'):
 
 def numeric(value,default=99):
     return float(value) if isinstance(value,(int,float)) and math.isfinite(value) else default
+
+
+def sufficient_comp_samples(row):
+    count=row.get('sampleCount')
+    return type(count) is int and count>=COMP_MIN_SAMPLE
 
 
 class Portraits(QObject):
@@ -155,6 +161,9 @@ class CompBrowser(QWidget):
         layout.addWidget(filter_box)
         toolbar=QHBoxLayout();self.search=QLineEdit();self.search.setPlaceholderText('搜索阵容或核心英雄…');toolbar.addWidget(self.search,1)
         self.sort=QComboBox();self.sort.addItems(['均排优先','样本优先']);toolbar.addWidget(self.sort)
+        self.sample_note=text_label(f'样本≥{COMP_MIN_SAMPLE}局','cardMeta')
+        self.sample_note.setToolTip('与 DataJ 默认最小样本一致；按当前检索条件下的对局数筛选。')
+        toolbar.addWidget(self.sample_note)
         self.only_favs=QPushButton('☆ 收藏');self.only_favs.setCheckable(True);toolbar.addWidget(self.only_favs)
         self.refresh=QPushButton('刷新');toolbar.addWidget(self.refresh);layout.addLayout(toolbar)
         self.note=text_label('正在读取阵容…');self.note.setWordWrap(True);layout.addWidget(self.note);self.note.hide()
@@ -210,7 +219,9 @@ class CompBrowser(QWidget):
         self.rows=[];self.render();self.note.setText('正在读取条件匹配阵容…' if self.scope else '正在读取全部阵容…');self.empty.hide()
 
     def set_result(self,rows,version):
-        self.rows=rows;self.limit=8;self.render();self.note.setText(f"S18 · {version} · {len(rows)} 套阵容 · "+('条件内统计' if self.scope else '全局统计')+' · 点击卡片即可固定')
+        self.rows=rows;self.limit=8;self.render()
+        count=sum(sufficient_comp_samples(row) for row in rows)
+        self.note.setText(f"S18 · {version} · {count} 套阵容 · "+('条件内统计' if self.scope else '全局统计')+f' · 样本≥{COMP_MIN_SAMPLE}局 · 点击卡片即可固定')
 
     def set_error(self):
         self.rows=[];self.render();self.note.setText('阵容读取失败');self.empty.setText('暂时无法取得阵容。请点击「刷新」重试。');self.empty.show()
@@ -230,7 +241,10 @@ class CompBrowser(QWidget):
     def render(self):
         for card in self.cards:self.card_layout.removeWidget(card);card.hide();card.deleteLater()
         self.cards=[];query=self.search.text().strip().lower()
-        rows=[row for row in self.rows if (not self.only_favs.isChecked() or str(row['compId']) in self.favorites)
+        # Filter before sorting/pagination, including cached explorer responses.
+        # Keep the shared API rows intact for direct equipment-stat lookups.
+        rows=[row for row in self.rows if sufficient_comp_samples(row)
+              and (not self.only_favs.isChecked() or str(row['compId']) in self.favorites)
               and (not query or query in (row['name']+' '+ ' '.join(h.get('heroName','') for h in row.get('heroes',[]))).lower())]
         rows.sort(key=(lambda row:-numeric(row.get('sampleCount'),0)) if self.sort.currentIndex() else lambda row:numeric(row.get('avgPlacement')))
         heroes=portrait_catalog(self.catalog.get('hero',[]))
@@ -239,4 +253,4 @@ class CompBrowser(QWidget):
             card.selected.connect(self.compSelected);card.starred.connect(self.favorite_changed)
             self.card_layout.insertWidget(self.card_layout.count()-2,card);self.cards.append(card)
         self.more.setVisible(len(rows)>self.limit)
-        self.empty.setText('没有匹配阵容。试试清除条件、搜索文字或收藏筛选。');self.empty.setVisible(not rows)
+        self.empty.setText(f'没有匹配且样本≥{COMP_MIN_SAMPLE}局的阵容。试试清除条件、搜索文字或收藏筛选。');self.empty.setVisible(not rows)

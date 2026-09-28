@@ -10,6 +10,9 @@ import time
 import httpx
 from bootstrap import STATE_DIR
 
+# DataJ's explorer applies this default in its UI, not in /explorer/query.
+COMP_MIN_SAMPLE = 50
+
 
 class SourceError(RuntimeError):
     pass
@@ -103,7 +106,7 @@ class DataJ:
         return {**result,'data':rows}
 
     def comps(self):
-        result=self.request('/comp/rank', minSample=50)
+        result=self.request('/comp/rank', minSample=COMP_MIN_SAMPLE)
         self.validate_comps(result['data'])
         return result
 

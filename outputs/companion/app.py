@@ -12,7 +12,7 @@ import sys
 import time
 from pathlib import Path
 
-from bootstrap import ROOT, STATE_DIR
+from bootstrap import ROOT, STATE_DIR, RESOURCE_DIR
 import win_capture as win
 from core import Session, parse_comp_url
 from dataj import DataJ
@@ -139,7 +139,7 @@ class GuidePage(QWebEnginePage):
 
 
 class Companion(QWidget):
-    def __init__(self, offline=False):
+    def __init__(self, offline=False, offline_catalog=None):
         super().__init__()
         self.setWindowTitle('DataJ 阵容助手')
         self.setWindowFlag(Qt.WindowType.FramelessWindowHint,True)
@@ -205,7 +205,7 @@ class Companion(QWidget):
             self.navigation_group.addButton(nav,index)
         rail.addStretch();rail.addWidget(label('统计版本','muted'))
         self.patch=QComboBox();self.patch.addItem('18.2a');self.patch.setToolTip('切换后重新加载该版本的统计')
-        self.patch.setStyleSheet('QComboBox::down-arrow {image:url("'+(ROOT/'outputs/companion/chevron-down.svg').as_posix()+'");width:12px;height:8px;}')
+        self.patch.setStyleSheet('QComboBox::down-arrow {image:url("'+(RESOURCE_DIR/'chevron-down.svg').as_posix()+'");width:12px;height:8px;}')
         self.patch.activated.connect(self.change_patch);rail.addWidget(self.patch);rail.addSpacing(8)
 
         rail.addSpacing(4);rail.addWidget(button('退出助手',QApplication.instance().quit))
@@ -241,7 +241,7 @@ class Companion(QWidget):
         self.timer=QTimer(self);self.timer.timeout.connect(self.tick);self.timer.start(150)
         self.refresh_windows()
         if offline:
-            data=json.loads((ROOT/'work/s18-refresh-20260926/catalog.json').read_text(encoding='utf-8'))['data']
+            data=offline_catalog if offline_catalog is not None else json.loads((ROOT/'work/s18-refresh-20260926/catalog.json').read_text(encoding='utf-8'))['data']
             self.catalog_loaded({'data':data},True)
         else:
             self.load_catalog()

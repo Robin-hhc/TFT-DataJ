@@ -1,5 +1,6 @@
 # Local runtimes, models, caches, logs, and private game samples
 /work/
+/dist/
 /migration-copy.log
 __pycache__/
 *.py[cod]

@@ -1,0 +1,103 @@
+{
+  "source": "https://www.dataj.cc/api/web/explorer/query",
+  "captured": "2026-09-28",
+  "setId": 18,
+  "version": "18.2a",
+  "entity": {
+    "id": "20778",
+    "name": "黑暗仪式"
+  },
+  "siteDefaultMinSample": 50,
+  "comps": [
+    {
+      "compId": "120",
+      "name": "黑暗仪式蜘蛛",
+      "avgPlacement": 4.14,
+      "sampleCount": 6453
+    },
+    {
+      "compId": "100",
+      "name": "重装女警",
+      "avgPlacement": 4.51,
+      "sampleCount": 150
+    },
+    {
+      "compId": "119",
+      "name": "神谕大嘴",
+      "avgPlacement": 3.87,
+      "sampleCount": 30
+    },
+    {
+      "compId": "95",
+      "name": "月男Flex",
+      "avgPlacement": 4.33,
+      "sampleCount": 9
+    },
+    {
+      "compId": "112",
+      "name": "地狱火95",
+      "avgPlacement": 4.71,
+      "sampleCount": 7
+    },
+    {
+      "compId": "84",
+      "name": "莲华阿狸",
+      "avgPlacement": 6,
+      "sampleCount": 7
+    },
+    {
+      "compId": "109",
+      "name": "皎月螳螂",
+      "avgPlacement": 3.4,
+      "sampleCount": 5
+    },
+    {
+      "compId": "106",
+      "name": "主宰女警",
+      "avgPlacement": 4.5,
+      "sampleCount": 4
+    },
+    {
+      "compId": "101",
+      "name": "护卫蛇女",
+      "avgPlacement": 6.25,
+      "sampleCount": 4
+    },
+    {
+      "compId": "89",
+      "name": "巨龙95",
+      "avgPlacement": 5.33,
+      "sampleCount": 3
+    },
+    {
+      "compId": "117",
+      "name": "6主宰Flex",
+      "avgPlacement": 5,
+      "sampleCount": 2
+    },
+    {
+      "compId": "116",
+      "name": "裁决螳螂",
+      "avgPlacement": 2,
+      "sampleCount": 1
+    },
+    {
+      "compId": "103",
+      "name": "螳螂蛇女",
+      "avgPlacement": 5,
+      "sampleCount": 1
+    },
+    {
+      "compId": "99",
+      "name": "7野怪鸡哥",
+      "avgPlacement": 7,
+      "sampleCount": 1
+    },
+    {
+      "compId": "83",
+      "name": "重装豹女",
+      "avgPlacement": 7,
+      "sampleCount": 1
+    }
+  ]
+}

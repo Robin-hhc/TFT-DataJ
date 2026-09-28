@@ -1,0 +1,29 @@
+TFT DataJ Companion - third-party components
+
+This package uses Python, Qt/PySide6/Shiboken6, Qt WebEngine/Chromium,
+RapidOCR, ONNX Runtime, NumPy, OpenCV, Pillow and other Python libraries.
+Their license texts and installed versions are included under licenses/.
+The application does not change the bundled upstream libraries or model weights.
+
+Qt/PySide6/Shiboken6 6.8.3 are used under LGPL-3.0. Copyright The Qt Company
+and their respective contributors. LGPLv3 and GPLv3 texts are included.
+Qt libraries are separate dynamic libraries in _internal/PySide6 and may be
+replaced with compatible modified versions. Nothing in this package restricts
+modification of these libraries or reverse engineering to debug such changes.
+Corresponding sources and build instructions:
+https://download.qt.io/archive/qt/6.8/6.8.3/submodules/
+https://code.qt.io/cgit/pyside/pyside-setup.git/tag/?h=v6.8.3
+https://doc.qt.io/qtforpython-6/building_from_source/index.html
+Qt WebEngine includes Chromium and third-party code. See the Qt 6.8 licensing
+reference in licenses/Qt and its linked third-party notices and source archive.
+https://doc.qt.io/qt-6.8/qtwebengine-licensing.html
+
+The included OCR model artifacts are distributed by RapidOCR 3.9.2 and derived
+from PaddleOCR. Upstream model copyright belongs to Baidu and/or the applicable
+PaddleOCR rights holders. They are licensed under Apache-2.0. See the model
+attribution notice, Apache license and model hashes in licenses/ and manifest.json.
+https://github.com/RapidAI/RapidOCR/blob/main/python/MODEL_LICENSES.md
+
+This application is an independent companion, not an official DataJ or game
+product. DataJ statistics and game/hero artwork are retrieved at runtime; personal
+screenshots, recordings, caches and account data are not included in this package.

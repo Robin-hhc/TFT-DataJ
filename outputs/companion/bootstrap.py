@@ -1,4 +1,4 @@
-"""Local workspace layout; shared P0 capture/OCR primitives remain versioned beside us."""
+"""Read-only application resources and writable per-user state for packaged builds."""
 from pathlib import Path
 import sys
 import os
@@ -10,7 +10,13 @@ tls_dir=Path(sys.base_prefix)/'DLLs'
 if (tls_dir/'libssl-3-x64.dll').is_file() and (tls_dir/'libcrypto-3-x64.dll').is_file():
     os.environ['PATH']=str(tls_dir)+os.pathsep+os.environ.get('PATH','')
 
-ROOT = Path(__file__).resolve().parents[2]
-sys.path.insert(0, str(ROOT / 'outputs/mumu-p0-probe'))
-STATE_DIR = ROOT / 'work/companion'
+FROZEN = bool(getattr(sys, 'frozen', False))
+RESOURCE_DIR = Path(__file__).resolve().parent
+ROOT = Path(sys._MEIPASS) if FROZEN else RESOURCE_DIR.parents[1]
+if FROZEN:
+    local_app_data = Path(os.environ.get('LOCALAPPDATA', str(Path.home()/'AppData/Local')))
+    STATE_DIR = local_app_data/'TFT-DataJ'
+else:
+    sys.path.insert(0, str(ROOT / 'outputs/mumu-p0-probe'))
+    STATE_DIR = ROOT / 'work/companion'
 STATE_DIR.mkdir(parents=True, exist_ok=True)
