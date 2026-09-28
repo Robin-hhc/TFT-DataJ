@@ -4,6 +4,8 @@
 
 其他电脑请下载 [v0.2.1 Windows便携版](https://github.com/Robin-hhc/TFT-DataJ/releases/tag/v0.2.1) 中的 `TFT-DataJ-0.2.1-windows-x64.zip`：完整解压后双击 **TFT-DataJ.exe**，不需要安装Python或OCR环境。保留旁边的 `_internal` 文件夹；可以为EXE创建快捷方式。目标系统为Windows 10/11 x64，最新统计与攻略仍需联网。
 
+[安装、快捷键与已知限制](docs/releases/v0.2.1.md) · [更新记录](CHANGELOG.md) · [问题反馈](https://github.com/Robin-hhc/TFT-DataJ/issues)
+
 本机产物在 [dist目录](dist/)，构建与验证说明见 [Windows便携包](packaging/README.md)。设置与缓存保存在 `%LOCALAPPDATA%\TFT-DataJ`；包中不包含本机游戏截图、录像及旧缓存。已在本机的隔离目录和清理过的环境中运行EXE验证，尚未在第二台物理电脑实测。
 
 ## 源码运行
