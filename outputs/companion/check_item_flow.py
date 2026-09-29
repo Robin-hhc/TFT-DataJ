@@ -92,7 +92,8 @@ def main():
         with patch('item_controller.time.monotonic',return_value=100) as clock:
             panel.items.tick();assert len(jobs)==1
             fn,done,_=jobs.pop(0)
-            done((Image.new('RGB',image.size),binding))
+            with patch('item_controller.capture_item_region',return_value=(Image.new('RGB',image.size),binding)):
+                done(fn())
             clock.return_value=101.9;panel.items.tick();assert not jobs
             clock.return_value=102;panel.items.tick();assert len(jobs)==1
         jobs.clear();panel.capture_pending=False;panel.items.probing=False

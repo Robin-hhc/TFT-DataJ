@@ -5,6 +5,27 @@ from PIL import Image, ImageDraw
 
 
 class FrameGuardTests(unittest.TestCase):
+    def test_roi_sampling_preserves_full_frame_stroke_masks(self):
+        # Independent oracle: legacy whole-frame normalization, including a
+        # non-integral scale, small Roman strokes and brightness thresholds.
+        source=Image.new('RGB',(640,360),'#46403b');draw=ImageDraw.Draw(source)
+        for x in range(60,250,7):
+            draw.rectangle((x,120,x+2,134),fill=(190+x%40,)*3)
+        for width,height in [(1280,720),(1920,1080),(3840,2160),(1366,768)]:
+            with self.subTest(size=(width,height)):
+                image=source.resize((width,height),Image.Resampling.BICUBIC)
+                box=[[width*.18,height*.33],[width*.36,height*.33],
+                     [width*.36,height*.39],[width*.18,height*.39]]
+                obs={'layout_method':'three_refresh_controls','cards':[{'box':box}]}
+                actual=tracked_signature(image,obs).masks[0]
+                half=max(width*.09,(box[1][0]-box[0][0])/2+2);center=width*.27;s=640/width
+                normalized=image.convert('RGB').resize((640,round(height*s)),Image.Resampling.LANCZOS)
+                region=normalized.crop((round((center-half)*s),round((height*.33-1)*s),
+                                        round((center+half)*s),round((height*.39+1)*s)))
+                rgb=np.asarray(region,dtype=np.int16)
+                expected=(np.asarray(region.convert('L'))>=200)&(rgb.max(axis=2)-rgb.min(axis=2)<80)
+                np.testing.assert_array_equal(actual,expected)
+
     def test_small_title_change_is_not_diluted(self):
         previous=np.zeros((360,640),dtype=np.int16)
         changed=previous.copy();changed[150:155,100:110]=180

@@ -28,6 +28,7 @@ with patch('app.win.foreground_root',return_value=123),patch('app.win.same_targe
     panel.observed(old,True)
     fn,late=jobs.pop()
     panel.captured((after,panel.binding),False)
+    inspect,accept=jobs.pop();accept(inspect())
     late(fn())
     assert panel.stats_payload is None,'Old statistics returned after a real refresh'
     panel.signature=tracked_signature(after,new);panel.observed(new,True)
@@ -35,6 +36,7 @@ with patch('app.win.foreground_root',return_value=123),patch('app.win.same_targe
     assert panel.stats_payload and panel.stats_payload['rows'][2][1].startswith('—')
     assert '白银命运' in panel.stats_payload['rows'][2][0]
     panel.captured((board,panel.binding),False)
+    inspect,accept=jobs.pop();accept(inspect())
     assert panel.stats_payload is None,'Leaving selection must clear all old results'
 panel.shutdown()
 print('user refresh invalidates old response; missing catalog entry stays blank; board clears results: passed')

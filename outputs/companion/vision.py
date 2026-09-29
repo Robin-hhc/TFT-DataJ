@@ -305,11 +305,17 @@ def tracked_signature(image,observation):
         half=max(width*.09,(x2-x1)/2+2)
         regions.append((center-half,y1-1,center+half,y2+1))
     scale=640/width
-    normalized=image.convert('RGB').resize((640,round(height*scale)),Image.Resampling.LANCZOS)
+    normalized_height=round(height*scale)
+    source=image if image.mode=='RGB' else image.convert('RGB')
     vectors=[]
     for left,top,right,bottom in regions:
-        region=normalized.crop((max(0,round(left*scale)),max(0,round(top*scale)),
-                                min(640,round(right*scale)),min(normalized.height,round(bottom*scale))))
+        # Preserve the original 640-wide sampling grid, but resample only the
+        # small text regions. PIL's box keeps the Lanczos support at ROI edges.
+        l,t=max(0,round(left*scale)),max(0,round(top*scale))
+        r,b=min(640,round(right*scale)),min(normalized_height,round(bottom*scale))
+        if r<=l or b<=t:return TextSignature(())
+        region=source.resize((r-l,b-t),Image.Resampling.LANCZOS,
+                             box=(l*width/640,t*height/normalized_height,r*width/640,b*height/normalized_height))
         rgb=np.asarray(region,dtype=np.int16)
         brightness=np.asarray(region.convert('L'))
         vectors.append((brightness>=200)&((rgb.max(axis=2)-rgb.min(axis=2))<80))

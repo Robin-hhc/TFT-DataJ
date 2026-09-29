@@ -18,13 +18,14 @@ from core import Session, parse_comp_url
 from dataj import DataJ, COMP_MIN_SAMPLE
 from snapshot_stats import stage_stat, STAGES
 from vision import Vision, capture_image, capture_stage, tracked_signature, unchanged
+from scene_gate import may_be_choice
 from floating_mark import FloatingMark
 from comp_browser import CompBrowser,HeroPortrait,portrait_catalog
 from mouse_shortcut import MouseShortcut
 from stat_colors import placement_color
 from ui_theme import STYLE, ResultCard, Rune, label
 from diagnostics import record, FrameRecorder
-from item_controller import ItemController
+from item_controller import ItemController, inspect_items
 from PySide6.QtCore import Qt, QTimer, QObject, Signal, QRunnable, QThreadPool, QUrl, QAbstractNativeEventFilter, QSettings
 from PySide6.QtGui import QDesktopServices,QColor
 from PySide6.QtWidgets import (QApplication, QWidget, QLabel, QPushButton, QComboBox, QLineEdit,
@@ -49,6 +50,8 @@ class Job(QRunnable):
             self.signals.done.emit(self.fn())
         except Exception as exc:
             self.signals.failed.emit(str(exc))
+        finally:
+            self.fn=None
 
 
 def game_windows():
@@ -277,11 +280,17 @@ class Companion(QWidget):
             if failed:failed(message)
             return
         job=Job(fn);self.jobs.add(job)
-        def finish(value):
+        def release():
+            # QObject connections own these closures, which own the job and
+            # often a 4K image. Break that cycle on both completion paths.
             self.jobs.discard(job)
+            job.signals.done.disconnect()
+            job.signals.failed.disconnect()
+        def finish(value):
+            release()
             done(value)
         def error(message):
-            self.jobs.discard(job)
+            release()
             self.status.setText(message)
             if failed:failed(message)
         job.signals.done.connect(finish)
@@ -550,6 +559,7 @@ class Companion(QWidget):
         self.partial_retries=0
         self.stats_inflight_token=None
         self.session.invalidate();self.signature=None;self.stable=0;self.stats_payload=None;self.last_observation=None
+        self.last_frame=None
         self.once_active=False
         self.once_ocr_pending=False
         self.was_available=False
@@ -644,6 +654,7 @@ class Companion(QWidget):
         self.capture_once()
 
     def capture_once(self):
+        if self.capture_pending or self.ocr_busy or (self.once_active and self.once_ocr_pending):return
         if not self.catalog:
             self.set_activity('catalog_missing','数据正在准备，请稍后再按截图快捷键。');return
         if not self.binding or not win.same_target(self.binding,win.describe(self.binding.hwnd)):
@@ -652,10 +663,14 @@ class Companion(QWidget):
                 self.set_activity('no_game','没有找到唯一的 MuMu 游戏窗口，请在面板选择窗口。');return
             self.bind_window()
         if not self.binding:return
-        if self.return_to_game() is False:return
+        # A refresh from the game must retain confirmed ranks until the new
+        # frame proves that the choices changed. Opening the panel still resets.
+        needs_return=self.panel_open() or win.foreground_root()!=self.binding.hwnd
+        if needs_return:
+            if self.return_to_game() is False:return
         self.once_active=True;self.once_deadline=time.monotonic()+30
-        self.once_ocr_pending=True
-        QTimer.singleShot(100,lambda:self.request_capture())
+        self.once_ocr_pending=True;self.next_ocr_allowed=0
+        QTimer.singleShot(100 if needs_return else 0,lambda:self.request_capture())
 
     def request_capture(self,once=False):
         if self.capture_pending or not self.binding:return
@@ -678,17 +693,58 @@ class Companion(QWidget):
         self.capture_pending=False;self.invalidate()
         self.set_activity('capture_failed','暂时无法读取游戏画面。请保持 MuMu 在前台；助手会继续尝试。')
 
+    def choices_changed(self,once=False):
+        """Discard old ranks while keeping a bounded re-recognition request."""
+        manual=self.once_active
+        deadline=max(self.once_deadline,time.monotonic()+30) if manual else self.once_deadline
+        retry=once or self.once_ocr_pending or manual or self.automatic.isChecked()
+        self.invalidate()
+        self.once_active=manual;self.once_deadline=deadline;self.once_ocr_pending=retry
+        if self.automatic.isChecked():self.stage_window_until=max(self.stage_window_until,time.monotonic()+15)
+
     def captured(self,result,once):
-        self.capture_pending=False;self.last_capture=time.monotonic()
+        image,binding=result
+        self.capture_pending=True
+        token=self.session.token();observation=self.last_observation
+        captured_at=time.monotonic()
+        def inspect():
+            # Three refresh controls identify the augment scene; board shapes
+            # below it must not hijack recognition as an item-card proposal.
+            items=([],None) if may_be_choice(image) else inspect_items(image)
+            signature=tracked_signature(image,observation) if observation else None
+            return items,signature
+        def done(prepared):
+            self.capture_pending=False
+            if self.session.accepts(token):self.accept_frame(result,once,prepared,captured_at)
+        def failed(message):
+            self.capture_pending=False
+            if self.session.accepts(token):self.capture_failed(message)
+        self.submit(self.capture_pool,inspect,done,failed)
+
+    def accept_frame(self,result,once,prepared,captured_at):
+        """Qt state changes only; pixel inspection has finished on the worker."""
         image,binding=result
         if not self.offline:record('captured',width=image.width,height=image.height)
-        if not self.binding or not win.same_target(self.binding,binding) or self.panel_open():return
-        if self.items.ingest(image,binding,force=once or self.once_ocr_pending):
+        if (not self.binding or not win.same_target(self.binding,binding) or self.panel_open()
+            or win.foreground_root()!=binding.hwnd):return
+        self.last_capture=captured_at
+        items,signature=prepared
+        if self.last_observation:
+            if not unchanged(signature,self.signature):
+                # Keep a manual request armed when it actually discovers new cards.
+                self.choices_changed(once)
+            elif (self.stats_payload and self.stats_payload['live']
+                  and self.session.accepts(self.stats_payload['token'])
+                  and all(c.get('resolution',{}).get('id') for c in self.last_observation['cards'])):
+                # The same text already has confirmed statistics; a side-button
+                # refresh needs a fresh frame check, not another OCR pass.
+                retry_stats=(once or self.once_ocr_pending) and self.stats_payload.get('retryable',False)
+                self.once_ocr_pending=False;once=False
+                if retry_stats:
+                    self.query_stats(list(self.session.choices),[r[0] for r in self.stats_payload['rows']],True,refresh=True)
+        if self.items.ingest(image,binding,force=once or self.once_ocr_pending,prepared=items):
             self.once_ocr_pending=False
             return
-        if self.last_observation:
-            signature=tracked_signature(image,self.last_observation)
-            if not unchanged(signature,self.signature):self.invalidate()
         self.last_frame=image
         if once:self.once_ocr_pending=True
         # Retry a transient unreadable title twice, using already scheduled captures.
@@ -700,7 +756,7 @@ class Companion(QWidget):
                        and not self.ocr_busy and self.catalog
                        and time.monotonic()>=self.next_ocr_allowed
                        and time.monotonic()-self.last_ocr>2)
-        if self.once_ocr_pending and not self.ocr_busy and self.catalog:
+        if self.once_ocr_pending and not self.ocr_busy and self.catalog and time.monotonic()>=self.next_ocr_allowed:
             self.once_ocr_pending=False
             self.partial_retries=0
             self.analyze(image,True)
@@ -718,16 +774,28 @@ class Companion(QWidget):
         if self.ocr_busy or not self.catalog:return
         self.ocr_busy=True;self.ocr_live=live;self.last_ocr=time.monotonic()
         token=self.session.token();catalog=self.catalog['hex']
-        def done(obs):
+        def finish(obs,signature):
             self.ocr_busy=False
-            self.next_ocr_allowed=time.monotonic()+1.5
-            if not self.offline:record('ocr_complete',scene=obs.get('scene'),reason=obs.get('reason'),diagnostic_frame=obs.get('diagnostic_frame'),stage=obs.get('round'),elapsed_ms=obs.get('elapsed_ms'),resolutions=[c.get('resolution',{}).get('status') for c in obs.get('cards',[])],unresolved=[{'slot':c.get('slot'),'readings':c.get('resolution',{}).get('readings',[])} for c in obs.get('cards',[]) if not c.get('resolution',{}).get('id')],session_valid=self.session.accepts(token))
             if not self.session.accepts(token):return
             if live and (self.panel_open() or not self.binding or win.foreground_root()!=self.binding.hwnd):return
-            if live and obs.get('scene')=='choice_candidates' and (self.last_frame is None or not unchanged(tracked_signature(image,obs),tracked_signature(self.last_frame,obs))):
-                self.invalidate();self.set_activity('frame_changed','选择画面发生变化，正在重新识别…');return
-            if live:self.signature=tracked_signature(self.last_frame,obs)
+            if live:self.signature=signature
             self.observed(obs,live)
+        def done(result):
+            obs,signature=result
+            self.next_ocr_allowed=time.monotonic()+1.5
+            if not self.offline:record('ocr_complete',scene=obs.get('scene'),reason=obs.get('reason'),diagnostic_frame=obs.get('diagnostic_frame'),stage=obs.get('round'),elapsed_ms=obs.get('elapsed_ms'),resolutions=[c.get('resolution',{}).get('status') for c in obs.get('cards',[])],unresolved=[{'slot':c.get('slot'),'readings':c.get('resolution',{}).get('readings',[])} for c in obs.get('cards',[]) if not c.get('resolution',{}).get('id')],session_valid=self.session.accepts(token))
+            if not self.session.accepts(token):self.ocr_busy=False;return
+            latest=self.last_frame
+            if live and obs.get('scene')=='choice_candidates' and latest is not image:
+                def checked(current):
+                    self.ocr_busy=False
+                    if not self.session.accepts(token):return
+                    if latest is not self.last_frame or not unchanged(signature,current):
+                        self.choices_changed()
+                        self.set_activity('frame_changed','选择画面发生变化，正在重新识别…');return
+                    finish(obs,current)
+                self.submit(self.capture_pool,lambda:tracked_signature(latest,obs) if latest else None,checked,failed)
+            else:finish(obs,signature)
         def failed(_):
             self.ocr_busy=False
             self.next_ocr_allowed=time.monotonic()+2
@@ -737,7 +805,7 @@ class Companion(QWidget):
             observation=self.vision.analyze_fast(image,catalog) if live else self.vision.analyze(image,catalog)
             if live and not self.offline and self.save_diagnostic_frames:
                 observation['diagnostic_frame']=self.frame_recorder.save(image,observation)
-            return observation
+            return observation,tracked_signature(image,observation) if live and observation.get('scene')=='choice_candidates' else None
         self.submit(self.ocr_pool,recognize,done,failed)
 
     def observed(self,obs,live):
@@ -765,16 +833,20 @@ class Companion(QWidget):
         names=[p.currentText().split(' · ')[0] for p in self.picks]
         self.query_stats(ids,names,False)
 
-    def query_stats(self,ids,names,live):
+    def query_stats(self,ids,names,live,refresh=False):
         same_choices=self.session.stage==self.stage.currentText() and self.session.choices==tuple(ids)
         if live and same_choices:
             if self.stats_inflight_token==self.session.token():return
-            if self.stats_payload and self.stats_payload['live'] and self.session.accepts(self.stats_payload['token']):
+            if not refresh and self.stats_payload and self.stats_payload['live'] and self.session.accepts(self.stats_payload['token']):
                 self.display_overlays();return
+        retained=(self.stats_payload if refresh and live and same_choices and self.stats_payload
+                  and self.stats_payload['live'] and self.session.accepts(self.stats_payload['token']) else None)
         self.session.set_choices(self.stage.currentText(),ids)
         self.set_activity('querying','正在获取海克斯均排…')
-        self.hide_overlays();self.choice_table.setRowCount(0)
-        for card in self.result_cards:card.clear(self.session.target is not None)
+        if retained:retained['token']=self.session.token()
+        else:
+            self.hide_overlays();self.choice_table.setRowCount(0)
+            for card in self.result_cards:card.clear(self.session.target is not None)
         token=self.session.token();stage=self.session.stage;target=self.session.target;adapter=self.adapter
         self.stats_inflight_token=token
         def fetch():
@@ -792,7 +864,8 @@ class Companion(QWidget):
                 available+=global_stat['status']=='ok' or (comp_stat is not None and comp_stat['status']=='ok')
                 comp_text=stat_text(comp_stat) if comp_stat else ('阵容数据暂不可用' if comp_finished else '阵容数据读取中…') if target else '未固定阵容'
                 rendered.append([name,stat_text(global_stat),comp_text])
-            self.stats_payload={'rows':rendered,'live':live,'created':time.monotonic(),'token':token}
+            self.stats_payload={'rows':rendered,'live':live,'created':time.monotonic(),'token':token,
+                                'retryable':bool(target and comp_finished and comp_result is None)}
             if not self.offline:record('stats_ready',available=available,live=live)
             fill_table(self.choice_table,rendered)
             for card,row in zip(self.result_cards,rendered):card.update_result(row)
@@ -809,6 +882,9 @@ class Companion(QWidget):
         def failed(_):
             if self.stats_inflight_token==token:self.stats_inflight_token=None
             if self.session.accepts(token):
+                self.stats_payload=None
+                self.choice_table.setRowCount(0)
+                for card in self.result_cards:card.clear(self.session.target is not None)
                 self.hide_overlays();self.set_activity('stats_failed','暂时取不到均排，请按正常节奏选择。助手稍后会重试。')
         self.submit(self.network,fetch,done,failed)
 
@@ -837,11 +913,15 @@ class Companion(QWidget):
         def done(stage):
             self.stage_probe_pending=False
             if not self.session.accepts(token) or not self.automatic.isChecked():return
+            # A side-button request already owns the next full frame. A late
+            # background probe must not cancel it before that frame is examined.
+            if self.once_active and self.once_ocr_pending:return
             if stage and stage!=self.last_probe_stage:
-                self.invalidate()
+                same_choice=self.last_observation is not None and self.session.stage==stage
+                if not same_choice:self.invalidate()
                 self.stage_window_until=time.monotonic()+60 if stage in STAGES else 0
                 self.last_probe_stage=stage
-                if stage in STAGES:self.once_ocr_pending=True
+                if stage in STAGES and not same_choice:self.once_ocr_pending=True
         def failed(_):self.stage_probe_pending=False
         self.submit(self.ocr_pool,lambda:self.vision.read_round_crop(capture_stage(binding)),done,failed)
 
@@ -869,7 +949,7 @@ class Companion(QWidget):
         self.was_available=True
         if self.automatic.isChecked() and self.activity_code=='waiting_foreground':
             self.set_activity('watching_stage','已回到 MuMu，继续检查海克斯与装备选择。')
-        if self.once_active and time.monotonic()>self.once_deadline:
+        if self.once_active and time.monotonic()>self.once_deadline and self.last_observation is None:
             self.once_active=False
             if not self.automatic.isChecked():self.invalidate()
         geometry=(current.rect,current.dpi)
@@ -879,7 +959,7 @@ class Companion(QWidget):
         if self.items.active or self.items.recognizing:return
         if time.monotonic()-self.last_capture>1.5:self.hide_overlays()
         capture_interval=.5 if self.last_observation else 1.0
-        stage_active=self.automatic.isChecked() and (self.offline or time.monotonic()<self.stage_window_until)
+        stage_active=self.automatic.isChecked() and (self.offline or self.last_observation is not None or time.monotonic()<self.stage_window_until)
         if (stage_active or self.once_active) and time.monotonic()-self.last_capture>capture_interval:
             self.request_capture()
 

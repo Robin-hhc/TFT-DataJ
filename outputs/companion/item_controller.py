@@ -8,6 +8,12 @@ from diagnostics import record
 import win_capture as win
 
 
+def inspect_items(image):
+    """Pure pixel work, called on the serialized capture worker in live use."""
+    boxes=item_boxes(image)
+    return boxes,item_signature(image,boxes)
+
+
 class ItemController:
     def __init__(self,panel):
         self.panel=panel
@@ -59,20 +65,24 @@ class ItemController:
         token=self.token();binding=p.binding
         def done(result):
             self.probing=False;p.capture_pending=False
-            if self.accepts(token) and self.available():self.ingest(*result)
+            if self.accepts(token) and self.available():
+                image,current,prepared=result
+                self.ingest(image,current,prepared=prepared)
         def failed(_):
             self.probing=False;p.capture_pending=False
             if self.accepts(token):self.reset()
-        p.submit(p.capture_pool,lambda:capture_item_region(binding),done,failed)
+        def capture():
+            image,current=capture_item_region(binding)
+            return image,current,inspect_items(image)
+        p.submit(p.capture_pool,capture,done,failed)
 
-    def ingest(self,image,binding,force=False):
+    def ingest(self,image,binding,force=False,prepared=None):
         """Return True when this frame belongs to the item scene investigation."""
         p=self.panel
-        boxes=item_boxes(image)
+        boxes,signature=inspect_items(image) if prepared is None else prepared
         if not boxes:
             if self.active or self.boxes:self.reset()
             return False
-        signature=item_signature(image,boxes)
         same=(len(boxes)==len(self.boxes) and all(max(abs(a-b) for a,b in zip(x,y))<=4
               for x,y in zip(boxes,self.boxes)) and same_item_text(signature,self.signature))
         self.last_frame=image

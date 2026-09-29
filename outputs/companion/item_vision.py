@@ -11,6 +11,10 @@ import numpy as np
 from PIL import Image
 from vision import TextSignature
 
+# Small 960-pixel scene proposals must not fan out across every game CPU core.
+# OCR inference has its own bounded ONNX pool; capture/OCR jobs are serialized.
+cv2.setNumThreads(1)
+
 
 ITEM_TYPES = frozenset(('成型装备', '神器装备', '光明武器'))
 
@@ -21,7 +25,8 @@ def item_boxes(image):
     if width < 640 or height < 360:
         return []
     scale = min(1, 960/width)
-    small = image.convert('RGB').resize((round(width*scale), round(height*scale)), Image.Resampling.BILINEAR)
+    source=image if image.mode=='RGB' else image.convert('RGB')
+    small = source.resize((round(width*scale), round(height*scale)), Image.Resampling.BILINEAR)
     pixels = np.asarray(small, dtype=np.int16)
     h, w = pixels.shape[:2]
     mask = ((pixels[:,:,0]-pixels[:,:,2] > 15) & (pixels[:,:,1]-pixels[:,:,2] > 7)

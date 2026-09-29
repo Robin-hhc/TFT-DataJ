@@ -2,6 +2,24 @@
 
 在仓库根目录、已安装 `packaging/requirements-runtime.txt` 的 Python 3.12 环境中执行。开发机可将 `python` 换成 `work\p0-runtime\Scripts\python.exe`。
 
+## 识别性能、内存与闪烁回归
+
+`validate_data.py` 同时包含 `test_runtime_stability.py`：手动/阶段触发、过期窗口后换牌、冷却、迟到回调、前台检查、失败统计重试、并发上限，以及真实 Qt 任务完成/失败后释放截图。释放检查禁用循环 GC，用弱引用检查图片是否还被任务持有，不依赖机器内存阈值。
+
+性能单独测量，避免把系统负载波动当成 UT 失败。需要本机真实图片和 OCR 模型：
+
+```powershell
+python -X utf8 tools/profile_runtime.py --copy-frames --report work/performance/refresh.json
+python -X utf8 tools/profile_runtime.py --copy-frames --fresh --report work/performance/new-choice.json
+python -X utf8 tools/profile_runtime.py --copy-frames --captures 200 --report work/performance/stress.json
+```
+
+可用 `--image 完整图片路径` 换样本。`--copy-frames` 为每次截图分配新图片，必须用于内存比较；复用同一图片不会暴露截图滞留。`--fresh` 每轮清空已确认候选，测首次识别；默认测同一组候选反复按侧键。报告包括主进程工作集、私有提交量、CPU 时间、Qt 事件间隔及阶段耗时；不含浏览器子进程和实际游戏帧率。
+
+本轮优化前基线可用 `--baseline-ref a940d5d2637c2ea4e56933a9435b90a3c2f50d8b` 复现。只在当前测试进程中加载该提交的四个运行模块，不修改工作区；其余依赖沿用本机，后续其他模块改变后需重新评估该对照。运行性能对照时不要并行构建或跑其他高负载检查。
+
+实测与边界见 [2026-09-29 性能修复记录](runtime-performance-20260929.md)。
+
 ## 每次修改数据代码
 
 ```powershell

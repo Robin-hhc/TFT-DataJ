@@ -10,6 +10,7 @@ with patch('app.win.enumerate_mumu', return_value=[]):
 panel.timer.stop()
 panel.hide()
 panel.binding = SimpleNamespace(hwnd=123)
+panel.submit=lambda pool,fn,done,failed=None:done(fn())
 image = Image.new('RGB', (20, 20))
 partial = {'cards': [{'resolution': {'id': 'a'}},
                      {'resolution': {'id': None}},
@@ -20,10 +21,12 @@ try:
         panel.automatic.setChecked(automatic)
         panel.once_active = not automatic
         panel.last_observation = partial
-        panel.stats_payload = {'retained': True}
+        panel.stats_payload = {'live':True,'token':panel.session.token()}
+        payload=panel.stats_payload
         panel.last_ocr = 0
         panel.next_ocr_allowed = 0
         with patch('app.win.same_target', return_value=True), \
+             patch('app.win.foreground_root',return_value=123), \
              patch('app.tracked_signature', return_value=None), \
              patch('app.unchanged', return_value=True), \
              patch.object(panel, 'display_overlays'), \
@@ -34,7 +37,7 @@ try:
             panel.captured((image, panel.binding), False)
             panel.captured((image, panel.binding), False)
             assert analyze.call_count == 2, 'Partial retries must be bounded to two attempts'
-            assert panel.stats_payload == {'retained': True} and not hide.called
+            assert panel.stats_payload is payload and not hide.called
             panel.partial_retries = 0
             panel.ocr_busy = True
             panel.captured((image, panel.binding), False)

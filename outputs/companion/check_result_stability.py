@@ -32,6 +32,7 @@ with patch('app.win.foreground_root',return_value=123):
         panel.last_observation=observation
         with patch('app.tracked_signature',return_value=None),patch('app.unchanged',return_value=True):
             panel.captured((Image.new('RGB',(20,20)),panel.binding),False)
+            fn,done=jobs.pop();done(fn())
         assert display.called,'A busy OCR worker prevents restoring existing overlays after capture'
 panel.shutdown()
 print('stable same-choice request, retained result, restore while OCR busy: passed')

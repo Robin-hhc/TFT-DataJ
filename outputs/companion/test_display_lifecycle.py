@@ -13,6 +13,7 @@ from types import SimpleNamespace
 import unittest
 from unittest.mock import patch
 import httpx
+from PIL import Image
 from PySide6.QtWidgets import QLabel
 from app import QApplication, Companion
 from display_audit import ReplayDataJ, plain, table_rows
@@ -86,6 +87,24 @@ class DisplayLifecycle(unittest.TestCase):
     def hex(self,stage='2-1',live=False):
         self.p.stage.blockSignals(True);self.p.stage.setCurrentText(stage);self.p.stage.blockSignals(False)
         self.p.query_stats(['1023',None,None],['应急护甲 I','未确认','未确认'],live)
+
+    def test_manual_same_choice_retry_recovers_failed_comp_scope(self):
+        p=self.p;p.session.set_target('112');self.failure=('/comp/','network')
+        p.stage.blockSignals(True);p.stage.setCurrentText('2-1');p.stage.blockSignals(False)
+        p.last_observation={'cards':[{'resolution':{'id':'1023'}}]*3}
+        with patch.object(p,'display_overlays'),patch('app.win.same_target',return_value=True),patch('app.unchanged',return_value=True):
+            p.query_stats(['1023']*3,['应急护甲 I']*3,True);self.flush()
+            self.assertTrue(p.stats_payload['retryable'])
+            self.assertEqual(p.stats_payload['rows'][0][2],'阵容数据暂不可用')
+            global_text=p.stats_payload['rows'][0][1]
+            self.failure=None;p.once_active=True;p.once_ocr_pending=True
+            with patch.object(p,'hide_overlays') as hide,patch.object(p,'analyze') as ocr:
+                p.accept_frame((Image.new('RGB',(1280,720)),p.binding),False,(([],None),None),time.monotonic())
+            self.assertFalse(hide.called);self.assertFalse(ocr.called)
+            self.assertEqual(p.stats_payload['rows'][0][1],global_text)
+            self.flush()
+            self.assertFalse(p.stats_payload['retryable'])
+            self.assertTrue(p.stats_payload['rows'][0][2].startswith('2.75 · '))
 
     def hero(self):
         self.p.session.set_target('112');self.p.heroes.blockSignals(True);self.p.heroes.clear()
