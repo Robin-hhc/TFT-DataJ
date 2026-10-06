@@ -153,6 +153,64 @@ class DisplayLifecycle(unittest.TestCase):
         self.assertEqual(self.p.comp_detail['compId'],'120')
         self.assertEqual(self.p.comp_detail['gameCode'],'【阵容码】120')
 
+    def test_pinned_guide_never_returns_to_choose_comp_prompt(self):
+        p=self.p
+        for version in ['18.2a','18.2']:
+            with self.subTest(version=version):
+                p.unpin();self.set_version(version);p.versions_loaded(['18.2a','18.2'])
+                # Exercise the online guide branch, stubbing only browser I/O.
+                with patch.object(p.web,'setUrl'),patch.object(p,'offline',False):
+                    p.select_comp('112');self.flush()
+                self.assertEqual(p.session.target,'112')
+                self.assertIn('已固定',p.target_label.text())
+                self.assertTrue(p.copy_button.isEnabled())
+                self.assertTrue(p.guide_empty.isHidden(),'a pinned comp must not show the choose-comp prompt')
+
+    def test_historical_guide_opt_in_preserves_statistics_and_unpin_clears_it(self):
+        p=self.p;self.set_version('18.2');p.versions_loaded(['18.2a','18.2'])
+        with patch.object(p.web,'setUrl') as navigate,patch.object(p,'offline',False):
+            p.select_comp('112');self.flush()
+            self.assertEqual([args[0][0].toString() for args in navigate.call_args_list],['about:blank'])
+            self.assertFalse(p.guide_version.isHidden());self.assertTrue(p.web.isHidden())
+            self.assertIn('测试阵容112',p.guide_version_title.text())
+            p.guide_latest.click()
+            self.assertEqual(navigate.call_args[0][0].toString(),'https://www.dataj.cc/comp/112')
+            self.assertTrue(p.guide_version.isHidden());self.assertFalse(p.web.isHidden())
+            self.assertIn('原站攻略：18.2a',p.guide_notice.text())
+            self.assertIn('统计：18.2',p.guide_notice.text())
+            self.assertEqual((p.adapter.patch,p.session.patch,p.session.target),('18.2','18.2','112'))
+            with patch('app.QApplication.clipboard') as clipboard:
+                p.copy_code();clipboard.return_value.setText.assert_called_once_with('【阵容码】112')
+            p.unpin()
+            self.assertTrue(p.guide_version.isHidden());self.assertTrue(p.web.isHidden())
+            self.assertFalse(p.guide_empty.isHidden());self.assertIsNone(p.guide_requested_url)
+            self.assertFalse(p.copy_button.isEnabled())
+
+    def test_delayed_versions_refresh_guide_without_changing_active_tab(self):
+        p=self.p
+        p.select_comp('112');self.flush()
+        self.assertTrue(p.guide_empty.isHidden());self.assertFalse(p.guide_version.isHidden())
+        p.tabs.setCurrentIndex(3)
+        p.versions_loaded(['18.2a','18.2'])
+        self.assertTrue(p.guide_version.isHidden());self.assertFalse(p.web.isHidden())
+        self.assertEqual(p.tabs.currentIndex(),3)
+        p.versions_loaded(['18.3','18.2a','18.2'])
+        self.assertFalse(p.guide_version.isHidden());self.assertTrue(p.web.isHidden())
+        self.assertTrue(p.guide_empty.isHidden());self.assertEqual(p.tabs.currentIndex(),3)
+
+    def test_switch_comp_failure_and_retry_do_not_reuse_old_guide_consent(self):
+        p=self.p;p.versions_loaded(['18.3','18.2a'])
+        p.select_comp('112');self.flush();p.guide_latest.click()
+        self.failure=('/comp/120','network');p.select_comp('120')
+        self.assertTrue(p.guide_version.isHidden());self.assertTrue(p.web.isHidden())
+        self.assertTrue(p.guide_empty.isHidden());self.assertFalse(p.copy_button.isEnabled())
+        self.flush();self.assertFalse(p.guide_retry.isHidden());self.assertIsNone(p.comp_detail)
+        self.failure=None;p.guide_retry.click();self.flush()
+        self.assertIn('测试阵容120',p.guide_version_title.text())
+        self.assertTrue(p.guide_empty.isHidden());self.assertFalse(p.guide_version.isHidden())
+        self.assertTrue(p.web.isHidden());self.assertFalse(p.guide_allow_latest)
+        self.assertTrue(p.guide_retry.isHidden());self.assertTrue(p.copy_button.isEnabled())
+
     def test_item_reset_version_and_focus_drop_late_results(self):
         self.item();self.set_version('18.2');self.item();self.complete(1);self.flush()
         self.assertIn('6.25',plain(self.p.items.overlays[0].global_line.text()))

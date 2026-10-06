@@ -8,6 +8,40 @@ import time
 import traceback
 
 
+def check_pinned_guide(panel):
+    """Drive real pinned-guide widgets with a bounded offline detail response."""
+    from unittest.mock import patch
+    pending=[]
+    detail={'compId':'116','name':'验证阵容','heroes':[],'gameCode':'【阵容码】便携验证'}
+    with patch.object(panel,'submit',side_effect=lambda pool,fn,done,failed=lambda _:None:pending.append((fn,done,failed))), \
+         patch.object(panel.adapter,'comp',return_value={'data':detail}):
+        panel.versions_loaded(['18.3','18.2a'])
+        panel.select_comp('116')
+        assert len(pending)==1,'Expected one comp detail request'
+        fn,done,_=pending.pop();done(fn())
+        assert panel.session.target=='116' and panel.copy_button.isEnabled(),'Pinned comp missing'
+        assert panel.guide_empty.isHidden(),'Pinned guide incorrectly shows choose-comp prompt'
+        assert not panel.guide_version.isHidden() and panel.web.isHidden(),'Historical guide state missing'
+        assert '验证阵容' in panel.guide_version_title.text(),'Pinned name missing'
+        panel.tabs.setCurrentIndex(3)
+        panel.versions_loaded(['18.3','18.2a'])
+        assert panel.tabs.currentIndex()==3,'Version response changed active tab'
+        panel.tabs.setCurrentIndex(2)
+        from bootstrap import STATE_DIR
+        assert panel.grab().save(str(STATE_DIR/'portable-pinned-guide.png'))
+        panel.guide_latest.click()
+        assert panel.guide_version.isHidden() and not panel.web.isHidden(),'Latest guide entry failed'
+        assert '18.3' in panel.guide_notice.text() and '18.2a' in panel.guide_notice.text(),'Guide version labels missing'
+        assert panel.adapter.patch==panel.session.patch=='18.2a' and panel.session.target=='116','Guide changed statistics scope'
+        panel.unpin()
+        assert not panel.guide_empty.isHidden() and panel.guide_version.isHidden() and panel.web.isHidden(),'Unpin left old guide visible'
+        assert not panel.copy_button.isEnabled() and panel.guide_requested_url is None,'Unpin left old code or URL'
+        panel.versions_loaded(['18.2a','18.2'])
+        panel.select_comp('116');fn,done,_=pending.pop();done(fn())
+        assert panel.guide_empty.isHidden() and panel.guide_version.isHidden() and not panel.web.isHidden(),'Matching-version guide failed'
+        panel.unpin()
+
+
 def main():
     parser=argparse.ArgumentParser()
     parser.add_argument('--diagnose',action='store_true')
@@ -39,6 +73,8 @@ def main():
         assert (RESOURCE_DIR/'assets/refresh-glyph.png').is_file()
         assert (RESOURCE_DIR/'chevron-down.svg').is_file()
         report['checks'].append('application widgets and bundled UI assets')
+        check_pinned_guide(panel)
+        report['checks'].append('pinned guide versions, latest entry, scope and unpin regression')
         if args.explorer_fixture:
             fixture=json.loads(args.explorer_fixture.read_text(encoding='utf-8'))
             browser=panel.browser

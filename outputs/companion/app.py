@@ -259,6 +259,10 @@ class Companion(QWidget):
         if selected not in versions:self.patch.addItem(selected)
         self.patch.setCurrentText(selected);self.patch.blockSignals(False)
         self.latest_patch=versions[0]
+        if self.guide_requested_url:
+            tab=self.tabs.currentIndex()
+            self.open_guide(self.guide_requested_url,allow_latest=self.guide_allow_latest)
+            self.tabs.setCurrentIndex(tab)
 
     def navigate(self,index):
         headings=[('局内识别','自动检查海克斯与装备选择，侧键随时补查。'),
@@ -430,7 +434,7 @@ class Companion(QWidget):
         self.tabs.addTab(self.browser,'选阵容')
 
     def make_guide(self):
-        page=QWidget();layout=QVBoxLayout(page)
+        page=QWidget();layout=QVBoxLayout(page);layout.setAlignment(Qt.AlignmentFlag.AlignTop)
         row=QHBoxLayout()
         row.addWidget(button('攻略',lambda:self.tabs.setCurrentIndex(2)))
         row.addWidget(button('出装',lambda:self.tabs.setCurrentIndex(3)))
@@ -455,6 +459,14 @@ class Companion(QWidget):
         empty.addWidget(label('从阵容列表点击一套，立刻固定为本局目标。\n之后可以复制阵容码，并查看攻略、出装与强化统计。','muted'))
         empty.addSpacing(16);empty.addWidget(button('去选阵容  →',lambda:self.tabs.setCurrentIndex(1)))
         layout.addWidget(self.guide_empty)
+        self.guide_requested_url=None;self.guide_allow_latest=False
+        self.guide_version=QFrame();self.guide_version.setObjectName('hero');version=QVBoxLayout(self.guide_version)
+        version.setContentsMargins(16,20,16,20)
+        self.guide_version_title=label('','pageTitle');self.guide_version_title.setWordWrap(True);version.addWidget(self.guide_version_title)
+        self.guide_version_note=label('','muted');self.guide_version_note.setWordWrap(True);version.addWidget(self.guide_version_note)
+        self.guide_latest=button('查看原站最新攻略',self.open_latest_guide);version.addWidget(self.guide_latest)
+        version.addWidget(button('查看本局英雄出装',lambda:self.tabs.setCurrentIndex(3)))
+        layout.addWidget(self.guide_version);self.guide_version.hide()
         self.web.setMinimumHeight(320);layout.addWidget(self.web);self.web.hide()
         self.web.urlChanged.connect(self.guide_url_changed)
         layout.addWidget(label('浏览不会自动更换本局阵容。变体阵容码请在原站复制。','muted'))
@@ -998,13 +1010,26 @@ class Companion(QWidget):
         except ValueError as exc:self.status.setText(str(exc));return
         self.open_guide(self.comp_url.text())
 
-    def open_guide(self,url):
-        if self.adapter.patch!=getattr(self,'latest_patch','18.2a'):
-            self.web.stop();self.web.hide();self.guide_empty.show()
-            self.guide_notice.setText(f'当前统计版本 {self.adapter.patch}。来源攻略网页默认最新版本，已避免混显；本局阵容码、强化和出装仍按所选版本查询。')
+    def open_latest_guide(self):
+        if self.guide_requested_url:self.open_guide(self.guide_requested_url,allow_latest=True)
+
+    def open_guide(self,url,*,allow_latest=False):
+        self.guide_requested_url=url;self.guide_allow_latest=allow_latest
+        self.guide_empty.hide();self.guide_version.hide()
+        latest=getattr(self,'latest_patch',None)
+        if self.adapter.patch!=latest and not allow_latest:
+            self.web.stop();self.web.hide();self.guide_version.show()
+            pinned=self.comp_detail and str(self.comp_detail.get('compId'))==self.session.target
+            self.guide_version_title.setText('已固定 · '+self.comp_detail.get('name',self.session.target) if pinned else '攻略版本说明')
+            source=f'原站攻略为最新 {latest} 版本' if latest else '原站攻略使用最新版本，版本列表尚未确认'
+            self.guide_version_note.setText(f'{source}，当前助手统计为 {self.adapter.patch}。\n可继续复制阵容码、查询出装和强化；查看最新攻略不会改变所选统计版本。')
+            self.guide_latest.setText(f'查看原站最新攻略（{latest}）' if latest else '查看原站最新攻略')
+            self.guide_notice.setText(('阵容已固定。' if pinned else '')+f'当前统计版本 {self.adapter.patch}，攻略版本需单独确认。')
             self.tabs.setCurrentIndex(2);return
-        self.guide_empty.hide();self.web.show()
-        self.web.setUrl(QUrl(url));self.tabs.setCurrentIndex(2)
+        self.guide_notice.setText(f'原站攻略：{latest or "最新版本"} · 助手阵容码、强化与出装统计：{self.adapter.patch}。'+('网页内统计也属于原站最新版本。' if latest!=self.adapter.patch else ''))
+        self.web.show()
+        if not self.offline and self.web.url().toString()!=url:self.web.setUrl(QUrl(url))
+        self.tabs.setCurrentIndex(2)
 
     def guide_url_changed(self,url):
         try:parse_comp_url(url.toString())
@@ -1018,7 +1043,8 @@ class Companion(QWidget):
         self.heroes.blockSignals(True);self.heroes.clear();self.heroes.blockSignals(False)
         self.populate_hero_buttons()
         self.copy_button.setEnabled(False);self.web.stop();self.web.hide();self.web.setUrl(QUrl('about:blank'))
-        self.guide_empty.hide();self.guide_retry.hide();self.guide_notice.setText('已选择阵容，正在读取攻略和阵容码…')
+        self.guide_requested_url=None;self.guide_allow_latest=False
+        self.guide_empty.hide();self.guide_version.hide();self.guide_retry.hide();self.guide_notice.setText('已选择阵容，正在读取攻略和阵容码…')
         self.browser.set_pinned(comp)
         self.comp_generation+=1;generation=self.comp_generation;adapter=self.adapter;session_id=self.session.session_id
         name=next((row['name'] for row in self.browser.rows if str(row['compId'])==comp),comp)
@@ -1040,8 +1066,7 @@ class Companion(QWidget):
             self.populate_hero_buttons()
             code=detail.get('gameCode');self.copy_button.setEnabled(isinstance(code,str) and code.startswith('【阵容码】'))
             self.guide_notice.setText('已固定 · 强化与出装查询会跟随本阵容。'+('复制按钮对应主阵容。' if self.copy_button.isEnabled() else '来源暂无主阵容码。'))
-            self.guide_empty.hide();self.web.show()
-            if not self.offline:self.open_guide('https://www.dataj.cc/comp/'+comp)
+            self.open_guide('https://www.dataj.cc/comp/'+comp)
             self.status.setText('已固定 '+detail.get('name',comp))
             self.items.prewarm(comp)
         self.submit(self.network,lambda:adapter.comp(comp),done,failed)
@@ -1053,7 +1078,8 @@ class Companion(QWidget):
         self.heroes.blockSignals(True);self.heroes.clear();self.heroes.blockSignals(False);self.clear_equipment()
         self.populate_hero_buttons()
         self.equip_note.setText('先选一套阵容，再点击英雄头像查看出装。')
-        self.web.stop();self.web.setUrl(QUrl('about:blank'));self.web.hide();self.guide_empty.show();self.guide_retry.hide()
+        self.guide_requested_url=None;self.guide_allow_latest=False
+        self.web.stop();self.web.setUrl(QUrl('about:blank'));self.web.hide();self.guide_empty.show();self.guide_version.hide();self.guide_retry.hide()
         self.guide_notice.setText('先在阵容列表选择一套阵容。')
 
     def copy_code(self):
