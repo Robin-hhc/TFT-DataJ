@@ -34,10 +34,11 @@ def check_pinned_guide(panel):
         assert panel.guide_version.isHidden() and not panel.web.isHidden(),'Latest guide entry failed'
         assert '18.3' in panel.guide_notice.text() and '18.2a' in panel.guide_notice.text(),'Guide version labels missing'
         assert panel.adapter.patch==panel.session.patch=='18.2a' and panel.session.target=='116','Guide changed statistics scope'
+        panel.versions_loaded(['18.2a','18.2'])
         url=QUrl('https://www.dataj.cc/comp/116')
         with patch.object(panel,'offline',False),patch.object(panel.web,'url',return_value=url),patch.object(panel.web,'setUrl') as navigate:
             panel.browse_comp();navigate.assert_called_once_with(url);navigate.reset_mock()
-            panel.versions_loaded(['18.3','18.2a']);navigate.assert_not_called()
+            panel.versions_loaded(['18.2a','18.2']);navigate.assert_not_called()
             panel.select_comp('116');navigate.assert_called_once_with(url)
         panel.unpin()
         assert not panel.guide_empty.isHidden() and panel.guide_version.isHidden() and panel.web.isHidden(),'Unpin left old guide visible'
