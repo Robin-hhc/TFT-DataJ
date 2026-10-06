@@ -278,7 +278,8 @@ class DisplayLifecycle(unittest.TestCase):
             cls.validate_comps=ReplayDataJ.validate_comps
             p.patch.activated.emit(p.patch.currentIndex());self.flush()
         self.assertEqual(p.adapter.patch,'18.2');self.assertEqual(p.session.patch,'18.2')
-        self.assertIsNone(p.session.target);self.assertEqual(p.equip_table.rowCount(),0)
+        # Changing statistics patch retains the game plan, while old rows clear.
+        self.assertEqual(p.session.target,'112');self.assertEqual(p.equip_table.rowCount(),0)
         self.assertEqual(p.result_cards[0].average_label.text(),'—')
         self.hex();self.flush();self.assertEqual(p.result_cards[0].average_label.text(),'6.25')
         p.stage.setCurrentText('4-2')

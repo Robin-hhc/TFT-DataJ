@@ -49,6 +49,169 @@ def check_pinned_guide(panel):
         panel.unpin()
 
 
+def check_resource_inputs(panel, qt):
+    """Exercise actual condition widgets and DataJ bodies with local transport.
+
+    The compact fixture is embedded so a packaged app needs no repository tests,
+    private screenshots or work directory. It is an offline diagnostic scenario,
+    not evidence of game OCR or automatic selection confirmation.
+    """
+    from unittest.mock import patch
+    from copy import deepcopy
+    import httpx
+    from PySide6.QtCore import QPoint, QRect, Qt
+    from dataj import DataJ
+    from bootstrap import STATE_DIR
+    catalog={
+        'hero':[
+            {'id':'14503','name':'阿木木','heroType':0,'price':4,'setId':'18'},
+            {'id':'24503','name':'阿木木','heroType':0,'price':4,'setId':'18'},
+        ],
+        'hex':[{'id':'20778','name':'黑暗仪式','level':2,'descText':'【魔女】不再提供战利品！','setId':'18'}],
+        'equip':[
+            {'id':'2085','name':'光明版狂徒铠甲','type':'光明武器','descText':'获得36%最大生命值。','setId':'18'},
+            {'id':'2091','name':'光明版强袭者的链枷','type':'光明武器','descText':'暴击提供持续5秒的10%伤害增幅，可叠加至多4次。','setId':'18'},
+            {'id':'2078','name':'光明版适应性头盔','type':'光明武器','descText':'从所有来源中获得额外的30%法力值。','setId':'18'},
+            {'id':'2092','name':'光明版秘法手套','type':'光明武器','descText':'每一回合：装备2件随机光明武器。','setId':'18'},
+        ],
+        'trait':[],
+    }
+    comp={'compId':'116','name':'便携验证阵容','sampleCount':200,'avgPlacement':4.0,
+          'top4Rate':55.0,'topRate':15.0,'heroes':[],'traits':[]}
+    detail={**comp,'gameCode':'【阵容码】便携免打字验证'}
+    requests=[]
+
+    def transport(request):
+        path=request.url.path
+        body=json.loads(request.content) if request.method=='POST' else None
+        requests.append({'method':request.method,'path':path,'body':body,
+                         'params':dict(request.url.params)})
+        if path.endswith('/gamedata'):data=deepcopy(catalog)
+        elif path.endswith('/explorer/query'):data={'comps':[deepcopy(comp)]}
+        elif path.endswith('/comp/rank'):data=[deepcopy(comp)]
+        elif path.endswith('/comp/116'):data=deepcopy(detail)
+        elif path.endswith('/stats/hex'):data=[]
+        else:raise AssertionError('Unplanned diagnostic endpoint: '+path)
+        return httpx.Response(200,json={'code':200,'success':True,'data':data})
+
+    class OfflineDataJ(DataJ):
+        def __init__(self,*args,**kwargs):
+            kwargs['db']=STATE_DIR/'portable-resource-cache.sqlite'
+            kwargs['transport']=httpx.MockTransport(transport)
+            super().__init__(*args,**kwargs)
+
+        def request(self,path,body=None,ttl=900,**extra):
+            # Still run the real serializer/validator, but do not let cache/rate
+            # limits conceal the repeated chip HTTP body in this diagnostic.
+            self.next_request=0
+            return super().request(path,body=body,ttl=0,**extra)
+
+    def run_job(pool,fn,done,failed=lambda _:None):
+        done(fn())
+
+    def last_rule(expected_kind,expected_id,version):
+        posts=[r['body'] for r in requests if r['method']=='POST']
+        assert posts,'No DataJ Explorer body produced'
+        body=posts[-1]
+        assert body['setId']==18 and body['version']==version,body
+        assert body['filter']['combinator']=='and' and len(body['filter']['rules'])==1,body
+        rule=body['filter']['rules'][0]
+        assert rule['type']==expected_kind and rule['targetId']==expected_id,rule
+        expected_name='阿木木' if expected_kind=='hero' and expected_id=='4503' else next(
+            row['name'] for row in catalog[expected_kind] if row['id']==expected_id)
+        assert rule['targetName']==expected_name,rule
+        assert {key:rule[key] for key in ('starCount','hexRound','equipCarry','equipCount')}=={
+            'starCount':'','hexRound':'','equipCarry':'','equipCount':''},rule
+        assert rule['exclude'] is False and rule['enable'] is True and rule['nameMatch'] is False,rule
+        return deepcopy(body)
+
+    def bounds_and_screenshot(name,manual_open):
+        panel.tabs.setCurrentIndex(1);panel.resize(760,430)
+        panel.ensurePolished();panel.layout().activate();qt.processEvents()
+        shot=panel.grab()
+        assert panel.width()==760 and panel.height()==430,('Compact panel grew',panel.size())
+        ratio=shot.devicePixelRatio()
+        assert abs(shot.width()/ratio-760)<1 and abs(shot.height()/ratio-430)<1,('Wrong screenshot canvas',shot.size(),ratio)
+        bar=panel.browser.input_bar
+        controls=[('read',bar.read),('current_condition',bar.current),('manual_toggle',panel.browser.manual_toggle),
+                  ('overflow',bar.more),*((f'chip_{i}',chip) for i,chip in enumerate(bar.chips))]
+        if not bar.clear.isHidden():controls.append(('clear_condition',bar.clear))
+        if not bar.confirm.isHidden():controls.append(('confirm',bar.confirm))
+        if manual_open:
+            controls.extend([('type',panel.browser.kind),('search',panel.browser.entity),
+                             ('apply',panel.browser.apply),('clear',panel.browser.clear)])
+        rectangles={}
+        for label,widget in controls:
+            assert not widget.isHidden(),label+' unexpectedly hidden'
+            rect=QRect(widget.mapTo(panel,QPoint(0,0)),widget.size())
+            assert panel.rect().contains(rect),(label,'outside compact panel',rect,panel.rect())
+            assert rect.width()>0 and rect.height()>0,(label,'empty control',rect)
+            rectangles[label]=[rect.x(),rect.y(),rect.width(),rect.height()]
+        row=[QRect(*rectangles[label]) for label in rectangles if label.startswith('chip_') or label=='overflow']
+        assert all(not first.intersects(second) for index,first in enumerate(row) for second in row[index+1:]),'Resource shortcuts overlap'
+        # Windows may render the 760x430 logical panel at 200% DPI. Preserve
+        # native pixels and also save the requested logical-size QA preview.
+        native=Path(name).with_stem(Path(name).stem+'-native')
+        assert shot.save(str(STATE_DIR/native)),'Could not save native condition-input screenshot'
+        preview=shot.scaled(760,430,Qt.AspectRatioMode.IgnoreAspectRatio,Qt.TransformationMode.SmoothTransformation)
+        assert preview.save(str(STATE_DIR/name)),'Could not save condition-input preview'
+        return rectangles
+
+    original_loaded=panel.catalog_loaded
+    with patch('app.DataJ',OfflineDataJ),patch.object(panel,'submit',side_effect=run_job), \
+         patch.object(panel,'catalog_loaded',side_effect=lambda result,offline=False:original_loaded(result,True)):
+        panel.adapter=OfflineDataJ(patch='18.2a');panel.session.patch='18.2a'
+        panel.versions_loaded(['18.3','18.2a'])
+        original_loaded({'data':deepcopy(catalog)},True)
+        bar=panel.browser.input_bar
+        assert panel.browser.set_filter('hero',catalog['hero'][1],can_confirm=True)
+        manual_body=last_rule('hero','4503','18.2a')
+        assert not panel.selected_resources.events and not bar.chips,'A search was recorded as selected'
+        assert not bar.confirm.isHidden(),'Explicit confirmation is unavailable'
+        bar.confirm.click()
+        assert len(panel.selected_resources.events)==len(bar.chips)==1,'Confirmation did not create one shortcut'
+        bar.chips[0].click()
+        assert last_rule('hero','4503','18.2a')==manual_body,'Chip changed the single-condition rule'
+        assert len(panel.selected_resources.events)==1,'Chip click duplicated selected history'
+        for entity in catalog['equip']:
+            assert panel.browser.set_filter('equip',entity,can_confirm=True)
+            assert last_rule('equip',entity['id'],'18.2a')
+            bar.confirm.click()
+        history=panel.selected_resources.events;game_id=panel.session.session_id
+        assert len(history)==5 and len(bar.chips)==3 and len(bar.menu.actions())==2,'Shortcut overflow lost resources'
+        # The overflow is another actual input surface, not a separate ID path.
+        bar.menu.actions()[-1].trigger();last_rule('hero','4503','18.2a')
+        assert panel.selected_resources.events==history,'Overflow query modified selected history'
+        panel.select_comp('116')
+        assert panel.session.target=='116' and panel.copy_button.isEnabled(),'Could not pin fixture comp'
+        assert panel.selected_resources.events==history,'Pinning cleared selected history'
+        panel.patch.setCurrentText('18.3');panel.change_patch()
+        assert panel.adapter.patch==panel.session.patch=='18.3' and panel.session.target=='116','Version changed pinned scope'
+        assert panel.session.session_id==game_id and panel.selected_resources.events==history,'Version change lost game resources'
+        assert panel.comp_detail and panel.comp_detail['compId']=='116' and panel.copy_button.isEnabled(),'Version change did not restore fixed comp details'
+        bar.chips[0].click();last_rule('equip','2092','18.3')
+        panel.browser.set_filter('equip',catalog['equip'][1],can_confirm=True)
+        rectangles_closed=bounds_and_screenshot('portable-resource-inputs.png',False)
+        panel.browser.manual_toggle.click()
+        assert not panel.browser.manual_inputs.isHidden(),'Manual fallback did not open'
+        rectangles_open=bounds_and_screenshot('portable-resource-inputs-manual.png',True)
+        panel.browser.manual_toggle.click()
+        assert panel.browser.manual_inputs.isHidden(),'Manual fallback did not collapse'
+        assert panel.selected_resources.events==history,'Toggling fallback recorded or removed choices'
+        panel.new_game()
+        assert panel.session.session_id!=game_id and panel.session.target is None,'New game did not isolate pinned scope'
+        assert not panel.selected_resources.events and not bar.chips and not bar.menu.actions(),'New game retained old resources'
+        assert panel.browser.scope is None and bar.condition is None,'New game retained old input'
+        assert bar.more.isHidden() and not bar.empty.isHidden(),'New game retained overflow UI'
+    return {'catalog_source':'embedded S18 identity fixture','network':'httpx.MockTransport only',
+            'canonical_hero_id':'4503','versions':['18.2a','18.3'],'confirmed_events':len(history),
+            'visible_shortcuts':3,'overflow_actions':2,'request_bodies':requests,
+            'closed_control_bounds':rectangles_closed,'open_control_bounds':rectangles_open,
+            'logical_canvas':[760,430],'device_pixel_ratio':panel.devicePixelRatioF(),
+            'screenshots':['portable-resource-inputs.png','portable-resource-inputs-manual.png',
+                           'portable-resource-inputs-native.png','portable-resource-inputs-manual-native.png']}
+
+
 def main():
     parser=argparse.ArgumentParser()
     parser.add_argument('--diagnose',action='store_true')
@@ -58,7 +221,12 @@ def main():
     parser.add_argument('--explorer-fixture',type=Path)
     parser.add_argument('--data-fixture',type=Path)
     parser.add_argument('--forbid-path',type=Path)
+    parser.add_argument('--output',type=Path,help='Use an isolated diagnostic state/output directory')
     args=parser.parse_args()
+    if args.output:
+        import bootstrap
+        bootstrap.STATE_DIR=args.output.resolve()
+        bootstrap.STATE_DIR.mkdir(parents=True,exist_ok=True)
     from bootstrap import FROZEN,RESOURCE_DIR,STATE_DIR
     report={'frozen':FROZEN,'resource_dir':str(RESOURCE_DIR),'state_dir':str(STATE_DIR),'checks':[]}
     qt=panel=None
@@ -82,6 +250,8 @@ def main():
         report['checks'].append('application widgets and bundled UI assets')
         check_pinned_guide(panel)
         report['checks'].append('pinned guide versions, latest entry, retry, scope and unpin regression')
+        report['resource_inputs']=check_resource_inputs(panel,qt)
+        report['checks'].append('packaged canonical single-condition inputs, explicit selection, chips, overflow, pinned version switch and new game')
         if args.explorer_fixture:
             fixture=json.loads(args.explorer_fixture.read_text(encoding='utf-8'))
             browser=panel.browser
@@ -157,3 +327,6 @@ def main():
         (STATE_DIR/'portable-check.json').write_text(json.dumps(report,ensure_ascii=False,indent=2),encoding='utf-8')
         print(json.dumps(report,ensure_ascii=False),flush=True)
     return 0 if report['status']=='passed' else 1
+
+
+if __name__=='__main__':raise SystemExit(main())

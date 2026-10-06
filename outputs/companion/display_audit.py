@@ -189,6 +189,14 @@ class DisplayReplay:
                 count=hero['samples'];sample=f'{count/10000:.1f}万' if count>=10000 else f'{count/1000:.1f}千' if count>=1000 else str(count)
                 assert plain(overlay.holder_lines[i][1].text())==f"{hero['name']} {hero['average']:.2f} {sample}局"
                 candidates=[r for r in self.catalog['hero'] if str(r['id'])==hero['id']]
+                # Source catalog IDs encode stars; the holder endpoint uses
+                # base form IDs. Resolve the exact one-star image from the
+                # frozen catalog before considering same-name fallback. This
+                # oracle intentionally does not call the product lookup.
+                if not candidates:
+                    for star in ('1','2','3','4'):
+                        candidates=[r for r in self.catalog['hero'] if str(r['id'])==star+hero['id']]
+                        if candidates:break
                 if not candidates:candidates=[r for r in self.catalog['hero'] if r['name']==hero['name']]
                 urls={r.get('picture','') for r in candidates};url=next(iter(urls)) if len(urls)==1 else ''
                 assert overlay.urls[i]==url,'holder portrait identity mismatch'

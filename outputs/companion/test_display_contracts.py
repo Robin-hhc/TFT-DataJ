@@ -8,6 +8,50 @@ from dataj import DataJ, SourceError
 
 
 class DisplayContracts(unittest.TestCase):
+    def test_valid_holder_names_and_empty_comp_heroes_remain_available(self):
+        hero={'heroId':4503,'avgPlacement':3.5,'sampleCount':50}
+        with tempfile.TemporaryDirectory() as tmp:
+            cases=[(lambda a:a.item_holders('2004'),[{**hero,'name':'阿木木'}]),
+                (lambda a:a.item_holders('2004','112'),{'compId':'112','equipId':'2004','heroes':[{**hero,'heroName':'阿木木'}]}),
+                (lambda a:a.comp('112'),{'compId':'112','heroes':[]}),
+                (lambda a:a.comp('112'),{'compId':'112','heroes':[{'heroId':4503,'heroName':'阿木木'}]})]
+            for index,(call,data) in enumerate(cases):
+                adapter=DataJ(db=Path(tmp)/f'{index}.db',transport=httpx.MockTransport(
+                    lambda request,payload=data:httpx.Response(200,json={'success':True,'code':200,'data':payload})))
+                for cached in (False,True):
+                    with self.subTest(data=data,cached=cached):
+                        result=call(adapter)
+                        self.assertEqual(result['data'],data)
+                        self.assertEqual(result['cached'],cached)
+
+    def test_comp_details_reject_malformed_hero_identity_before_display(self):
+        hero={'heroId':'4503','heroName':'阿木木'}
+        cases=[None,[],{'heroId':'4503'},{'heroName':'阿木木'}]
+        cases.extend({**hero,'heroName':name} for name in [None,42,'',' \t'])
+        cases.extend({**hero,'heroId':identity} for identity in [None,True,0,-1,1.5,'','one'])
+        with tempfile.TemporaryDirectory() as tmp:
+            for index,invalid in enumerate(cases):
+                data={'compId':'112','name':'测试阵容','heroes':[invalid]}
+                adapter=DataJ(db=Path(tmp)/f'{index}.db',transport=httpx.MockTransport(
+                    lambda request,payload=data:httpx.Response(200,json={'success':True,'code':200,'data':payload})))
+                for cached in (False,True):
+                    with self.subTest(hero=invalid,cached=cached),self.assertRaises(SourceError):
+                        adapter.comp('112')
+
+    def test_holder_endpoints_reject_missing_or_invalid_display_names(self):
+        row={'heroId':'4503','avgPlacement':3.5,'sampleCount':50}
+        with tempfile.TemporaryDirectory() as tmp:
+            for scope,field in [(None,'name'),('112','heroName')]:
+                for index,fields in enumerate([{}, {field:None}, {field:42},
+                        {field:''}, {field:' \t'}, {'name':'阿木木','heroName':None}]):
+                    rows=[{**row,**fields}]
+                    data=rows if scope is None else {'compId':scope,'equipId':'2004','heroes':rows}
+                    adapter=DataJ(db=Path(tmp)/f'{scope}-{index}.db',transport=httpx.MockTransport(
+                        lambda request,payload=data:httpx.Response(200,json={'success':True,'code':200,'data':payload})))
+                    for cached in (False,True):
+                        with self.subTest(scope=scope,fields=fields,cached=cached),self.assertRaises(SourceError):
+                            adapter.item_holders('2004',scope)
+
     def test_comp_rejects_invalid_numeric_statistics_and_duplicate_ids(self):
         row={'compId':112,'name':'test','avgPlacement':4.2,'sampleCount':50,'top4Rate':50,'topRate':10}
         for key,values in [('avgPlacement',[True,'4.2',0,9,float('nan'),float('inf')]),

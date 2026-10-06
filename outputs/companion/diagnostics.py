@@ -1,5 +1,6 @@
 """Bounded local events and recent game-only diagnostic frames; never uploads."""
 import json
+import os
 import time
 from datetime import datetime
 from bootstrap import STATE_DIR
@@ -38,6 +39,6 @@ def record(event, **values):
             path.replace(STATE_DIR / 'pipeline.previous.jsonl')
         with path.open('a', encoding='utf-8') as stream:
             stream.write(json.dumps({'time': datetime.now().isoformat(timespec='milliseconds'),
-                                     'event': event, **values}, ensure_ascii=False) + '\n')
+                                     'pid': os.getpid(), 'event': event, **values}, ensure_ascii=False) + '\n')
     except OSError:
         pass

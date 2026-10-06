@@ -1,5 +1,6 @@
 """Single-condition comp browsing and selection, independent of game capture."""
 from collections import deque
+from functools import lru_cache
 import json
 import math
 from urllib.parse import urlparse
@@ -11,6 +12,8 @@ from PySide6.QtWidgets import (QWidget,QFrame,QLabel,QPushButton,QLineEdit,QComb
 from bootstrap import STATE_DIR
 from dataj import COMP_MIN_SAMPLE
 from stat_colors import placement_color
+from condition_inputs import ConditionInputs
+from entity_identity import EntityResolver, display_label
 
 
 def text_label(text,kind='muted'):
@@ -63,9 +66,23 @@ class Portraits(QObject):
         self.pending.discard(url);reply.deleteLater();self.active-=1;self.pump()
 
 
+@lru_cache(maxsize=4)
+def canonical_portrait_aliases(snapshot):
+    """Cache the shared catalog star-family mapping, keeping form IDs separate."""
+    keys=('id','name','picture','heroType','price','setId')
+    catalog=[dict(zip(keys,values)) for values in snapshot]
+    entries=EntityResolver({'hero':catalog}).entries('hero')
+    return tuple((row['id'],row.get('picture','')) for row in entries)
+
+
 def portrait_catalog(rows):
     """IDs differ across endpoints. Name fallback is images-only and unanimous."""
     result={str(row['id']):row for row in rows};pictures={}
+    snapshot=tuple((str(row['id']),row['name'],row.get('picture',''),
+                    str(row.get('heroType',0)),row.get('price'),
+                    str(row.get('setId',18))) for row in rows)
+    for identity,picture in canonical_portrait_aliases(snapshot):
+        result.setdefault(identity,{'picture':picture})
     for row in rows:pictures.setdefault(row['name'],set()).add(row.get('picture',''))
     for name,urls in pictures.items():
         if len(urls)==1:result['name:'+name]={'picture':next(iter(urls))}
@@ -147,8 +164,17 @@ class CompBrowser(QWidget):
         try:self.favorites=set(json.loads(settings.value('favorite_comps','[]')))
         except (ValueError,TypeError):self.favorites=set()
         self.portraits=Portraits(self,not offline)
+        self.resolver=EntityResolver({})
+        self.input_revision=0
         layout=QVBoxLayout(self);layout.setContentsMargins(0,0,0,0);layout.setSpacing(7)
         filter_box=QFrame();filter_box.setObjectName('filterBox');filters=QVBoxLayout(filter_box);filters.setContentsMargins(10,8,10,8);filters.setSpacing(4)
+        self.input_bar=ConditionInputs(self.portraits);filters.addWidget(self.input_bar)
+        self.input_bar.entitySelected.connect(self.set_filter)
+        self.input_bar.alternativeSelected.connect(lambda k,e:self.set_filter(k,e,can_confirm=True))
+        self.input_bar.clearRequested.connect(self.clear_filter)
+        self.manual_toggle=QPushButton('更多输入：文字搜索 ▸');self.manual_toggle.clicked.connect(self.toggle_manual)
+        filters.addWidget(self.manual_toggle,0,Qt.AlignmentFlag.AlignLeft)
+        self.manual_inputs=QWidget();manual_layout=QVBoxLayout(self.manual_inputs);manual_layout.setContentsMargins(0,0,0,0)
 
         row=QHBoxLayout();row.addWidget(text_label('检索器','section'));self.kind=QComboBox()
         for name,key in [('装备 / 转职','equip'),('海克斯','hex'),('英雄','hero'),('羁绊档位','trait')]:self.kind.addItem(name,key)
@@ -156,7 +182,8 @@ class CompBrowser(QWidget):
         self.entity=QComboBox();self.entity.setEditable(True);self.entity.setInsertPolicy(QComboBox.InsertPolicy.NoInsert);self.entity.setMinimumWidth(130)
         self.entity.lineEdit().setPlaceholderText('输入名称，选择一个条件…');row.addWidget(self.entity,1)
         self.apply=QPushButton('筛选');self.apply.clicked.connect(self.apply_filter);row.addWidget(self.apply)
-        self.clear=QPushButton('清除');self.clear.clicked.connect(self.clear_filter);row.addWidget(self.clear);filters.addLayout(row)
+        self.clear=QPushButton('清除');self.clear.clicked.connect(self.clear_filter);row.addWidget(self.clear);manual_layout.addLayout(row)
+        filters.addWidget(self.manual_inputs);self.manual_inputs.hide()
         self.condition=text_label('未添加条件 · 显示全部阵容','filterStatus');self.condition.setWordWrap(True);filters.addWidget(self.condition);self.condition.hide()
         layout.addWidget(filter_box)
         toolbar=QHBoxLayout();self.search=QLineEdit();self.search.setPlaceholderText('搜索阵容或核心英雄…');toolbar.addWidget(self.search,1)
@@ -178,18 +205,18 @@ class CompBrowser(QWidget):
         self.refresh.clicked.connect(self.retry);self.populate_entities()
 
     def set_catalog(self,catalog):
-        self.catalog=catalog;self.populate_entities();self.render()
+        self.catalog=catalog;self.resolver=EntityResolver(catalog);self.populate_entities();self.render()
+
+    def toggle_manual(self):
+        opened=self.manual_inputs.isHidden();self.manual_inputs.setVisible(opened)
+        self.manual_toggle.setText('收起文字搜索 ▾' if opened else '更多输入：文字搜索 ▸')
 
     def populate_entities(self,*_):
         self.entity.blockSignals(True);self.entity.clear();self.entity.addItem('选择一个条件…',None)
         kind=self.kind.currentData()
-        names={}
-        for row in self.catalog.get(kind,[]):names[row['name']]=names.get(row['name'],0)+1
-        for row in self.catalog.get(kind,[]):
-            if kind=='hero' and (row.get('heroType')!=0 or numeric(row.get('price'),0)<=0):continue
-            suffix=(f" · {row.get('num','')}级" if kind=='trait' else f" · 品质{row.get('level','')}" if kind=='hex' else '')
-            if kind!='trait' and names[row['name']]>1:suffix+=f" · ID {row['id']}"
-            self.entity.addItem(row['name']+suffix,row)
+        for row in self.resolver.entries(kind):
+            self.entity.addItem(display_label(kind,row),row)
+            self.entity.setItemData(self.entity.count()-1,row.get('descText') or row.get('skillDesc') or row.get('identity_detail',''),Qt.ItemDataRole.ToolTipRole)
         self.entity.setCurrentIndex(0);self.entity.blockSignals(False)
         self.entity.completer().setFilterMode(Qt.MatchFlag.MatchContains);self.entity.completer().setCompletionMode(QCompleter.CompletionMode.PopupCompletion)
         self.entity.completer().setCaseSensitivity(Qt.CaseSensitivity.CaseInsensitive)
@@ -198,19 +225,30 @@ class CompBrowser(QWidget):
         item=self.entity.currentData()
         if item is None or self.entity.currentText()!=self.entity.itemText(self.entity.currentIndex()):
             active=('当前条件：'+self.scope[1]['name']) if self.scope else '当前显示全部阵容'
-            self.condition.setText(active+' · 请从搜索结果选择完整条件后筛选');return
-        self.condition.show();self.scope=(self.kind.currentData(),item);self.condition.setText('仅使用：'+self.entity.currentText());self.search.clear();self.retry()
+            self.input_bar.show_note(active+' · 请从搜索结果选择完整条件后筛选');return
+        self.set_filter(self.kind.currentData(),item,can_confirm=True)
 
-    def set_filter(self,kind,entity):
+    def set_filter(self,kind,entity,can_confirm=False):
+        resolved=self.resolver.resolve_selection(kind,entity)
+        if not resolved.confirmed:
+            self.input_bar.show_note(resolved.reason or '条件身份尚未确认，当前检索未改变。');return False
+        entity=resolved.entity
+        self.input_revision+=1
         self.kind.setCurrentIndex(max(0,self.kind.findData(kind)))
         for i in range(self.entity.count()):
             row=self.entity.itemData(i)
             if row and str(row['id'])==str(entity['id']) and (kind!='trait' or row.get('num')==entity.get('num')):
                 self.entity.setCurrentIndex(i);break
-        self.condition.show();self.scope=(kind,entity);self.condition.setText('仅使用：'+entity['name']);self.retry()
+        self.condition.hide();self.scope=(kind,entity);self.condition.setText('仅使用：'+display_label(kind,entity))
+        self.input_bar.set_condition(kind,entity,can_confirm=can_confirm and kind!='trait')
+        self.input_bar.show_alternatives([])
+        self.input_bar.show_note('');self.search.clear();self.retry();return True
 
     def clear_filter(self,*_):
+        self.input_revision+=1
         self.condition.hide();self.scope=None;self.entity.setCurrentIndex(0);self.search.clear();self.condition.setText('未添加条件 · 显示全部阵容');self.retry()
+        self.input_bar.set_condition();self.input_bar.show_note('')
+        self.input_bar.show_alternatives([])
 
     def retry(self,*_):
         self.queryRequested.emit(*(self.scope if self.scope else ('',None)))

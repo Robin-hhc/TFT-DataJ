@@ -8,8 +8,24 @@ from stat_colors import placement_color
 from comp_browser import portrait_catalog
 
 
-# Fraction of card height reserved above the card; the header reaches .48.
-HEADER_CLEARANCE = .52
+# The common selection header starts .48 card-heights above the cards. Leave
+# it clear, while anchoring the smaller panel immediately above that boundary.
+HEADER_CLEARANCE = .49
+OVERLAY_HEIGHT = 96
+PORTRAIT_SIZE = 18
+
+
+def item_overlay_geometry(binding,box,image_size,gap,height=OVERLAY_HEIGHT):
+    """Physical client placement shared by native ranks and screenshot QA."""
+    left,top,right,bottom=binding.rect
+    sx=(right-left)/image_size[0];sy=(bottom-top)/image_size[1];dpi=binding.dpi/96
+    width=max(120,min(200,round(gap*sx*.98/dpi)))
+    physical_width=round(width*dpi);physical_height=round(height*dpi)
+    x=round(left+(box[0][0]+box[1][0])/2*sx-physical_width/2)
+    card_height=box[2][1]-box[0][1]
+    y=round(top+(box[0][1]-HEADER_CLEARANCE*card_height)*sy-physical_height)
+    x=max(left,min(x,right-physical_width));y=max(top,y)
+    return x,y,physical_width,physical_height
 
 
 def compact_samples(count):
@@ -39,59 +55,76 @@ class ItemOverlay(QWidget):
         self.setFocusPolicy(Qt.FocusPolicy.NoFocus)
         self.setStyleSheet('QWidget#itemRank {background:#191922;border:1px solid #6d5d40;border-radius:6px;}'
                           'QLabel {background:transparent;border:0;color:#e8e8ee;font-size:11px;}')
-        layout=QVBoxLayout(self);layout.setContentsMargins(6,6,6,6);layout.setSpacing(2)
-        self.title=QLabel();self.title.setWordWrap(True);self.title.setFixedHeight(30)
+        layout=QVBoxLayout(self);layout.setContentsMargins(5,4,5,4);layout.setSpacing(1)
+        layout.setAlignment(Qt.AlignmentFlag.AlignTop)
+        self.title=QLabel();self.title.setWordWrap(True);self.title.setFixedHeight(16)
         self.title.setStyleSheet('font-weight:600;color:#f1e6c8;');layout.addWidget(self.title)
         self.global_line=QLabel();self.comp_line=QLabel()
+        self.global_line.setFixedHeight(14);self.comp_line.setFixedHeight(14)
         layout.addWidget(self.global_line);layout.addWidget(self.comp_line)
         self.holder_lines=[];self.urls=['',''];self.portraits=portraits
+        self._portrait_keys=[None,None]
         for _ in range(2):
             row=QHBoxLayout();row.setSpacing(3)
-            picture=QLabel();picture.setFixedSize(24,24)
+            picture=QLabel();picture.setFixedSize(PORTRAIT_SIZE,PORTRAIT_SIZE)
             picture.setAlignment(Qt.AlignmentFlag.AlignCenter)
             picture.setStyleSheet('background:#292834;border-radius:3px;')
-            name=QLabel();row.addWidget(picture);row.addWidget(name,1);layout.addLayout(row)
+            name=QLabel();name.setStyleSheet('font-size:9px;');name.setFixedHeight(PORTRAIT_SIZE)
+            row.addWidget(picture);row.addWidget(name,1);layout.addLayout(row)
             self.holder_lines.append((picture,name))
-        self.setFixedHeight(132)
+        self.setFixedHeight(OVERLAY_HEIGHT)
         portraits.ready.connect(self.picture_loaded)
         self.handle=int(self.winId())
 
     def picture_loaded(self,url,pix):
         for index,wanted in enumerate(self.urls):
             if wanted and wanted==url:
-                self.holder_lines[index][0].setPixmap(pix.scaled(QSize(24,24),Qt.AspectRatioMode.KeepAspectRatio,Qt.TransformationMode.SmoothTransformation))
+                picture=self.holder_lines[index][0]
+                key=(url,pix.cacheKey())
+                if self._portrait_keys[index]!=key or picture.pixmap().isNull():
+                    picture.setPixmap(pix.scaled(QSize(PORTRAIT_SIZE,PORTRAIT_SIZE),Qt.AspectRatioMode.KeepAspectRatio,Qt.TransformationMode.SmoothTransformation))
+                    self._portrait_keys[index]=key
+
+    @staticmethod
+    def set_text(label,text):
+        if label.text()!=text:label.setText(text)
 
     def update_row(self,row,catalog):
-        self.title.setText(html.escape(row['name']))
-        self.global_line.setText('全局 '+metric(row['global']))
-        self.comp_line.setText('本阵容 '+metric(row['comp']))
-        self.comp_line.setVisible(row['comp'].get('status')!='unpinned')
+        self.set_text(self.title,html.escape(row['name']))
+        self.set_text(self.global_line,'全局 '+metric(row['global']))
+        self.set_text(self.comp_line,'本阵容 '+metric(row['comp']))
+        comp_visible=row['comp'].get('status')!='unpinned'
+        if self.comp_line.isHidden()==comp_visible:self.comp_line.setVisible(comp_visible)
         pictures=portrait_catalog(catalog.get('hero',[]))
         holders=row.get('holders',[])
-        self.urls=['','']
         for i,(picture,label) in enumerate(self.holder_lines):
-            picture.clear();label.clear()
-            picture.setVisible(i<len(holders))
-            if i<len(holders):
+            holder_visible=i<len(holders)
+            if picture.isHidden()==holder_visible:picture.setVisible(holder_visible)
+            url=''
+            if holder_visible:
                 hero=holders[i];name=hero['name']
-                self.urls[i]=pictures.get(hero['id'],pictures.get('name:'+name,{})).get('picture','')
-                label.setText(f'{html.escape(name)} <b style="color:{placement_color(hero["average"])}">{hero["average"]:.2f}</b> '
-                              f'<span style="color:#a5a2b3;font-size:9px">{compact_samples(hero["samples"])}局</span>')
-                if self.urls[i] in self.portraits.images:self.picture_loaded(self.urls[i],self.portraits.images[self.urls[i]])
-                else:self.portraits.request(self.urls[i])
+                url=pictures.get(hero['id'],pictures.get('name:'+name,{})).get('picture','')
+                text=(f'{html.escape(name)} <b style="color:{placement_color(hero["average"])}">{hero["average"]:.2f}</b> '
+                      f'<span style="color:#a5a2b3;font-size:8px">{compact_samples(hero["samples"])}局</span>')
             elif i==0:
-                label.setText({'pending':'读取持有者…','error':'持有者暂不可用',
-                               'missing':'暂无足够样本','unrecognized':'该项未确认'}.get(row.get('holder_status'),'—'))
+                text={'pending':'读取持有者…','error':'持有者暂不可用',
+                      'missing':'暂无足够样本','unrecognized':'该项未确认'}.get(row.get('holder_status'),'—')
+            else:text=''
+            self.set_text(label,text)
+            if self.urls[i]!=url:
+                picture.clear()
+                self._portrait_keys[i]=None
+                self.urls[i]=url
+            if url in self.portraits.images:self.picture_loaded(url,self.portraits.images[url])
+            elif url and picture.pixmap().isNull():self.portraits.request(url)
 
     def place(self,binding,box,image_size,gap):
-        left,top,right,bottom=binding.rect
-        sx=(right-left)/image_size[0];sy=(bottom-top)/image_size[1];dpi=binding.dpi/96
-        # Leave the game's shared selection header and all item names unobstructed.
-        width=max(100,min(250,round(gap*sx*.92/dpi)))
-        self.setFixedWidth(width)
-        x=round(left+(box[0][0]+box[1][0])/2*sx-width*dpi/2)
-        card_height=box[2][1]-box[0][1]
-        y=round(top+(box[0][1]-HEADER_CLEARANCE*card_height)*sy-self.height()*dpi)
-        x=max(left,min(x,right-round(width*dpi)));y=max(top,y)
-        if not self.isVisible():self.show()
-        win.user.SetWindowPos(self.handle,c.c_void_p(-1),x,y,round(width*dpi),round(self.height()*dpi),0x10|0x40)
+        x,y,physical_width,physical_height=item_overlay_geometry(binding,box,image_size,gap,self.height())
+        width=round(physical_width*96/binding.dpi)
+        if self.minimumWidth()!=width or self.maximumWidth()!=width:self.setFixedWidth(width)
+        was_visible=self.isVisible()
+        if not was_visible:self.show()
+        geometry=(x,y,physical_width,physical_height,binding.dpi)
+        if not was_visible or geometry!=getattr(self,'_native_geometry',None):
+            if win.user.SetWindowPos(self.handle,c.c_void_p(-1),*geometry[:4],0x10|0x40):
+                self._native_geometry=geometry

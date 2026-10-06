@@ -20,6 +20,7 @@ def main():
     from test_equipment_display import EquipmentDisplayTests
     from test_display_lifecycle import DisplayLifecycle
     from dataj import DataJ
+    from comp_browser import CompBrowser
     import app
     import item_controller
     replay=DisplayReplay(args.fixture);results=[]
@@ -53,11 +54,25 @@ def main():
               lambda:replay.items('18.2a',None,replay.matrix['items'][3:6]))
         check('visible augment panel never updates',patch('ui_theme.ResultCard.update_result',lambda *args:None),
               lambda:replay.hex('18.2a','112','3-2',runes))
+        original_comp_render=CompBrowser.render
+        def reversed_comp_ranks(browser):
+            original_comp_render(browser)
+            browser.cards.reverse()
+            for card in browser.cards:browser.card_layout.removeWidget(card)
+            for index,card in enumerate(browser.cards):browser.card_layout.insertWidget(index,card)
+        rank_record=next(r for r in replay.records if r['request']['path']=='/comp/rank'
+                         and r['request']['params']['gameVersion']=='18.2a')
+        check('reverse visible comp ranking',patch.object(CompBrowser,'render',reversed_comp_ranks),
+              lambda:replay.explorer(rank_record,0))
+        original_holders=item_controller.best_holders
+        check('reverse item holder ranking',patch('item_controller.best_holders',
+              lambda *args,**kwargs:list(reversed(original_holders(*args,**kwargs)))),
+              lambda:replay.items('18.2a',None,replay.matrix['items'][:3]))
     finally:replay.close()
     args.report.parent.mkdir(parents=True,exist_ok=True)
     args.report.write_text(json.dumps({'cases':results},ensure_ascii=False,indent=2),encoding='utf8')
     print(json.dumps(results,ensure_ascii=False))
-    return int(len(results)!=6 or any(r['status']!='caught' for r in results))
+    return int(len(results)!=8 or any(r['status']!='caught' for r in results))
 
 
 if __name__=='__main__':raise SystemExit(main())

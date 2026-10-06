@@ -1,6 +1,6 @@
 # Windows便携包
 
-普通使用只需完整解压 `TFT-DataJ-0.2.1-windows-x64.zip`，双击 `TFT-DataJ.exe`。无需Python、pip、OCR安装和GPU推理环境。`_internal` 必须与EXE放在同一文件夹，设置、头像缓存、统计缓存和日志另存 `%LOCALAPPDATA%\TFT-DataJ`。可以移动整个程序文件夹或创建EXE快捷方式。
+普通使用只需完整解压发布页的 `TFT-DataJ-0.2.4-windows-x64.zip`，双击 `TFT-DataJ.exe`。无需Python、pip、OCR安装和GPU推理环境。`_internal` 必须与EXE放在同一文件夹，设置、头像缓存、统计缓存和日志另存 `%LOCALAPPDATA%\TFT-DataJ`。可以移动整个程序文件夹或创建EXE快捷方式。
 
 目标为Windows 10/11 x64。默认用CPU识别，DataJ统计和攻略需要联网；网络失败不会使用其他版本数据。更新时退出旧版、解压新版，用户目录中的设置保留。当前是未签名的便携测试构建，没有安装器、自动更新或Windows ARM原生包。
 
@@ -14,7 +14,7 @@ py -3.12 -m venv .venv
 .venv\Scripts\python.exe packaging\build_windows.py
 ```
 
-当前开发机也可使用 `work/p0-runtime/Scripts/python.exe packaging/build_windows.py`。依赖锁定不再包含开发机的 `file:///C:/Users/...` 安装路径；构建脚本在缺少模型时从RapidOCR官方模型仓库下载，并逐一验证SHA-256。运行助手不会自动下载模型。
+当前开发机也可使用 `work/p0-runtime/Scripts/python.exe packaging/build_windows.py --version 0.2.4`。显式指定新版本，不覆盖已有 ZIP。依赖锁定不再包含开发机的 `file:///C:/Users/...` 安装路径；构建脚本在缺少模型时从RapidOCR官方模型仓库下载，并逐一验证SHA-256。运行助手不会自动下载模型。
 
 产物：
 

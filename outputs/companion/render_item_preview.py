@@ -1,6 +1,7 @@
 """Render actual item widgets over a recorded S18 frame; this is not a live test."""
 import json
 import time
+from types import SimpleNamespace
 from PIL import Image
 from PySide6.QtCore import Qt
 from PySide6.QtGui import QPixmap
@@ -9,7 +10,7 @@ from bootstrap import ROOT
 from vision import Vision
 from item_vision import analyze_items
 from item_stats import item_stat,fallback_stat,best_holders
-from item_overlay import ItemOverlay, HEADER_CLEARANCE
+from item_overlay import ItemOverlay, item_overlay_geometry
 from comp_browser import Portraits
 from dataj import DataJ
 
@@ -43,9 +44,10 @@ def main():
             rows.append(row)
             widget=ItemOverlay(store);widget.setParent(canvas);widget.setWindowFlags(Qt.WindowType.Widget)
             widget.update_row(row,catalog)
-            widget.setFixedWidth(round(gap*.92))
-            b=card['box'];height=b[2][1]-b[0][1]
-            widget.move(round((b[0][0]+b[1][0])/2-widget.width()/2),round(b[0][1]-HEADER_CLEARANCE*height-widget.height()))
+            binding=SimpleNamespace(rect=(0,0,image.width,image.height),dpi=96)
+            x,y,width,height=item_overlay_geometry(binding,card['box'],image.size,gap,widget.height())
+            widget.setFixedSize(width,height)
+            widget.move(x,y)
             widget.show();overlays.append(widget)
         deadline=time.monotonic()+20
         while store.pending and time.monotonic()<deadline:

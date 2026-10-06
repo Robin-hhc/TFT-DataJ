@@ -7,7 +7,7 @@ import sys
 import unittest
 
 ROOT=Path(__file__).resolve().parents[1]
-PRIVATE={'test_user_layout','test_live_failure','test_scene_gate','test_live_choice','test_item_vision'}
+PRIVATE={'test_user_layout','test_live_failure','test_scene_gate','test_live_choice','test_item_vision','test_item_live_layout','test_condition_reader_local'}
 
 
 def main():

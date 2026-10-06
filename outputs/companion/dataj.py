@@ -153,6 +153,11 @@ class DataJ:
         result=self.request(f'/comp/{comp}')
         if not isinstance(result['data'],dict) or str(result['data'].get('compId'))!=str(comp) or not isinstance(result['data'].get('heroes'),list):
             raise SourceError('阵容详情字段变化')
+        for hero in result['data']['heroes']:
+            if (not isinstance(hero,dict)
+                or not re.fullmatch(r'[1-9][0-9]*',str(hero.get('heroId','')))
+                or not isinstance(hero.get('heroName'),str) or not hero['heroName'].strip()):
+                raise SourceError('阵容英雄身份异常')
         return result
 
     def equipment(self, comp, hero):
@@ -194,6 +199,10 @@ class DataJ:
                 or type(average) not in (int, float) or not math.isfinite(average)
                 or not 1 <= average <= 8 or type(count) is not int or count < 0):
                 raise SourceError('装备统计数值或身份异常')
+            if identity == 'heroId':
+                name = row.get('heroName', row.get('name'))
+                if not isinstance(name, str) or not name.strip():
+                    raise SourceError('装备持有者名称异常')
             seen.add(key)
 
     def item_stats(self, comp=None):

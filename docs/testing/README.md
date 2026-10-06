@@ -1,5 +1,7 @@
 # 数据验证的运行方式
 
+免打字检索、本局已选与新版本输入的实现范围、真实图片、性能及未通过的自动确认门槛见 [2026-10-06 验证记录](condition-inputs-20261006.md)。公共统一入口包含该功能的实际Qt/HTTP与生命周期回归；私有图片通过 `--include-private` 独立运行。
+
 在仓库根目录、已安装 `packaging/requirements-runtime.txt` 的 Python 3.12 环境中执行。开发机可将 `python` 换成 `work\p0-runtime\Scripts\python.exe`。
 
 ## 识别性能、内存与闪烁回归
@@ -21,6 +23,10 @@ python -X utf8 tools/profile_runtime.py --copy-frames --captures 200 --report wo
 实测与边界见 [2026-09-29 性能修复记录](runtime-performance-20260929.md)。
 
 ## 每次修改数据代码
+
+2026-10-06 对装备、阵容、海克斯及出装分类的当前覆盖复查、18.3 最新数据抽查与补充回归见 [排名显示覆盖复查](ranking-validation-20261006.md)。冻结基准现要求158个审核过的请求、165个响应及356组显示完整；错误注入增加两种排序反转，共8种。
+
+`test_startup_versions.py` 使用真实Qt控件与HTTP模拟响应检查启动默认版本：列表返回前禁止目录/统计/捕获，首个统计及预热使用网页首项，运行中和手选历史版本不重新拉列表，网络失败/空列表/页面结构变化时暂停统计并允许显式重试。已纳入下面的统一入口。
 
 ```powershell
 python -X utf8 tools/validate_data.py --release-gate
@@ -64,3 +70,13 @@ python -X utf8 packaging/build_windows.py --version 0.2.2-data.1
 构建后自动从新 ZIP 解压到仓库外的中文临时目录，限制 Python、PATH 及模块来源，启动真正的 EXE，回放同一份四领域矩阵。报告在 ZIP 同名 `.validation.json`，详细案例在报告指向的临时用户数据目录。
 
 已有版本 ZIP 不允许覆盖。改代码或打包资源后不能用 `--skip-build` 复用旧构建。候选包验证不会创建 GitHub Release，也不会修改 v0.2.1 标签或资产。这仍是构建电脑上的隔离验证，不等于在另一台实体电脑验收。
+
+## 装备与海克斯浮层闪现
+
+2026-10-06两轮反馈后的修复、真实单实例启动及测试边界见 [装备与海克斯浮层闪现修复与验证](overlay-flicker-20261006.md)。
+
+统一入口自动发现 `test_overlay_flicker_sequences.py`、`test_item_overlay_stability.py`、`test_overlay_presentation.py`、`test_item_signature_stability.py`。前两者用实际Qt控件与可控制的异步队列覆盖显示寿命、回调迟到、换牌与失焦；第三者在桌面范围外的自有原生窗口检查重复更新的像素、Paint/Resize及真实SetWindowPos。公共文字亮度测试无需私人素材；原始游戏连续帧扩展位于 `test_item_live_layout.py`，仅 `--include-private` 运行，缺素材不计为通过。这些检查不替代MuMu实际合成器或游戏FPS验收。
+
+## 普通成装英雄与紧凑装备框
+
+2026-10-06 的英雄请求补查、基础形态头像映射、框体缩小与下移记录见 [普通成装英雄与紧凑装备浮层](item-compact-20261006.md)。新增三个套件共 15 项检查请求恢复、英雄与头像身份、阵容范围、3–5 列及不同 DPI 的长文本布局，纳入同一统一入口；历史截图回放与现场运行证据分开记录。

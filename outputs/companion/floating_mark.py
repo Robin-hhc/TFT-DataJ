@@ -1,4 +1,4 @@
-from PySide6.QtCore import Qt,QEvent,QRectF,QPointF
+from PySide6.QtCore import Qt,QEvent,QRectF,QPointF,QTimer
 from PySide6.QtGui import QPainter,QColor,QPen,QFont
 from PySide6.QtWidgets import QWidget,QVBoxLayout,QPushButton
 
@@ -7,16 +7,26 @@ class LauncherButton(QPushButton):
         super().__init__()
         self.setFixedSize(160,42)
         self.expanded=False
+        self.feedback=''
+        self.feedback_timer=QTimer(self);self.feedback_timer.setSingleShot(True)
+        self.feedback_timer.timeout.connect(lambda:self.set_panel_open(self.expanded))
         self.setCursor(Qt.CursorShape.PointingHandCursor)
         self.setFocusPolicy(Qt.FocusPolicy.NoFocus)
         self.setMouseTracking(True)
         self.set_panel_open(False)
 
     def set_panel_open(self,opened):
+        self.feedback='';self.feedback_timer.stop()
         self.expanded=opened
         self.setText('阵容助手 · '+('收起' if opened else '展开'))
         self.setAccessibleName(self.text())
         self.update()
+
+    def show_feedback(self,message):
+        self.feedback=message
+        self.setAccessibleName('阵容助手：'+message+' · '+('收起' if self.expanded else '展开'))
+        self.update()
+        self.feedback_timer.start(3500)
 
     def paintEvent(self,event):
         painter=QPainter(self);painter.setRenderHint(QPainter.RenderHint.Antialiasing)
@@ -30,7 +40,8 @@ class LauncherButton(QPushButton):
         painter.drawLine(QPointF(17,14),QPointF(17,28))
         font=QFont('Microsoft YaHei UI');font.setPixelSize(13);font.setWeight(QFont.Weight.DemiBold)
         painter.setFont(font);painter.setPen(QColor('#f1eee8'))
-        painter.drawText(QRectF(36,0,58,42),Qt.AlignmentFlag.AlignVCenter,'阵容助手')
+        if self.feedback:font.setPixelSize(11);painter.setFont(font)
+        painter.drawText(QRectF(36,0,65,42),Qt.AlignmentFlag.AlignVCenter,self.feedback or '阵容助手')
         font.setPixelSize(11);font.setWeight(QFont.Weight.Normal);painter.setFont(font)
         painter.setPen(QColor('#e5c477'))
         painter.drawText(QRectF(105,0,27,42),Qt.AlignmentFlag.AlignVCenter,'收起' if self.expanded else '展开')

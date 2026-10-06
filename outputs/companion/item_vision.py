@@ -4,6 +4,7 @@ The detector accepts three to five cards. It deliberately does not infer item
 identity from a similar icon or substitute a normal item for a radiant item.
 """
 from __future__ import annotations
+from dataclasses import dataclass
 from statistics import median
 import time
 import cv2
@@ -17,6 +18,13 @@ cv2.setNumThreads(1)
 
 
 ITEM_TYPES = frozenset(('成型装备', '神器装备', '光明武器'))
+
+
+@dataclass
+class ItemTextSignature(TextSignature):
+    # Only the shared header has a broader warm-light stroke support mask.
+    # Supported pixels cannot authorize a match without actual core text.
+    support_masks: tuple
 
 
 def item_boxes(image):
@@ -48,31 +56,43 @@ def item_boxes(image):
             if len(group) not in (3,4,5):
                 continue
             gaps = [b[0]-a[0] for a,b in zip(group,group[1:])]
-            if min(gaps) > median(b[2] for b in group) and max(gaps)-min(gaps) < .025*w:
+            # Choice cards have separate gaps and a centered complete row. The
+            # ordinary five-hero shop is tightly packed; an off-center remainder
+            # must never be renumbered as a smaller choice row.
+            centered = abs((group[0][0]+group[-1][0]+group[-1][2])/2-w/2) < .045*w
+            if (centered and min(gaps) > median(b[2] for b in group)*1.2
+                    and max(gaps)-min(gaps) < .025*w):
                 if group not in groups:groups.append(group)
         return groups
-    groups = aligned_groups(candidates)
-    if not groups:
-        # A selection animation can tint the brown card interiors green. Recover
-        # their outlines, but still require the header and exact item names below.
-        edges = cv2.Canny(np.asarray(small.convert('L')),25,70)
-        edges[:round(h*.55)] = 0
-        edges[:,:round(w*.12)] = 0
-        edges[:,round(w*.9):] = 0
-        for contour in cv2.findContours(edges, cv2.RETR_LIST, cv2.CHAIN_APPROX_SIMPLE)[0]:
-            x,y,bw,bh = cv2.boundingRect(contour)
-            if .06*w < bw < .17*w and .065*h < bh < .20*h and .55 < bw/bh < 1.6:
-                candidates.append((x,y,bw,bh))
-        distinct = []
-        for box in sorted(candidates,key=lambda b:b[2]*b[3],reverse=True):
-            if not any(abs(box[0]+box[2]/2-b[0]-b[2]/2)<min(box[2],b[2])*.35
-                       and abs(box[1]+box[3]/2-b[1]-b[3]/2)<min(box[3],b[3])*.6 for b in distinct):
-                distinct.append(box)
-        groups = aligned_groups(distinct)
+    color_groups = aligned_groups(candidates)
+    # Color can find only the dark three cards in a five-radiant row. Always
+    # complete the color proposal with outlines before deciding its card count;
+    # treating any three-color hit as final loses two real slots and changes IDs.
+    edges = cv2.Canny(np.asarray(small.convert('L')),25,70)
+    edges[:round(h*.55)] = 0
+    edges[:,:round(w*.12)] = 0
+    edges[:,round(w*.9):] = 0
+    for contour in cv2.findContours(edges, cv2.RETR_LIST, cv2.CHAIN_APPROX_SIMPLE)[0]:
+        x,y,bw,bh = cv2.boundingRect(contour)
+        if .06*w < bw < .17*w and .065*h < bh < .20*h and .55 < bw/bh < 1.6:
+            candidates.append((x,y,bw,bh))
+    distinct = []
+    for box in sorted(candidates,key=lambda b:b[2]*b[3],reverse=True):
+        if not any(abs(box[0]+box[2]/2-b[0]-b[2]/2)<min(box[2],b[2])*.35
+                   and abs(box[1]+box[3]/2-b[1]-b[3]/2)<min(box[3],b[3])*.6 for b in distinct):
+            distinct.append(box)
+    groups = aligned_groups(distinct)
     if len(groups) != 1:
         return []
+    group = groups[0]
+    # When both methods agree on the complete row, keep the color rectangles:
+    # edge glow varies during animation and would move the title signature crop.
+    if len(color_groups) == 1 and len(color_groups[0]) == len(group):
+        colors = color_groups[0]
+        if all(abs((a[0]+a[2]/2)-(b[0]+b[2]/2)) < .018*w for a,b in zip(colors,group)):
+            group = colors
     return [(round(x/scale),round(y/scale),round((x+bw)/scale),round((y+bh)/scale))
-            for x,y,bw,bh in groups[0]]
+            for x,y,bw,bh in group]
 
 
 def analyze_items(image, vision, catalogue):
@@ -117,13 +137,23 @@ def item_signature(image, boxes):
     top=median(b[1] for b in boxes);height=median(b[3]-b[1] for b in boxes)
     regions=[(image.width*.4,top-height*.48,image.width*.6,top-height*.08)]
     regions.extend((l,t+(b-t)*.44,r,t+(b-t)*.68) for l,t,r,b in boxes)
-    masks=[]
-    for region in regions:
+    masks=[];supports=[]
+    for index,region in enumerate(regions):
         crop=image.crop(tuple(round(v) for v in region)).convert('RGB')
         crop=crop.resize((180,max(8,round(crop.height*180/crop.width))),Image.Resampling.BILINEAR)
         rgb=np.asarray(crop,dtype=np.int16)
-        masks.append((rgb.min(axis=2)>180)&(rgb.max(axis=2)-rgb.min(axis=2)<70))
-    return TextSignature(tuple(masks))
+        # Warm/white text under the game's pulsing selection light must keep
+        # its anti-aliased strokes. Native same-offer frames lose whole strokes
+        # at 180, even with perfectly stable card coordinates. Keep the strict
+        # per-title change budget; do not compensate by ignoring changed pixels.
+        neutral=rgb.max(axis=2)-rgb.min(axis=2)<70
+        core=(rgb.min(axis=2)>140)&neutral
+        masks.append(core)
+        # The header changes from cream to white under its own glow. Retain
+        # faint matching strokes rather than treating glow as new text. Item
+        # titles keep the stricter core because their brown backgrounds vary.
+        supports.append((rgb.mean(axis=2)>140)&neutral if index==0 else core)
+    return ItemTextSignature(tuple(masks),tuple(supports))
 
 
 def same_item_text(current, previous):
@@ -135,10 +165,14 @@ def same_item_text(current, previous):
     """
     if not current or not previous or len(current.masks)!=len(previous.masks):return False
     kernel=np.ones((3,3),np.uint8)
-    for a,b in zip(current.masks,previous.masks):
-        if a.shape!=b.shape or min(np.count_nonzero(a),np.count_nonzero(b))<8:return False
-        expanded_a=cv2.dilate(a.astype('uint8'),kernel).astype(bool)
-        expanded_b=cv2.dilate(b.astype('uint8'),kernel).astype(bool)
+    current_support=getattr(current,'support_masks',current.masks)
+    previous_support=getattr(previous,'support_masks',previous.masks)
+    if len(current_support)!=len(current.masks) or len(previous_support)!=len(previous.masks):return False
+    for a,b,support_a,support_b in zip(current.masks,previous.masks,current_support,previous_support):
+        if (a.shape!=b.shape or a.shape!=support_a.shape or b.shape!=support_b.shape
+            or min(np.count_nonzero(a),np.count_nonzero(b))<8):return False
+        expanded_a=cv2.dilate(support_a.astype('uint8'),kernel).astype(bool)
+        expanded_b=cv2.dilate(support_b.astype('uint8'),kernel).astype(bool)
         if np.count_nonzero(a & ~expanded_b)>5 or np.count_nonzero(b & ~expanded_a)>5:return False
     return bool(current.masks)
 

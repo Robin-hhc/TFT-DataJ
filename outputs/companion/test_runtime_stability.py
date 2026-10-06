@@ -23,7 +23,10 @@ class RuntimeStability(unittest.TestCase):
         self.stack.enter_context(patch('app.win.enumerate_mumu',return_value=[]))
         self.p=Companion(offline=True,offline_catalog={'hex':[{'id':'1023','name':'应急护甲 I'}],'hero':[],'equip':[],'trait':[]})
         self.p.timer.stop();self.p.hide()
-        self.binding=SimpleNamespace(hwnd=123,pid=123,process='MuMuNxDevice.exe',rect=(0,0,1920,1080),dpi=96)
+        # Lifecycle tests own real visible Qt widgets, but must never overlay
+        # the user's game with synthetic ranks while their callbacks are held.
+        self.binding=SimpleNamespace(hwnd=123,pid=123,process='MuMuNxDevice.exe',rect=(-5000,-4000,-3080,-2920),dpi=96)
+        for overlay in self.p.overlays+self.p.items.overlays:overlay.move(-5000,-4000)
         self.p.binding=self.binding;self.p.geometry=(self.binding.rect,96)
         self.stack.enter_context(patch('app.win.describe',return_value=self.binding))
         self.stack.enter_context(patch('app.win.foreground_root',return_value=123))

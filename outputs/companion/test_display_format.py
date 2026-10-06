@@ -51,5 +51,34 @@ class DisplayFormatting(unittest.TestCase):
         self.assertEqual(stat_text({'status':'ok','avg_placement':3.5,'sample_count':49}),'3.50 · 49局 · 少')
         self.assertEqual(stat_text({'status':'ok','avg_placement':3.5,'sample_count':50}),'3.50 · 50局')
 
+    def test_zero_sample_hex_cannot_display_stage_or_overall_average(self):
+        from snapshot_stats import stage_stat
+        rows=[{'hexId':1023,'avgPlacement':4.6,'sampleCount':500,
+               'roundStats':[{'round':0,'roundLabel':'2-1','avgPlacement':1.2,'sampleCount':0}]}]
+        rune=ResultCard(1)
+        try:
+            value=stat_text(stage_stat(rows,'1023','2-1'))
+            rune.update_result(['应急护甲 I',value,'未固定阵容'])
+            self.assertEqual(rune.average_label.text(),'—')
+            self.assertEqual(rune.sample.text(),'无数据/未识别')
+            self.assertNotIn('1.20',rune.average_label.text())
+            self.assertNotIn('4.60',rune.average_label.text())
+        finally:rune.close();rune.deleteLater();self.qt.processEvents()
+
+    def test_zero_sample_item_and_holders_display_missing_state(self):
+        from item_stats import item_stat,best_holders
+        pictures=Pictures();item=ItemOverlay(pictures)
+        try:
+            result={'data':[{'equipId':2027,'avgPlacement':1.2,'sampleCount':0}],
+                    'source':'offline','fetched_at':1}
+            holders=best_holders({'data':[{'heroId':4503,'name':'阿木木','avgPlacement':1.2,'sampleCount':0}]})
+            item.update_row({'name':'棘刺背心','global':item_stat(result,'2027'),
+                'comp':{'status':'unpinned'},'holders':holders,'holder_status':'missing'}, {})
+            self.assertEqual(plain(item.global_line.text()),'全局 暂无数据')
+            self.assertEqual(plain(item.holder_lines[0][1].text()),'暂无足够样本')
+            self.assertTrue(item.comp_line.isHidden())
+            self.assertEqual(item.urls,['',''])
+        finally:item.close();item.deleteLater();self.qt.processEvents()
+
 
 if __name__=='__main__':unittest.main()

@@ -1,10 +1,12 @@
-"""Passive Windows side-button notifications; never consume mouse input.
+"""Passive Windows mouse notifications; never consume mouse input.
 
 MSLLHOOKSTRUCT: https://learn.microsoft.com/en-us/windows/win32/api/winuser/ns-winuser-msllhookstruct
 """
 import ctypes as c
 from ctypes import wintypes as w
+import time
 from PySide6.QtCore import QObject, Signal
+from selection_tracker import MouseNotice
 
 
 class MouseEvent(c.Structure):
@@ -21,10 +23,15 @@ def released_button(code, message, event):
 
 class MouseShortcut(QObject):
     released = Signal(int, object)
+    # Connect this using Qt.QueuedConnection: game selection work must not run
+    # synchronously inside LowLevelMouseProc on the GUI/native hook thread.
+    left_event = Signal(object)
 
     def __init__(self, parent=None):
         super().__init__(parent)
         self.handle = None
+        self.left_down = None
+        self.drag_notified = False
         self.user = c.WinDLL('user32', use_last_error=True)
         self.kernel = c.WinDLL('kernel32', use_last_error=True)
         self.proc_type = c.WINFUNCTYPE(c.c_ssize_t, c.c_int, w.WPARAM, w.LPARAM)
@@ -47,6 +54,30 @@ class MouseShortcut(QObject):
                 if button:
                     # Only enqueue notification. No capture, OCR or queries in hook.
                     self.released.emit(button, int(self.user.GetForegroundWindow() or 0))
+            elif code >= 0 and (message in (0x0201, 0x0202)
+                                or (message == 0x0200 and getattr(self, 'left_down', None)
+                                    and not self.drag_notified)):
+                event = c.cast(data, c.POINTER(MouseEvent)).contents
+                if not event.flags & 3:
+                    x, y = int(event.pt.x), int(event.pt.y)
+                    action = 'down' if message == 0x0201 else 'up' if message == 0x0202 else 'move'
+                    notify = True
+                    if action == 'down':
+                        self.left_down = (x, y)
+                        self.drag_notified = False
+                    elif action == 'up':
+                        self.left_down = None
+                        self.drag_notified = False
+                    else:
+                        # At most one excursion notification per press. Idle moves
+                        # do no extra Win32 calls and never enqueue OCR/capture.
+                        dx, dy = x - self.left_down[0], y - self.left_down[1]
+                        notify = dx * dx + dy * dy > 8 * 8
+                        if notify:
+                            self.drag_notified = True
+                    if notify:
+                        self.left_event.emit(MouseNotice(action, x, y, time.monotonic(),
+                                            int(self.user.GetForegroundWindow() or 0)))
         finally:
             return self.user.CallNextHookEx(self.handle, code, message, data)
 

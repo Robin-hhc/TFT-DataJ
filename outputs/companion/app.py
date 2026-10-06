@@ -26,6 +26,10 @@ from stat_colors import placement_color
 from ui_theme import STYLE, ResultCard, Rune, label
 from diagnostics import record, FrameRecorder
 from item_controller import ItemController, inspect_items
+from entity_identity import EntityResolver
+from selected_resources import SelectedResources, SelectionEntity
+from selection_controller import SelectionController
+from condition_controller import ConditionController
 from PySide6.QtCore import Qt, QTimer, QObject, Signal, QRunnable, QThreadPool, QUrl, QAbstractNativeEventFilter, QSettings
 from PySide6.QtGui import QDesktopServices,QColor
 from PySide6.QtWidgets import (QApplication, QWidget, QLabel, QPushButton, QComboBox, QLineEdit,
@@ -112,10 +116,11 @@ class CardOverlay(QLabel):
         self.handle=int(self.winId())
 
     def place(self, binding, box, text):
+        was_visible=self.isVisible()
         if self.text()!=text:
             self.setText(text)
             self.adjustSize()
-        if not self.isVisible():self.show()
+        if not was_visible:self.show()
         scale=binding.dpi/96
         left,top,right,bottom=binding.rect
         x=round(left+sum(p[0] for p in box)/4-self.width()*scale/2)
@@ -123,7 +128,10 @@ class CardOverlay(QLabel):
         y=round(top+(bottom-top)*.596-self.height()*scale/2)
         width,height=round(self.width()*scale),round(self.height()*scale)
         x=max(left,min(x,right-width));y=max(top,min(y,bottom-height))
-        win.user.SetWindowPos(self.handle,c.c_void_p(-1),x,y,width,height,0x10|0x40)
+        geometry=(x,y,width,height,binding.dpi)
+        if not was_visible or geometry!=getattr(self,'_native_geometry',None):
+            if win.user.SetWindowPos(self.handle,c.c_void_p(-1),x,y,width,height,0x10|0x40):
+                self._native_geometry=geometry
 
 
 class GuidePage(QWebEnginePage):
@@ -149,7 +157,17 @@ class Companion(QWidget):
         self.setObjectName('companion');self.setStyleSheet(STYLE)
         self.resize(760,430);self.setMinimumSize(760,430)
         self.session=Session()
+        self.selected_resources=SelectedResources(self.session.session_id)
+        self.entity_resolver=EntityResolver({})
+        self.selections=SelectionController(self.session.session_id,self.entity_resolver,
+            on_selected=self.selection_confirmed,on_context_reset=self.game_context_changed,win_api=win)
+        self.selection_tracker=self.selections.tracker
+        self.condition_generation=0
+        self.last_resource_guard=float('-inf')
+        self.resources_uncertain=False
         self.offline=offline
+        self.versions_ready=offline
+        self.versions_pending=False
         self.frame_recorder=FrameRecorder()
         self.save_diagnostic_frames=os.environ.get('DATAJ_DIAGNOSTIC_FRAMES')=='1'
         self.next_ocr_allowed=0.0
@@ -170,6 +188,7 @@ class Companion(QWidget):
         self.binding=None
         self.geometry=None
         self.capture_pending=False
+        self.rank_capture_started=None
         self.ocr_busy=False
         self.ocr_live=False
         self.once_active=False
@@ -207,9 +226,11 @@ class Companion(QWidget):
             nav.setObjectName('nav');nav.setCheckable(True);rail.addWidget(nav);self.navigation[index]=nav
             self.navigation_group.addButton(nav,index)
         rail.addStretch();rail.addWidget(label('统计版本','muted'))
-        self.patch=QComboBox();self.patch.addItem('18.2a');self.patch.setToolTip('切换后重新加载该版本的统计')
+        self.patch=QComboBox();self.patch.addItem(self.adapter.patch if offline else '读取版本…');self.patch.setEnabled(offline)
+        self.patch.setToolTip('启动时读取网页版本列表，默认使用最新版本；可手动切换历史版本')
         self.patch.setStyleSheet('QComboBox::down-arrow {image:url("'+(RESOURCE_DIR/'chevron-down.svg').as_posix()+'");width:12px;height:8px;}')
         self.patch.activated.connect(self.change_patch);rail.addWidget(self.patch);rail.addSpacing(8)
+        self.version_retry=button('重试版本列表',self.load_versions);self.version_retry.hide();rail.addWidget(self.version_retry)
 
         rail.addSpacing(4);rail.addWidget(button('退出助手',QApplication.instance().quit))
         shell.addWidget(sidebar)
@@ -235,6 +256,8 @@ class Companion(QWidget):
         self.make_guide()
         self.make_equipment()
         self.items=ItemController(self)
+        self.conditions=ConditionController(self)
+        self.browser.input_bar.readRequested.connect(self.conditions.trigger)
         self.tabs.currentChanged.connect(self.navigate);self.tabs.setCurrentIndex(1);self.navigate(1)
         self.apply_display_preferences()
         self.status=label('Ctrl + Alt + F9 随时展开或收起助手。','status')
@@ -247,11 +270,51 @@ class Companion(QWidget):
             data=offline_catalog if offline_catalog is not None else json.loads((ROOT/'work/s18-refresh-20260926/catalog.json').read_text(encoding='utf-8'))['data']
             self.catalog_loaded({'data':data},True)
         else:
-            self.load_catalog()
-            self.submit(self.network,self.adapter.versions,self.versions_loaded,lambda _:self.patch.setToolTip('版本列表读取失败；保留当前版本，可重启后重试'))
+            self.load_versions()
 
     def drag_window(self,event):
         if event.button()==Qt.MouseButton.LeftButton and self.windowHandle():self.windowHandle().startSystemMove()
+
+    def load_versions(self,*_):
+        # One startup request, with explicit retries only after failure. No
+        # catalog/statistics or game recognition can run until it succeeds.
+        if self.offline or self.versions_ready or self.versions_pending:return
+        self.versions_pending=True
+        self.version_retry.hide();self.patch.setEnabled(False);self.tabs.setEnabled(False)
+        self.patch.clear();self.patch.addItem('读取版本…')
+        self.status.setText('正在读取 DataJ 版本列表，随后加载最新版本统计…')
+        self.browser.note.setText('正在确认最新统计版本…')
+        self.set_activity('versions_loading','正在读取最新统计版本，请稍候。')
+        self.submit(self.network,self.adapter.versions,self.startup_versions_loaded,self.versions_failed)
+
+    def startup_versions_loaded(self,versions):
+        if self.versions_ready:return
+        if (not isinstance(versions,list) or not versions
+            or any(not isinstance(v,str) or not re.fullmatch(r'18\.\d+(?:\.?[a-z])?',v) for v in versions)):
+            self.versions_failed('invalid versions');return
+        try:
+            # Preserve an already-correct adapter (also used by frozen OCR
+            # checks); otherwise select the first entry in the site's order.
+            adapter=self.adapter if self.adapter.patch==versions[0] else DataJ(patch=versions[0])
+        except Exception as exc:
+            self.versions_failed(str(exc));return
+        self.adapter=adapter;self.session.patch=adapter.patch
+        self.versions_loaded(versions)
+        self.versions_pending=False;self.versions_ready=True
+        self.patch.setEnabled(True);self.tabs.setEnabled(True);self.version_retry.hide()
+        self.patch.setToolTip('默认使用启动时的网页最新版本；切换后重新加载该版本的统计')
+        self.status.setText(f'已选择网页最新版本 {adapter.patch}，正在准备统计…')
+        self.load_catalog()
+
+    def versions_failed(self,_):
+        if self.versions_ready:return
+        self.versions_pending=False
+        self.patch.clear();self.patch.addItem('版本读取失败');self.patch.setEnabled(False)
+        self.patch.setToolTip('未确认网页最新版本，暂停统计；点击下方按钮重试')
+        self.version_retry.show()
+        self.status.setText('版本列表读取失败，请点击「重试版本列表」。')
+        self.browser.note.setText('最新版本尚未确认，暂不加载统计。')
+        self.set_activity('versions_failed','版本列表读取失败，请重试；暂不加载旧版统计。')
 
     def versions_loaded(self,versions):
         selected=self.adapter.patch
@@ -317,7 +380,7 @@ class Companion(QWidget):
         layout.addWidget(label('海克斯：每 3 秒检查阶段；装备：每 2 秒检查底部选择。侧键随时补查。','muted'))
         layout.addWidget(button('立即补查一次',self.capture_once))
         self.mouse_button=QComboBox()
-        for title,value in [('后退侧键查均排（默认）',1),('前进侧键查均排',2),('关闭鼠标侧键',0)]:self.mouse_button.addItem(title,value)
+        for title,value in [('后退侧键：读详情 / 查均排（默认）',1),('前进侧键：读详情 / 查均排',2),('关闭鼠标侧键',0)]:self.mouse_button.addItem(title,value)
         saved=str(self.mouse_settings.value('mouse_button',1)) if not self.offline else '1'
         self.mouse_button.setCurrentIndex({'1':0,'2':1,'0':2}.get(saved,0))
         self.mouse_button.currentIndexChanged.connect(self.save_mouse_button)
@@ -407,6 +470,7 @@ class Companion(QWidget):
         except OSError:pass
 
     def start_or_pause(self):
+        if not self.versions_ready:self.load_versions();return
         if self.automatic.isChecked():
             self.automatic.setChecked(False)
             self.set_activity('paused','自动识别已暂停，鼠标侧键仍可补查。');return
@@ -431,7 +495,45 @@ class Companion(QWidget):
         self.browser=CompBrowser(self.mouse_settings,self.offline)
         self.browser.queryRequested.connect(self.load_comps)
         self.browser.compSelected.connect(self.select_comp)
+        self.browser.input_bar.confirmRequested.connect(self.confirm_condition)
         self.tabs.addTab(self.browser,'选阵容')
+
+    def refresh_selected_resources(self):
+        shortcuts=[]
+        for event in self.selected_resources.shortcuts:
+            row=next((r for r in self.entity_resolver.entries(event.kind) if str(r['id'])==event.entity_id),None)
+            if row:shortcuts.append({'kind':event.kind,'entity':row})
+        self.browser.input_bar.set_resources(shortcuts)
+        if self.resources_uncertain:
+            for chip in self.browser.input_bar.chips:chip.setEnabled(False)
+            self.browser.input_bar.more.setEnabled(False)
+            self.browser.input_bar.confirm.setEnabled(False)
+        else:
+            self.browser.input_bar.more.setEnabled(True);self.browser.input_bar.confirm.setEnabled(True)
+
+    def selection_confirmed(self,event):
+        if self.resources_uncertain:return
+        accepted=self.selected_resources.confirm(event.entity,selection_event_id=event.selection_event_id,
+            session_id=event.session_id,selected_at=event.selected_at,source=event.source,
+            round=event.round,evidence_reference=event.evidence_reference)
+        if accepted:self.refresh_selected_resources()
+
+    def confirm_condition(self):
+        if not self.browser.scope or self.resources_uncertain or self.browser.input_bar.confirm.isHidden():return
+        kind,row=self.browser.scope
+        if kind not in ('hex','equip','hero'):return
+        resolution=self.entity_resolver.resolve_selection(kind,row)
+        if not resolution.confirmed:
+            self.browser.input_bar.show_note('名称身份未确认，不能记为本局已选。');return
+        entity=resolution.entity
+        selected=SelectionEntity(kind,str(entity['id']),entity['name'],
+            entity.get('category',entity.get('type','')),entity.get('picture',''),True)
+        event_id=f'manual:{self.session.session_id}:{self.browser.input_revision}:{kind}:{entity["id"]}'
+        accepted=self.selected_resources.confirm(selected,selection_event_id=event_id,
+            session_id=self.session.session_id,selected_at=time.monotonic(),source='manual_confirmation',round=self.session.stage)
+        if accepted:
+            self.refresh_selected_resources();self.browser.input_bar.confirm.hide()
+            self.browser.input_bar.show_note('已记入本局选过的资源，点击条目即可单项检索。')
 
     def make_guide(self):
         page=QWidget();layout=QVBoxLayout(page);layout.setAlignment(Qt.AlignmentFlag.AlignTop)
@@ -508,6 +610,7 @@ class Companion(QWidget):
         self.query_equipment()
 
     def load_catalog(self):
+        if not self.versions_ready:return
         adapter=self.adapter
         def failed(_):
             if adapter is not self.adapter:return
@@ -526,6 +629,10 @@ class Companion(QWidget):
             combo.blockSignals(False)
             combo.completer().setFilterMode(Qt.MatchFlag.MatchContains)
         self.browser.set_catalog(self.catalog)
+        self.entity_resolver=self.browser.resolver
+        self.selections.resolver=self.entity_resolver
+        self.conditions.configure()
+        self.refresh_selected_resources()
         self.start_button.setEnabled(True)
         self.set_activity('ready','收起面板后自动检查海克斯与装备选择，侧键可随时补查。' if self.automatic.isChecked() else '自动识别已暂停，鼠标侧键可随时补查。')
         self.status.setText('离线演示已准备好。' if offline else '目录已准备好，正在后台预热识别与统计；首次查询可能稍慢。')
@@ -541,13 +648,24 @@ class Companion(QWidget):
             self.submit(self.network,self.adapter.hexes,lambda _:None)
             self.browser.retry()
             self.items.prewarm()
+        if self.session.target and self.comp_detail is None:
+            self.comp_url.setText('https://www.dataj.cc/comp/'+self.session.target)
+            self.pin_comp()
 
     def change_patch(self,*_):
+        if not self.versions_ready:return
         try:adapter=DataJ(patch=self.patch.currentText().strip())
         except ValueError as exc:self.status.setText(str(exc));return
         if adapter.patch==self.adapter.patch:return
         self.adapter=adapter;self.session.patch=adapter.patch;self.catalog={}
-        self.new_game();self.load_catalog()
+        self.condition_generation+=1;self.invalidate();self.clear_equipment()
+        self.explorer_generation+=1;self.comp_generation+=1
+        self.comp_detail=None;self.copy_button.setEnabled(False)
+        self.heroes.blockSignals(True);self.heroes.clear();self.heroes.blockSignals(False);self.populate_hero_buttons()
+        self.web.stop();self.web.hide();self.guide_empty.setVisible(self.session.target is None)
+        self.guide_version.hide();self.guide_retry.hide()
+        if self.session.target:self.guide_notice.setText('正在重新读取所选版本的固定阵容…')
+        self.load_catalog()
         self.status.setText(f'当前统计版本 {adapter.patch}，请与游戏版本保持一致。')
 
     def refresh_windows(self):
@@ -559,6 +677,7 @@ class Companion(QWidget):
     def bind_window(self):
         item=self.windows.currentData()
         if item and win.same_target(item,win.describe(item.hwnd)):
+            self.selections.binding_changed(item)
             self.binding=item;self.geometry=(item.rect,item.dpi);self.invalidate();self.status.setText('已绑定 MuMu。自动检查海克斯与装备选择，侧键可随时补查。')
         else:self.status.setText('没有有效 MuMu 游戏窗口')
 
@@ -567,6 +686,7 @@ class Companion(QWidget):
         if hasattr(self,'items'):self.items.hide()
 
     def invalidate(self):
+        if hasattr(self,'selections'):self.selections.scene_left()
         if hasattr(self,'items'):self.items.reset()
         self.partial_retries=0
         self.stats_inflight_token=None
@@ -594,10 +714,32 @@ class Companion(QWidget):
 
     def new_game(self):
         self.last_probe_stage=None;self.stage_window_until=0
+        self.resources_uncertain=False
         self.session.reset();self.comp_detail=None;self.heroes.clear();self.unpin()
+        self.condition_generation+=1
+        self.selected_resources.reset(self.session.session_id);self.selections.new_game(self.session.session_id)
+        self.refresh_selected_resources()
         self.stage.setCurrentIndex(-1)
         for pick in self.picks:pick.setCurrentIndex(0)
         self.browser.clear_filter();self.tabs.setCurrentIndex(1)
+
+    def game_context_changed(self,reason,identity):
+        self.new_game()
+        self.browser.input_bar.show_note('游戏窗口已变化，上一局的已选记录已清除。')
+
+    def resource_context_guard(self):
+        # A handle/PID check only: no new screenshot or OCR while idle.
+        now=time.monotonic()
+        if not self.binding or now-self.last_resource_guard<3:return
+        self.last_resource_guard=now
+        current=win.describe(self.binding.hwnd)
+        if not current or not win.same_target(self.binding,current):
+            self.selections.window_closed();self.binding=None;self.geometry=None
+        else:
+            if (current.rect,current.dpi)!=(self.binding.rect,self.binding.dpi):
+                self.condition_generation+=1
+            self.selections.binding_changed(current)
+            self.binding=current;self.geometry=(current.rect,current.dpi)
 
     def return_to_game(self):
         self.invalidate()
@@ -663,9 +805,11 @@ class Companion(QWidget):
         if valid_binding and not win.same_target(self.binding,target):return
         if not valid_binding and len(targets)!=1:return
         self.last_mouse_trigger=now
-        self.capture_once()
+        if hasattr(self,'conditions'):self.conditions.trigger()
+        else:self.capture_once()
 
     def capture_once(self):
+        if not self.versions_ready:return
         if self.capture_pending or self.ocr_busy or (self.once_active and self.once_ocr_pending):return
         if not self.catalog:
             self.set_activity('catalog_missing','数据正在准备，请稍后再按截图快捷键。');return
@@ -687,21 +831,28 @@ class Companion(QWidget):
     def request_capture(self,once=False):
         if self.capture_pending or not self.binding:return
         self.capture_pending=True
+        self.rank_capture_started=time.monotonic()
         binding=self.binding;token=self.session.token()
-        def done(result):
+        def done(captured):
+            result,captured_at=captured
             self.capture_pending=False
-            if self.session.accepts(token):self.captured(result,once)
+            if self.session.accepts(token):self.captured(result,once,captured_at)
+            else:self.rank_capture_started=None
         def failed(message):
             self.capture_pending=False
             if self.session.accepts(token):self.capture_failed(message)
         def begin():
-            self.submit(self.capture_pool,lambda:capture_image(binding),done,failed)
+            def capture():
+                result=capture_image(binding)
+                return result,time.monotonic()
+            self.submit(self.capture_pool,capture,done,failed)
         # Rank windows sit at the tier badges, outside title/round OCR regions.
         # Keep them visible during capture; changed inputs still invalidate results.
         begin()
 
     def capture_failed(self,message):
         if not self.offline:record('capture_failed')
+        self.rank_capture_started=None
         self.capture_pending=False;self.invalidate()
         self.set_activity('capture_failed','暂时无法读取游戏画面。请保持 MuMu 在前台；助手会继续尝试。')
 
@@ -714,22 +865,25 @@ class Companion(QWidget):
         self.once_active=manual;self.once_deadline=deadline;self.once_ocr_pending=retry
         if self.automatic.isChecked():self.stage_window_until=max(self.stage_window_until,time.monotonic()+15)
 
-    def captured(self,result,once):
+    def captured(self,result,once,captured_at=None):
         image,binding=result
         self.capture_pending=True
         token=self.session.token();observation=self.last_observation
-        captured_at=time.monotonic()
+        item_reference_boxes=tuple(self.items.boxes)
+        captured_at=time.monotonic() if captured_at is None else captured_at
         def inspect():
             # Three refresh controls identify the augment scene; board shapes
             # below it must not hijack recognition as an item-card proposal.
-            items=([],None) if may_be_choice(image) else inspect_items(image)
+            items=([],None) if may_be_choice(image) else inspect_items(image,item_reference_boxes)
             signature=tracked_signature(image,observation) if observation else None
             return items,signature
         def done(prepared):
             self.capture_pending=False
+            self.rank_capture_started=None
             if self.session.accepts(token):self.accept_frame(result,once,prepared,captured_at)
         def failed(message):
             self.capture_pending=False
+            self.rank_capture_started=None
             if self.session.accepts(token):self.capture_failed(message)
         self.submit(self.capture_pool,inspect,done,failed)
 
@@ -752,12 +906,15 @@ class Companion(QWidget):
                 # refresh needs a fresh frame check, not another OCR pass.
                 retry_stats=(once or self.once_ocr_pending) and self.stats_payload.get('retryable',False)
                 self.once_ocr_pending=False;once=False
+                self.selections.observe(self.last_observation,image.size,binding,captured_at)
                 if retry_stats:
                     self.query_stats(list(self.session.choices),[r[0] for r in self.stats_payload['rows']],True,refresh=True)
-        if self.items.ingest(image,binding,force=once or self.once_ocr_pending,prepared=items):
+        # All accepted frames supersede in-flight OCR, including item proposals
+        # which return before the shared augment path can start another read.
+        self.last_frame=image
+        if self.items.ingest(image,binding,force=once or self.once_ocr_pending,prepared=items,frame_time=captured_at):
             self.once_ocr_pending=False
             return
-        self.last_frame=image
         if once:self.once_ocr_pending=True
         # Retry a transient unreadable title twice, using already scheduled captures.
         # Keep existing ranks visible; normal session checks still reject changed cards.
@@ -774,7 +931,7 @@ class Companion(QWidget):
             self.analyze(image,True)
         elif partial_retry:
             self.partial_retries+=1
-            self.analyze(image,True)
+            self.analyze(image,True,retain_confirmed=True)
         elif (self.automatic.isChecked() and time.monotonic()>=self.next_ocr_allowed
               and time.monotonic()-self.last_ocr>2
               and not (self.last_observation and (self.stats_payload or self.stats_inflight_token==self.session.token()))):
@@ -782,14 +939,27 @@ class Companion(QWidget):
         if self.stats_payload and self.last_observation:
             self.display_overlays()
 
-    def analyze(self,image,live):
+    def analyze(self,image,live,retain_confirmed=False):
         if self.ocr_busy or not self.catalog:return
         self.ocr_busy=True;self.ocr_live=live;self.last_ocr=time.monotonic()
         token=self.session.token();catalog=self.catalog['hex']
+        retained_observation=self.last_observation if retain_confirmed else None
+        retained_payload=self.stats_payload if retain_confirmed else None
         def finish(obs,signature):
             self.ocr_busy=False
             if not self.session.accepts(token):return
             if live and (self.panel_open() or not self.binding or win.foreground_root()!=self.binding.hwnd):return
+            # accept_frame verified unchanged title/round pixels before this
+            # bounded partial retry. An OCR miss cannot erase confirmed slots;
+            # a changed frame/session or loss of the choice scene still clears.
+            if (live and retained_observation is not None and retained_payload is not None
+                and self.last_observation is retained_observation and self.stats_payload is retained_payload
+                and retained_payload.get('live') and self.session.accepts(retained_payload['token'])
+                and obs.get('scene')=='choice_unresolved'
+                and obs.get('round') in (None,retained_observation.get('round'))
+                and time.monotonic()-self.last_capture<=1.5):
+                if not self.offline:record('ocr_partial_retained')
+                self.display_overlays();return
             if live:self.signature=signature
             self.observed(obs,live)
         def done(result):
@@ -799,14 +969,24 @@ class Companion(QWidget):
             if not self.session.accepts(token):self.ocr_busy=False;return
             latest=self.last_frame
             if live and obs.get('scene')=='choice_candidates' and latest is not image:
-                def checked(current):
-                    self.ocr_busy=False
-                    if not self.session.accepts(token):return
-                    if latest is not self.last_frame or not unchanged(signature,current):
-                        self.choices_changed()
-                        self.set_activity('frame_changed','选择画面发生变化，正在重新识别…');return
-                    finish(obs,current)
-                self.submit(self.capture_pool,lambda:tracked_signature(latest,obs) if latest else None,checked,failed)
+                def check_latest(frame,remaining=2):
+                    def checked(current):
+                        if not self.session.accepts(token):self.ocr_busy=False;return
+                        if frame is not self.last_frame:
+                            # A new screenshot object is not evidence of new
+                            # choices. Check its pixels before clearing ranks.
+                            if remaining and self.last_frame is not None:
+                                check_latest(self.last_frame,remaining-1);return
+                            self.ocr_busy=False
+                            if not self.offline:record('ocr_verification_superseded')
+                            return
+                        if not unchanged(signature,current):
+                            self.ocr_busy=False
+                            self.choices_changed()
+                            self.set_activity('frame_changed','选择画面发生变化，正在重新识别…');return
+                        finish(obs,current)
+                    self.submit(self.capture_pool,lambda:tracked_signature(frame,obs) if frame else None,checked,failed)
+                check_latest(latest)
             else:finish(obs,signature)
         def failed(_):
             self.ocr_busy=False
@@ -822,6 +1002,8 @@ class Companion(QWidget):
 
     def observed(self,obs,live):
         self.last_observation=obs
+        if live and self.binding:
+            self.selections.observe(obs,obs.get('image_size',self.binding.rect[2:]),self.binding,self.last_capture)
         for pick in self.picks:
             pick.blockSignals(True);pick.setCurrentIndex(0);pick.blockSignals(False)
         if obs.get('scene')!='choice_candidates' or obs.get('round') not in STAGES:
@@ -846,6 +1028,7 @@ class Companion(QWidget):
         self.query_stats(ids,names,False)
 
     def query_stats(self,ids,names,live,refresh=False):
+        if not self.versions_ready:return
         same_choices=self.session.stage==self.stage.currentText() and self.session.choices==tuple(ids)
         if live and same_choices:
             if self.stats_inflight_token==self.session.token():return
@@ -928,6 +1111,11 @@ class Companion(QWidget):
             # A side-button request already owns the next full frame. A late
             # background probe must not cancel it before that frame is examined.
             if self.once_active and self.once_ocr_pending:return
+            if stage=='2-1' and self.last_probe_stage and self.last_probe_stage[0] in '3456789' and self.selected_resources.events:
+                self.resources_uncertain=True;self.condition_generation+=1
+                self.selections.cancel('game_boundary_uncertain')
+                self.refresh_selected_resources()
+                self.browser.input_bar.show_note('阶段回到 2-1，本局边界待确认；请点击「新的一局」清除上一局资源。')
             if stage and stage!=self.last_probe_stage:
                 same_choice=self.last_observation is not None and self.session.stage==stage
                 if not same_choice:self.invalidate()
@@ -938,6 +1126,8 @@ class Companion(QWidget):
         self.submit(self.ocr_pool,lambda:self.vision.read_round_crop(capture_stage(binding)),done,failed)
 
     def tick(self):
+        self.resource_context_guard();self.selections.tick()
+        if not self.versions_ready:return
         if not self.automatic.isChecked() and not self.once_active and not self.stats_payload and not self.items.active:return
         if self.automatic.isChecked() and not self.binding and not self.panel_open():
             if time.monotonic()-self.last_binding_probe<3:return
@@ -945,6 +1135,7 @@ class Companion(QWidget):
             targets=game_windows();foreground=win.foreground_root()
             if len(targets)!=1 or targets[0].hwnd!=foreground:return
             self.binding=targets[0];self.geometry=(self.binding.rect,self.binding.dpi)
+            self.selections.binding_changed(self.binding)
             self.set_activity('watching_stage','自动识别已就绪；检查海克斯阶段与装备选择，侧键可随时补查。')
         current=win.describe(self.binding.hwnd) if self.binding else None
         reason=win.capture_block_reason(self.binding,current,win.foreground_root()) if self.binding else 'no_binding'
@@ -954,6 +1145,7 @@ class Companion(QWidget):
             self.was_available=False
             if self.automatic.isChecked() and not self.panel_open():
                 if reason=='target_changed_or_closed':
+                    self.selections.window_closed()
                     self.binding=None;self.geometry=None
                     self.set_activity('game_closed','等待 MuMu；回到游戏后自动连接，侧键可随时补查。')
                 elif reason:self.set_activity('waiting_foreground','已暂停识别；回到 MuMu 后会自动继续。')
@@ -969,13 +1161,19 @@ class Companion(QWidget):
         if self.automatic.isChecked() and not self.offline and time.monotonic()-self.last_stage_probe>=3:self.probe_stage()
         if not self.once_ocr_pending and not self.offline:self.items.tick()
         if self.items.active or self.items.recognizing:return
-        if time.monotonic()-self.last_capture>1.5:self.hide_overlays()
+        now=time.monotonic()
+        # Keep already-visible ranks while a short verification capture finishes.
+        # This never paints an old result, and a stalled worker still expires.
+        checking=(self.capture_pending and self.rank_capture_started is not None
+                  and now-self.rank_capture_started<=1.25 and now-self.last_capture<=2.75)
+        if now-self.last_capture>1.5 and not checking:self.hide_overlays()
         capture_interval=.5 if self.last_observation else 1.0
         stage_active=self.automatic.isChecked() and (self.offline or self.last_observation is not None or time.monotonic()<self.stage_window_until)
         if (stage_active or self.once_active) and time.monotonic()-self.last_capture>capture_interval:
             self.request_capture()
 
     def load_comps(self,kind='',entity=None):
+        if not self.versions_ready:return
         self.explorer_generation+=1;generation=self.explorer_generation;adapter=self.adapter
         self.browser.set_loading()
         def done(result):
@@ -1035,6 +1233,7 @@ class Companion(QWidget):
         self.comp_url.setText(url.toString())
 
     def pin_comp(self):
+        if not self.versions_ready:return
         try:comp=parse_comp_url(self.comp_url.text())
         except ValueError as exc:self.status.setText(str(exc));return
         self.session.set_target(comp);self.invalidate();self.clear_equipment();self.comp_detail=None
@@ -1092,6 +1291,7 @@ class Companion(QWidget):
         if hasattr(self,'equip_note'):self.equip_note.setText('点击本局阵容的英雄头像查看出装。' if self.session.target else '先选一套阵容，再点击英雄头像查看出装。')
 
     def query_equipment(self,*_):
+        if not self.versions_ready:return
         comp=self.session.target;hero=self.heroes.currentData()
         if not comp or not hero:self.status.setText('请先固定阵容并选择英雄');return
         self.clear_equipment();generation=self.equip_generation;adapter=self.adapter
@@ -1125,50 +1325,60 @@ class Companion(QWidget):
 
 
 def main():
+    from contextlib import nullcontext
+    from single_instance import SingleInstance
     parser=argparse.ArgumentParser();parser.add_argument('--self-test',action='store_true');parser.add_argument('--seconds',type=int,default=0)
+    parser.add_argument('--start-collapsed',action='store_true',help='启动时只显示左上角展开标记')
     args=parser.parse_args()
-    win.enable_dpi()
-    app=QApplication(sys.argv[:1]);app.setQuitOnLastWindowClosed(False)
-    panel=Companion(offline=args.self_test)
-    registered=[]
-    mouse=MouseShortcut(panel)
-    mouse.released.connect(panel.mouse_capture,Qt.ConnectionType.QueuedConnection)
-    class Hotkeys(QAbstractNativeEventFilter):
-        def nativeEventFilter(self,event_type,message):
-            msg=w.MSG.from_address(int(message))
-            if msg.message==0x312:
-                action={51:panel.toggle,52:panel.capture_once,53:app.quit}.get(int(msg.wParam))
-                if action:action();return True,0
-            return False,0
-    native=Hotkeys();app.installNativeEventFilter(native)
-    if not args.self_test:
-        for id_,key in ((51,0x78),(52,0x79),(53,0x7B)):
-            if win.user.RegisterHotKey(None,id_,0x4003,key):registered.append(id_)
-        panel.reopen_shortcut_available=51 in registered
-        if not panel.reopen_shortcut_available:panel.status.setText('展开快捷键被占用。收起后，可点击左上角「阵容助手 · 展开」重新打开。')
-        elif len(registered)!=3:panel.status.setText('部分快捷键被占用，可以使用面板按钮。')
-        if not mouse.start():panel.status.setText('鼠标侧键监听不可用，请用截图按钮或 Ctrl+Alt+F10。')
-        panel.setWindowFlag(Qt.WindowType.WindowStaysOnTopHint,True)
-        area=app.primaryScreen().availableGeometry()
-        if panel.mouse_settings.value('panel_geometry') is None:panel.move(area.left()+64,area.top()+12)
-        saved_mark=panel.mouse_settings.value('mark_position')
-        if saved_mark is not None and area.contains(saved_mark):panel.mark.move(saved_mark)
-        else:panel.mark.move(area.left()+12,area.top()+12)
-        panel.mark.show();panel.show()
-    else:
-        assert len(panel.catalog['hex'])==263
-        assert panel.picks[0].count()==264
-        panel.resize(1080,760);panel.grab();app.processEvents()
-        panel.grab().save(str(STATE_DIR/'ui-self-test.png'))
-        print(json.dumps({'self_test':'widgets and offline catalog passed','catalog_rows':263,'screen_saved':str(STATE_DIR/'ui-self-test.png')}),flush=True)
-        QTimer.singleShot(200,app.quit)
-    if args.seconds:QTimer.singleShot(args.seconds*1000,app.quit)
-    def cleanup():
-        mouse.stop()
-        for key in registered:win.user.UnregisterHotKey(None,key)
-        panel.shutdown()
-    app.aboutToQuit.connect(cleanup)
-    return app.exec()
+    # Diagnostic widgets remain runnable while the ordinary companion is active.
+    with (nullcontext(True) if args.self_test else SingleInstance()) as acquired:
+        if not acquired:
+            print('助手已运行，跳过重复启动。',flush=True)
+            return 0
+        win.enable_dpi()
+        app=QApplication(sys.argv[:1]);app.setQuitOnLastWindowClosed(False)
+        panel=Companion(offline=args.self_test)
+        registered=[]
+        mouse=MouseShortcut(panel)
+        mouse.released.connect(panel.mouse_capture,Qt.ConnectionType.QueuedConnection)
+        mouse.left_event.connect(panel.selections.on_mouse,Qt.ConnectionType.QueuedConnection)
+        class Hotkeys(QAbstractNativeEventFilter):
+            def nativeEventFilter(self,event_type,message):
+                msg=w.MSG.from_address(int(message))
+                if msg.message==0x312:
+                    action={51:panel.toggle,52:panel.capture_once,53:app.quit}.get(int(msg.wParam))
+                    if action:action();return True,0
+                return False,0
+        native=Hotkeys();app.installNativeEventFilter(native)
+        if not args.self_test:
+            for id_,key in ((51,0x78),(52,0x79),(53,0x7B)):
+                if win.user.RegisterHotKey(None,id_,0x4003,key):registered.append(id_)
+            panel.reopen_shortcut_available=51 in registered
+            if not panel.reopen_shortcut_available:panel.status.setText('展开快捷键被占用。收起后，可点击左上角「阵容助手 · 展开」重新打开。')
+            elif len(registered)!=3:panel.status.setText('部分快捷键被占用，可以使用面板按钮。')
+            if not mouse.start():panel.status.setText('鼠标侧键监听不可用，请用截图按钮或 Ctrl+Alt+F10。')
+            panel.setWindowFlag(Qt.WindowType.WindowStaysOnTopHint,True)
+            area=app.primaryScreen().availableGeometry()
+            if panel.mouse_settings.value('panel_geometry') is None:panel.move(area.left()+64,area.top()+12)
+            saved_mark=panel.mouse_settings.value('mark_position')
+            if saved_mark is not None and area.contains(saved_mark):panel.mark.move(saved_mark)
+            else:panel.mark.move(area.left()+12,area.top()+12)
+            panel.mark.show()
+            if not args.start_collapsed:panel.show()
+        else:
+            assert len(panel.catalog['hex'])==263
+            assert panel.picks[0].count()==264
+            panel.resize(1080,760);panel.grab();app.processEvents()
+            panel.grab().save(str(STATE_DIR/'ui-self-test.png'))
+            print(json.dumps({'self_test':'widgets and offline catalog passed','catalog_rows':263,'screen_saved':str(STATE_DIR/'ui-self-test.png')}),flush=True)
+            QTimer.singleShot(200,app.quit)
+        if args.seconds:QTimer.singleShot(args.seconds*1000,app.quit)
+        def cleanup():
+            mouse.stop()
+            for key in registered:win.user.UnregisterHotKey(None,key)
+            panel.shutdown()
+        app.aboutToQuit.connect(cleanup)
+        return app.exec()
 
 
 if __name__=='__main__':raise SystemExit(main())

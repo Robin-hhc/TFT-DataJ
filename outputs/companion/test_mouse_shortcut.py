@@ -2,7 +2,10 @@ import ctypes as c
 import unittest
 from types import SimpleNamespace
 from unittest.mock import Mock, patch
+from PySide6.QtCore import Qt
+from PySide6.QtWidgets import QApplication
 from mouse_shortcut import MouseEvent, MouseShortcut, released_button
+from selection_tracker import MouseNotice
 from app import Companion
 
 
@@ -26,6 +29,77 @@ class MouseShortcutTests(unittest.TestCase):
         obj.released.emit.reset_mock()
         self.assertEqual(MouseShortcut.dispatch(obj,0,0x0200,0),42)
         obj.released.emit.assert_not_called()
+
+    def test_real_left_button_copies_notice_and_always_forwards_native_input(self):
+        user = Mock(); user.CallNextHookEx.return_value = 42; user.GetForegroundWindow.return_value = 7
+        obj = SimpleNamespace(user=user, handle=99, released=Mock(), left_event=Mock(),
+                              left_down=None, drag_notified=False)
+        event = MouseEvent(); event.pt.x = 160; event.pt.y = 200
+        with patch('mouse_shortcut.time.monotonic', return_value=10):
+            self.assertEqual(MouseShortcut.dispatch(obj, 0, 0x0201, c.addressof(event)), 42)
+        obj.left_event.emit.assert_called_once_with(MouseNotice('down', 160, 200, 10, 7))
+        obj.left_event.emit.reset_mock()
+        with patch('mouse_shortcut.time.monotonic', return_value=10.1):
+            self.assertEqual(MouseShortcut.dispatch(obj, 0, 0x0202, c.addressof(event)), 42)
+        obj.left_event.emit.assert_called_once_with(MouseNotice('up', 160, 200, 10.1, 7))
+        self.assertEqual(user.CallNextHookEx.call_count, 2)
+
+    def test_injected_left_negative_code_and_idle_motion_create_no_notice(self):
+        user = Mock(); user.CallNextHookEx.return_value = 42
+        obj = SimpleNamespace(user=user, handle=99, released=Mock(), left_event=Mock(),
+                              left_down=None, drag_notified=False)
+        event = MouseEvent(); event.flags = 1
+        for code, message, data in ((0, 0x0201, c.addressof(event)),
+                                    (-1, 0x0201, 0), (0, 0x0200, 0)):
+            self.assertEqual(MouseShortcut.dispatch(obj, code, message, data), 42)
+        obj.left_event.emit.assert_not_called()
+        user.GetForegroundWindow.assert_not_called()
+
+    def test_drag_notice_is_bounded_and_excursion_cannot_hide_on_return(self):
+        user = Mock(); user.CallNextHookEx.return_value = 42; user.GetForegroundWindow.return_value = 7
+        obj = SimpleNamespace(user=user, handle=99, released=Mock(), left_event=Mock(),
+                              left_down=None, drag_notified=False)
+        event = MouseEvent(); event.pt.x = 160; event.pt.y = 200
+        MouseShortcut.dispatch(obj, 0, 0x0201, c.addressof(event))
+        event.pt.x = 161
+        MouseShortcut.dispatch(obj, 0, 0x0200, c.addressof(event))
+        event.pt.x = 180
+        MouseShortcut.dispatch(obj, 0, 0x0200, c.addressof(event))
+        for x in (190, 170, 160):
+            event.pt.x = x
+            MouseShortcut.dispatch(obj, 0, 0x0200, c.addressof(event))
+        MouseShortcut.dispatch(obj, 0, 0x0202, c.addressof(event))
+        notices = [call.args[0] for call in obj.left_event.emit.call_args_list]
+        self.assertEqual([notice.action for notice in notices], ['down', 'move', 'up'])
+        self.assertEqual(notices[1].x, 180)
+        self.assertEqual(user.GetForegroundWindow.call_count, 3)
+        self.assertEqual(user.CallNextHookEx.call_count, 7)
+
+    def test_notification_failure_cannot_swallow_mouse_input(self):
+        user = Mock(); user.CallNextHookEx.return_value = 42; user.GetForegroundWindow.return_value = 7
+        obj = SimpleNamespace(user=user, handle=99, released=Mock(), left_event=Mock(),
+                              left_down=None, drag_notified=False)
+        obj.left_event.emit.side_effect = RuntimeError('deleted receiver')
+        event = MouseEvent()
+        self.assertEqual(MouseShortcut.dispatch(obj, 0, 0x0201, c.addressof(event)), 42)
+        user.CallNextHookEx.assert_called_once()
+
+    def test_real_qt_queued_notice_runs_only_after_native_hook_has_returned(self):
+        application = QApplication.instance() or QApplication([])
+        obj = MouseShortcut()
+        user = Mock(); user.CallNextHookEx.return_value = 42; user.GetForegroundWindow.return_value = 7
+        obj.user = user; obj.handle = 99
+        notices = []
+        obj.left_event.connect(notices.append, Qt.ConnectionType.QueuedConnection)
+        event = MouseEvent(); event.pt.x = 160; event.pt.y = 200
+        with patch('mouse_shortcut.time.monotonic', return_value=10):
+            self.assertEqual(obj.dispatch(0, 0x0201, c.addressof(event)), 42)
+        self.assertEqual(notices, [])
+        user.CallNextHookEx.assert_called_once()
+        event.pt.x = 999  # Queued signal owns a copy, not native hook memory.
+        application.processEvents()
+        self.assertEqual(notices, [MouseNotice('down', 160, 200, 10, 7)])
+        obj.handle = None
 
     def test_foreground_filter_busy_filter_and_debounce(self):
         target=SimpleNamespace(hwnd=7,process='MuMuNxDevice.exe',class_name='Qt5156QWindowIcon')

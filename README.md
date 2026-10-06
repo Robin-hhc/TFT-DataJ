@@ -2,9 +2,9 @@
 
 ## Windows 便携版
 
-其他电脑请下载 [v0.2.3 Windows便携版](https://github.com/Robin-hhc/TFT-DataJ/releases/tag/v0.2.3) 中的 `TFT-DataJ-0.2.3-windows-x64.zip`：先退出旧助手，完整解压后双击 **TFT-DataJ.exe**，不需要安装Python或OCR环境。保留旁边的 `_internal` 文件夹；可以为EXE创建快捷方式。目标系统为Windows 10/11 x64，最新统计与攻略仍需联网。
+其他电脑请下载 [v0.2.4 Windows便携版](https://github.com/Robin-hhc/TFT-DataJ/releases/tag/v0.2.4) 中的 `TFT-DataJ-0.2.4-windows-x64.zip`：先退出旧助手，完整解压后双击 **TFT-DataJ.exe**，不需要安装Python或OCR环境。保留旁边的 `_internal` 文件夹；可以为EXE创建快捷方式。目标系统为Windows 10/11 x64，最新统计与攻略仍需联网。
 
-[本版改动与升级](docs/releases/v0.2.3.md) · [安装、快捷键与已知限制](docs/releases/v0.2.1.md) · [更新记录](CHANGELOG.md) · [问题反馈](https://github.com/Robin-hhc/TFT-DataJ/issues)
+[本版改动与升级](docs/releases/v0.2.4.md) · [安装、快捷键与已知限制](docs/releases/v0.2.1.md) · [更新记录](CHANGELOG.md) · [问题反馈](https://github.com/Robin-hhc/TFT-DataJ/issues)
 
 本机产物在 [dist目录](dist/)，构建与验证说明见 [Windows便携包](packaging/README.md)。设置与缓存保存在 `%LOCALAPPDATA%\TFT-DataJ`；包中不包含本机游戏截图、录像及旧缓存。已在本机的隔离目录和清理过的环境中运行EXE验证，尚未在第二台物理电脑实测。
 
@@ -12,7 +12,7 @@
 
 项目工作目录：`E:\tft-helper`。
 
-双击根目录的 **启动助手.cmd**。首页展示多套阵容，上方检索器选择一个装备、转职、海克斯、英雄或羁绊条件。点击卡片即固定阵容，顶部复制主阵容码，左侧查看攻略或点英雄查出装。
+双击根目录的 **启动助手.cmd**。首页展示多套阵容，启动时只读取一次版本列表并默认最新。上方检索器支持本局已选快捷条目、从游戏取条件及折叠的文字搜索，每次使用一个装备、转职、海克斯、英雄或羁绊条件。只有明确点击“记为本局已选”才保存该项，自动记选暂未开放。点击阵容卡片即固定，顶部复制主阵容码，左侧查看攻略或点英雄查出装。
 
 默认自动阶段识别：收起面板并回到 MuMu 后，自动连接唯一的游戏窗口，每 3 秒仅检查顶部回合，在 2-1、3-2、4-2 开启海克斯识别。启动时预热识别模型，统计在后台加载。
 
