@@ -11,6 +11,7 @@ import traceback
 def check_pinned_guide(panel):
     """Drive real pinned-guide widgets with a bounded offline detail response."""
     from unittest.mock import patch
+    from PySide6.QtCore import QUrl
     pending=[]
     detail={'compId':'116','name':'验证阵容','heroes':[],'gameCode':'【阵容码】便携验证'}
     with patch.object(panel,'submit',side_effect=lambda pool,fn,done,failed=lambda _:None:pending.append((fn,done,failed))), \
@@ -33,6 +34,11 @@ def check_pinned_guide(panel):
         assert panel.guide_version.isHidden() and not panel.web.isHidden(),'Latest guide entry failed'
         assert '18.3' in panel.guide_notice.text() and '18.2a' in panel.guide_notice.text(),'Guide version labels missing'
         assert panel.adapter.patch==panel.session.patch=='18.2a' and panel.session.target=='116','Guide changed statistics scope'
+        url=QUrl('https://www.dataj.cc/comp/116')
+        with patch.object(panel,'offline',False),patch.object(panel.web,'url',return_value=url),patch.object(panel.web,'setUrl') as navigate:
+            panel.browse_comp();navigate.assert_called_once_with(url);navigate.reset_mock()
+            panel.versions_loaded(['18.3','18.2a']);navigate.assert_not_called()
+            panel.select_comp('116');navigate.assert_called_once_with(url)
         panel.unpin()
         assert not panel.guide_empty.isHidden() and panel.guide_version.isHidden() and panel.web.isHidden(),'Unpin left old guide visible'
         assert not panel.copy_button.isEnabled() and panel.guide_requested_url is None,'Unpin left old code or URL'
@@ -74,7 +80,7 @@ def main():
         assert (RESOURCE_DIR/'chevron-down.svg').is_file()
         report['checks'].append('application widgets and bundled UI assets')
         check_pinned_guide(panel)
-        report['checks'].append('pinned guide versions, latest entry, scope and unpin regression')
+        report['checks'].append('pinned guide versions, latest entry, retry, scope and unpin regression')
         if args.explorer_fixture:
             fixture=json.loads(args.explorer_fixture.read_text(encoding='utf-8'))
             browser=panel.browser

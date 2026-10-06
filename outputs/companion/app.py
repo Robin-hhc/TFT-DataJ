@@ -261,7 +261,7 @@ class Companion(QWidget):
         self.latest_patch=versions[0]
         if self.guide_requested_url:
             tab=self.tabs.currentIndex()
-            self.open_guide(self.guide_requested_url,allow_latest=self.guide_allow_latest)
+            self.open_guide(self.guide_requested_url,allow_latest=self.guide_allow_latest,reload=False)
             self.tabs.setCurrentIndex(tab)
 
     def navigate(self,index):
@@ -995,10 +995,7 @@ class Companion(QWidget):
 
     def select_comp(self,comp):
         if self.session.target==str(comp) and self.comp_detail:
-            try:current=parse_comp_url(self.web.url().toString())
-            except ValueError:current=None
-            if current!=str(comp) and not self.offline:self.open_guide('https://www.dataj.cc/comp/'+str(comp))
-            self.tabs.setCurrentIndex(2);return
+            self.open_guide('https://www.dataj.cc/comp/'+str(comp));return
         self.comp_url.setText('https://www.dataj.cc/comp/'+str(comp));self.pin_comp()
         self.tabs.setCurrentIndex(2)
 
@@ -1013,7 +1010,7 @@ class Companion(QWidget):
     def open_latest_guide(self):
         if self.guide_requested_url:self.open_guide(self.guide_requested_url,allow_latest=True)
 
-    def open_guide(self,url,*,allow_latest=False):
+    def open_guide(self,url,*,allow_latest=False,reload=True):
         self.guide_requested_url=url;self.guide_allow_latest=allow_latest
         self.guide_empty.hide();self.guide_version.hide()
         latest=getattr(self,'latest_patch',None)
@@ -1027,8 +1024,9 @@ class Companion(QWidget):
             self.guide_notice.setText(('阵容已固定。' if pinned else '')+f'当前统计版本 {self.adapter.patch}，攻略版本需单独确认。')
             self.tabs.setCurrentIndex(2);return
         self.guide_notice.setText(f'原站攻略：{latest or "最新版本"} · 助手阵容码、强化与出装统计：{self.adapter.patch}。'+('网页内统计也属于原站最新版本。' if latest!=self.adapter.patch else ''))
+        should_load=reload or self.web.isHidden() or self.web.url().toString()!=url
         self.web.show()
-        if not self.offline and self.web.url().toString()!=url:self.web.setUrl(QUrl(url))
+        if not self.offline and should_load:self.web.setUrl(QUrl(url))
         self.tabs.setCurrentIndex(2)
 
     def guide_url_changed(self,url):

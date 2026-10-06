@@ -186,6 +186,26 @@ class DisplayLifecycle(unittest.TestCase):
             self.assertFalse(p.guide_empty.isHidden());self.assertIsNone(p.guide_requested_url)
             self.assertFalse(p.copy_button.isEnabled())
 
+    def test_explicit_guide_retry_reloads_same_url_but_version_refresh_does_not(self):
+        from PySide6.QtCore import QUrl
+        p=self.p;p.versions_loaded(['18.2a','18.2'])
+        url='https://www.dataj.cc/comp/112'
+        # Qt retains the requested URL after loadFinished(False) or stop().
+        with patch.object(p.web,'url',return_value=QUrl(url)),patch.object(p.web,'setUrl') as navigate,patch.object(p,'offline',False):
+            p.select_comp('112');self.flush();navigate.reset_mock()
+            p.comp_url.setText(url);p.browse_comp()
+            navigate.assert_called_once_with(QUrl(url));navigate.reset_mock()
+            p.versions_loaded(['18.2a','18.2'])
+            navigate.assert_not_called()
+            p.select_comp('112')
+            navigate.assert_called_once_with(QUrl(url));navigate.reset_mock()
+            p.versions_loaded(['18.3','18.2a'])
+            self.assertTrue(p.web.isHidden())
+            p.guide_latest.click()
+            navigate.assert_called_once_with(QUrl(url));navigate.reset_mock()
+            p.versions_loaded(['18.3','18.2a'])
+            navigate.assert_not_called()
+
     def test_delayed_versions_refresh_guide_without_changing_active_tab(self):
         p=self.p
         p.select_comp('112');self.flush()
