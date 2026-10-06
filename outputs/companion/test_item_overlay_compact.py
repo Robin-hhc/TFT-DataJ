@@ -6,7 +6,7 @@ from unittest.mock import patch
 
 import bootstrap
 from PySide6.QtCore import QObject, Signal, Qt
-from PySide6.QtGui import QColor, QPixmap, QTextDocument
+from PySide6.QtGui import QColor, QFont, QPixmap, QTextDocument
 from PySide6.QtWidgets import QApplication
 from item_overlay import ItemOverlay
 
@@ -76,6 +76,19 @@ class ItemOverlayCompactTests(unittest.TestCase):
         self.assertTrue(widget.testAttribute(Qt.WidgetAttribute.WA_ShowWithoutActivating))
 
     def test_two_portraits_and_every_text_line_fit_three_to_five_columns(self):
+        self.assert_compact_column_layouts()
+
+    def test_windows_default_font_keeps_fallback_text_inside_compact_frame(self):
+        original_font = QFont(self.qt.font())
+        try:
+            # English Windows/CI uses Segoe UI; Chinese fallback glyphs make
+            # the same rich-text line 17px high instead of the local 14px.
+            self.qt.setFont(QFont('Segoe UI'))
+            self.assert_compact_column_layouts()
+        finally:
+            self.qt.setFont(original_font)
+
+    def assert_compact_column_layouts(self):
         for count in (3, 4, 5):
             for dpi in (96, 144, 192):
                 with self.subTest(columns=count, dpi=dpi):

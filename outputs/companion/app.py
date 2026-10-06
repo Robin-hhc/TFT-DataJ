@@ -660,6 +660,7 @@ class Companion(QWidget):
         self.adapter=adapter;self.session.patch=adapter.patch;self.catalog={}
         self.condition_generation+=1;self.invalidate();self.clear_equipment()
         self.explorer_generation+=1;self.comp_generation+=1
+        self.browser.set_loading()
         self.comp_detail=None;self.copy_button.setEnabled(False)
         self.heroes.blockSignals(True);self.heroes.clear();self.heroes.blockSignals(False);self.populate_hero_buttons()
         self.web.stop();self.web.hide();self.guide_empty.setVisible(self.session.target is None)

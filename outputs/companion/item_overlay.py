@@ -1,7 +1,9 @@
 """Compact, non-interactive item ranks located above each game choice."""
 import ctypes as c
 import html
+from math import ceil
 from PySide6.QtCore import Qt, QSize
+from PySide6.QtGui import QTextDocument
 from PySide6.QtWidgets import QWidget, QLabel, QVBoxLayout, QHBoxLayout
 import win_capture as win
 from stat_colors import placement_color
@@ -73,6 +75,7 @@ class ItemOverlay(QWidget):
             row.addWidget(picture);row.addWidget(name,1);layout.addLayout(row)
             self.holder_lines.append((picture,name))
         self.setFixedHeight(OVERLAY_HEIGHT)
+        self._text_layout_keys={}
         portraits.ready.connect(self.picture_loaded)
         self.handle=int(self.winId())
 
@@ -88,6 +91,24 @@ class ItemOverlay(QWidget):
     @staticmethod
     def set_text(label,text):
         if label.text()!=text:label.setText(text)
+
+    def fit_text(self):
+        # Rich text includes fallback glyph metrics which QFontMetrics alone
+        # misses on English Windows. Measure the displayed lines at their actual
+        # width, while stable content avoids repeated size changes and paints.
+        self.ensurePolished()
+        layout=self.layout();margins=layout.contentsMargins()
+        width=max(1,self.width()-margins.left()-margins.right())
+        for label,minimum in ((self.title,16),(self.global_line,14),(self.comp_line,14)):
+            key=(label.text(),label.font().toString(),width)
+            if self._text_layout_keys.get(label)==key:continue
+            document=QTextDocument();document.setDefaultFont(label.font())
+            document.setDocumentMargin(0);document.setHtml(label.text());document.setTextWidth(width)
+            height=max(minimum,ceil(document.size().height()))
+            if label.minimumHeight()!=height or label.maximumHeight()!=height:label.setFixedHeight(height)
+            self._text_layout_keys[label]=key
+        height=max(OVERLAY_HEIGHT,layout.sizeHint().height())
+        if self.height()!=height:self.setFixedHeight(height)
 
     def update_row(self,row,catalog):
         self.set_text(self.title,html.escape(row['name']))
@@ -117,11 +138,15 @@ class ItemOverlay(QWidget):
                 self.urls[i]=url
             if url in self.portraits.images:self.picture_loaded(url,self.portraits.images[url])
             elif url and picture.pixmap().isNull():self.portraits.request(url)
+        self.fit_text()
 
     def place(self,binding,box,image_size,gap):
         x,y,physical_width,physical_height=item_overlay_geometry(binding,box,image_size,gap,self.height())
         width=round(physical_width*96/binding.dpi)
         if self.minimumWidth()!=width or self.maximumWidth()!=width:self.setFixedWidth(width)
+        self.fit_text()
+        self.layout().activate()
+        x,y,physical_width,physical_height=item_overlay_geometry(binding,box,image_size,gap,self.height())
         was_visible=self.isVisible()
         if not was_visible:self.show()
         geometry=(x,y,physical_width,physical_height,binding.dpi)
