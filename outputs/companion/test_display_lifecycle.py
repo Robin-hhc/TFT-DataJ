@@ -176,6 +176,7 @@ class DisplayLifecycle(unittest.TestCase):
             p.guide_latest.click()
             self.assertEqual(navigate.call_args[0][0].toString(),'https://www.dataj.cc/comp/112')
             self.assertTrue(p.guide_version.isHidden());self.assertFalse(p.web.isHidden())
+            self.assertFalse(p.guide_notice.isHidden(),'Historical statistics and latest guide need a visible version label')
             self.assertIn('原站攻略：18.2a',p.guide_notice.text())
             self.assertIn('统计：18.2',p.guide_notice.text())
             self.assertEqual((p.adapter.patch,p.session.patch,p.session.target),('18.2','18.2','112'))

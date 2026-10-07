@@ -33,6 +33,7 @@ def check_pinned_guide(panel):
         panel.guide_latest.click()
         assert panel.guide_version.isHidden() and not panel.web.isHidden(),'Latest guide entry failed'
         assert '18.3' in panel.guide_notice.text() and '18.2a' in panel.guide_notice.text(),'Guide version labels missing'
+        assert not panel.guide_notice.isHidden(),'Cross-version guide explanation hidden'
         assert panel.adapter.patch==panel.session.patch=='18.2a' and panel.session.target=='116','Guide changed statistics scope'
         panel.versions_loaded(['18.2a','18.2'])
         url=QUrl('https://www.dataj.cc/comp/116')

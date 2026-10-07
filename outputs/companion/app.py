@@ -1240,6 +1240,7 @@ class Companion(QWidget):
             self.guide_notice.setText(('阵容已固定。' if pinned else '')+f'当前统计版本 {self.adapter.patch}，攻略版本需单独确认。')
             self.tabs.setCurrentIndex(2);return
         self.guide_notice.setText(f'原站攻略：{latest or "最新版本"} · 助手阵容码、强化与出装统计：{self.adapter.patch}。'+('网页内统计也属于原站最新版本。' if latest!=self.adapter.patch else ''))
+        self.guide_notice.setVisible(latest!=self.adapter.patch)
         should_load=reload or self.web.isHidden() or self.web.url().toString()!=url
         self.web.show()
         if not self.offline and should_load:self.web.setUrl(QUrl(url))
