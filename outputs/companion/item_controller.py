@@ -34,6 +34,7 @@ class ItemController:
         self.retries=0;self.last_frame=None;self.tasks=deque()
         self.probe_started=None
         self.query_inflight=None
+        self.frame_scope='full_game'
 
     def token(self):return self.generation,self.panel.session.token(),id(self.panel.adapter)
 
@@ -47,6 +48,7 @@ class ItemController:
         self.signature=None;self.boxes=[];self.tasks.clear();self.last_frame=None;self.retries=0
         self.probe_started=None;self.last_seen=0
         self.query_inflight=None
+        self.frame_scope='full_game'
         self.hide()
 
     def available(self):
@@ -81,7 +83,7 @@ class ItemController:
             self.probing=False;self.probe_started=None;p.capture_pending=False
             if self.accepts(token) and self.available():
                 image,current,prepared,frame_time=result
-                self.ingest(image,current,prepared=prepared,frame_time=frame_time)
+                self.ingest(image,current,prepared=prepared,frame_time=frame_time,frame_scope='item_band')
         def failed(_):
             self.probing=False;self.probe_started=None;p.capture_pending=False
             if self.accepts(token):self.reset()
@@ -91,7 +93,7 @@ class ItemController:
             return image,current,inspect_items(image,reference_boxes),frame_time
         p.submit(p.capture_pool,capture,done,failed)
 
-    def ingest(self,image,binding,force=False,prepared=None,frame_time=None):
+    def ingest(self,image,binding,force=False,prepared=None,frame_time=None,frame_scope='full_game'):
         """Return True when this frame belongs to the item scene investigation."""
         p=self.panel
         frame_time=time.monotonic() if frame_time is None else frame_time
@@ -103,6 +105,7 @@ class ItemController:
         signature_boxes=list(self.boxes) if aligned else boxes
         same=aligned and same_item_text(signature,self.signature)
         self.last_frame=image
+        self.frame_scope=frame_scope
         if same and self.active:
             self.last_seen=max(self.last_seen,frame_time)
             if self.observation is not None and hasattr(p,'selections'):
@@ -125,6 +128,7 @@ class ItemController:
         def done(observation):
             self.recognizing=False;p.ocr_busy=False
             if not self.accepts(token) or not self.available():return
+            p.bugs.observed_items(observation,image,frame_scope=frame_scope)
             if observation['scene']!='item_candidates':
                 # A retry on freshly verified identical pixels can temporarily
                 # fail to read the header. Keep confirmed rows, without retries
@@ -139,6 +143,7 @@ class ItemController:
             if hasattr(p,'selections'):
                 p.selections.observe(observation,image.size,binding,frame_time)
             self.last_frame=image;self.signature=signature;self.boxes=signature_boxes
+            self.frame_scope=frame_scope
             # OCR confirms the captured pixels; returning does not make them new.
             # A later verified frame of the same titles may already be fresher.
             self.last_seen=max(self.last_seen,frame_time)
@@ -232,6 +237,8 @@ class ItemController:
                 scope=target if kind!='table' else value,status='ok',
                 elapsed_ms=round((time.monotonic()-started)*1000),cached=bool(result.get('cached')))
             self.cache[key]=result
+            if kind=='table' and not value and any(row['id'] and row['global']['status']=='missing' for row in self.rows):
+                p.bugs.item_statistics('item_data_gap',evidence={'rows':self.rows,'scope':'global'})
             if len(self.cache)>96:
                 fresh=sorted(((k,v) for k,v in self.cache.items() if 0<=time.time()-v['fetched_at']<900),
                              key=lambda item:item[1]['fetched_at'],reverse=True)
@@ -249,6 +256,7 @@ class ItemController:
             if not p.offline:record('item_query',kind=kind,item_id=value if kind!='table' else None,
                 scope=target if kind!='table' else value,status='error',
                 elapsed_ms=round((time.monotonic()-started)*1000))
+            p.bugs.item_statistics('item_query_failed',evidence={'kind':kind,'scope':target if kind!='table' else value,'rows':self.rows})
             self.render();self.next_query()
         cached=self.cached(key)
         if cached:

@@ -1,4 +1,5 @@
 """Private original S18 screenshot evidence, excluded from clean public CI."""
+import hashlib
 import json
 import unittest
 from PIL import Image
@@ -60,6 +61,20 @@ class LocalConditionScreenshotTests(unittest.TestCase):
             self.assertLess(result['evidence']['title_rect'][3], image.height*.15)
             self.assertEqual({value for value in result['evidence']['readings'] if value}, {'金锅锅'})
             self.assertFalse(result['records_selected'])
+
+    def test_native_4k_large_equipment_header_reads_item_not_its_wearer(self):
+        path = ROOT/'work/condition-sword-20261007/current.png'
+        if not path.exists():
+            self.skipTest('Native 4K large equipment detail is not installed')
+        self.assertEqual(hashlib.sha256(path.read_bytes()).hexdigest(),
+                         'f863a2b23a6c48ce18be5e06d9bafd23a94efc5856bb174c281ea767afbb98db')
+        with Image.open(path) as image:
+            result = self.reader.read(image.convert('RGB'))
+        self.assertEqual(result['status'], 'resolved', result)
+        self.assertEqual(result['entity']['id'], '1007')
+        self.assertEqual(result['entity']['kind'], 'equip')
+        self.assertEqual(result['entity']['name'], '巨人腰带')
+        self.assertFalse(result['records_selected'])
 
 
 if __name__ == '__main__':

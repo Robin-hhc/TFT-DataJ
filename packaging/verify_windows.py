@@ -44,6 +44,15 @@ def verify(archive,root,online=False):
     if real_frame.is_file() and catalog.is_file():
         shutil.copy2(real_frame,sandbox/'选择画面.png');shutil.copy2(catalog,sandbox/'目录.json')
         command+=['--image',str(sandbox/'选择画面.png'),'--catalog',str(sandbox/'目录.json')]
+    condition_frame=root/'work/condition-sword-20261007/current.png'
+    if condition_frame.is_file() and catalog.is_file():
+        assert hashlib.sha256(condition_frame.read_bytes()).hexdigest()==(
+            'f863a2b23a6c48ce18be5e06d9bafd23a94efc5856bb174c281ea767afbb98db'), 'Detail evidence changed'
+        shutil.copy2(condition_frame,sandbox/'装备详情.png')
+        if not (sandbox/'目录.json').exists():
+            shutil.copy2(catalog,sandbox/'目录.json')
+            command+=['--catalog',str(sandbox/'目录.json')]
+        command+=['--condition-image',str(sandbox/'装备详情.png')]
     start=time.monotonic()
     result=subprocess.run(command,cwd=sandbox,env=env,timeout=300,capture_output=True)
     report_path=state/'TFT-DataJ/portable-check.json'

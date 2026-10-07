@@ -1,0 +1,293 @@
+{
+  "source": "https://www.dataj.cc/api/web/gamedata?setId=18",
+  "stats_source": "https://www.dataj.cc/api/web/stats/hex?setId=18&gameVersion=18.3",
+  "catalog_fetched": 1791349904.110688,
+  "stats_fetched": 1791354298.3618393,
+  "patch": "18.3",
+  "catalog": [
+    {
+      "id": "1019",
+      "name": "并肩作战 I",
+      "descText": "在你的队伍之中，每有一个已激活的非唯一特质/职业，你的弈子就会获得1.5%物理加成和1.5%法术加成。  当前加成：0%【物理加成】0%【法术加成】",
+      "icon": "https://img.dataj.cc/images/hex/standunited1.png",
+      "level": 1,
+      "isLegend": 0,
+      "heroEnhancementType": 0,
+      "fetterId": null,
+      "fetterType": "0",
+      "setId": "18",
+      "season": "S19",
+      "version": "18.18.1"
+    },
+    {
+      "id": "1625",
+      "name": "别再错过",
+      "descText": "获得每个1费弈子各1个。",
+      "icon": "https://img.dataj.cc/images/hex/missedconnections1.png",
+      "level": 1,
+      "isLegend": 0,
+      "heroEnhancementType": 0,
+      "fetterId": null,
+      "fetterType": "0",
+      "setId": "18",
+      "season": "S19",
+      "version": "18.18.1"
+    },
+    {
+      "id": "2705",
+      "name": "成吨的属性！",
+      "descText": "你的弈子们获得44生命值、4%物理加成、4%法术加成、4护甲、4魔抗、4%攻击速度和4法力值。",
+      "icon": "https://img.dataj.cc/images/hex/tonsofstats2.png",
+      "level": 2,
+      "isLegend": 0,
+      "heroEnhancementType": 0,
+      "fetterId": null,
+      "fetterType": "0",
+      "setId": "18",
+      "season": "S19",
+      "version": "18.18.1"
+    },
+    {
+      "id": "3705",
+      "name": "成吨的属性！",
+      "descText": "你的弈子们获得88生命值、8%物理加成、8%法术加成、8护甲、8魔抗、8%攻击速度和8法力值。",
+      "icon": "https://img.dataj.cc/images/hex/tonsofstats3.png",
+      "level": 3,
+      "isLegend": 0,
+      "heroEnhancementType": 0,
+      "fetterId": null,
+      "fetterType": "0",
+      "setId": "18",
+      "season": "S19",
+      "version": "18.18.1"
+    },
+    {
+      "id": "20768",
+      "name": "自然庇护所",
+      "descText": "战斗开始时：位于【永恒之森】植物邻格的弈子们获得15%攻击速度，并且每2秒治疗其3%最大生命值。获得1个【阿利斯塔】、1个【奥恩】和1个【霞】。",
+      "icon": "https://img.dataj.cc/images/hex/elderwoodaugment2.png",
+      "level": 2,
+      "isLegend": 0,
+      "heroEnhancementType": 0,
+      "fetterId": null,
+      "fetterType": "0",
+      "setId": "18",
+      "season": "S19",
+      "version": "18.18.1"
+    },
+    {
+      "id": "10615",
+      "name": "拥抱 I",
+      "descText": "战斗开始时：弈子为其他邻格弈子提供7护甲和魔法抗性。此效果可叠加。",
+      "icon": "https://img.dataj.cc/images/hex/grouphugi1.png",
+      "level": 1,
+      "isLegend": 0,
+      "heroEnhancementType": 0,
+      "fetterId": null,
+      "fetterType": "0",
+      "setId": "18",
+      "season": "S19",
+      "version": "18.18.3"
+    },
+    {
+      "id": "10784",
+      "name": "别再错过",
+      "descText": "获得每个1费弈子各1个。",
+      "icon": "https://img.dataj.cc/images/hex/missedconnections1.png",
+      "level": 1,
+      "isLegend": 0,
+      "heroEnhancementType": 0,
+      "fetterId": null,
+      "fetterType": "0",
+      "setId": "18",
+      "season": "S19",
+      "version": "18.18.1"
+    },
+    {
+      "id": "30768",
+      "name": "自然庇护所",
+      "descText": "战斗开始时：位于【永恒之森】植物邻格的弈子们获得15%攻击速度，并且每2秒治疗其3%最大生命值。获得1个【阿利斯塔】、1个【奥恩】和1个【霞】。",
+      "icon": "https://img.dataj.cc/images/hex/elderwoodaugment2.png",
+      "level": 2,
+      "isLegend": 0,
+      "heroEnhancementType": 0,
+      "fetterId": null,
+      "fetterType": "0",
+      "setId": "18",
+      "season": "S19",
+      "version": "18.18.1"
+    }
+  ],
+  "statistics": [
+    {
+      "hexId": 1625,
+      "name": "别再错过",
+      "icon": "https://game.gtimg.cn/images/lol/act/jkzlk/gamedata/hex/missedconnections1.png",
+      "sampleCount": 4246,
+      "playRate": 0.15,
+      "avgPlacement": 4.34,
+      "top4Rate": 52.57,
+      "topRate": 13.45,
+      "rounds": [
+        "3-2",
+        "4-2"
+      ],
+      "roundStats": [
+        {
+          "round": 1,
+          "roundLabel": "3-2",
+          "sampleCount": 3573,
+          "playRate": 0.12,
+          "avgPlacement": 4.27,
+          "top4Rate": 53.96,
+          "topRate": 13.74
+        },
+        {
+          "round": 2,
+          "roundLabel": "4-2",
+          "sampleCount": 602,
+          "playRate": 0.02,
+          "avgPlacement": 4.8,
+          "top4Rate": 44.19,
+          "topRate": 12.13
+        }
+      ]
+    },
+    {
+      "hexId": 2705,
+      "name": "成吨的属性！",
+      "icon": "https://game.gtimg.cn/images/lol/act/jkzlk/gamedata/hex/tonsofstats2.png",
+      "sampleCount": 2824,
+      "playRate": 0.1,
+      "avgPlacement": 4.39,
+      "top4Rate": 52.12,
+      "topRate": 12.46,
+      "rounds": [
+        "3-2",
+        "4-2"
+      ],
+      "roundStats": [
+        {
+          "round": 1,
+          "roundLabel": "3-2",
+          "sampleCount": 1014,
+          "playRate": 0.04,
+          "avgPlacement": 4.49,
+          "top4Rate": 50.79,
+          "topRate": 12.03
+        },
+        {
+          "round": 2,
+          "roundLabel": "4-2",
+          "sampleCount": 1798,
+          "playRate": 0.06,
+          "avgPlacement": 4.34,
+          "top4Rate": 52.78,
+          "topRate": 12.68
+        }
+      ]
+    },
+    {
+      "hexId": 10615,
+      "name": "拥抱 I",
+      "icon": "https://game.gtimg.cn/images/lol/act/jkzlk/gamedata/hex/grouphugi1.png",
+      "sampleCount": 1002,
+      "playRate": 0.03,
+      "avgPlacement": 4.45,
+      "top4Rate": 51.2,
+      "topRate": 12.67,
+      "rounds": [
+        "2-1",
+        "3-2",
+        "4-2"
+      ],
+      "roundStats": [
+        {
+          "round": 0,
+          "roundLabel": "2-1",
+          "sampleCount": 185,
+          "playRate": 0.01,
+          "avgPlacement": 4.62,
+          "top4Rate": 48.65,
+          "topRate": 10.81
+        },
+        {
+          "round": 1,
+          "roundLabel": "3-2",
+          "sampleCount": 597,
+          "playRate": 0.02,
+          "avgPlacement": 4.44,
+          "top4Rate": 51.09,
+          "topRate": 13.4
+        },
+        {
+          "round": 2,
+          "roundLabel": "4-2",
+          "sampleCount": 220,
+          "playRate": 0.01,
+          "avgPlacement": 4.35,
+          "top4Rate": 53.64,
+          "topRate": 12.27
+        }
+      ]
+    },
+    {
+      "hexId": 20768,
+      "name": "自然庇护所",
+      "icon": "https://game.gtimg.cn/images/lol/act/jkzlk/gamedata/hex/elderwoodaugment2.png",
+      "sampleCount": 877,
+      "playRate": 0.03,
+      "avgPlacement": 4.29,
+      "top4Rate": 54.62,
+      "topRate": 13.57,
+      "rounds": [
+        "2-1"
+      ],
+      "roundStats": [
+        {
+          "round": 0,
+          "roundLabel": "2-1",
+          "sampleCount": 877,
+          "playRate": 0.03,
+          "avgPlacement": 4.29,
+          "top4Rate": 54.62,
+          "topRate": 13.57
+        }
+      ]
+    },
+    {
+      "hexId": 1019,
+      "name": "并肩作战 I",
+      "icon": "https://game.gtimg.cn/images/lol/act/jkzlk/gamedata/hex/standunited1.png",
+      "sampleCount": 682,
+      "playRate": 0.02,
+      "avgPlacement": 4.61,
+      "top4Rate": 47.36,
+      "topRate": 10.26,
+      "rounds": [
+        "3-2",
+        "4-2"
+      ],
+      "roundStats": [
+        {
+          "round": 1,
+          "roundLabel": "3-2",
+          "sampleCount": 497,
+          "playRate": 0.02,
+          "avgPlacement": 4.59,
+          "top4Rate": 48.69,
+          "topRate": 9.05
+        },
+        {
+          "round": 2,
+          "roundLabel": "4-2",
+          "sampleCount": 179,
+          "playRate": 0.01,
+          "avgPlacement": 4.64,
+          "top4Rate": 43.58,
+          "topRate": 13.41
+        }
+      ]
+    }
+  ]
+}

@@ -197,6 +197,7 @@ class ConditionReader:
         if kind is not None and kind not in SUPPORTED_KINDS:
             return result('detail_kind_unsupported')
         popup_rect = None
+        headers = []
         if title_rect is not None:
             area = _valid_rect(title_rect, image.size)
             if not area:
@@ -224,6 +225,7 @@ class ConditionReader:
                 kind, layout = 'hero', 's18_right_hero_detail'
                 icon_rect = tuple(round(value) for value in (width*.796, area[1], width*.834,
                                                             area[1]+panel_width*.20))
+                headers.append((layout, area, icon_rect))
             else:
                 bw = right-left
                 area = tuple(round(value) for value in (left+bw*.28, top+bw*.025, right-bw*.025, top+bw*.24))
@@ -232,9 +234,31 @@ class ConditionReader:
                     kind, layout = 'equip', 's18_left_inventory_detail'
                 icon_rect = tuple(round(value) for value in (left+bw*.035, top+bw*.035,
                                                             left+bw*.255, top+bw*.27))
-            if not _header_icon_visible(image.crop(icon_rect)):
-                return result('detail_header_icon_unconfirmed',
-                              evidence={'layout': layout, 'popup_rect': popup_rect, 'icon_rect': icon_rect})
+                headers.append((layout, area, icon_rect))
+                if layout == 's18_floating_icon_title':
+                    # Native MuMu equipment popups have a larger header icon.
+                    # The older video layout clips its right edge into the
+                    # title and misses part of the icon. Keep both bounded
+                    # header layouts; never search stats or the wearer below.
+                    title = tuple(round(value) for value in (left+bw*.35, top+bw*.07,
+                                                            left+bw*.97, top+bw*.18))
+                    icon = tuple(round(value) for value in (left+bw*.07, top+bw*.07,
+                                                           left+bw*.32, top+bw*.32))
+                    headers.append(('s18_floating_large_icon_title', title, icon))
+            valid = []
+            for header_layout, title, icon in headers:
+                if not _header_icon_visible(image.crop(icon)):
+                    reason = 'detail_header_icon_unconfirmed'
+                else:
+                    bounded, reason = _title_is_bounded(image.crop(title))
+                    if bounded:
+                        valid.append((header_layout, title, icon))
+                evidence = {'layout': header_layout, 'popup_rect': popup_rect,
+                            'icon_rect': icon, 'title_rect': title, 'readings': []}
+            if not valid:
+                return result(reason, evidence=evidence)
+            # Preserve the previously verified crop when both layouts fit.
+            layout, area, icon_rect = valid[0]
         bounded, reason = _title_is_bounded(image.crop(area))
         evidence = {'layout': layout, 'title_rect': area, 'popup_rect': popup_rect, 'readings': []}
         if not bounded:

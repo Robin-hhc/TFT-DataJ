@@ -1,6 +1,6 @@
 # Windows便携包
 
-普通使用只需完整解压 [v0.2.5发布页](https://github.com/Robin-hhc/TFT-DataJ/releases/tag/v0.2.5) 的 `TFT-DataJ-0.2.5-windows-x64.zip`，双击 `TFT-DataJ.exe`。无需Python、pip、OCR安装和GPU推理环境。`_internal` 必须与EXE放在同一文件夹，设置、头像缓存、统计缓存和日志另存 `%LOCALAPPDATA%\TFT-DataJ`。可以移动整个程序文件夹或创建EXE快捷方式。
+普通使用只需完整解压 [v0.2.6发布页](https://github.com/Robin-hhc/TFT-DataJ/releases/tag/v0.2.6) 的 `TFT-DataJ-0.2.6-windows-x64.zip`，双击 `TFT-DataJ.exe`。无需Python、pip、OCR安装和GPU推理环境。`_internal` 必须与EXE放在同一文件夹，设置、头像缓存、统计缓存和日志另存 `%LOCALAPPDATA%\TFT-DataJ`。可以移动整个程序文件夹或创建EXE快捷方式。[本版发布说明](../docs/releases/v0.2.6.md)
 
 目标为Windows 10/11 x64。默认用CPU识别，DataJ统计和攻略需要联网；网络失败不会使用其他版本数据。更新时退出旧版、解压新版，用户目录中的设置保留。当前是未签名的便携测试构建，没有安装器、自动更新或Windows ARM原生包。
 
@@ -11,16 +11,16 @@
 ```powershell
 py -3.12 -m venv .venv
 .venv\Scripts\python.exe -m pip install -r packaging\requirements-build.txt
-.venv\Scripts\python.exe packaging\build_windows.py --version 0.2.5
+.venv\Scripts\python.exe packaging\build_windows.py --version 0.2.6
 ```
 
-当前开发机也可使用 `work/p0-runtime/Scripts/python.exe packaging/build_windows.py --version 0.2.5`。显式指定新版本，不覆盖已有 ZIP。依赖锁定不再包含开发机的 `file:///C:/Users/...` 安装路径；构建脚本在缺少模型时从RapidOCR官方模型仓库下载，并逐一验证SHA-256。运行助手不会自动下载模型。
+当前开发机也可使用 `work/p0-runtime/Scripts/python.exe packaging/build_windows.py --version 0.2.6`。显式指定新版本，不覆盖已有 ZIP。依赖锁定不再包含开发机的 `file:///C:/Users/...` 安装路径；构建脚本在缺少模型时从RapidOCR官方模型仓库下载，并逐一验证SHA-256。运行助手不会自动下载模型。
 
 应用图标源文件是 `outputs/companion/assets/app-icon.svg`。修改后运行 `work/p0-runtime/Scripts/python.exe -X utf8 tools/build_app_icon.py`，生成 PNG 和包含 16/24/32/48/64/128/256px 的 ICO。打包配置将 ICO 嵌入 EXE，同时供 Qt 窗口使用；图标文件也纳入构建指纹，不能以旧构建跳过新图标。
 
 产物：
 
-- `dist/TFT-DataJ-0.2.5-windows-x64.zip`：整体复制到其他电脑的便携包。
+- `dist/TFT-DataJ-0.2.6-windows-x64.zip`：整体复制到其他电脑的便携包。
 - 同名 `.zip.sha256`：ZIP校验值。
 - 同名 `.validation.json`：从ZIP解压后实际EXE的隔离验证结果。
 - `work/package-build/dist/TFT-DataJ/`：未压缩目录，含EXE、运行库、模型、说明、许可与逐文件哈希清单。
@@ -32,18 +32,32 @@ py -3.12 -m venv .venv
 构建完成后自动把实际ZIP解压到仓库外的临时目录，目录含中文和空格；使用仅含Windows系统目录的PATH、空的用户配置目录和无效的PYTHONHOME/PYTHONPATH启动EXE。不会修改系统环境或已有用户设置，不操作游戏。
 
 ```powershell
-work\p0-runtime\Scripts\python.exe packaging\verify_windows.py dist\TFT-DataJ-0.2.5-windows-x64.zip --online
+work\p0-runtime\Scripts\python.exe packaging\verify_windows.py dist\TFT-DataJ-0.2.6-windows-x64.zip --online
 ```
 
 检查包内每个清单文件的哈希、完整界面实例、UI资源、三份内置模型、ONNX CPU识别、WebEngine子进程和本地页面、Windows TLS。加 `--online` 时实测DataJ目录HTTPS请求和真实英雄头像。开发机有原始2-1截图时，额外复制到验证目录做真实画面识别，截图不会进入ZIP。
 
-当前源码完整验收411项通过，0错误、0失败、0跳过，包含356组冻结响应到实际Qt界面的数据显示回放；8种错误注入和9项异步集成操作通过。检查覆盖统一搜索的完整实体身份、最小样本请求/缓存/旧响应隔离、出场率值与单位、收起恢复和真实退出，详见 [紧凑界面验收](../docs/testing/compact-ui-20261007.md)。冻结接口回放不等于当日网站DOM对账。
+当前源码完整验收519项通过，0错误、0失败、0跳过；356组冻结响应到实际Qt界面的数据显示回放、原有详情21/21原图回放及8种错误注入通过。新增覆盖等价海克斯身份、4K普通大图标详情和问题归档/严格oracle；源码证据见 [身份验证](../docs/testing/hex-identity-20261007.md)、[详情取条件](../docs/testing/condition-detail-20261007.md) 和 [问题原图复验](../docs/testing/bug-recording-20261007.md)。冻结接口回放不等于当日网站DOM对账，源码测试不替代新版EXE诊断。
 
-每次发布均需从本版源代码重新构建，并以上述命令验证实际ZIP；此前候选包不能代替交付包验证。验收包含356组数据显示、真实2-1静态截图的三项ID `1023 / 1479 / 1006`、模型、WebEngine、联网DataJ与头像，结果保存为本版 `.validation.json`，下载校验值见 `.zip.sha256`。发布页先保持草稿，待CI通过、实际ZIP验证通过且ZIP与校验附件均上传完成后，发布为预发行测试版。
+每次发布均需从本版源代码重新构建，并以上述命令验证实际ZIP；此前候选包不能代替交付包验证。门槛包含356组数据显示、真实2-1静态截图的三项ID `1023 / 1479 / 1006`、模型、WebEngine、联网DataJ与头像。本版增加打包后等价海克斯别名及不同variants保留、问题图无损PNG保存/去重/无oracle保持pending，以及真实4K巨人腰带 `equip/1007` 主标题不误读穿戴者的诊断。验证器把本机哈希锁定的私人原图复制到外部临时目录，图片不进入ZIP。实际执行项及结果保存为本版 `.validation.json`，下载校验值见 `.zip.sha256`。发布页先保持草稿，待CI通过、实际ZIP验证通过且ZIP与校验附件均上传完成后，发布为预发行测试版。
+
+源码和已核对私有原图可通过统一入口复验：
+
+```powershell
+work\p0-runtime\Scripts\python.exe -X utf8 tools\validate_data.py --include-private --release-gate --bug-cases-dir work\condition-sword-20261007\verified-cases --report work\data-validation\v0.2.6-source.json
+```
+
+只有合法 `expected.json` 的问题图会运行OCR；待核对图另列 pending，不算通过。这条路径验证场景、身份、详情种类与海克斯阶段，不证明排名正确，也不会进入游戏或联网。
 
 便携隔离验证运行在构建机上，**不等于第二台物理电脑、其他Windows版本或不同硬件实测**；真实静态截图OCR不代表新增对局现场捕获、实战延迟或FPS验收。原有装备光明正例的验收限制保持不变。
 
 启动遇到问题时双击包内“检查运行环境.cmd”，查看 `%LOCALAPPDATA%\TFT-DataJ\portable-check.json` 和 `run-*.log`。正式启动失败会提示日志位置，避免无提示闪退。
+
+## 本机问题图片
+
+识别或查询失败时，助手复用已经取得的绑定游戏图在后台归档，不增加自动截图或OCR；“识别 / 设置”里的“记录问题”可手动捕获当前游戏，“记录文件夹”打开记录目录。源码位于 `work/companion/bug-cases/`，EXE 位于 `%LOCALAPPDATA%\TFT-DataJ\bug-cases\`。上限100例、500 MiB，重复问题保留首帧，满额停止新增，不覆盖旧图、不自动上传；自动归档为单任务并有15秒冷却。
+
+打开游戏名称详情后，直接按鼠标后退侧键即可取条件并检索，无需先点击助手按钮。“记为已选”只保存本局检索快捷条目。普通4K巨人腰带已用真实原图验证；暴风之剑尚无独立原图，先前单次在线查询失败也不代表零样本或持续服务故障。
 
 ## 包内容和许可记录
 

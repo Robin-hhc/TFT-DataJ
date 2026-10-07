@@ -62,21 +62,47 @@ def resolve_name(readings, catalog):
     return {'status':'resolved','id':str(matches[0]['id']),'name':matches[0]['name'], 'candidates':matches}
 
 
-def description_terms(candidates):
-    """Only explicit bracketed entities unique among the same-name variants."""
-    terms=[set(re.findall(r'【([^【】]{2,20})】',r.get('descText',''))) for r in candidates]
+def _unique_terms(terms):
     return [own-set().union(*(other for j,other in enumerate(terms) if j!=i))
             for i,own in enumerate(terms)]
+
+
+def _description_evidence(candidates):
+    descriptions=[normalize_name(row.get('descText','')) for row in candidates]
+    entities=_unique_terms([set(re.findall(r'【([^【】]{2,20})】',text)) for text in descriptions])
+    numbers=_unique_terms([set(re.findall(r'(?<![\d.])\d+(?:\.\d+)?%?[\u4e00-\u9fff]{2,8}',text))
+                           for text in descriptions])
+    return entities,numbers
+
+
+def description_terms(candidates):
+    """Distinct entities or complete number/unit phrases, never isolated digits."""
+    entities,numbers=_description_evidence(candidates)
+    return [words|values for words,values in zip(entities,numbers)]
+
+
+def _description_hits(text,entities,numbers):
+    evidence={}
+    for i,(words,values) in enumerate(zip(entities,numbers)):
+        named={word for word in words if word in text}
+        counted={value for value in values if re.search(r'(?<![\d.])'+re.escape(value),text)}
+        if named or counted:evidence[i]=(named,counted)
+    return evidence
 
 
 def resolve_description(resolution, readings):
     candidates=resolution.get('candidates',[])
     if resolution.get('status')!='ambiguous' or len(readings)!=2:return resolution
-    terms=description_terms(candidates)
-    matches=[{i for i,words in enumerate(terms) if any(word in text for word in words)}
-             for text in readings]
-    if len(matches[0])!=1 or matches[0]!=matches[1]:return resolution
-    candidate=candidates[next(iter(matches[0]))]
+    entities,numbers=_description_evidence(candidates)
+    matches=[_description_hits(text,entities,numbers)
+             for text in map(normalize_name,readings)]
+    # Even one opposing term vetoes the identity. The same discriminating
+    # entity or two complete numeric phrases must be reproduced in both views.
+    if len(matches[0])!=1 or set(matches[0])!=set(matches[1]):return resolution
+    index=next(iter(matches[0]))
+    left_named,left_numbers=matches[0][index];right_named,right_numbers=matches[1][index]
+    if not (left_named&right_named) and len(left_numbers&right_numbers)<2:return resolution
+    candidate=candidates[index]
     title=resolve_name(resolution.get('readings',[]),[candidate])
     if title['status']!='resolved':return resolution
     return {**title,'method':'name_and_description_two_views',

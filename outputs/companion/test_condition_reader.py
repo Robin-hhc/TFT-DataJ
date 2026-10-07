@@ -135,6 +135,36 @@ class ConditionReaderTests(unittest.TestCase):
 
     @patch('condition_reader.may_be_choice', return_value=False)
     @patch('condition_reader.item_boxes', return_value=[])
+    @patch('condition_reader.detail_boxes', return_value=[(200, 120, 460, 360)])
+    @patch('condition_reader._header_icon_visible', side_effect=[False, True])
+    def test_large_icon_layout_reads_only_the_first_header_title(self, *_):
+        image=Image.new('RGB',(1280,720),'#1d2630')
+        draw=ImageDraw.Draw(image)
+        draw.rectangle((310,144,380,155),fill='white')
+        draw.rectangle((310,260,400,275),fill='white')  # wearer/body excluded
+        reader,vision=self.reader(['巨人杀手']*3)
+        result=reader.read(image)
+        self.assertEqual(result['entity']['id'],'2010')
+        self.assertEqual(result['evidence']['layout'],'s18_floating_large_icon_title')
+        self.assertLess(result['evidence']['title_rect'][3],180)
+        self.assertEqual(len(vision.calls),1)
+
+    @patch('condition_reader.may_be_choice', return_value=False)
+    @patch('condition_reader.item_boxes', return_value=[])
+    @patch('condition_reader.detail_boxes', return_value=[(200, 120, 460, 360)])
+    @patch('condition_reader._header_icon_visible', side_effect=[False, True])
+    def test_large_icon_title_does_not_fall_back_to_a_known_wearer_name(self, *_):
+        image=Image.new('RGB',(1280,720),'#1d2630')
+        draw=ImageDraw.Draw(image)
+        draw.rectangle((310,144,380,155),fill='white')
+        draw.rectangle((310,260,400,275),fill='white')
+        reader,vision=self.reader(['未列入目录的标题']*3)
+        result=reader.read(image)
+        self.assertEqual(result['status'],'unknown')
+        self.assertIsNone(result['entity']);self.assertEqual(len(vision.calls),1)
+
+    @patch('condition_reader.may_be_choice', return_value=False)
+    @patch('condition_reader.item_boxes', return_value=[])
     def test_missing_panel_unsupported_size_or_bad_rectangle_has_no_ocr(self, *_):
         reader, vision = self.reader(['巨人杀手']*3)
         for image, rect in ((Image.new('RGB', (1280, 720), '#775f66'), None),

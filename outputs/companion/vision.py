@@ -98,7 +98,7 @@ class Vision:
                 view=line.resize((round(line.width*factor),line.height),Image.Resampling.BICUBIC)
                 result=self.engine(np.asarray(view)[:,:,::-1].copy(),use_det=False,use_cls=False,return_word_box=False)
                 if result.txts and result.scores[0]>=.95:readings[index]+=result.txts[0]
-        return resolve_description(resolution,readings)
+        return {**resolve_description(resolution,readings),'description_readings':readings}
 
     def read_name(self, crop, catalog):
         if self.engine is None:

@@ -15,7 +15,8 @@ from pathlib import Path
 from bootstrap import ROOT, STATE_DIR, RESOURCE_DIR
 import win_capture as win
 from core import Session, parse_comp_url
-from dataj import DataJ, COMP_MIN_SAMPLE
+from hex_catalog import canonical_hex_catalog
+from dataj import DataJ, SourceError, COMP_MIN_SAMPLE
 from snapshot_stats import stage_stat, STAGES
 from vision import Vision, capture_image, capture_stage, tracked_signature, unchanged
 from scene_gate import may_be_choice
@@ -25,6 +26,7 @@ from mouse_shortcut import MouseShortcut
 from stat_colors import placement_color
 from ui_theme import STYLE, ResultCard, Rune, label
 from diagnostics import record, FrameRecorder
+from bug_reporting import BugReporter
 from item_controller import ItemController, inspect_items
 from entity_identity import EntityResolver
 from selected_resources import SelectedResources, SelectionEntity
@@ -222,6 +224,7 @@ class Companion(QWidget):
         self.last_ocr=0.0
         self.ocr_revision=0
         self.catalog={}
+        self.catalog_generation=0
         self.comp_detail=None
         self.stats_payload=None
         self.mark=FloatingMark(self.toggle)
@@ -279,6 +282,7 @@ class Companion(QWidget):
         self.make_guide()
         self.make_equipment()
         self.items=ItemController(self)
+        self.bugs=BugReporter(self,enabled=not offline)
         self.conditions=ConditionController(self)
         self.browser.input_bar.readRequested.connect(self.conditions.trigger)
         self.tabs.currentChanged.connect(self.navigate);self.tabs.setCurrentIndex(1);self.navigate(1)
@@ -396,7 +400,13 @@ class Companion(QWidget):
         self.start_button.setMinimumHeight(46);self.start_button.setEnabled(False)
         hero_layout.addWidget(self.start_button);layout.addWidget(hero)
         layout.addWidget(label('海克斯：每 3 秒检查阶段；装备：每 2 秒检查底部选择。侧键随时补查。','muted'))
-        layout.addWidget(button('立即补查一次',self.capture_once))
+        actions=QHBoxLayout();actions.addWidget(button('立即补查一次',self.capture_once),1)
+        report=button('记录问题',lambda:self.bugs.manual_report())
+        report.setToolTip('收起面板，保存当前 MuMu 游戏画面供后续核对；仅本机保存')
+        actions.addWidget(report)
+        folder=button('记录文件夹',lambda:self.bugs.open_folder())
+        folder.setToolTip('自动保存识别与查询异常；样本核对后可用于原图回归')
+        actions.addWidget(folder);layout.addLayout(actions)
         self.mouse_button=QComboBox()
         for title,value in [('后退侧键：读详情 / 查均排（默认）',1),('前进侧键：读详情 / 查均排',2),('关闭鼠标侧键',0)]:self.mouse_button.addItem(title,value)
         saved=str(self.mouse_settings.value('mouse_button',1)) if not self.offline else '1'
@@ -628,11 +638,21 @@ class Companion(QWidget):
     def load_catalog(self):
         if not self.versions_ready:return
         adapter=self.adapter
+        self.catalog_generation+=1;generation=self.catalog_generation
+        def current():return adapter is self.adapter and generation==self.catalog_generation
+        def fetch():
+            result=adapter.catalog()
+            # The same global prewarm also supplies the current patch's identity
+            # mapping. Never filter real variants by statistical availability.
+            try:statistics=adapter.hexes()['data']
+            except SourceError:statistics=[]
+            data=result['data']
+            return {**result,'data':{**data,'hex':canonical_hex_catalog(data['hex'],statistics,set_id=adapter.set_id)}}
         def failed(_):
-            if adapter is not self.adapter:return
+            if not current():return
             self.start_button.setEnabled(True)
             self.set_activity('catalog_failed','数据准备失败。检查网络后点击主按钮重试。')
-        self.submit(self.network,adapter.catalog,lambda r:self.catalog_loaded(r) if adapter is self.adapter else None,failed)
+        self.submit(self.network,fetch,lambda r:self.catalog_loaded(r) if current() else None,failed)
 
     def catalog_loaded(self,result,offline=False):
         self.catalog=result['data']
@@ -661,7 +681,6 @@ class Companion(QWidget):
             except Exception:
                 self.set_activity('ocr_failed','OCR 初始化失败，请检查本机模型与运行环境。')
                 return
-            self.submit(self.network,self.adapter.hexes,lambda _:None)
             self.browser.retry()
             self.items.prewarm()
         if self.session.target and self.comp_detail is None:
@@ -978,11 +997,12 @@ class Companion(QWidget):
                 if not self.offline:record('ocr_partial_retained')
                 self.display_overlays();return
             if live:self.signature=signature
+            if live:self.bugs.observed_hex(obs,image)
             self.observed(obs,live)
         def done(result):
             obs,signature=result
             self.next_ocr_allowed=time.monotonic()+1.5
-            if not self.offline:record('ocr_complete',scene=obs.get('scene'),reason=obs.get('reason'),diagnostic_frame=obs.get('diagnostic_frame'),stage=obs.get('round'),elapsed_ms=obs.get('elapsed_ms'),resolutions=[c.get('resolution',{}).get('status') for c in obs.get('cards',[])],unresolved=[{'slot':c.get('slot'),'readings':c.get('resolution',{}).get('readings',[])} for c in obs.get('cards',[]) if not c.get('resolution',{}).get('id')],session_valid=self.session.accepts(token))
+            if not self.offline:record('ocr_complete',scene=obs.get('scene'),reason=obs.get('reason'),diagnostic_frame=obs.get('diagnostic_frame'),stage=obs.get('round'),elapsed_ms=obs.get('elapsed_ms'),resolutions=[c.get('resolution',{}).get('status') for c in obs.get('cards',[])],unresolved=[{'slot':c.get('slot'),'status':c.get('resolution',{}).get('status'),'readings':c.get('resolution',{}).get('readings',[]),'candidate_ids':[str(r.get('id')) for r in c.get('resolution',{}).get('candidates',[])],'description_readings':[s[:260] for s in c.get('resolution',{}).get('description_readings',[])]} for c in obs.get('cards',[]) if not c.get('resolution',{}).get('id')],session_valid=self.session.accepts(token))
             if not self.session.accepts(token):self.ocr_busy=False;return
             latest=self.last_frame
             if live and obs.get('scene')=='choice_candidates' and latest is not image:
@@ -1032,7 +1052,10 @@ class Companion(QWidget):
         ids=[];names=[]
         for pick,card in zip(self.picks,obs['cards']):
             resolved=card['resolution'];entity=resolved.get('id')
-            ids.append(entity);names.append(resolved.get('name',card['raw_text'])+('（待纠正）' if entity is None else ''))
+            pending=('品质待确认' if len({str(row.get('level')) for row in resolved.get('candidates',[])})>1
+                     else '身份待确认') if resolved.get('status')=='ambiguous' else (
+                     '等级待确认' if resolved.get('status')=='needs_confirmation' else '名称待确认')
+            ids.append(entity);names.append(resolved.get('name',card['raw_text'])+(f'（{pending}）' if entity is None else ''))
             pick.blockSignals(True);pick.setCurrentIndex(max(0,pick.findData(entity or resolved.get('suggested_id'))));pick.blockSignals(False)
         self.choice_note.setText(f"{'MuMu' if live else '文件回放（赛季由用户确认，不用于实时浮层）'} · OCR {obs['elapsed_ms']} ms")
         self.query_stats(ids,names,live)
@@ -1069,6 +1092,13 @@ class Companion(QWidget):
             if not self.session.accepts(token):return
             if live and (self.panel_open() or not self.binding or win.foreground_root()!=self.binding.hwnd):return
             global_result,comp_result=payload
+            if live:
+                missing=[entity for entity in ids if entity is not None
+                         and stage_stat(global_result['data'],entity,stage)['status']!='ok']
+                relevant=[row for row in global_result['data'] if str(row.get('hexId')) in {str(i) for i in ids if i is not None}]
+                if missing:self.bugs.hex_statistics('hex_data_gap',evidence={'stage':stage,'missing_ids':missing,'global_statistics':relevant})
+                if target and comp_finished and comp_result is None:
+                    self.bugs.hex_statistics('hex_comp_query_failed',evidence={'stage':stage,'global_statistics':relevant})
             rendered=[];available=0
             for entity,name in zip(ids,names):
                 global_stat=stage_stat(global_result['data'],entity,stage)
@@ -1094,6 +1124,7 @@ class Companion(QWidget):
         def failed(_):
             if self.stats_inflight_token==token:self.stats_inflight_token=None
             if self.session.accepts(token):
+                if live:self.bugs.hex_statistics('hex_query_failed',evidence={'stage':stage,'requested_ids':ids})
                 self.stats_payload=None
                 self.choice_table.setRowCount(0)
                 for card in self.result_cards:card.clear(self.session.target is not None)
@@ -1339,6 +1370,7 @@ class Companion(QWidget):
             self.mouse_settings.setValue('panel_geometry',self.saveGeometry())
             self.mouse_settings.setValue('mark_position',self.mark.pos());self.mouse_settings.sync()
         self.timer.stop();self.hide_overlays();self.mark.hide()
+        self.bugs.shutdown()
         self.items.shutdown()
         for pool in (self.capture_pool,self.ocr_pool,self.network):pool.clear();pool.waitForDone()
 

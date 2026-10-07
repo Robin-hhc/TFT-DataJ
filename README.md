@@ -2,11 +2,11 @@
 
 ## Windows 便携版
 
-其他电脑请下载 [v0.2.5 Windows便携测试版](https://github.com/Robin-hhc/TFT-DataJ/releases/tag/v0.2.5) 中的 `TFT-DataJ-0.2.5-windows-x64.zip`：先退出旧助手，完整解压后双击 **TFT-DataJ.exe**，不需要安装Python或OCR环境。保留旁边的 `_internal` 文件夹；可以为EXE创建快捷方式。目标系统为Windows 10/11 x64，最新统计与攻略仍需联网。
+其他电脑请下载 [v0.2.6 Windows便携测试版](https://github.com/Robin-hhc/TFT-DataJ/releases/tag/v0.2.6) 中的 `TFT-DataJ-0.2.6-windows-x64.zip`：先退出旧助手，完整解压后双击 **TFT-DataJ.exe**，不需要安装Python或OCR环境。保留旁边的 `_internal` 文件夹；可以为EXE创建快捷方式。目标系统为Windows 10/11 x64，最新统计与攻略仍需联网。
 
-[本版改动与升级](docs/releases/v0.2.5.md) · [安装、快捷键与已知限制](docs/releases/v0.2.1.md) · [更新记录](CHANGELOG.md) · [问题反馈](https://github.com/Robin-hhc/TFT-DataJ/issues)
+[本版改动与升级](docs/releases/v0.2.6.md) · [安装、快捷键与已知限制](docs/releases/v0.2.1.md) · [更新记录](CHANGELOG.md) · [问题反馈](https://github.com/Robin-hhc/TFT-DataJ/issues)
 
-本机产物在 [dist目录](dist/)，构建与验证说明见 [Windows便携包](packaging/README.md)。设置与缓存保存在 `%LOCALAPPDATA%\TFT-DataJ`；包中不包含本机游戏截图、录像及旧缓存。已在本机的隔离目录和清理过的环境中运行EXE验证，尚未在第二台物理电脑实测。
+本机产物在 [dist目录](dist/)，构建与验证说明见 [Windows便携包](packaging/README.md)。设置与缓存保存在 `%LOCALAPPDATA%\TFT-DataJ`；包中不包含本机游戏截图、录像及旧缓存。每版发布前须在构建机的隔离目录和清理过的环境中验证实际EXE；尚未在第二台物理电脑实测。
 
 ## 源码运行
 
@@ -20,7 +20,13 @@
 
 手动触发始终作为保底：按 **鼠标后退侧键**、**Ctrl+Alt+F10** 或“立即补查一次”，不会关闭自动识别。暂停自动识别后，手动补查仍可使用；MuMu 关闭后等待重新连接。左上角“阵容助手 · 展开”按钮打开面板；Ctrl+Alt+F9 切换，Ctrl+Alt+F12 退出。
 
-详见 [手动触发与阶段浮窗](outputs/手动触发与阶段浮窗.md)。当前源码验收411项通过，包含356组冻结响应到实际Qt界面的数据显示回放，布局与完整操作链见 [紧凑界面验收](docs/testing/compact-ui-20261007.md)。这些结果不等于实时网站DOM对账或新增对局现场OCR验收；游戏帧率、实际全屏点击穿透仍待实测。
+v0.2.6 增加本机问题记录：识别或查询异常时复用已有游戏截图在后台保存；“识别 / 设置”中的 **记录问题** 可手动保存漏识别现场，**记录文件夹** 可打开样本目录。最多100例、500 MiB，重复问题保留首帧，容量满后不覆盖旧样本，不自动上传。源码保存到 `work/companion/bug-cases/`，EXE 保存到 `%LOCALAPPDATA%\TFT-DataJ\bug-cases\`。新记录保持待核对，只有逐图核对并提供合法 `expected.json` 后才运行原图 OCR 回放；这不验证排名数值。详见 [问题记录与原图验证](docs/testing/bug-recording-20261007.md)。
+
+等价海克斯别名仅在名称、赛季、品质、图标、描述完整等价且当前版本全局统计唯一支持一个有效身份时合并；真正不同品质或属性的选项继续分别确认，不按均排大小或单条标题猜身份。详见 [身份修复与验证](docs/testing/hex-identity-20261007.md)。
+
+从游戏取检索条件时，先在游戏点开装备或英雄的名称详情，保持详情可见，直接按鼠标后退侧键即可；不需要先点击助手按钮。识别成功会展开“选阵容”，显示当前条件并发起检索。“记为已选”仅保存本局快捷条目。普通4K巨人腰带大图标详情已用真实原图验证；暴风之剑尚无独立原图验收，不能由此前一次 API 查询失败推断为零结果。修复及边界见 [详情检索修复](docs/testing/condition-detail-20261007.md)。
+
+详见 [手动触发与阶段浮窗](outputs/手动触发与阶段浮窗.md)。当前源码验收519项通过，0失败、0错误、0跳过；356组冻结响应到实际Qt界面的数据显示回放及原有详情21/21回放通过。布局与完整操作链见 [紧凑界面验收](docs/testing/compact-ui-20261007.md)。这些结果不等于实时网站DOM对账或新增对局现场OCR验收，也不能替代 v0.2.6 实际 EXE 验收；游戏帧率、实际全屏点击穿透仍待实测。
 
 ## 文件位置
 

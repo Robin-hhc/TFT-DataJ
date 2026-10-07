@@ -220,12 +220,59 @@ def check_resource_inputs(panel, qt):
                            'portable-resource-inputs-native.png','portable-resource-inputs-search-native.png']}
 
 
+def check_identity_and_bug_archive():
+    """Exercise new packaged modules with bounded synthetic evidence, offline."""
+    import hashlib
+    from PIL import Image
+    from bootstrap import STATE_DIR
+    from bug_cases import BugCaseStore
+    from core import resolve_name
+    from hex_catalog import canonical_hex_catalog
+    common={'name':'别再错过','level':1,'setId':'18',
+            'icon':'https://img.dataj.cc/images/hex/missedconnections1.png',
+            'descText':'获得每个1费弈子各1个。'}
+    aliases=[{**common,'id':'1625'},{**common,'id':'10784'}]
+    stats=[{'hexId':1625,'name':common['name'],'icon':common['icon'],
+            'roundStats':[{'round':1,'roundLabel':'3-2','sampleCount':100,'avgPlacement':4.27}]}]
+    projected=canonical_hex_catalog(aliases,stats,set_id=18)
+    identity=resolve_name([common['name']]*3,projected)
+    assert identity['status']=='resolved' and identity['id']=='1625',identity
+    different=[aliases[0],{**aliases[1],'level':2,'descText':'另一种效果。'}]
+    assert len(canonical_hex_catalog(different,stats,set_id=18))==2,'Different variants merged'
+    # Use a distinct diagnostic directory. Never write a simulated failure to
+    # the user's production archive or manufacture an expected.json oracle.
+    directory=STATE_DIR/'portable-bug-cases'
+    store=BugCaseStore(directory)
+    image=Image.new('RGB',(1280,720),'#193a20')
+    observation={'scene':'choice_unresolved','round':'3-2','cards':[
+        {'slot':i,'resolution':{'status':'unrecognized','readings':['待核对']}}
+        for i in range(3)]}
+    context={'set_id':18,'patch':'18.3','domain':'hex','source':'diagnostic',
+             'frame_scope':'full_game','target':None}
+    saved=store.save(image,observation,reason='hex_unresolved',context=context,
+                     evidence={'failure_simulated':True,'catalog':{'hex':aliases}})
+    assert saved['status'] in ('saved','duplicate'),saved
+    path=Path(saved['path']);before=(path/'frame.png').read_bytes()
+    metadata=json.loads((path/'case.json').read_text(encoding='utf-8'))
+    assert metadata['status']=='pending_review' and not (path/'expected.json').exists(),metadata
+    assert metadata['image']['sha256']==hashlib.sha256(before).hexdigest()
+    with Image.open(path/'frame.png') as restored:
+        assert restored.size==image.size and restored.convert('RGB').tobytes()==image.tobytes()
+    duplicate=store.save(Image.new('RGB',image.size,'red'),observation,
+                         reason='hex_unresolved',context=context)
+    assert duplicate['status']=='duplicate' and (path/'frame.png').read_bytes()==before,duplicate
+    return {'canonical_hex_id':identity['id'],'different_variants_preserved':True,
+            'archive_status':metadata['status'],'duplicate_preserves_first_frame':True,
+            'evidence':'synthetic diagnostic only; no game screenshot or upload'}
+
+
 def main():
     parser=argparse.ArgumentParser()
     parser.add_argument('--diagnose',action='store_true')
     parser.add_argument('--online',action='store_true')
     parser.add_argument('--image',type=Path)
     parser.add_argument('--catalog',type=Path)
+    parser.add_argument('--condition-image',type=Path,help='Optional original 4K giant-belt detail regression')
     parser.add_argument('--explorer-fixture',type=Path)
     parser.add_argument('--data-fixture',type=Path)
     parser.add_argument('--forbid-path',type=Path)
@@ -269,6 +316,8 @@ def main():
         report['checks'].append('pinned guide versions, latest entry, retry, scope and unpin regression')
         report['resource_inputs']=check_resource_inputs(panel,qt)
         report['checks'].append('packaged canonical single-condition inputs, explicit selection, chips, overflow, pinned version switch and new game')
+        report['identity_and_bug_archive']=check_identity_and_bug_archive()
+        report['checks'].append('packaged hex alias identity, variant rejection and lossless pending bug archive deduplication')
         if args.explorer_fixture:
             fixture=json.loads(args.explorer_fixture.read_text(encoding='utf-8'))
             browser=panel.browser
@@ -326,6 +375,19 @@ def main():
             report['real_frame']={'stage':result['round'],'ids':[c['resolution'].get('id') for c in result['cards']]}
             assert result['scene']=='choice_candidates' and all(report['real_frame']['ids']),report['real_frame']
             report['checks'].append('external real game frame recognition')
+        if args.condition_image:
+            if not args.catalog:parser.error('--condition-image requires --catalog')
+            from condition_reader import ConditionReader
+            from entity_identity import EntityResolver
+            catalog=json.loads(args.catalog.read_text(encoding='utf-8'))['data']
+            with Image.open(args.condition_image) as frame:
+                result=ConditionReader(panel.vision,EntityResolver(catalog)).read(frame.convert('RGB'))
+            entity=result.get('entity') or {}
+            assert result['status']=='resolved' and entity.get('kind')=='equip' and entity.get('id')=='1007',result
+            assert entity.get('name')=='巨人腰带' and result['records_selected'] is False,result
+            report['real_condition']={'kind':entity['kind'],'id':entity['id'],'name':entity['name'],
+                                      'layout':result['evidence']['layout']}
+            report['checks'].append('external original 4K equipment primary-title recognition, not wearer')
         if args.forbid_path:
             forbidden=args.forbid_path.resolve()
             dependencies=[Path(m.__file__).resolve() for m in list(sys.modules.values()) if getattr(m,'__file__',None)]

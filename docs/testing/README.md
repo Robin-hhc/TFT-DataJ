@@ -1,5 +1,11 @@
 # 数据验证的运行方式
 
+海克斯重复目录 ID、同名不同品质与“待确认”提示的本机排查和新增回归见 [2026-10-07 身份验证记录](hex-identity-20261007.md)。目录投影、真实阶段均排、历史版本和迟到回调检查均已纳入统一入口。
+
+识别或查询失败时的本机截图归档、手动“记录问题”按钮、容量限制、逐图核对及私有原图复验见 [2026-10-07 问题画面归档与复验](bug-recording-20261007.md)。待核对截图单独统计，不计为通过；原图复验只验证场景、身份、详情种类及海克斯阶段，不证明排名正确。
+
+普通详情浮窗“从游戏取条件”未读到名称的定位、巨人腰带真实原图验收及条件领域的核对复验见 [2026-10-07 详情取条件修复与验证](condition-detail-20261007.md)。按钮立即读取游戏中已打开的详情，也可直接在游戏按鼠标侧键；读取成功仍需显式点击“记为已选”才计入本局资源。
+
 免打字检索、本局已选与新版本输入的实现范围、真实图片、性能及未通过的自动确认门槛见 [2026-10-06 验证记录](condition-inputs-20261006.md)。公共统一入口包含该功能的实际Qt/HTTP与生命周期回归；私有图片通过 `--include-private` 独立运行。
 
 在仓库根目录、已安装 `packaging/requirements-runtime.txt` 的 Python 3.12 环境中执行。开发机可将 `python` 换成 `work\p0-runtime\Scripts\python.exe`。
@@ -43,7 +49,7 @@ python -X utf8 tools/check_data_mutations.py
 python -X utf8 tools/validate_data.py --include-private --release-gate --report work/data-validation/with-private.json
 ```
 
-这会包含原有 OCR/截图测试。资料缺失会失败或明确跳过，不算全部通过。Windows CI 只运行可从干净克隆复现的核心检查及故障注入，并保存报告。
+这会包含原有 OCR/截图测试，并复验本机问题归档中已有合法 `expected.json` 的原图；可用 `--bug-cases-dir 完整目录路径` 指定 EXE 的记录目录。未核对、非法和已复验的样本在报告 `bug_cases` 中分别统计，pending 不算通过。资料缺失会失败或明确跳过，不算全部通过。Windows CI 只运行可从干净克隆复现的核心检查及故障注入，并保存报告。
 
 ## 需要刷新网站抽查时
 

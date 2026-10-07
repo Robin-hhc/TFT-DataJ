@@ -203,6 +203,24 @@ class ConditionControllerExtraTests(unittest.TestCase):
                 self.assertEqual(p.browser.scope, before)
                 self.assert_no_accepted_input()
 
+    def test_unread_detail_archives_the_exact_existing_capture_and_reason(self):
+        result={'route':'none','status':'unknown','scene':'unknown',
+                'reason':'detail_header_icon_unconfirmed','evidence':{'readings':[]}}
+        self.reader.read.return_value=result
+        with patch.object(self.p.bugs,'observed_condition',return_value=True) as report:
+            self.p.conditions.trigger();self.flush()
+        report.assert_called_once_with(result,self.frame)
+        self.capture.assert_called_once_with(self.binding)
+        self.assertIn('详情',self.p.browser.input_bar.note.text())
+        self.assert_no_accepted_input()
+
+    def test_obsolete_detail_failure_cannot_archive_or_replace_input(self):
+        self.reader.read.return_value={'route':'none','status':'unknown','scene':'unknown',
+                                      'reason':'detail_header_icon_unconfirmed'}
+        with patch.object(self.p.bugs,'observed_condition') as report:
+            self.queued_ocr();self.foreground=99;self.run_one()
+        report.assert_not_called();self.assert_no_accepted_input()
+
     def test_augment_and_equipment_routes_use_same_capture_without_expanding_or_selecting(self):
         augment = self.stack.enter_context(patch.object(self.p, 'captured'))
         equipment = self.stack.enter_context(patch.object(self.p.items, 'ingest'))

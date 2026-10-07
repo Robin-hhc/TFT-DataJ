@@ -36,7 +36,7 @@ class ConditionInputs(QWidget):
         self.current.setTextFormat(Qt.TextFormat.PlainText);row.addWidget(self.current,1)
         self.clear=QPushButton('×');self.clear.setFixedWidth(24);self.clear.setToolTip('清除检索条件')
         self.clear.clicked.connect(self.clearRequested);self.clear.hide();row.addWidget(self.clear)
-        self.read=QPushButton('从游戏取条件');self.read.setToolTip('在游戏打开名称详情后按侧键；选择页仍补查均排')
+        self.read=QPushButton('从游戏取条件');self.read.setToolTip('读取游戏中已打开的名称详情；也可直接在游戏按鼠标侧键。选择页仍补查均排。')
         self.read.clicked.connect(self.readRequested);row.addWidget(self.read)
         self.confirm=QPushButton('记为已选');self.confirm.clicked.connect(self.confirmRequested)
         self.confirm.setToolTip('确认这是你本局已经选中的内容，再记录为本局已选；不会自动记录其他候选项')
