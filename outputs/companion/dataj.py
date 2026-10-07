@@ -12,6 +12,7 @@ from bootstrap import STATE_DIR
 
 # DataJ's explorer applies this default in its UI, not in /explorer/query.
 COMP_MIN_SAMPLE = 50
+COMP_MIN_SAMPLE_CHOICES = (1, 10, 50, 100, 300, 500, 1000, 3000, 10000)
 
 
 class SourceError(RuntimeError):
@@ -116,8 +117,10 @@ class DataJ:
                 stages.add(index);self.validate_statistics(part,required=True)
         return {**result,'data':rows}
 
-    def comps(self):
-        result=self.request('/comp/rank', minSample=COMP_MIN_SAMPLE)
+    def comps(self, min_sample=COMP_MIN_SAMPLE):
+        if type(min_sample) is not int or min_sample not in COMP_MIN_SAMPLE_CHOICES:
+            raise ValueError('unsupported minimum sample')
+        result=self.request('/comp/rank', minSample=min_sample)
         self.validate_comps(result['data'])
         return result
 
@@ -140,7 +143,8 @@ class DataJ:
     @staticmethod
     def validate_statistics(row, required=False):
         """Reject corrupt values; absent optional metrics remain unavailable."""
-        for key,low,high in [('avgPlacement',1,8),('top4Rate',0,100),('topRate',0,100)]:
+        for key,low,high in [('avgPlacement',1,8),('top4Rate',0,100),('topRate',0,100),
+                             ('pickRate',0,math.inf)]:
             if key not in row and not (required and key=='avgPlacement'):continue
             value=row.get(key)
             if type(value) not in (int,float) or not math.isfinite(value) or not low<=value<=high:

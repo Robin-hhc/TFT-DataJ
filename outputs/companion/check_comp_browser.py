@@ -6,7 +6,9 @@ from app import Companion,QApplication
 from bootstrap import ROOT,STATE_DIR
 from integration_check import FrozenSource
 class Source(FrozenSource):
- def comps(self):return json.loads((ROOT/'work/comp-browser/rank.json').read_text(encoding='utf-8'))
+ def comps(self,min_sample=50):
+  assert min_sample==50
+  return json.loads((ROOT/'work/comp-browser/rank.json').read_text(encoding='utf-8'))
 qt=QApplication([])
 with patch('app.win.enumerate_mumu',return_value=[]):panel=Companion(offline=True)
 panel.timer.stop();panel.adapter=Source()

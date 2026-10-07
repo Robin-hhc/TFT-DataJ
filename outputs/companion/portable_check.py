@@ -76,7 +76,7 @@ def check_resource_inputs(panel, qt):
         ],
         'trait':[],
     }
-    comp={'compId':'116','name':'便携验证阵容','sampleCount':200,'avgPlacement':4.0,
+    comp={'compId':'116','name':'便携验证阵容','sampleCount':200,'avgPlacement':4.0,'pickRate':1.12,
           'top4Rate':55.0,'topRate':15.0,'heroes':[],'traits':[]}
     detail={**comp,'gameCode':'【阵容码】便携免打字验证'}
     requests=[]
@@ -125,7 +125,7 @@ def check_resource_inputs(panel, qt):
         assert rule['exclude'] is False and rule['enable'] is True and rule['nameMatch'] is False,rule
         return deepcopy(body)
 
-    def bounds_and_screenshot(name,manual_open):
+    def bounds_and_screenshot(name):
         panel.tabs.setCurrentIndex(1);panel.resize(760,430)
         panel.ensurePolished();panel.layout().activate();qt.processEvents()
         shot=panel.grab()
@@ -133,13 +133,14 @@ def check_resource_inputs(panel, qt):
         ratio=shot.devicePixelRatio()
         assert abs(shot.width()/ratio-760)<1 and abs(shot.height()/ratio-430)<1,('Wrong screenshot canvas',shot.size(),ratio)
         bar=panel.browser.input_bar
-        controls=[('read',bar.read),('current_condition',bar.current),('manual_toggle',panel.browser.manual_toggle),
+        controls=[('read',bar.read),('search',panel.browser.search),('average_sort',panel.browser.avg_sort),
+                  ('pick_rate_sort',panel.browser.pick_sort),('minimum_sample',panel.browser.sample),
+                  ('target',panel.target_label),('copy_code',panel.copy_button),
+                  ('close',panel.close_button),('collapse',panel.collapse_button),
                   ('overflow',bar.more),*((f'chip_{i}',chip) for i,chip in enumerate(bar.chips))]
+        if not bar.current.isHidden():controls.append(('current_condition',bar.current))
         if not bar.clear.isHidden():controls.append(('clear_condition',bar.clear))
         if not bar.confirm.isHidden():controls.append(('confirm',bar.confirm))
-        if manual_open:
-            controls.extend([('type',panel.browser.kind),('search',panel.browser.entity),
-                             ('apply',panel.browser.apply),('clear',panel.browser.clear)])
         rectangles={}
         for label,widget in controls:
             assert not widget.isHidden(),label+' unexpectedly hidden'
@@ -147,8 +148,9 @@ def check_resource_inputs(panel, qt):
             assert panel.rect().contains(rect),(label,'outside compact panel',rect,panel.rect())
             assert rect.width()>0 and rect.height()>0,(label,'empty control',rect)
             rectangles[label]=[rect.x(),rect.y(),rect.width(),rect.height()]
-        row=[QRect(*rectangles[label]) for label in rectangles if label.startswith('chip_') or label=='overflow']
-        assert all(not first.intersects(second) for index,first in enumerate(row) for second in row[index+1:]),'Resource shortcuts overlap'
+        row=[QRect(*values) for values in rectangles.values()]
+        assert all(not first.intersects(second) for index,first in enumerate(row) for second in row[index+1:]),'Compact controls overlap'
+        assert panel.browser.scroll.horizontalScrollBar().maximum()==0,'Comp cards overflow horizontally'
         # Windows may render the 760x430 logical panel at 200% DPI. Preserve
         # native pixels and also save the requested logical-size QA preview.
         native=Path(name).with_stem(Path(name).stem+'-native')
@@ -191,25 +193,30 @@ def check_resource_inputs(panel, qt):
         assert panel.comp_detail and panel.comp_detail['compId']=='116' and panel.copy_button.isEnabled(),'Version change did not restore fixed comp details'
         bar.chips[0].click();last_rule('equip','2092','18.3')
         panel.browser.set_filter('equip',catalog['equip'][1],can_confirm=True)
-        rectangles_closed=bounds_and_screenshot('portable-resource-inputs.png',False)
-        panel.browser.manual_toggle.click()
-        assert not panel.browser.manual_inputs.isHidden(),'Manual fallback did not open'
-        rectangles_open=bounds_and_screenshot('portable-resource-inputs-manual.png',True)
-        panel.browser.manual_toggle.click()
-        assert panel.browser.manual_inputs.isHidden(),'Manual fallback did not collapse'
-        assert panel.selected_resources.events==history,'Toggling fallback recorded or removed choices'
+        rectangles_active=bounds_and_screenshot('portable-resource-inputs.png')
+        # The one real input must carry exact candidate identity, with no old
+        # second text box, apply button or guessed first completion.
+        browser=panel.browser
+        browser.search.setText('黑暗仪式')
+        choices=[browser.suggestions.index(i,0) for i in range(browser.suggestions.rowCount())
+                 if browser.suggestions.item(i).data(Qt.ItemDataRole.UserRole)[0]=='hex']
+        assert len(choices)==1,'Unified entity suggestion missing or ambiguous'
+        browser.choose_suggestion(choices[0]);last_rule('hex','20778','18.3')
+        assert panel.selected_resources.events==history,'Searching a candidate changed selected history'
+        assert not bar.confirm.isHidden(),'Manual suggestion lost explicit selected confirmation'
+        rectangles_search=bounds_and_screenshot('portable-resource-inputs-search.png')
         panel.new_game()
         assert panel.session.session_id!=game_id and panel.session.target is None,'New game did not isolate pinned scope'
         assert not panel.selected_resources.events and not bar.chips and not bar.menu.actions(),'New game retained old resources'
         assert panel.browser.scope is None and bar.condition is None,'New game retained old input'
-        assert bar.more.isHidden() and not bar.empty.isHidden(),'New game retained overflow UI'
+        assert bar.more.isHidden() and bar.resource_container.isHidden() and bar.condition_container.isHidden(),'New game retained resource or condition rows'
     return {'catalog_source':'embedded S18 identity fixture','network':'httpx.MockTransport only',
             'canonical_hero_id':'4503','versions':['18.2a','18.3'],'confirmed_events':len(history),
             'visible_shortcuts':3,'overflow_actions':2,'request_bodies':requests,
-            'closed_control_bounds':rectangles_closed,'open_control_bounds':rectangles_open,
+            'active_control_bounds':rectangles_active,'unified_search_control_bounds':rectangles_search,
             'logical_canvas':[760,430],'device_pixel_ratio':panel.devicePixelRatioF(),
-            'screenshots':['portable-resource-inputs.png','portable-resource-inputs-manual.png',
-                           'portable-resource-inputs-native.png','portable-resource-inputs-manual-native.png']}
+            'screenshots':['portable-resource-inputs.png','portable-resource-inputs-search.png',
+                           'portable-resource-inputs-native.png','portable-resource-inputs-search-native.png']}
 
 
 def main():
@@ -237,17 +244,26 @@ def main():
     try:
         from app import QApplication,Companion
         from PySide6.QtCore import QUrl
+        from PySide6.QtGui import QIcon
         from PySide6.QtWebEngineWidgets import QWebEngineView
         from PySide6.QtNetwork import QSslSocket
         from PIL import Image,ImageDraw,ImageFont
         from ocr_baseline import build_engine
         qt=QApplication([]);qt.setQuitOnLastWindowClosed(False)
+        icon=QIcon(str(RESOURCE_DIR/'assets/app-icon.ico'))
+        assert not icon.isNull(),'Bundled application icon missing'
+        sizes=sorted((size.width(),size.height()) for size in icon.availableSizes())
+        assert {(16,16),(32,32),(48,48),(256,256)}.issubset(sizes),'Application icon sizes missing'
+        qt.setWindowIcon(icon)
+        report['app_icon']={'sizes':sizes,'bundled':True}
         panel=Companion(offline=True,offline_catalog={'hex':[],'hero':[],'equip':[],'trait':[]})
         panel.timer.stop();panel.hide()
         assert panel.grab().save(str(STATE_DIR/'portable-ui.png'))
         assert (RESOURCE_DIR/'assets/refresh-glyph.png').is_file()
+        assert not QIcon(str(RESOURCE_DIR/'assets/collapse-panel.svg')).isNull(),'Collapse icon missing'
         assert (RESOURCE_DIR/'chevron-down.svg').is_file()
         report['checks'].append('application widgets and bundled UI assets')
+        report['checks'].append('multi-size application icon and Qt window icon')
         check_pinned_guide(panel)
         report['checks'].append('pinned guide versions, latest entry, retry, scope and unpin regression')
         report['resource_inputs']=check_resource_inputs(panel,qt)

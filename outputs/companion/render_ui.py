@@ -15,8 +15,7 @@ def main():
             nav.click()
             assert panel.tabs.currentIndex()==index
             assert all(button.isChecked()==(i==index) for i,button in panel.navigation.items())
-    panel.browser.kind.setCurrentIndex(panel.browser.kind.findData('hex'))
-    labels=[panel.browser.entity.itemText(i) for i in range(panel.browser.entity.count())]
+    labels=[panel.browser.suggestions.item(i).text() for i in range(panel.browser.suggestions.rowCount())]
     assert len(labels)>1 and len(set(labels))==len(labels),labels
     panel.browser.retry()
     output=ROOT/'outputs/ui-preview';output.mkdir(exist_ok=True)
@@ -25,13 +24,13 @@ def main():
         while panel.jobs and time.monotonic()<deadline:app.processEvents();time.sleep(.01)
         assert not panel.jobs
         panel.grab();app.processEvents()
-    def save(name,index=1,size=(1140,860)):
+    def save(name,index=1,size=(760,430)):
         panel.tabs.setCurrentIndex(index);panel.resize(*size);settle()
         scroll=panel.browser.scroll if index==1 else panel.tabs.widget(index)
         assert scroll.horizontalScrollBar().maximum()==0,(name,'horizontal overflow')
         panel.grab().save(str(output/(name+'.png')))
     save('01-home')
-    save('02-compact-home',size=(920,660))
+    save('02-compact-home')
     obs=json.loads((STATE_DIR/'real-gameplay-eval.json').read_text(encoding='utf-8'))['rows'][0]['observation']
     panel.observed(obs,False);settle()
     assert panel.result_cards[0].name.text()=='银汤匙'

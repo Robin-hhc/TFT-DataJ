@@ -81,7 +81,7 @@ class PatchBrowserLifecycleTests(unittest.TestCase):
         self.assert_context_preserved()
 
     def hold_old_browser_result(self):
-        self.p.browser.refresh.click()
+        self.p.browser.retry()
         function, done, _ = self.pending.pop(0)
         return function(), done
 

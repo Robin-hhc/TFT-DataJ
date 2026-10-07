@@ -71,14 +71,24 @@ class OverlayPresentation(unittest.TestCase):
     def card(self):
         widget = CardOverlay()
         widget.move(-5000, -4000)
+        self.align_window_dpi(widget)
         self.widgets.append(widget)
         return widget
 
     def item(self):
         widget = ItemOverlay(self.portraits)
         widget.move(-5000, -4000)
+        self.align_window_dpi(widget)
         self.widgets.append(widget)
         return widget
+
+    def align_window_dpi(self,widget):
+        # The owned off-desktop HWND can belong to a different monitor than
+        # primaryScreen. Keep this stable-window fixture internally consistent;
+        # using primary DPI on a 125% secondary window manufactures resizes.
+        dpi=win.user.GetDpiForWindow(widget.handle)
+        self.assertGreater(dpi,0)
+        self.binding.dpi=dpi
 
     def tearDown(self):
         for widget in self.widgets:

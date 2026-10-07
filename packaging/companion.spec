@@ -6,7 +6,8 @@ import PySide6
 root=Path(SPECPATH).parent
 source=root/'outputs/companion'
 datas=collect_data_files('rapidocr')+copy_metadata('rapidocr')
-datas += [(str(source/'chevron-down.svg'),'.'),(str(source/'assets/refresh-glyph.png'),'assets')]
+datas += [(str(source/'chevron-down.svg'),'.'),(str(source/'assets/refresh-glyph.png'),'assets'),
+          (str(source/'assets/app-icon.ico'),'assets'),(str(source/'assets/collapse-panel.svg'),'assets')]
 binaries=collect_dynamic_libs('onnxruntime')
 # Keep the MSVC runtime beside the application; users need no developer tools.
 for dll in Path(PySide6.__file__).parent.glob('*140*.dll'):
@@ -21,5 +22,5 @@ a=Analysis([str(source/'launch.py')],
 pyz=PYZ(a.pure)
 exe=EXE(pyz,a.scripts,[],exclude_binaries=True,name='TFT-DataJ',
     debug=False,bootloader_ignore_signals=False,strip=False,upx=False,console=False,
-    disable_windowed_traceback=False,uac_admin=False)
+    disable_windowed_traceback=False,uac_admin=False,icon=str(source/'assets/app-icon.ico'))
 coll=COLLECT(exe,a.binaries,a.datas,strip=False,upx=False,name='TFT-DataJ')

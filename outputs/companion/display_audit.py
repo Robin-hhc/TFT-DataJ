@@ -37,6 +37,23 @@ def table_rows(table):
     return [[table.item(i,j).text() for j in range(table.columnCount())] for i in range(table.rowCount())]
 
 
+def ranked_comp_expectation(record, order):
+    """Keep reviewed metrics intact; derive the new website order from raw data.
+
+    The accepted fixture's second ordering is sample count, which is different
+    from the website's rounded pickRate ordering at ties. Do not rewrite that
+    baseline or use production filtering/sorting helpers to produce the answer.
+    """
+    reviewed = record['expected']['average']
+    if not order:
+        return reviewed
+    raw = record['data'] if isinstance(record['data'], list) else record['data']['comps']
+    rows = [row for row in raw if type(row.get('sampleCount')) is int and row['sampleCount'] >= 50]
+    ordered = sorted(rows, key=lambda row: -row['pickRate'])
+    metrics = {row['id']: row for row in reviewed}
+    return [metrics[str(row['compId'])] for row in ordered]
+
+
 def wait_jobs(panel,qt):
     end=time.monotonic()+10
     while panel.jobs and time.monotonic()<end:qt.processEvents();time.sleep(.001)
@@ -106,24 +123,30 @@ class DisplayReplay:
 
     def explorer(self,record,order):
         p=self.panel;req=record['request'];v=req.get('params',{}).get('gameVersion') or req['body']['version'];self.version(v)
-        p.browser.search.clear();p.browser.only_favs.setChecked(False);p.browser.sort.setCurrentIndex(order)
+        p.browser.search.clear();p.browser.set_min_sample(50);p.browser.set_sort('pick' if order else 'avg')
         if req['method']=='POST':
             rule=req['body']['filter']['rules'][0];kind=rule['type']
             entity={'id':rule['targetId'],'name':rule['targetName'],'num':rule.get('traitLevel')}
             p.browser.scope=(kind,entity);p.load_comps(kind,entity)
         else:p.browser.scope=None;p.load_comps()
         wait_jobs(p,self.qt)
-        expected=record['expected']['samples' if order else 'average']
+        expected=ranked_comp_expectation(record,order)
         assert [c.comp_id for c in p.browser.cards]==[r['id'] for r in expected[:8]],'first page identity/order'
         while len(p.browser.cards)<len(expected):
             old=len(p.browser.cards);p.browser.show_more()
             assert len(p.browser.cards)>old,'pagination did not advance'
         actual=[]
+        raw=record['data'] if isinstance(record['data'],list) else record['data']['comps']
+        raw_by_id={str(row['compId']):row for row in raw}
         for card in p.browser.cards:
             labels=card.findChildren(QLabel)
             actual.append({'id':card.comp_id,'name':card.findChild(QLabel,'cardName').text(),
                 'metrics':[w.text() for w in labels if w.objectName()=='compAverage'],
                 'samples':next(w.text() for w in labels if w.text().endswith(' 局'))})
+            source=raw_by_id[card.comp_id]
+            rate=f"{source['pickRate']:.2f}" if 'pickRate' in source else '—'
+            label=card.findChild(QLabel,'compPickRate')
+            assert label is not None and label.text()==rate,('pick rate units/value',card.comp_id,rate)
         assert actual==expected,{'expected':expected,'actual':actual}
         if not expected:assert not p.browser.empty.isHidden(),'empty state missing'
 
@@ -219,7 +242,8 @@ class DisplayReplay:
         for r in self.records:
             req=r['request'];path=req['path']
             if 'explorer' in domains and path in ['/comp/rank','/explorer/query']:
-                for order in [0,1]:check('explorer',{'request':req,'order':order},lambda r=r,o=order:self.explorer(r,o))
+                for order in [0,1]:check('explorer',{'request':req,'order':order,
+                    'sort':'pickRate' if order else 'avgPlacement'},lambda r=r,o=order:self.explorer(r,o))
             if 'hero' in domains and path.endswith('/hero-equips'):
                 for form in ['heroEquips','hero3Equips']:
                     for kind in ['全部','成型装备','神器装备','光明武器','转职纹章','特殊装备']:

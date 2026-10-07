@@ -30,11 +30,11 @@ from entity_identity import EntityResolver
 from selected_resources import SelectedResources, SelectionEntity
 from selection_controller import SelectionController
 from condition_controller import ConditionController
-from PySide6.QtCore import Qt, QTimer, QObject, Signal, QRunnable, QThreadPool, QUrl, QAbstractNativeEventFilter, QSettings
-from PySide6.QtGui import QDesktopServices,QColor
+from PySide6.QtCore import Qt, QTimer, QObject, Signal, QRunnable, QThreadPool, QUrl, QAbstractNativeEventFilter, QSettings, QSize
+from PySide6.QtGui import QDesktopServices,QColor,QIcon
 from PySide6.QtWidgets import (QApplication, QWidget, QLabel, QPushButton, QComboBox, QLineEdit,
     QVBoxLayout, QHBoxLayout, QTabWidget, QTableWidget, QTableWidgetItem, QListWidget,
-    QListWidgetItem, QCheckBox, QFileDialog, QHeaderView, QAbstractItemView,QFrame,QScrollArea,QButtonGroup,QSizeGrip)
+    QListWidgetItem, QCheckBox, QFileDialog, QHeaderView, QAbstractItemView,QFrame,QScrollArea,QButtonGroup,QSizeGrip,QSizePolicy)
 from PySide6.QtWebEngineWidgets import QWebEngineView
 from PySide6.QtWebEngineCore import QWebEnginePage, QWebEngineProfile,QWebEngineSettings
 
@@ -149,6 +149,28 @@ class GuidePage(QWebEnginePage):
         return []
 
 
+class ElidedLabel(QLabel):
+    """A single-line context label keeps long names in its tooltip."""
+    def __init__(self,text,parent=None):
+        super().__init__('',parent)
+        self.full_text=''
+        self.setWordWrap(False);self.setTextFormat(Qt.TextFormat.PlainText)
+        self.setMinimumWidth(0);self.setSizePolicy(QSizePolicy.Policy.Ignored,QSizePolicy.Policy.Preferred)
+        self.setText(text)
+
+    def setText(self,text):
+        self.full_text=str(text)
+        self.setToolTip(self.full_text);self.setAccessibleName(self.full_text)
+        self.update_elision()
+
+    def update_elision(self):
+        super().setText(self.fontMetrics().elidedText(self.full_text,Qt.TextElideMode.ElideRight,
+                                                    max(0,self.contentsRect().width())))
+
+    def resizeEvent(self,event):
+        super().resizeEvent(event);self.update_elision()
+
+
 class Companion(QWidget):
     def __init__(self, offline=False, offline_catalog=None):
         super().__init__()
@@ -232,24 +254,25 @@ class Companion(QWidget):
         self.patch.activated.connect(self.change_patch);rail.addWidget(self.patch);rail.addSpacing(8)
         self.version_retry=button('重试版本列表',self.load_versions);self.version_retry.hide();rail.addWidget(self.version_retry)
 
-        rail.addSpacing(4);rail.addWidget(button('退出助手',QApplication.instance().quit))
         shell.addWidget(sidebar)
         content=QWidget();root=QVBoxLayout(content);root.setContentsMargins(10,8,10,6);root.setSpacing(5)
         shell.addWidget(content,1)
-        header=QHBoxLayout();headings=QVBoxLayout();headings.setSpacing(5)
-        self.banner=label('局内识别','pageTitle');headings.addWidget(self.banner)
-        self.subtitle=label('','subtitle');self.subtitle.hide()
-        header.addLayout(headings,1)
-        self.banner.setToolTip('按住标题拖动窗口')
-        self.banner.mousePressEvent=self.drag_window
-        header.addWidget(button('新的一局',self.new_game));header.addWidget(button('收起 ‹',self.return_to_game))
-        close_button=button('×',QApplication.instance().quit);close_button.setFixedWidth(32);close_button.setStyleSheet('padding:0;font-size:20px');close_button.setToolTip('退出助手');header.addWidget(close_button)
+        header=QHBoxLayout();header.setSpacing(5)
+        self.target_label=ElidedLabel('选择阵容');self.target_label.setObjectName('compactTarget')
+        self.target_label.setStyleSheet('font-size:14px;font-weight:600;color:#eee7d8')
+        self.target_label.mousePressEvent=self.drag_window
+        header.addWidget(self.target_label,1)
+        self.copy_button=button('复制码',self.copy_code);self.copy_button.setToolTip('复制已固定阵容的主阵容码')
+        self.copy_button.setEnabled(False);header.addWidget(self.copy_button)
+        header.addWidget(button('新一局',self.new_game))
+        self.close_button=button('×',QApplication.instance().quit);self.close_button.setFixedWidth(28)
+        self.close_button.setStyleSheet('padding:0;font-size:19px');self.close_button.setToolTip('退出助手')
+        self.close_button.setAccessibleName('退出助手');header.addWidget(self.close_button)
+        self.collapse_button=button('收起',self.return_to_game)
+        self.collapse_button.setIcon(QIcon(str(RESOURCE_DIR/'assets/collapse-panel.svg')));self.collapse_button.setIconSize(QSize(18,18))
+        self.collapse_button.setToolTip('收起为浮动标记，回到游戏；点击标记重新展开')
+        self.collapse_button.setAccessibleName('收起助手');header.addWidget(self.collapse_button)
         root.addLayout(header)
-        self.target_label=label('本局阵容：未固定','target')
-        target_row=QHBoxLayout();target_row.addWidget(self.target_label,1)
-        self.copy_button=button('复制主阵容码',self.copy_code);self.copy_button.setEnabled(False);target_row.addWidget(self.copy_button)
-        target_row.addWidget(button('换阵容',lambda:self.tabs.setCurrentIndex(1)))
-        root.addLayout(target_row)
         self.tabs=QTabWidget();self.tabs.tabBar().hide();root.addWidget(self.tabs,1)
         self.make_choices()
         self.make_explorer()
@@ -328,11 +351,6 @@ class Companion(QWidget):
             self.tabs.setCurrentIndex(tab)
 
     def navigate(self,index):
-        headings=[('局内识别','自动检查海克斯与装备选择，侧键随时补查。'),
-                  ('选阵容','先选一个检索条件，再点击适合这局的阵容。'),
-                  ('本局攻略','阵容已固定，攻略、出装和强化查询一起跟随。'),
-                  ('英雄出装','查看本局阵容下的装备表现，寻找替代选择。')]
-        self.banner.setText(headings[index][0]);self.subtitle.setText(headings[index][1])
         for i,nav in self.navigation.items():nav.setChecked(i==index)
 
     def add_page(self,page,title):
@@ -533,22 +551,20 @@ class Companion(QWidget):
             session_id=self.session.session_id,selected_at=time.monotonic(),source='manual_confirmation',round=self.session.stage)
         if accepted:
             self.refresh_selected_resources();self.browser.input_bar.confirm.hide()
-            self.browser.input_bar.show_note('已记入本局选过的资源，点击条目即可单项检索。')
+            self.browser.input_bar.show_note('')
 
     def make_guide(self):
         page=QWidget();layout=QVBoxLayout(page);layout.setAlignment(Qt.AlignmentFlag.AlignTop)
-        row=QHBoxLayout()
-        row.addWidget(button('攻略',lambda:self.tabs.setCurrentIndex(2)))
-        row.addWidget(button('出装',lambda:self.tabs.setCurrentIndex(3)))
-        row.addWidget(button('强化',lambda:self.tabs.setCurrentIndex(0)))
-        row.addStretch();row.addWidget(button('取消定阵',self.unpin));layout.addLayout(row)
-        self.guide_notice=label('先在阵容列表选择一套阵容。','muted');self.guide_notice.setWordWrap(True);layout.addWidget(self.guide_notice)
+        self.guide_notice=label('先在阵容列表选择一套阵容。','muted');self.guide_notice.setWordWrap(True)
+        layout.addWidget(self.guide_notice);self.guide_notice.hide()
         self.guide_retry=button('重试加载本局阵容',self.retry_comp);self.guide_retry.hide();layout.addWidget(self.guide_retry)
         self.comp_url=QLineEdit();self.comp_url.setPlaceholderText('DataJ 阵容地址')
         self.address_box=QWidget();address=QHBoxLayout(self.address_box);address.setContentsMargins(0,0,0,0)
         address.addWidget(self.comp_url);address.addWidget(button('选择此阵容',self.pin_comp));address.addWidget(button('只浏览',self.browse_comp))
         toggle=button('其他阵容地址 ▸',lambda:self.address_box.setVisible(not self.address_box.isVisible()));toggle.setObjectName('subtle')
-        layout.addWidget(toggle);layout.addWidget(self.address_box);self.address_box.hide()
+        actions=QHBoxLayout();actions.addWidget(toggle);actions.addStretch()
+        actions.addWidget(button('取消定阵',self.unpin));layout.addLayout(actions)
+        layout.addWidget(self.address_box);self.address_box.hide()
         self.profile=QWebEngineProfile(self)
         self.profile.downloadRequested.connect(lambda item:item.cancel())
         self.web=QWebEngineView()
@@ -569,10 +585,10 @@ class Companion(QWidget):
         self.guide_latest=button('查看原站最新攻略',self.open_latest_guide);version.addWidget(self.guide_latest)
         version.addWidget(button('查看本局英雄出装',lambda:self.tabs.setCurrentIndex(3)))
         layout.addWidget(self.guide_version);self.guide_version.hide()
-        self.web.setMinimumHeight(320);layout.addWidget(self.web);self.web.hide()
+        self.web.setMinimumHeight(180);layout.addWidget(self.web,1);self.web.hide()
         self.web.urlChanged.connect(self.guide_url_changed)
-        layout.addWidget(label('浏览不会自动更换本局阵容。变体阵容码请在原站复制。','muted'))
-        self.add_page(page,'阵容攻略')
+        self.web.setToolTip('浏览不会自动更换本局阵容。变体阵容码请在原站复制。')
+        self.add_page(page,'阵容攻略');layout.setSpacing(5)
 
     def make_equipment(self):
         page=QWidget();layout=QVBoxLayout(page)
@@ -1176,6 +1192,7 @@ class Companion(QWidget):
     def load_comps(self,kind='',entity=None):
         if not self.versions_ready:return
         self.explorer_generation+=1;generation=self.explorer_generation;adapter=self.adapter
+        minimum=self.browser.min_sample
         self.browser.set_loading()
         def done(result):
             if generation!=self.explorer_generation or adapter is not self.adapter:return
@@ -1186,7 +1203,7 @@ class Companion(QWidget):
             except Exception:self.browser.set_error();return
         def failed(_):
             if generation==self.explorer_generation and adapter is self.adapter:self.browser.set_error()
-        self.submit(self.network,lambda:adapter.explore(kind,entity) if kind else adapter.comps(),done,failed)
+        self.submit(self.network,lambda:adapter.explore(kind,entity) if kind else adapter.comps(min_sample=minimum),done,failed)
 
     def clear_explorer(self):self.browser.clear_filter()
 
@@ -1211,7 +1228,7 @@ class Companion(QWidget):
 
     def open_guide(self,url,*,allow_latest=False,reload=True):
         self.guide_requested_url=url;self.guide_allow_latest=allow_latest
-        self.guide_empty.hide();self.guide_version.hide()
+        self.guide_empty.hide();self.guide_version.hide();self.guide_notice.hide()
         latest=getattr(self,'latest_patch',None)
         if self.adapter.patch!=latest and not allow_latest:
             self.web.stop();self.web.hide();self.guide_version.show()
@@ -1242,22 +1259,22 @@ class Companion(QWidget):
         self.populate_hero_buttons()
         self.copy_button.setEnabled(False);self.web.stop();self.web.hide();self.web.setUrl(QUrl('about:blank'))
         self.guide_requested_url=None;self.guide_allow_latest=False
-        self.guide_empty.hide();self.guide_version.hide();self.guide_retry.hide();self.guide_notice.setText('已选择阵容，正在读取攻略和阵容码…')
+        self.guide_empty.hide();self.guide_version.hide();self.guide_retry.hide();self.guide_notice.show();self.guide_notice.setText('已选择阵容，正在读取攻略和阵容码…')
         self.browser.set_pinned(comp)
         self.comp_generation+=1;generation=self.comp_generation;adapter=self.adapter;session_id=self.session.session_id
         name=next((row['name'] for row in self.browser.rows if str(row['compId'])==comp),comp)
-        self.target_label.setText('本局阵容：'+name+' · 正在读取')
+        self.target_label.setText('正在读取 · '+name)
         def current():
             return generation==self.comp_generation and session_id==self.session.session_id and adapter is self.adapter
         def failed(_):
             if not current():return
             self.guide_notice.setText('阵容详情暂时无法读取。请重试；旧阵容码与攻略已清除。');self.guide_retry.show()
-            self.target_label.setText('本局阵容：'+name+' · 加载失败')
+            self.target_label.setText('加载失败 · '+name)
         def done(result):
             if not current():return
             detail=result['data']
             if not isinstance(detail,dict) or str(detail.get('compId'))!=comp:failed('scope');return
-            self.comp_detail=detail;self.target_label.setText('本局阵容：'+detail.get('name',comp)+' · 已固定')
+            self.comp_detail=detail;self.target_label.setText('已固定 · '+detail.get('name',comp))
             self.heroes.blockSignals(True)
             for hero in detail.get('heroes',[]):self.heroes.addItem(hero['heroName'],str(hero['heroId']))
             self.heroes.blockSignals(False)
@@ -1271,13 +1288,13 @@ class Companion(QWidget):
 
     def unpin(self):
         self.comp_generation+=1
-        self.session.set_target(None);self.invalidate();self.comp_detail=None;self.target_label.setText('本局阵容：未固定')
+        self.session.set_target(None);self.invalidate();self.comp_detail=None;self.target_label.setText('选择阵容')
         self.copy_button.setEnabled(False);self.browser.set_pinned(None)
         self.heroes.blockSignals(True);self.heroes.clear();self.heroes.blockSignals(False);self.clear_equipment()
         self.populate_hero_buttons()
         self.equip_note.setText('先选一套阵容，再点击英雄头像查看出装。')
         self.guide_requested_url=None;self.guide_allow_latest=False
-        self.web.stop();self.web.setUrl(QUrl('about:blank'));self.web.hide();self.guide_empty.show();self.guide_version.hide();self.guide_retry.hide()
+        self.web.stop();self.web.setUrl(QUrl('about:blank'));self.web.hide();self.guide_empty.show();self.guide_version.hide();self.guide_retry.hide();self.guide_notice.hide()
         self.guide_notice.setText('先在阵容列表选择一套阵容。')
 
     def copy_code(self):
@@ -1338,6 +1355,7 @@ def main():
             return 0
         win.enable_dpi()
         app=QApplication(sys.argv[:1]);app.setQuitOnLastWindowClosed(False)
+        app.setWindowIcon(QIcon(str(RESOURCE_DIR/'assets/app-icon.ico')))
         panel=Companion(offline=args.self_test)
         registered=[]
         mouse=MouseShortcut(panel)

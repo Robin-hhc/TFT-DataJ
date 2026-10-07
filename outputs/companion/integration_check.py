@@ -35,7 +35,8 @@ class FrozenSource:
         assert kind=='equip' and str(entity['id'])=='41806'
         return self.read('explorer-inferno.json')
 
-    def comps(self):
+    def comps(self,min_sample=50):
+        assert min_sample==50,'This frozen source only captures the default sample scope'
         return json.loads((ROOT/'work/comp-browser/rank.json').read_text(encoding='utf-8'))
 
 

@@ -12,7 +12,9 @@ QLabel#filterStatus { color:#e6c678; font-size:12px; }
 QFrame#compCard { background:#1b1b27; border:1px solid #34313f; border-radius:10px; }
 QFrame#compCard:hover { border-color:#8f784d; background:#242230; }
 QFrame#compCard[pinned="true"] { border:1px solid #e2b860; background:#29251f; }
-QPushButton#chooseComp { background:#30291d; color:#e9c674; border:1px solid #76603a; padding:6px 12px; }
+QPushButton#chooseComp { background:#30291d; color:#e9c674; border:1px solid #76603a; padding:3px 8px; font-size:11px; min-height:16px; }
+QPushButton#compSort { padding:3px 9px; font-size:12px; min-height:18px; }
+QLabel#compPickRate { color:#ddd6e6; font-size:12px; }
 QLabel#emptyComps { color:#b4aabd; padding:35px; }
 QWidget#companion { background:#101016; }
 QFrame#sidebar { background:#14141e; border-right:1px solid #292935; }

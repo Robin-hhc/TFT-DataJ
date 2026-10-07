@@ -16,6 +16,8 @@ py -3.12 -m venv .venv
 
 当前开发机也可使用 `work/p0-runtime/Scripts/python.exe packaging/build_windows.py --version 0.2.4`。显式指定新版本，不覆盖已有 ZIP。依赖锁定不再包含开发机的 `file:///C:/Users/...` 安装路径；构建脚本在缺少模型时从RapidOCR官方模型仓库下载，并逐一验证SHA-256。运行助手不会自动下载模型。
 
+应用图标源文件是 `outputs/companion/assets/app-icon.svg`。修改后运行 `work/p0-runtime/Scripts/python.exe -X utf8 tools/build_app_icon.py`，生成 PNG 和包含 16/24/32/48/64/128/256px 的 ICO。打包配置将 ICO 嵌入 EXE，同时供 Qt 窗口使用；图标文件也纳入构建指纹，不能以旧构建跳过新图标。
+
 产物：
 
 - `dist/TFT-DataJ-0.2.1-windows-x64.zip`：整体复制到其他电脑的便携包。

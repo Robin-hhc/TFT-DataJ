@@ -44,6 +44,9 @@ def main():
     assert work.is_relative_to(ROOT.resolve()) and work!=ROOT.resolve()
     sources=[*sorted((ROOT/'outputs/companion').glob('*.py')),*sorted((ROOT/'outputs/mumu-p0-probe').glob('*.py')),
              ROOT/'outputs/companion/chevron-down.svg',ROOT/'outputs/companion/assets/refresh-glyph.png',
+             ROOT/'outputs/companion/assets/app-icon.svg',ROOT/'outputs/companion/assets/app-icon.png',
+             ROOT/'outputs/companion/assets/app-icon.ico',
+             ROOT/'outputs/companion/assets/collapse-panel.svg',
              ROOT/'packaging/companion.spec',ROOT/'packaging/requirements-runtime.txt']
     fingerprint={str(p.relative_to(ROOT)):hashlib.sha256(p.read_bytes()).hexdigest() for p in sources}
     provenance=work/'build-provenance.json'

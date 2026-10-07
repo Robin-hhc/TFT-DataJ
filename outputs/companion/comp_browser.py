@@ -1,16 +1,15 @@
 """Single-condition comp browsing and selection, independent of game capture."""
 from collections import deque
 from functools import lru_cache
-import json
 import math
 from urllib.parse import urlparse
-from PySide6.QtCore import Qt,QObject,Signal,QUrl,QSize
-from PySide6.QtGui import QPixmap
+from PySide6.QtCore import Qt,QObject,Signal,QUrl,QSize,QEvent,QModelIndex
+from PySide6.QtGui import QPixmap,QStandardItem,QStandardItemModel
 from PySide6.QtNetwork import QNetworkAccessManager,QNetworkRequest,QNetworkDiskCache,QSslSocket
 from PySide6.QtWidgets import (QWidget,QFrame,QLabel,QPushButton,QLineEdit,QComboBox,
-    QVBoxLayout,QHBoxLayout,QGridLayout,QScrollArea,QCompleter)
-from bootstrap import STATE_DIR
-from dataj import COMP_MIN_SAMPLE
+    QVBoxLayout,QHBoxLayout,QGridLayout,QScrollArea,QCompleter,QButtonGroup,QSizePolicy)
+from bootstrap import STATE_DIR,RESOURCE_DIR
+from dataj import COMP_MIN_SAMPLE,COMP_MIN_SAMPLE_CHOICES
 from stat_colors import placement_color
 from condition_inputs import ConditionInputs
 from entity_identity import EntityResolver, display_label
@@ -22,12 +21,33 @@ def text_label(text,kind='muted'):
 
 
 def numeric(value,default=99):
-    return float(value) if isinstance(value,(int,float)) and math.isfinite(value) else default
+    return float(value) if type(value) in (int,float) and math.isfinite(value) else default
 
 
-def sufficient_comp_samples(row):
+def sufficient_comp_samples(row,minimum=COMP_MIN_SAMPLE):
     count=row.get('sampleCount')
-    return type(count) is int and count>=COMP_MIN_SAMPLE
+    return type(count) is int and count>=minimum
+
+
+class SearchCompleter(QCompleter):
+    """Typing filters comps. Only a click or deliberate arrow choice sets an entity."""
+    def __init__(self,model,parent):
+        super().__init__(model,parent);self.choice_armed=False
+        self.setFilterMode(Qt.MatchFlag.MatchContains)
+        self.setCaseSensitivity(Qt.CaseSensitivity.CaseInsensitive)
+        self.setCompletionMode(QCompleter.CompletionMode.PopupCompletion)
+        self.setMaxVisibleItems(9)
+
+    def eventFilter(self,obj,event):
+        if event.type()==QEvent.Type.KeyPress:
+            key=event.key()
+            if key in (Qt.Key.Key_Down,Qt.Key.Key_Up):self.choice_armed=True
+            elif key in (Qt.Key.Key_Return,Qt.Key.Key_Enter) and not self.choice_armed:
+                self.popup().hide()
+                return obj is self.popup()
+            elif key not in (Qt.Key.Key_Return,Qt.Key.Key_Enter,Qt.Key.Key_Control,Qt.Key.Key_Shift):
+                self.choice_armed=False
+        return super().eventFilter(obj,event)
 
 
 class Portraits(QObject):
@@ -112,19 +132,20 @@ class HeroPortrait(QWidget):
 
 class CompCard(QFrame):
     selected=Signal(str)
-    starred=Signal(str,bool)
-    def __init__(self,row,catalog,portraits,scope,favorite=False,pinned=False):
+    def __init__(self,row,catalog,portraits,scope,pinned=False):
         super().__init__();self.comp_id=str(row['compId']);self.setObjectName('compCard');self.setProperty('pinned',pinned)
         self.setFocusPolicy(Qt.FocusPolicy.StrongFocus);self.setCursor(Qt.CursorShape.PointingHandCursor)
-        self.setAccessibleName('选择阵容 '+row['name']);layout=QVBoxLayout(self);layout.setContentsMargins(14,10,14,10);layout.setSpacing(7)
-        header=QHBoxLayout();header.setSpacing(10)
+        self.setSizePolicy(QSizePolicy.Policy.Expanding,QSizePolicy.Policy.Maximum)
+        self.setAccessibleName('固定阵容 '+row['name']);layout=QVBoxLayout(self);layout.setContentsMargins(10,7,10,7);layout.setSpacing(4)
+        header=QHBoxLayout();header.setSpacing(7)
         tier=row.get('tier')
         if tier:
             badge=text_label(str(tier),'badge');badge.setFixedWidth(26);badge.setAlignment(Qt.AlignmentFlag.AlignCenter);header.addWidget(badge)
-        title=text_label(row['name'],'cardName');header.addWidget(title);header.addStretch()
-        self.star=QPushButton('★' if favorite else '☆');self.star.setCheckable(True);self.star.setChecked(favorite);self.star.setFixedSize(28,26)
-        self.star.setToolTip('收藏阵容');self.star.setStyleSheet('padding:0;color:#dfb65d')
-        self.star.clicked.connect(lambda checked:self.starred.emit(self.comp_id,checked));header.addWidget(self.star);layout.addLayout(header)
+        title=text_label(row['name'],'cardName');title.setToolTip(row['name']);title.setMinimumWidth(0)
+        title.setSizePolicy(QSizePolicy.Policy.Ignored,QSizePolicy.Policy.Preferred);header.addWidget(title,1)
+        self.choose=QPushButton('已固定 · 查看' if pinned else '固定');self.choose.setObjectName('chooseComp')
+        self.choose.setToolTip('打开本局阵容攻略' if pinned else '固定为本局阵容并查看攻略')
+        self.choose.clicked.connect(lambda:self.selected.emit(self.comp_id));header.addWidget(self.choose);layout.addLayout(header)
         heroes=row.get('heroes') or []
         ordered=sorted(heroes,key=lambda h:(not h.get('isCarry'),not h.get('isSubCarry'),not h.get('isCore')))
         lineup=QGridLayout();lineup.setHorizontalSpacing(1);lineup.setVerticalSpacing(3)
@@ -134,18 +155,21 @@ class CompCard(QFrame):
         traits=' · '.join(t.get('name','') for t in (row.get('traits') or []))
         if traits:
             trait=text_label(traits,'cardMeta');trait.setWordWrap(True);layout.addWidget(trait)
-        footer=QHBoxLayout();footer.setSpacing(18)
+        footer=QHBoxLayout();footer.setSpacing(5)
         for caption,key,percent in [('条件均排' if scope else '平均排名','avgPlacement',False),('前四率','top4Rate',True),('登顶率','topRate',True)]:
-            value=row.get(key);valid=isinstance(value,(int,float)) and math.isfinite(value)
-            metric=QVBoxLayout();metric.setSpacing(0);metric.addWidget(text_label(caption,'cardMeta'))
+            value=row.get(key);valid=type(value) in (int,float) and math.isfinite(value)
+            footer.addWidget(text_label(caption,'cardMeta'))
             formatted=(f'{value:.1f}%' if percent else f'{value:.2f}') if valid else '—'
             number=text_label(formatted,'compAverage')
-            number.setStyleSheet('font-size:18px;font-weight:600;color:'+(placement_color(value) if valid and not percent else '#e8e8ee'))
-            metric.addWidget(number);footer.addLayout(metric)
-        footer.addWidget(text_label(f"{row.get('sampleCount','—'):,} 局" if isinstance(row.get('sampleCount'),int) else '样本 —','cardMeta'))
+            number.setStyleSheet('font-size:14px;font-weight:600;color:'+(placement_color(value) if valid and not percent else '#e8e8ee'))
+            footer.addWidget(number);footer.addSpacing(7)
+        pick=row.get('pickRate');pick_valid=type(pick) in (int,float) and math.isfinite(pick) and pick>=0
+        footer.addWidget(text_label('出场','cardMeta'))
+        rate=text_label(f'{pick:.2f}' if pick_valid else '—','compPickRate');footer.addWidget(rate)
+        rate.setToolTip('DataJ 出场率原始口径，与当前筛选范围一致。')
         footer.addStretch()
-        self.choose=QPushButton('已固定 · 查看' if pinned else '选这套 →');self.choose.setObjectName('chooseComp')
-        self.choose.clicked.connect(lambda:self.selected.emit(self.comp_id));footer.addWidget(self.choose);layout.addLayout(footer)
+        footer.addWidget(text_label(f"{row.get('sampleCount','—'):,} 局" if isinstance(row.get('sampleCount'),int) else '样本 —','cardMeta'))
+        layout.addLayout(footer)
 
     def mouseReleaseEvent(self,event):
         if event.button()==Qt.MouseButton.LeftButton:self.selected.emit(self.comp_id)
@@ -161,72 +185,88 @@ class CompBrowser(QWidget):
     compSelected=Signal(str)
     def __init__(self,settings,offline=False):
         super().__init__();self.settings=settings;self.catalog={};self.rows=[];self.scope=None;self.pinned=None;self.limit=8;self.cards=[]
-        try:self.favorites=set(json.loads(settings.value('favorite_comps','[]')))
-        except (ValueError,TypeError):self.favorites=set()
         self.portraits=Portraits(self,not offline)
-        self.resolver=EntityResolver({})
-        self.input_revision=0
-        layout=QVBoxLayout(self);layout.setContentsMargins(0,0,0,0);layout.setSpacing(7)
-        filter_box=QFrame();filter_box.setObjectName('filterBox');filters=QVBoxLayout(filter_box);filters.setContentsMargins(10,8,10,8);filters.setSpacing(4)
-        self.input_bar=ConditionInputs(self.portraits);filters.addWidget(self.input_bar)
+        self.resolver=EntityResolver({});self.input_revision=0
+        self.sort_mode='avg';self.min_sample=COMP_MIN_SAMPLE;self.failed=False;self.loading=False
+        layout=QVBoxLayout(self);layout.setContentsMargins(0,0,0,0);layout.setSpacing(5)
+        self.input_bar=ConditionInputs(self.portraits)
         self.input_bar.entitySelected.connect(self.set_filter)
         self.input_bar.alternativeSelected.connect(lambda k,e:self.set_filter(k,e,can_confirm=True))
         self.input_bar.clearRequested.connect(self.clear_filter)
-        self.manual_toggle=QPushButton('更多输入：文字搜索 ▸');self.manual_toggle.clicked.connect(self.toggle_manual)
-        filters.addWidget(self.manual_toggle,0,Qt.AlignmentFlag.AlignLeft)
-        self.manual_inputs=QWidget();manual_layout=QVBoxLayout(self.manual_inputs);manual_layout.setContentsMargins(0,0,0,0)
-
-        row=QHBoxLayout();row.addWidget(text_label('检索器','section'));self.kind=QComboBox()
-        for name,key in [('装备 / 转职','equip'),('海克斯','hex'),('英雄','hero'),('羁绊档位','trait')]:self.kind.addItem(name,key)
-        self.kind.setMinimumWidth(100);row.addWidget(self.kind)
-        self.entity=QComboBox();self.entity.setEditable(True);self.entity.setInsertPolicy(QComboBox.InsertPolicy.NoInsert);self.entity.setMinimumWidth(130)
-        self.entity.lineEdit().setPlaceholderText('输入名称，选择一个条件…');row.addWidget(self.entity,1)
-        self.apply=QPushButton('筛选');self.apply.clicked.connect(self.apply_filter);row.addWidget(self.apply)
-        self.clear=QPushButton('清除');self.clear.clicked.connect(self.clear_filter);row.addWidget(self.clear);manual_layout.addLayout(row)
-        filters.addWidget(self.manual_inputs);self.manual_inputs.hide()
-        self.condition=text_label('未添加条件 · 显示全部阵容','filterStatus');self.condition.setWordWrap(True);filters.addWidget(self.condition);self.condition.hide()
-        layout.addWidget(filter_box)
-        toolbar=QHBoxLayout();self.search=QLineEdit();self.search.setPlaceholderText('搜索阵容或核心英雄…');toolbar.addWidget(self.search,1)
-        self.sort=QComboBox();self.sort.addItems(['均排优先','样本优先']);toolbar.addWidget(self.sort)
-        self.sample_note=text_label(f'样本≥{COMP_MIN_SAMPLE}局','cardMeta')
-        self.sample_note.setToolTip('与 DataJ 默认最小样本一致；按当前检索条件下的对局数筛选。')
-        toolbar.addWidget(self.sample_note)
-        self.only_favs=QPushButton('☆ 收藏');self.only_favs.setCheckable(True);toolbar.addWidget(self.only_favs)
-        self.refresh=QPushButton('刷新');toolbar.addWidget(self.refresh);layout.addLayout(toolbar)
+        search_row=QHBoxLayout();search_row.setSpacing(6)
+        self.search=QLineEdit();self.search.setObjectName('compSearch');self.search.setClearButtonEnabled(True)
+        self.search.setPlaceholderText('搜索阵容、英雄、海克斯、装备…')
+        self.search.setToolTip('输入文字查找当前阵容；选择下拉条件，按该英雄、海克斯、装备或羁绊检索。')
+        self.search.setAccessibleName('搜索阵容或选择检索条件')
+        self.suggestions=QStandardItemModel(self)
+        self.completer=SearchCompleter(self.suggestions,self)
+        # QLineEdit.setCompleter also installs automatic string insertion on
+        # highlight/activation. We own identity selection, so attach only the
+        # completer's popup/event filter and keep the one input's text intact.
+        self.completer.setWidget(self.search);self.search.textEdited.connect(self.show_suggestions)
+        self.completer.popup().setVerticalScrollBarPolicy(Qt.ScrollBarPolicy.ScrollBarAsNeeded)
+        self.completer.popup().setHorizontalScrollBarPolicy(Qt.ScrollBarPolicy.ScrollBarAlwaysOff)
+        self.completer.popup().setStyleSheet('QListView { background:#201e2b; color:#e8e2ee; border:1px solid #77613e; padding:3px; font-size:12px; } QListView::item { padding:7px; } QListView::item:selected { background:#463927; color:#f4d594; } QScrollBar:vertical { background:#201e2b; width:6px; } QScrollBar::handle:vertical { background:#63566e; min-height:20px; } QScrollBar::add-line:vertical,QScrollBar::sub-line:vertical { height:0; }')
+        self.completer.activated[QModelIndex].connect(self.choose_suggestion)
+        search_row.addWidget(self.search,1);search_row.addWidget(self.input_bar.read)
+        layout.addLayout(search_row);layout.addWidget(self.input_bar)
+        toolbar=QHBoxLayout();toolbar.setSpacing(5);self.sort_group=QButtonGroup(self)
+        self.avg_sort=QPushButton('平均排名');self.pick_sort=QPushButton('出场率')
+        for mode,button in [('avg',self.avg_sort),('pick',self.pick_sort)]:
+            button.setCheckable(True);button.setObjectName('compSort');self.sort_group.addButton(button);toolbar.addWidget(button)
+            button.clicked.connect(lambda checked,m=mode:self.set_sort(m))
+        self.avg_sort.setChecked(True)
+        self.avg_sort.setToolTip('平均排名从低到高');self.pick_sort.setToolTip('按 DataJ 出场率从高到低，同值保持原站顺序')
+        toolbar.addStretch();toolbar.addWidget(text_label('最小样本','cardMeta'))
+        self.sample=QComboBox();self.sample.setObjectName('compSample');self.sample.setAccessibleName('最小样本')
+        for count in COMP_MIN_SAMPLE_CHOICES:self.sample.addItem(f'{count:,} 局',count)
+        self.sample.setCurrentIndex(self.sample.findData(self.min_sample));self.sample.setMinimumWidth(88)
+        self.sample.setStyleSheet('QComboBox::down-arrow {image:url("'+(RESOURCE_DIR/'chevron-down.svg').as_posix()+'");width:12px;height:8px;}')
+        self.sample.setToolTip('按当前检索范围的对局数筛选，与 DataJ 样本档位一致。')
+        self.sample.currentIndexChanged.connect(lambda _:self.set_min_sample(self.sample.currentData()))
+        toolbar.addWidget(self.sample);layout.addLayout(toolbar)
         self.note=text_label('正在读取阵容…');self.note.setWordWrap(True);layout.addWidget(self.note);self.note.hide()
         self.scroll=QScrollArea();self.scroll.setWidgetResizable(True);self.scroll.setFrameShape(QFrame.Shape.NoFrame)
-        content=QWidget();self.card_layout=QVBoxLayout(content);self.card_layout.setContentsMargins(0,0,4,0);self.card_layout.setSpacing(10);self.card_layout.addStretch()
+        content=QWidget();self.card_layout=QVBoxLayout(content);self.card_layout.setContentsMargins(0,0,4,0);self.card_layout.setSpacing(6);self.card_layout.addStretch()
         self.scroll.setWidget(content);layout.addWidget(self.scroll,1)
         self.more=QPushButton('显示更多阵容');self.more.clicked.connect(self.show_more);self.card_layout.insertWidget(0,self.more);self.more.hide()
-        self.empty=text_label('','emptyComps');self.empty.setWordWrap(True);self.empty.setAlignment(Qt.AlignmentFlag.AlignCenter);layout.addWidget(self.empty);self.empty.hide()
-        self.kind.currentIndexChanged.connect(self.populate_entities)
-        self.entity.activated.connect(self.apply_filter)
-        self.search.textChanged.connect(self.reset_page);self.sort.currentIndexChanged.connect(self.reset_page);self.only_favs.toggled.connect(self.reset_page)
-        self.refresh.clicked.connect(self.retry);self.populate_entities()
+        self.empty_box=QWidget();empty_layout=QVBoxLayout(self.empty_box);empty_layout.addStretch()
+        self.empty=text_label('','emptyComps');self.empty.setWordWrap(True);self.empty.setAlignment(Qt.AlignmentFlag.AlignCenter);empty_layout.addWidget(self.empty)
+        self.retry_button=QPushButton('重试');self.retry_button.clicked.connect(self.retry);empty_layout.addWidget(self.retry_button,0,Qt.AlignmentFlag.AlignCenter)
+        empty_layout.addStretch();layout.addWidget(self.empty_box,1);self.empty_box.hide();self.retry_button.hide()
+        self.search.textChanged.connect(self.search_changed);self.rebuild_suggestions()
 
     def set_catalog(self,catalog):
-        self.catalog=catalog;self.resolver=EntityResolver(catalog);self.populate_entities();self.render()
+        self.catalog=catalog;self.resolver=EntityResolver(catalog);self.rebuild_suggestions();self.render()
 
-    def toggle_manual(self):
-        opened=self.manual_inputs.isHidden();self.manual_inputs.setVisible(opened)
-        self.manual_toggle.setText('收起文字搜索 ▾' if opened else '更多输入：文字搜索 ▸')
+    def rebuild_suggestions(self):
+        self.suggestions.clear()
+        for row in self.rows:
+            if not sufficient_comp_samples(row,self.min_sample):continue
+            item=QStandardItem('阵容 · '+row['name']);item.setData(('comp',str(row['compId'])),Qt.ItemDataRole.UserRole)
+            self.suggestions.appendRow(item)
+        for caption,kind in [('海克斯','hex'),('装备 / 转职','equip'),('英雄','hero'),('羁绊','trait')]:
+            for entity in self.resolver.entries(kind):
+                item=QStandardItem(caption+' · '+display_label(kind,entity));item.setData((kind,entity),Qt.ItemDataRole.UserRole)
+                item.setToolTip(entity.get('descText') or entity.get('skillDesc') or entity.get('identity_detail',''))
+                self.suggestions.appendRow(item)
 
-    def populate_entities(self,*_):
-        self.entity.blockSignals(True);self.entity.clear();self.entity.addItem('选择一个条件…',None)
-        kind=self.kind.currentData()
-        for row in self.resolver.entries(kind):
-            self.entity.addItem(display_label(kind,row),row)
-            self.entity.setItemData(self.entity.count()-1,row.get('descText') or row.get('skillDesc') or row.get('identity_detail',''),Qt.ItemDataRole.ToolTipRole)
-        self.entity.setCurrentIndex(0);self.entity.blockSignals(False)
-        self.entity.completer().setFilterMode(Qt.MatchFlag.MatchContains);self.entity.completer().setCompletionMode(QCompleter.CompletionMode.PopupCompletion)
-        self.entity.completer().setCaseSensitivity(Qt.CaseSensitivity.CaseInsensitive)
+    def choose_suggestion(self,index):
+        choice=index.data(Qt.ItemDataRole.UserRole)
+        if not choice:return
+        kind,entity=choice;self.completer.choice_armed=False;self.completer.popup().hide();self.search.clear()
+        if kind=='comp':self.compSelected.emit(entity)
+        else:self.set_filter(kind,entity,can_confirm=True)
 
-    def apply_filter(self,*_):
-        item=self.entity.currentData()
-        if item is None or self.entity.currentText()!=self.entity.itemText(self.entity.currentIndex()):
-            active=('当前条件：'+self.scope[1]['name']) if self.scope else '当前显示全部阵容'
-            self.input_bar.show_note(active+' · 请从搜索结果选择完整条件后筛选');return
-        self.set_filter(self.kind.currentData(),item,can_confirm=True)
+    def set_sort(self,mode):
+        if mode not in ('avg','pick'):raise ValueError('Unknown comp sort')
+        self.sort_mode=mode;self.avg_sort.setChecked(mode=='avg');self.pick_sort.setChecked(mode=='pick');self.reset_page()
+
+    def set_min_sample(self,minimum):
+        if type(minimum) is not int or minimum not in COMP_MIN_SAMPLE_CHOICES:raise ValueError('Invalid minimum sample')
+        if minimum==self.min_sample:return
+        self.min_sample=minimum;self.sample.blockSignals(True);self.sample.setCurrentIndex(self.sample.findData(minimum));self.sample.blockSignals(False)
+        self.rebuild_suggestions();self.reset_page();self.retry()
 
     def set_filter(self,kind,entity,can_confirm=False):
         resolved=self.resolver.resolve_selection(kind,entity)
@@ -234,19 +274,14 @@ class CompBrowser(QWidget):
             self.input_bar.show_note(resolved.reason or '条件身份尚未确认，当前检索未改变。');return False
         entity=resolved.entity
         self.input_revision+=1
-        self.kind.setCurrentIndex(max(0,self.kind.findData(kind)))
-        for i in range(self.entity.count()):
-            row=self.entity.itemData(i)
-            if row and str(row['id'])==str(entity['id']) and (kind!='trait' or row.get('num')==entity.get('num')):
-                self.entity.setCurrentIndex(i);break
-        self.condition.hide();self.scope=(kind,entity);self.condition.setText('仅使用：'+display_label(kind,entity))
+        self.scope=(kind,entity)
         self.input_bar.set_condition(kind,entity,can_confirm=can_confirm and kind!='trait')
         self.input_bar.show_alternatives([])
         self.input_bar.show_note('');self.search.clear();self.retry();return True
 
     def clear_filter(self,*_):
         self.input_revision+=1
-        self.condition.hide();self.scope=None;self.entity.setCurrentIndex(0);self.search.clear();self.condition.setText('未添加条件 · 显示全部阵容');self.retry()
+        self.scope=None;self.search.clear();self.retry()
         self.input_bar.set_condition();self.input_bar.show_note('')
         self.input_bar.show_alternatives([])
 
@@ -254,41 +289,47 @@ class CompBrowser(QWidget):
         self.queryRequested.emit(*(self.scope if self.scope else ('',None)))
 
     def set_loading(self):
-        self.rows=[];self.render();self.note.setText('正在读取条件匹配阵容…' if self.scope else '正在读取全部阵容…');self.empty.hide()
+        self.failed=False;self.loading=True;self.rows=[];self.rebuild_suggestions();self.render()
+        self.note.setText('正在读取条件匹配阵容…' if self.scope else '正在读取全部阵容…')
 
     def set_result(self,rows,version):
-        self.rows=rows;self.limit=8;self.render()
-        count=sum(sufficient_comp_samples(row) for row in rows)
-        self.note.setText(f"S18 · {version} · {count} 套阵容 · "+('条件内统计' if self.scope else '全局统计')+f' · 样本≥{COMP_MIN_SAMPLE}局 · 点击卡片即可固定')
+        self.failed=False;self.loading=False;self.rows=rows;self.limit=8;self.rebuild_suggestions();self.render()
+        count=sum(sufficient_comp_samples(row,self.min_sample) for row in rows)
+        self.note.setText(f"S18 · {version} · {count} 套阵容 · "+('条件内统计' if self.scope else '全局统计')+f' · 样本≥{self.min_sample}局 · 点击卡片即可固定')
 
     def set_error(self):
-        self.rows=[];self.render();self.note.setText('阵容读取失败');self.empty.setText('暂时无法取得阵容。请点击「刷新」重试。');self.empty.show()
+        self.failed=True;self.loading=False;self.rows=[];self.rebuild_suggestions();self.render();self.note.setText('阵容读取失败')
 
     def set_pinned(self,comp):self.pinned=comp;self.render()
 
     def reset_page(self,*_):self.limit=8;self.render()
 
-    def show_more(self):self.limit+=8;self.render()
+    def search_changed(self,*_):
+        self.completer.choice_armed=False;self.reset_page()
 
-    def favorite_changed(self,comp,checked):
-        if checked:self.favorites.add(comp)
-        else:self.favorites.discard(comp)
-        self.settings.setValue('favorite_comps',json.dumps(sorted(self.favorites)));self.settings.sync()
-        self.render()
+    def show_suggestions(self,text):
+        if not text.strip():self.completer.popup().hide();return
+        self.completer.setCompletionPrefix(text)
+        if self.completer.completionCount():self.completer.complete()
+        else:self.completer.popup().hide()
+
+    def show_more(self):self.limit+=8;self.render()
 
     def render(self):
         for card in self.cards:self.card_layout.removeWidget(card);card.hide();card.deleteLater()
         self.cards=[];query=self.search.text().strip().lower()
         # Filter before sorting/pagination, including cached explorer responses.
         # Keep the shared API rows intact for direct equipment-stat lookups.
-        rows=[row for row in self.rows if sufficient_comp_samples(row)
-              and (not self.only_favs.isChecked() or str(row['compId']) in self.favorites)
+        rows=[row for row in self.rows if sufficient_comp_samples(row,self.min_sample)
               and (not query or query in (row['name']+' '+ ' '.join(h.get('heroName','') for h in row.get('heroes',[]))).lower())]
-        rows.sort(key=(lambda row:-numeric(row.get('sampleCount'),0)) if self.sort.currentIndex() else lambda row:numeric(row.get('avgPlacement')))
+        rows.sort(key=(lambda row:-numeric(row.get('pickRate'),float('-inf'))) if self.sort_mode=='pick' else lambda row:numeric(row.get('avgPlacement')))
         heroes=portrait_catalog(self.catalog.get('hero',[]))
         for row in rows[:self.limit]:
-            card=CompCard(row,heroes,self.portraits,self.scope,str(row['compId']) in self.favorites,str(row['compId'])==self.pinned)
-            card.selected.connect(self.compSelected);card.starred.connect(self.favorite_changed)
+            card=CompCard(row,heroes,self.portraits,self.scope,str(row['compId'])==self.pinned)
+            card.selected.connect(self.compSelected)
             self.card_layout.insertWidget(self.card_layout.count()-2,card);self.cards.append(card)
         self.more.setVisible(len(rows)>self.limit)
-        self.empty.setText(f'没有匹配且样本≥{COMP_MIN_SAMPLE}局的阵容。试试清除条件、搜索文字或收藏筛选。');self.empty.setVisible(not rows)
+        message=('正在读取阵容…' if self.loading else '阵容读取失败，请重试。' if self.failed else
+                 f'没有匹配且样本≥{self.min_sample}局的阵容。可清除搜索文字、检索条件或调整最小样本。')
+        self.empty.setText(message);self.empty.setVisible(not rows);self.empty_box.setVisible(not rows)
+        self.retry_button.setVisible(self.failed);self.scroll.setVisible(bool(rows))

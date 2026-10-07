@@ -1,0 +1,17 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="512" height="512" viewBox="0 0 256 256">
+  <title>DataJ Companion</title>
+  <desc>An original gold spatula and three turquoise data bars on a dark rounded tile.</desc>
+  <rect x="8" y="8" width="240" height="240" rx="54" fill="#13131d"/>
+  <rect x="11" y="11" width="234" height="234" rx="51" fill="none" stroke="#343344" stroke-width="3"/>
+  <g transform="rotate(35 116 128)">
+    <path d="M85 44h62c7 0 11 5 10 12l-5 40c-2 16-13 26-29 27v56c9 3 15 11 15 21 0 13-10 23-23 23s-23-10-23-23c0-10 6-18 15-21v-56c-16-1-27-11-29-27l-5-40c-1-7 4-12 12-12Z" fill="#e9bc60"/>
+    <rect x="92" y="58" width="13" height="39" rx="6.5" fill="#13131d"/>
+    <rect x="120" y="58" width="13" height="39" rx="6.5" fill="#13131d"/>
+    <circle cx="115" cy="200" r="9" fill="#13131d"/>
+  </g>
+  <g fill="#66c7c1">
+    <rect x="144" y="179" width="16" height="30" rx="5"/>
+    <rect x="170" y="155" width="16" height="54" rx="5"/>
+    <rect x="196" y="132" width="16" height="77" rx="5"/>
+  </g>
+</svg>
