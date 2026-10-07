@@ -1,13 +1,14 @@
 import unittest
 import numpy as np
-from vision import unchanged, tracked_signature, TextSignature
+from vision import unchanged, tracked_signature, TextSignature, _text_strokes
 from PIL import Image, ImageDraw
 
 
 class FrameGuardTests(unittest.TestCase):
     def test_roi_sampling_preserves_full_frame_stroke_masks(self):
         # Independent oracle: legacy whole-frame normalization, including a
-        # non-integral scale, small Roman strokes and brightness thresholds.
+        # non-integral scale and small Roman strokes. Extraction has separate
+        # real-pixel and background-negative tests below.
         source=Image.new('RGB',(640,360),'#46403b');draw=ImageDraw.Draw(source)
         for x in range(60,250,7):
             draw.rectangle((x,120,x+2,134),fill=(190+x%40,)*3)
@@ -22,9 +23,18 @@ class FrameGuardTests(unittest.TestCase):
                 normalized=image.convert('RGB').resize((640,round(height*s)),Image.Resampling.LANCZOS)
                 region=normalized.crop((round((center-half)*s),round((height*.33-1)*s),
                                         round((center+half)*s),round((height*.39+1)*s)))
-                rgb=np.asarray(region,dtype=np.int16)
-                expected=(np.asarray(region.convert('L'))>=200)&(rgb.max(axis=2)-rgb.min(axis=2)<80)
+                expected=_text_strokes(region)
                 np.testing.assert_array_equal(actual,expected)
+
+    def test_flat_lighting_smooth_gradients_and_dense_texture_are_not_text(self):
+        samples=[Image.new('RGB',(116,20),color) for color in ('black','white','#999999')]
+        gradient=np.tile(np.linspace(30,240,116,dtype=np.uint8),(20,1))
+        samples.append(Image.fromarray(gradient).convert('RGB'))
+        checker=(np.indices((20,116)).sum(axis=0)%2*255).astype(np.uint8)
+        samples.append(Image.fromarray(checker).convert('RGB'))
+        for image in samples:
+            with self.subTest(sample=np.asarray(image)[0,0].tolist()):
+                self.assertEqual(np.count_nonzero(_text_strokes(image)),0)
 
     def test_small_title_change_is_not_diluted(self):
         previous=np.zeros((360,640),dtype=np.int16)

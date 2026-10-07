@@ -30,8 +30,9 @@ def _left_inventory_panels(pixels):
     """Propose the verified S18 inventory panel from its four gold borders.
 
     The tall recipe list can cross the shop band. Its primary title remains
-    above the list, beside the large inventory icon. Require two long aligned
-    vertical borders and complete top/bottom borders; never search its body.
+    above the list, beside the large inventory icon. Require two long vertical
+    borders and complete top/bottom borders; never search its body. The small
+    assistant badge may cover a short segment at the top of the left border.
     """
     h, w = pixels.shape[:2]
     red, green, blue = pixels[:, :, 0], pixels[:, :, 1], pixels[:, :, 2]
@@ -48,16 +49,20 @@ def _left_inventory_panels(pixels):
             lines.append((x, y, x+bw, y+bh))
     proposals = []
     tolerance = max(3, round(h*.01))
+    top_occlusion = max(tolerance, round(h*.035))
     for left in lines:
         if not w*.05 < left[0] < w*.11:
             continue
         for right in lines:
             if not w*.24 < right[0] < w*.34:
                 continue
-            x1, y1, x2, y2 = left[0], max(left[1], right[1]), right[2], min(left[3], right[3])
+            # Keep the real header cap instead of moving the title band down
+            # to the bottom of a badge that overlaps just one border. The cap
+            # still has to span almost the entire panel at that original top.
+            x1, y1, x2, y2 = left[0], min(left[1], right[1]), right[2], min(left[3], right[3])
             if not w*.20 < x2-x1 < w*.27:
                 continue
-            if abs(left[1]-right[1]) > tolerance or abs(left[3]-right[3]) > tolerance:
+            if abs(left[1]-right[1]) > top_occlusion or abs(left[3]-right[3]) > tolerance:
                 continue
             if (np.mean(gold[y1, x1:x2] > 0) < .85
                     or np.mean(gold[y2-1, x1:x2] > 0) < .85):

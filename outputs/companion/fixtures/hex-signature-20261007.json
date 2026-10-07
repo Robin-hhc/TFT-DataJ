@@ -1,0 +1,212 @@
+{
+  "source_frame_sha256": "09d6c47043531632b3ce9836d18aec7718890eca3e8c934988b5afd956284f29",
+  "source_case_sha256": "7949b9791f91c247ade0ddbf6de7b224a6571439dc7d1b9ab4794bc18ffe2cf6",
+  "source_canvas": [
+    3840,
+    2160
+  ],
+  "retained_source_regions": [
+    [
+      1280,
+      0,
+      1480,
+      128
+    ],
+    [
+      520,
+      700,
+      1290,
+      880
+    ],
+    [
+      1530,
+      700,
+      2300,
+      880
+    ],
+    [
+      2530,
+      700,
+      3310,
+      880
+    ]
+  ],
+  "derived_png_sha256": "9b2a643f6a55f952f774a6037479131c3d0d6bda8ff4968c3d54527d5f32be03",
+  "limits": "Real first-frame pixels only. Black outside four text ROIs; padding retains Lanczos support. Brightness derivatives are controlled tests, not captured successor frames.",
+  "observation": {
+    "scene": "choice_candidates",
+    "round": "3-2",
+    "cards": [
+      {
+        "slot": 0,
+        "raw_text": "灵魂唤醒",
+        "box": [
+          [
+            561,
+            734
+          ],
+          [
+            1252,
+            734
+          ],
+          [
+            1252,
+            842
+          ],
+          [
+            561,
+            842
+          ]
+        ],
+        "resolution": {
+          "status": "resolved",
+          "id": "30599",
+          "name": "灵魂唤醒",
+          "candidates": [
+            {
+              "id": "30599",
+              "name": "灵魂唤醒",
+              "descText": "战斗开始时：你的队伍每秒获得1.5%物理加成和法术加成，持续10秒。在最大层数时，造成12%额外真实伤害。",
+              "icon": "https://img.dataj.cc/images/hex/awakenedsoul3.png",
+              "level": 3,
+              "isLegend": 0,
+              "heroEnhancementType": 0,
+              "fetterId": null,
+              "fetterType": "0",
+              "setId": "18",
+              "season": "S19",
+              "version": "18.18.1"
+            }
+          ],
+          "readings": [
+            "灵魂唤醒",
+            "灵魂唤醒",
+            ""
+          ]
+        }
+      },
+      {
+        "slot": 1,
+        "raw_text": "男爵幻域",
+        "box": [
+          [
+            1571,
+            734
+          ],
+          [
+            2262,
+            734
+          ],
+          [
+            2262,
+            842
+          ],
+          [
+            1571,
+            842
+          ]
+        ],
+        "resolution": {
+          "status": "resolved",
+          "id": "30617",
+          "name": "男爵幻域",
+          "candidates": [
+            {
+              "id": "30617",
+              "name": "男爵幻域",
+              "descText": "获得一件随机坦克装备。在战斗开始8秒后，你的弈子们会在战斗环节的剩余时间里每秒获得4%额外物理加成和法术加成，持续至战斗环节结束。  2025云顶之弈巴黎公开赛",
+              "icon": "https://img.dataj.cc/images/hex/thebaronslair3.png",
+              "level": 3,
+              "isLegend": 0,
+              "heroEnhancementType": 0,
+              "fetterId": null,
+              "fetterType": "0",
+              "setId": "18",
+              "season": "S19",
+              "version": "18.18.2"
+            }
+          ],
+          "readings": [
+            "男爵幻域",
+            "男爵幻域",
+            ""
+          ]
+        }
+      },
+      {
+        "slot": 2,
+        "raw_text": "星界喝福",
+        "box": [
+          [
+            2577,
+            734
+          ],
+          [
+            3268,
+            734
+          ],
+          [
+            3268,
+            842
+          ],
+          [
+            2577,
+            842
+          ]
+        ],
+        "resolution": {
+          "status": "unrecognized",
+          "candidates": [],
+          "readings": [
+            "星界喝福",
+            "星界喝福",
+            ""
+          ]
+        }
+      }
+    ],
+    "image_size": [
+      3840,
+      2160
+    ],
+    "round_box": [
+      [
+        1321,
+        17
+      ],
+      [
+        1436,
+        17
+      ],
+      [
+        1436,
+        93
+      ],
+      [
+        1321,
+        93
+      ]
+    ],
+    "header_box": null,
+    "layout_method": "three_refresh_controls",
+    "reason": "fast_mumu_layout",
+    "elapsed_ms": 250.0
+  },
+  "reviewed_cards": [
+    {
+      "slot": 0,
+      "id": "30599",
+      "name": "灵魂唤醒"
+    },
+    {
+      "slot": 1,
+      "id": "30617",
+      "name": "男爵幻域"
+    },
+    {
+      "slot": 2,
+      "id": "3022",
+      "name": "星界赐福 III"
+    }
+  ]
+}

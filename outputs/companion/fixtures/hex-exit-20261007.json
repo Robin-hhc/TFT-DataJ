@@ -1,0 +1,340 @@
+{
+  "source_canvas": [
+    3840,
+    2160
+  ],
+  "retained_regions": [
+    [
+      1280,
+      0,
+      1480,
+      128
+    ],
+    [
+      520,
+      700,
+      1290,
+      880
+    ],
+    [
+      1530,
+      700,
+      2300,
+      880
+    ],
+    [
+      2530,
+      700,
+      3310,
+      880
+    ]
+  ],
+  "frames": [
+    {
+      "label": "choice",
+      "source_evidence_id": "6bdc7c36a34021b17e7556658c6195dc",
+      "source_frame_sha256": "4419a6c9731eda3567e748e70bbba5692b7f6823bb7169b4eb8436a4402d5456",
+      "derived_file": "hex-exit-20261007-choice.png",
+      "derived_png_sha256": "562e73a6669a35c93cb5526c51fd4f7bf862a6bcb2865ceab95c204943f53787"
+    },
+    {
+      "label": "animation",
+      "source_evidence_id": "2fccacd722dd06749b24d506b174c687",
+      "source_frame_sha256": "298335068df858cfb5a1328e065f50a6eebf8daf88d802ca47c3e0d08267c186",
+      "derived_file": "hex-exit-20261007-animation.png",
+      "derived_png_sha256": "957f348d7137e6a551b7171550bdc59077a670021756ad18184fa392ef2584eb"
+    },
+    {
+      "label": "board",
+      "source_evidence_id": "a6084adb8cc770b7c522f7c1be518f58",
+      "source_frame_sha256": "45e9b97b92a412827f434a4b3c7314d9fde44ee7f321ddc790b075a5943012b1",
+      "derived_file": "hex-exit-20261007-board.png",
+      "derived_png_sha256": "4ae43942edb2f098b6c7886899c51180d1fc6f18b2895fe2fbe52628aac36545"
+    }
+  ],
+  "observation": {
+    "scene": "choice_candidates",
+    "round": "2-1",
+    "cards": [
+      {
+        "slot": 0,
+        "raw_text": "欧米茄之怪",
+        "box": [
+          [
+            561,
+            734
+          ],
+          [
+            1252,
+            734
+          ],
+          [
+            1252,
+            842
+          ],
+          [
+            561,
+            842
+          ]
+        ],
+        "resolution": {
+          "status": "resolved",
+          "id": "20767",
+          "name": "欧米茄之怪",
+          "candidates": [
+            {
+              "id": "20767",
+              "name": "欧米茄之怪",
+              "descText": "你现在可以选择第二个被【阿尔法印记】标记的【峡谷野怪】。获得1个【峡谷迅捷蟹】、1个【绯红树怪】和1个【苍蓝哨戒】。",
+              "icon": "https://img.dataj.cc/images/hex/riftbeastaugment22.png",
+              "level": 2,
+              "isLegend": 0,
+              "heroEnhancementType": 0,
+              "fetterId": null,
+              "fetterType": "0",
+              "setId": "18",
+              "season": "S19",
+              "version": "18.18.1b",
+              "catalog_alias_ids": [
+                "20767",
+                "30767"
+              ]
+            }
+          ],
+          "readings": [
+            "欧米茄之怪",
+            "欧米茄之怪",
+            "欧米茄之怪"
+          ]
+        }
+      },
+      {
+        "slot": 1,
+        "raw_text": "砍价高手",
+        "box": [
+          [
+            1571,
+            734
+          ],
+          [
+            2262,
+            734
+          ],
+          [
+            2262,
+            842
+          ],
+          [
+            1571,
+            842
+          ]
+        ],
+        "resolution": {
+          "status": "resolved",
+          "id": "20480",
+          "name": "砍价高手",
+          "candidates": [
+            {
+              "id": "20480",
+              "name": "砍价高手",
+              "descText": "你无法选择你的选秀奖励。每次选秀回合获得额外的6玩家生命值和8金币。 当你没有选择一个选秀奖励时，你会被给予一个未被选择的弈子和其携带的装备。",
+              "icon": "https://img.dataj.cc/images/hex/hardbargain2.png",
+              "level": 2,
+              "isLegend": 0,
+              "heroEnhancementType": 0,
+              "fetterId": null,
+              "fetterType": "0",
+              "setId": "18",
+              "season": "S19",
+              "version": "18.18.1"
+            }
+          ],
+          "readings": [
+            "砍价高手",
+            "砍价高手",
+            "砍价高手"
+          ]
+        }
+      },
+      {
+        "slot": 2,
+        "raw_text": "泪流成河",
+        "box": [
+          [
+            2577,
+            734
+          ],
+          [
+            3268,
+            734
+          ],
+          [
+            3268,
+            842
+          ],
+          [
+            2577,
+            842
+          ]
+        ],
+        "resolution": {
+          "status": "resolved",
+          "id": "20471",
+          "name": "泪流成河",
+          "candidates": [
+            {
+              "id": "20471",
+              "name": "泪流成河",
+              "descText": "获得1个【女神之泪】。你的队伍获得1法力回复。对战开始12秒后，该数值提升至4。",
+              "icon": "https://img.dataj.cc/images/hex/crymeariver2.png",
+              "level": 2,
+              "isLegend": 0,
+              "heroEnhancementType": 0,
+              "fetterId": null,
+              "fetterType": "0",
+              "setId": "18",
+              "season": "S19",
+              "version": "18.18.1"
+            }
+          ],
+          "readings": [
+            "泪流成河",
+            "泪流成河",
+            "泪流成河"
+          ]
+        }
+      }
+    ],
+    "image_size": [
+      3840,
+      2160
+    ],
+    "round_box": [
+      [
+        1321,
+        17
+      ],
+      [
+        1436,
+        17
+      ],
+      [
+        1436,
+        93
+      ],
+      [
+        1321,
+        93
+      ]
+    ],
+    "header_box": null,
+    "layout_method": "three_refresh_controls",
+    "reason": "fast_mumu_layout",
+    "elapsed_ms": 218.0
+  },
+  "statistics_rows": [
+    {
+      "hexId": 20767,
+      "name": "欧米茄之怪",
+      "icon": "https://game.gtimg.cn/images/lol/act/jkzlk/gamedata/hex/riftbeastaugment22.png",
+      "sampleCount": 11052,
+      "playRate": 0.39,
+      "avgPlacement": 4.18,
+      "top4Rate": 55.08,
+      "topRate": 12.7,
+      "rounds": [
+        "2-1",
+        "3-2",
+        "4-2"
+      ],
+      "roundStats": [
+        {
+          "round": 0,
+          "roundLabel": "2-1",
+          "sampleCount": 5752,
+          "playRate": 0.2,
+          "avgPlacement": 4.23,
+          "top4Rate": 54.61,
+          "topRate": 11.61
+        },
+        {
+          "round": 1,
+          "roundLabel": "3-2",
+          "sampleCount": 1995,
+          "playRate": 0.07,
+          "avgPlacement": 4.14,
+          "top4Rate": 55.59,
+          "topRate": 13.63
+        },
+        {
+          "round": 2,
+          "roundLabel": "4-2",
+          "sampleCount": 3305,
+          "playRate": 0.12,
+          "avgPlacement": 4.12,
+          "top4Rate": 55.58,
+          "topRate": 14.04
+        }
+      ]
+    },
+    {
+      "hexId": 20480,
+      "name": "砍价高手",
+      "icon": "https://game.gtimg.cn/images/lol/act/jkzlk/gamedata/hex/hardbargain2.png",
+      "sampleCount": 2125,
+      "playRate": 0.07,
+      "avgPlacement": 4.51,
+      "top4Rate": 50.07,
+      "topRate": 13.32,
+      "rounds": [
+        "2-1"
+      ],
+      "roundStats": [
+        {
+          "round": 0,
+          "roundLabel": "2-1",
+          "sampleCount": 2125,
+          "playRate": 0.07,
+          "avgPlacement": 4.51,
+          "top4Rate": 50.07,
+          "topRate": 13.32
+        }
+      ]
+    },
+    {
+      "hexId": 20471,
+      "name": "泪流成河",
+      "icon": "https://game.gtimg.cn/images/lol/act/jkzlk/gamedata/hex/crymeariver2.png",
+      "sampleCount": 2104,
+      "playRate": 0.07,
+      "avgPlacement": 4.55,
+      "top4Rate": 49.05,
+      "topRate": 9.89,
+      "rounds": [
+        "2-1",
+        "3-2"
+      ],
+      "roundStats": [
+        {
+          "round": 0,
+          "roundLabel": "2-1",
+          "sampleCount": 1202,
+          "playRate": 0.04,
+          "avgPlacement": 4.66,
+          "top4Rate": 47.17,
+          "topRate": 8.9
+        },
+        {
+          "round": 1,
+          "roundLabel": "3-2",
+          "sampleCount": 902,
+          "playRate": 0.03,
+          "avgPlacement": 4.4,
+          "top4Rate": 51.55,
+          "topRate": 11.2
+        }
+      ]
+    }
+  ],
+  "manual_review": "Actual 2-1 choice, selected left-card animation with unchanged names, then board. Outside text ROIs black; no resampling. These are different captured Windows images, not brightness derivatives."
+}

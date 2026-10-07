@@ -1,0 +1,15 @@
+{
+  "source_frame_sha256": "918450c3c6509308f1db420576c13480d20486a57f92b1199b214be315105bd5",
+  "derived_png_sha256": "f33bcf4ab1818e6469278163bea4aa986350c88dda3a3cc82ea4e8e7ebfbe0bd",
+  "source_crop_box": [
+    1280,
+    0,
+    1480,
+    128
+  ],
+  "source_canvas": [
+    3840,
+    2160
+  ],
+  "manual_review": "Actual round 2-1; byte-exact source crop, used as changed-round evidence against actual round 3-2."
+}

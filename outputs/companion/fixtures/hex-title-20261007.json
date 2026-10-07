@@ -1,0 +1,76 @@
+{
+  "source_frame_sha256": "09d6c47043531632b3ce9836d18aec7718890eca3e8c934988b5afd956284f29",
+  "source_case_sha256": "7949b9791f91c247ade0ddbf6de7b224a6571439dc7d1b9ab4794bc18ffe2cf6",
+  "derived_title_crop_box": [
+    2577,
+    734,
+    3268,
+    864
+  ],
+  "derived_png_sha256": "2d6b8cc390a048b9ba2023ee470baba0013a557debb05ffe7ffd59a2b28c1e94",
+  "source_canvas": [
+    3840,
+    2160
+  ],
+  "expected_slot": 2,
+  "expected_id": "3022",
+  "manual_review": "Original title is 星界赐福 III; recorded catalog3022 quality3 and description25%全能汲取/1000护盾 agree. Derived title crop is not a full raw screenshot.",
+  "catalog": [
+    {
+      "id": "2022",
+      "name": "星界赐福 II",
+      "descText": "你的队伍获得18%全能汲取。溢出的治疗量会转化为护盾，最高可达到400护盾值。",
+      "icon": "https://img.dataj.cc/images/hex/celestialblessing2.png",
+      "level": 2,
+      "isLegend": 0,
+      "heroEnhancementType": 0,
+      "fetterId": null,
+      "fetterType": "0",
+      "setId": "18",
+      "season": "S19",
+      "version": "18.18.1b"
+    },
+    {
+      "id": "3022",
+      "name": "星界赐福 III",
+      "descText": "你的队伍获得25%全能汲取。溢出的治疗量会转化为护盾，最高可达到1000护盾值。",
+      "icon": "https://img.dataj.cc/images/hex/celestialblessing3.png",
+      "level": 3,
+      "isLegend": 0,
+      "heroEnhancementType": 0,
+      "fetterId": null,
+      "fetterType": "0",
+      "setId": "18",
+      "season": "S19",
+      "version": "18.18.1b"
+    },
+    {
+      "id": "30599",
+      "name": "灵魂唤醒",
+      "descText": "战斗开始时：你的队伍每秒获得1.5%物理加成和法术加成，持续10秒。在最大层数时，造成12%额外真实伤害。",
+      "icon": "https://img.dataj.cc/images/hex/awakenedsoul3.png",
+      "level": 3,
+      "isLegend": 0,
+      "heroEnhancementType": 0,
+      "fetterId": null,
+      "fetterType": "0",
+      "setId": "18",
+      "season": "S19",
+      "version": "18.18.1"
+    },
+    {
+      "id": "30617",
+      "name": "男爵幻域",
+      "descText": "获得一件随机坦克装备。在战斗开始8秒后，你的弈子们会在战斗环节的剩余时间里每秒获得4%额外物理加成和法术加成，持续至战斗环节结束。  2025云顶之弈巴黎公开赛",
+      "icon": "https://img.dataj.cc/images/hex/thebaronslair3.png",
+      "level": 3,
+      "isLegend": 0,
+      "heroEnhancementType": 0,
+      "fetterId": null,
+      "fetterType": "0",
+      "setId": "18",
+      "season": "S19",
+      "version": "18.18.2"
+    }
+  ]
+}

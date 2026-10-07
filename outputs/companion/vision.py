@@ -4,7 +4,7 @@ import time
 import re
 from dataclasses import dataclass
 import numpy as np
-from PIL import Image, ImageOps, ImageStat
+from PIL import Image, ImageOps, ImageStat, ImageFilter
 import bootstrap
 from choice_reader import read_choice, bounds
 from ocr_baseline import build_engine
@@ -67,7 +67,10 @@ class Vision:
         stage=self.read_round_crop(image.crop(stage_rect))
         cards=[]
         for i,cx in enumerate((.236,.499,.761)):
-            area=rect(cx-.09,.34,cx+.09,.382)
+            # Live titles extend below .382h; clipping their lower strokes can
+            # turn 赐 into 喝 and remove a Roman quality suffix. Keep the whole
+            # title above the description region, without changing OCR matching.
+            area=rect(cx-.09,.34,cx+.09,.39)
             result=self.read_name(image.crop(area),catalog)
             description=None
             if result['status']=='ambiguous' and any(description_terms(result['candidates'])):
@@ -283,8 +286,28 @@ def unchanged(a,b):
     return int(np.count_nonzero(difference>12)) < 16 and float(np.mean(difference)) < .15
 
 
+def _text_strokes(region):
+    """Neutral foreground with both regional and local contrast evidence."""
+    gray=region.convert('L')
+    brightness=np.asarray(gray,dtype=np.int16)
+    rgb=np.asarray(region,dtype=np.int16)
+    background=float(np.median(brightness))
+    peak=float(np.percentile(brightness,99))
+    contrast=peak-background
+    # Beige live titles can peak below 200 after downsampling. A relative
+    # threshold recovers their strokes; insufficient contrast stays empty.
+    if contrast<max(40,.8*background):return np.zeros(brightness.shape,dtype=bool)
+    low=np.asarray(gray.filter(ImageFilter.MinFilter(3)),dtype=np.int16)
+    high=np.asarray(gray.filter(ImageFilter.MaxFilter(3)),dtype=np.int16)
+    mask=((brightness>=background+.6*contrast)&(high-low>=max(24,.35*contrast))
+          &((rgb.max(axis=2)-rgb.min(axis=2))<80))
+    # Smooth lighting has no local edges; dense texture is not title evidence.
+    if np.count_nonzero(mask)>.35*mask.size:return np.zeros(mask.shape,dtype=bool)
+    return mask
+
+
 def tracked_signature(image,observation):
-    """Development guard: bright title strokes, excluding animated card borders."""
+    """Development guard: supported text strokes, excluding animated borders."""
     width,height=image.size
     header=observation.get('header_box')
     regions=[(min(p[0] for p in header)-1,min(p[1] for p in header)-1,
@@ -316,7 +339,5 @@ def tracked_signature(image,observation):
         if r<=l or b<=t:return TextSignature(())
         region=source.resize((r-l,b-t),Image.Resampling.LANCZOS,
                              box=(l*width/640,t*height/normalized_height,r*width/640,b*height/normalized_height))
-        rgb=np.asarray(region,dtype=np.int16)
-        brightness=np.asarray(region.convert('L'))
-        vectors.append((brightness>=200)&((rgb.max(axis=2)-rgb.min(axis=2))<80))
+        vectors.append(_text_strokes(region))
     return TextSignature(tuple(vectors))

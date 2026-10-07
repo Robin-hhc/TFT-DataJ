@@ -59,6 +59,26 @@ class GameResourceInputTests(unittest.TestCase):
         self.assertEqual(body['filter']['rules'][0]['targetId'],'20778')
         self.assertEqual(len(body['filter']['rules']),1)
 
+    def test_successful_condition_retry_clears_previous_source_error(self):
+        self.flush()
+        self.p.status.setText('来源暂时不可用，稍后手动重试')
+        self.p.browser.set_filter('equip',CATALOG['equip'][0])
+        self.flush()
+        self.assertFalse(self.p.browser.failed)
+        self.assertEqual(self.p.status.text(),'已按「地狱火纹章」检索阵容。')
+        self.assertEqual(self.p.selected_resources.events,())
+
+    def test_late_query_success_does_not_clear_current_query_status(self):
+        self.flush()
+        self.p.browser.set_filter('equip',CATALOG['equip'][0])
+        _,old_done,_=self.pending.pop(0)
+        self.p.browser.set_filter('hex',CATALOG['hex'][0])
+        self.p.status.setText('当前查询尚未完成')
+        old_done({'data':{'comps':[]}})
+        self.assertEqual(self.p.status.text(),'当前查询尚未完成')
+        self.flush()
+        self.assertEqual(self.p.status.text(),'已按「黑暗仪式」检索阵容。')
+
     def test_patch_change_keeps_pin_resources_and_single_condition_but_clears_old_data(self):
         p=self.p;p.select_comp('112');self.flush()
         p.browser.set_filter('hex',CATALOG['hex'][0],can_confirm=True);self.flush()

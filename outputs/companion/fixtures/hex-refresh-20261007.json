@@ -1,0 +1,141 @@
+{
+  "derived_png_sha256": "aff69c2083ff9b98d2d274831c27ddc3cef9985ed0d358b526d6da61352aeee4",
+  "limits": "Three original crops packed without resampling. Not a contiguous captured frame.",
+  "entries": [
+    {
+      "case_id": "98906568e8022e344a74001f94915bda0840865219d1cbf20b998d27f6a7415f",
+      "source_frame_sha256": "918450c3c6509308f1db420576c13480d20486a57f92b1199b214be315105bd5",
+      "source_crop_box": [
+        2537,
+        700,
+        3308,
+        950
+      ],
+      "packed_crop_box": [
+        0,
+        0,
+        771,
+        250
+      ],
+      "changed_slot": 2,
+      "actual_title": "高塔",
+      "actual_title_y_approx": [
+        880,
+        930
+      ],
+      "observed_title_box": [
+        [
+          2577,
+          734
+        ],
+        [
+          3268,
+          734
+        ],
+        [
+          3268,
+          825
+        ],
+        [
+          2577,
+          825
+        ]
+      ],
+      "source_canvas": [
+        3840,
+        2160
+      ],
+      "manual_review": "Refresh animation; new title has moved below the tracked title ROI. Must not authorize old ranks."
+    },
+    {
+      "case_id": "efa09b0ec82228c7e21864c7d7f8ab06db3ccaf6bacc35bc1ac0d05ca387a918",
+      "source_frame_sha256": "1b899bad8fa60a8ed5a808763f6aa4c5a9277256b5ba246b592c12be4b9d2c1f",
+      "source_crop_box": [
+        521,
+        700,
+        1292,
+        950
+      ],
+      "packed_crop_box": [
+        0,
+        250,
+        771,
+        500
+      ],
+      "changed_slot": 0,
+      "actual_title": "物尽其用+",
+      "actual_title_y_approx": [
+        850,
+        905
+      ],
+      "observed_title_box": [
+        [
+          561,
+          734
+        ],
+        [
+          1252,
+          734
+        ],
+        [
+          1252,
+          825
+        ],
+        [
+          561,
+          825
+        ]
+      ],
+      "source_canvas": [
+        3840,
+        2160
+      ],
+      "manual_review": "Refresh animation; new title has moved below the tracked title ROI. Must not authorize old ranks."
+    },
+    {
+      "case_id": "ae09aefb387da52ab96602fa313095a2ac36809e543200187df4b5fdb9927768",
+      "source_frame_sha256": "833d0a9c084fa79829eb59943afd09ebedc99f5ff73b438b16990d530e6639ec",
+      "source_crop_box": [
+        1531,
+        700,
+        2302,
+        950
+      ],
+      "packed_crop_box": [
+        0,
+        500,
+        771,
+        750
+      ],
+      "changed_slot": 1,
+      "actual_title": "腰带溢流",
+      "actual_title_y_approx": [
+        850,
+        905
+      ],
+      "observed_title_box": [
+        [
+          1571,
+          734
+        ],
+        [
+          2262,
+          734
+        ],
+        [
+          2262,
+          825
+        ],
+        [
+          1571,
+          825
+        ]
+      ],
+      "source_canvas": [
+        3840,
+        2160
+      ],
+      "manual_review": "Refresh animation; new title has moved below the tracked title ROI. Must not authorize old ranks."
+    }
+  ]
+}

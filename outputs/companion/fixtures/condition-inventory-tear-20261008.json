@@ -1,0 +1,64 @@
+{
+  "source_frame_sha256": "d2bb294e0f9a937737ff27b10ca9e4acc15f3f3fd791ffc63a7838c70d42e35f",
+  "source_canvas": [
+    3840,
+    2160
+  ],
+  "derived_png_sha256": "6a6c93072bcee39b9bac7222d13ae4e47ab349e210e2fa1adce19568bfbe995c",
+  "kept_pixel_rects": [
+    [
+      270,
+      30,
+      1176,
+      250
+    ],
+    [
+      270,
+      30,
+      282,
+      1962
+    ],
+    [
+      1164,
+      30,
+      1176,
+      1962
+    ],
+    [
+      270,
+      1950,
+      1176,
+      1962
+    ]
+  ],
+  "redaction": "Original header and thin border pixels retained at original coordinates. Remaining frame and recipe-body pixels blacked out; no rescale, sharpening, or synthetic glyphs.",
+  "expected_name": "女神之泪",
+  "expected_id": "1004",
+  "expected_kind": "equip",
+  "expected_layout": "s18_left_inventory_detail",
+  "manual_review": "Source viewed at native 3840x2160; inventory main title and icon identify 女神之泪. Recipe rows are not primary titles. Glove source includes companion badge obscuring only the short upper-left gold border.",
+  "catalog": {
+    "equip": [
+      {
+        "id": "1009",
+        "name": "拳套",
+        "type": "基础装备"
+      },
+      {
+        "id": "1004",
+        "name": "女神之泪",
+        "type": "基础装备"
+      },
+      {
+        "id": "2038",
+        "name": "珠光护手",
+        "type": "成型装备"
+      },
+      {
+        "id": "2039",
+        "name": "正义之手",
+        "type": "成型装备"
+      }
+    ]
+  }
+}

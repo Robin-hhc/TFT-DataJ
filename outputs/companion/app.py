@@ -219,6 +219,8 @@ class Companion(QWidget):
         self.once_ocr_pending=False
         self.once_deadline=0.0
         self.signature=None
+        self.choice_recheck_required=False
+        self.pending_choice_confirmation=None
         self.stable=0
         self.last_capture=0.0
         self.last_ocr=0.0
@@ -728,6 +730,8 @@ class Companion(QWidget):
         self.stats_inflight_token=None
         self.session.invalidate();self.signature=None;self.stable=0;self.stats_payload=None;self.last_observation=None
         self.last_frame=None
+        self.choice_recheck_required=False
+        self.pending_choice_confirmation=None
         self.once_active=False
         self.once_ocr_pending=False
         self.was_available=False
@@ -895,9 +899,12 @@ class Companion(QWidget):
     def choices_changed(self,once=False):
         """Discard old ranks while keeping a bounded re-recognition request."""
         manual=self.once_active
-        deadline=max(self.once_deadline,time.monotonic()+30) if manual else self.once_deadline
+        rechecking=self.choice_recheck_required
+        confirmed=self.last_observation is not None and self.session.stage in STAGES
+        deadline=max(self.once_deadline,time.monotonic()+30) if manual and not rechecking else self.once_deadline
         retry=once or self.once_ocr_pending or manual or self.automatic.isChecked()
         self.invalidate()
+        self.choice_recheck_required=rechecking or confirmed
         self.once_active=manual;self.once_deadline=deadline;self.once_ocr_pending=retry
         if self.automatic.isChecked():self.stage_window_until=max(self.stage_window_until,time.monotonic()+15)
 
@@ -905,6 +912,8 @@ class Companion(QWidget):
         image,binding=result
         self.capture_pending=True
         token=self.session.token();observation=self.last_observation
+        if observation is None and self.pending_choice_confirmation:
+            observation=self.pending_choice_confirmation[1]
         item_reference_boxes=tuple(self.items.boxes)
         captured_at=time.monotonic() if captured_at is None else captured_at
         def inspect():
@@ -948,6 +957,18 @@ class Companion(QWidget):
         # All accepted frames supersede in-flight OCR, including item proposals
         # which return before the shared augment path can start another read.
         self.last_frame=image
+        pending=self.pending_choice_confirmation
+        if pending:
+            # The OCR input cannot confirm itself. A later captured image must
+            # retain the same round and all three titles before ranks return.
+            if image is pending[0]:return
+            self.pending_choice_confirmation=None
+            if not items[0] and unchanged(pending[2],signature):
+                self.choice_recheck_required=False
+                pending[3](pending[1],signature)
+                return
+            self.choices_changed(once)
+            self.last_frame=image
         if self.items.ingest(image,binding,force=once or self.once_ocr_pending,prepared=items,frame_time=captured_at):
             self.once_ocr_pending=False
             return
@@ -976,11 +997,18 @@ class Companion(QWidget):
             self.display_overlays()
 
     def analyze(self,image,live,retain_confirmed=False):
-        if self.ocr_busy or not self.catalog:return
+        if self.ocr_busy or self.pending_choice_confirmation or not self.catalog:return
         self.ocr_busy=True;self.ocr_live=live;self.last_ocr=time.monotonic()
         token=self.session.token();catalog=self.catalog['hex']
         retained_observation=self.last_observation if retain_confirmed else None
         retained_payload=self.stats_payload if retain_confirmed else None
+        def wait_for_signature():
+            deadline=self.once_deadline
+            self.choices_changed()
+            # Unverifiable pixels cannot renew a manual request's deadline.
+            self.once_deadline=deadline
+            if not self.offline:record('ocr_verification_pending',reason='unreliable_signature')
+            self.set_activity('frame_unverified','选择画面尚未稳定，正在重新识别…')
         def finish(obs,signature):
             self.ocr_busy=False
             if not self.session.accepts(token):return
@@ -996,8 +1024,14 @@ class Companion(QWidget):
                 and time.monotonic()-self.last_capture<=1.5):
                 if not self.offline:record('ocr_partial_retained')
                 self.display_overlays();return
-            if live:self.signature=signature
             if live:self.bugs.observed_hex(obs,image)
+            if (live and obs.get('scene')=='choice_candidates' and obs.get('round') in STAGES
+                and not unchanged(signature,signature)):
+                # Never publish a frame the next capture cannot verify. Actual
+                # legible beige titles pass the contrast-based stroke extractor.
+                wait_for_signature()
+                return
+            if live:self.signature=signature
             self.observed(obs,live)
         def done(result):
             obs,signature=result
@@ -1019,11 +1053,20 @@ class Companion(QWidget):
                             return
                         if not unchanged(signature,current):
                             self.ocr_busy=False
+                            if not unchanged(signature,signature) or not unchanged(current,current):
+                                wait_for_signature();return
                             self.choices_changed()
                             self.set_activity('frame_changed','选择画面发生变化，正在重新识别…');return
+                        self.choice_recheck_required=False
                         finish(obs,current)
                     self.submit(self.capture_pool,lambda:tracked_signature(frame,obs) if frame else None,checked,failed)
                 check_latest(latest)
+            elif (live and self.choice_recheck_required and obs.get('scene')=='choice_candidates'
+                  and obs.get('round') in STAGES and unchanged(signature,signature)):
+                self.ocr_busy=False
+                self.pending_choice_confirmation=(image,obs,signature,finish)
+                if not self.offline:record('ocr_verification_pending',reason='awaiting_next_capture')
+                self.set_activity('frame_unverified','选择画面发生变化，正在确认后续画面…')
             else:finish(obs,signature)
         def failed(_):
             self.ocr_busy=False
@@ -1165,7 +1208,9 @@ class Companion(QWidget):
                 self.refresh_selected_resources()
                 self.browser.input_bar.show_note('阶段回到 2-1，本局边界待确认；请点击「新的一局」清除上一局资源。')
             if stage and stage!=self.last_probe_stage:
-                same_choice=self.last_observation is not None and self.session.stage==stage
+                same_choice=((self.last_observation is not None and self.session.stage==stage)
+                             or (self.pending_choice_confirmation is not None
+                                 and self.pending_choice_confirmation[1].get('round')==stage))
                 if not same_choice:self.invalidate()
                 self.stage_window_until=time.monotonic()+60 if stage in STAGES else 0
                 self.last_probe_stage=stage
@@ -1189,7 +1234,7 @@ class Companion(QWidget):
         reason=win.capture_block_reason(self.binding,current,win.foreground_root()) if self.binding else 'no_binding'
         if self.panel_open() or reason:
             self.hide_overlays()
-            if self.was_available or self.signature is not None or (self.ocr_busy and self.ocr_live) or self.once_active or self.items.active or self.items.recognizing:self.invalidate()
+            if self.was_available or self.signature is not None or self.pending_choice_confirmation or (self.ocr_busy and self.ocr_live) or self.once_active or self.items.active or self.items.recognizing:self.invalidate()
             self.was_available=False
             if self.automatic.isChecked() and not self.panel_open():
                 if reason=='target_changed_or_closed':
@@ -1231,6 +1276,7 @@ class Companion(QWidget):
                 rows=result['data']['comps'] if kind else result['data']
                 DataJ.validate_comps(rows)
                 self.browser.set_result(rows,adapter.patch)
+                self.status.setText(f"已按「{entity['name']}」检索阵容。" if kind else '已更新阵容列表。')
             except Exception:self.browser.set_error();return
         def failed(_):
             if generation==self.explorer_generation and adapter is self.adapter:self.browser.set_error()

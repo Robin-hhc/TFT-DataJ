@@ -1,4 +1,4 @@
-金铲铲 DataJ Companion · v0.2.6 Windows 便携测试版
+金铲铲 DataJ Companion · v0.2.7 Windows 便携测试版
 
 1. 将ZIP完整解压到一个文件夹，不要直接在压缩包内运行。
 2. 双击 TFT-DataJ.exe。无需安装Python、OCR或其他开发环境。
