@@ -220,6 +220,86 @@ def check_resource_inputs(panel, qt):
                            'portable-resource-inputs-native.png','portable-resource-inputs-search-native.png']}
 
 
+def check_comp_hex_supplements():
+    """Run the real adapter and stage supplement using embedded mock responses.
+
+    No fixture or repository work files are required by this packaged check.
+    These are synthetic transport responses containing reviewed stage values,
+    not evidence of a live API request, game OCR or interaction. The normal
+    adapter cache, request pacing and failure cooldown remain unchanged.
+    """
+    import tempfile
+    import httpx
+    from dataj import DataJ
+    from hex_stats import lookup_comp_hexes
+    from snapshot_stats import stage_stat
+
+    reviewed={
+        '20742':('四之力',4.23,13),
+        '30668':('厨神',4.54,13),
+        '20708':('电火花',4.75,8),
+    }
+    entities=[(identity,row[0]) for identity,row in reviewed.items()]
+    requests=[]
+
+    def transport(request):
+        path=request.url.path
+        body=json.loads(request.content) if request.method=='POST' else None
+        requests.append({'method':request.method,'path':path,'body':body,
+                         'params':dict(request.url.params)})
+        assert request.url.scheme=='https' and request.url.host=='www.dataj.cc',request.url
+        if request.method=='GET' and path=='/api/web/comp/107/hexes':
+            assert dict(request.url.params)=={'setId':'18','gameVersion':'18.3'},request.url
+            data={'compId':'107','hexes':[]}
+        else:
+            assert request.method=='POST' and path=='/api/web/explorer/query',(request.method,path)
+            assert body['version']=='18.3' and body['setId']==18,body
+            assert body['filter']['combinator']=='and' and len(body['filter']['rules'])==1,body
+            rule=body['filter']['rules'][0]
+            identity=rule['targetId']
+            assert identity in reviewed and rule['type']=='hex' and rule['hexRound']=='1',rule
+            name,average,samples=reviewed[identity]
+            assert rule['targetName']==name,rule
+            assert rule['enable'] is True and rule['nameMatch'] is False and rule['exclude'] is False,rule
+            assert {key:rule[key] for key in ('starCount','equipCarry','equipCount')}=={
+                'starCount':'','equipCarry':'','equipCount':''},rule
+            data={'comps':[{'compId':'107','name':'便携补查验证阵容',
+                            'avgPlacement':average,'sampleCount':samples}]}
+        return httpx.Response(200,json={'code':200,'success':True,'data':data})
+
+    started=time.monotonic()
+    with tempfile.TemporaryDirectory(prefix='TFT-DataJ-hex-diagnostic-') as directory:
+        adapter=DataJ(set_id=18,patch='18.3',db=Path(directory)/'cache.sqlite',
+                      transport=httpx.MockTransport(transport))
+        first=lookup_comp_hexes(adapter,'107','3-2',entities)
+        assert len(requests)==4,'Expected one primary request and three exact stage supplements'
+        second=lookup_comp_hexes(adapter,'107','3-2',entities)
+        assert len(requests)==4,'Repeated supplement lookup bypassed the production cache'
+        for result,cached in ((first,False),(second,True)):
+            assert result['cached'] is cached and result['supplement_errors']=={},result
+            assert result['supplemented_ids']==list(reviewed),result
+            assert result['source'].split('?')[0]=='https://www.dataj.cc/api/web/comp/107/hexes',result
+            assert set(result['supplement_sources'])==set(reviewed),result
+            for identity,(_,average,samples) in reviewed.items():
+                statistic=stage_stat(result['data'],identity,'3-2')
+                assert statistic=={'status':'ok','avg_placement':average,
+                                  'sample_count':samples,'stage':'3-2'},statistic
+                source=result['supplement_sources'][identity]
+                assert source['source']=='https://www.dataj.cc/api/web/explorer/query',source
+                assert source['cached'] is cached and source['sample_count']==samples,source
+                assert source['scope']=={'set_id':18,'patch':'18.3','comp':'107',
+                                         'stage':'3-2','hex_id':identity},source
+                assert source['fetched_at']==first['supplement_sources'][identity]['fetched_at'],source
+    return {'evidence':'synthetic MockTransport diagnostic only; not live API, OCR or game validation',
+            'scope':{'set_id':18,'patch':'18.3','comp':'107','stage':'3-2'},
+            'primary_table_empty':True,'http_request_count':len(requests),
+            'repeat_lookup_fully_cached':True,'normal_request_pacing_preserved':True,
+            'elapsed_seconds':round(time.monotonic()-started,3),
+            'statistics':[{'hex_id':identity,'name':name,'average':average,'samples':samples}
+                          for identity,(name,average,samples) in reviewed.items()],
+            'request_bodies':requests}
+
+
 def check_identity_and_bug_archive():
     """Exercise new packaged modules with bounded synthetic evidence, offline."""
     import hashlib
@@ -316,6 +396,8 @@ def main():
         report['checks'].append('pinned guide versions, latest entry, retry, scope and unpin regression')
         report['resource_inputs']=check_resource_inputs(panel,qt)
         report['checks'].append('packaged canonical single-condition inputs, explicit selection, chips, overflow, pinned version switch and new game')
+        report['comp_hex_supplements']=check_comp_hex_supplements()
+        report['checks'].append('packaged exact-stage comp hex supplements and repeated lookup cache via embedded mock transport')
         report['identity_and_bug_archive']=check_identity_and_bug_archive()
         report['checks'].append('packaged hex alias identity, variant rejection and lossless pending bug archive deduplication')
         if args.explorer_fixture:

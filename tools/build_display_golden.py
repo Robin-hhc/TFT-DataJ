@@ -8,6 +8,7 @@ import argparse
 import gzip
 import hashlib
 import json
+import math
 from pathlib import Path
 from collect_display_fixtures import key
 
@@ -15,6 +16,28 @@ from collect_display_fixtures import key
 def metric(row):
     if row is None or row['sampleCount']==0:return '暂无数据'
     return f"{row['avgPlacement']:.2f} {row['sampleCount']:,}局"+(' · 少' if row['sampleCount']<50 else '')
+
+
+def hex_metric(rows, entity, stage, *, scope):
+    """Project the reviewed identity/stage/status rules without app imports.
+
+    This legacy capture covers the primary table only. A missing identity is
+    an absent statistic in that scope, not evidence that OCR failed.
+    """
+    stages={'2-1':0,'3-2':1,'4-2':2}
+    if stage not in stages:return '— 阶段待确认'
+    matches=[row for row in rows if str(row['hexId'])==str(entity)]
+    if len(matches)!=1:
+        return '— 本阵容暂无统计' if scope=='comp' else '— 暂无全局统计'
+    candidates=[row for row in matches[0]['roundStats']
+                if row['round']==stages[stage] and row['roundLabel']==stage]
+    if len(candidates)!=1:return '— 无该阶段数据'
+    row=candidates[0];average=row.get('avgPlacement');samples=row.get('sampleCount')
+    if (isinstance(average,bool) or not isinstance(average,(int,float))
+        or not math.isfinite(average) or not 1<=average<=8
+        or isinstance(samples,bool) or not isinstance(samples,int) or samples<=0):
+        return '— 统计不可用'
+    return f"{average:.2f} · {samples}局"+(' · 少' if samples<50 else '')
 
 
 def propose(folder):
@@ -40,12 +63,10 @@ def propose(folder):
         elif path.endswith('/hexes') or path=='/stats/hex':
             rows=data['hexes'] if isinstance(data,dict) else data
             for rune in matrix['hexes']:
-                entity=str(rune['id']);matches=[r for r in rows if str(r['hexId'])==entity]
-                expected[entity]={}
-                for index,stage in enumerate(['2-1','3-2','4-2']):
-                    candidates=[r for r in matches[0]['roundStats'] if r['round']==index and r['roundLabel']==stage] if len(matches)==1 else []
-                    expected[entity][stage]=(f"{candidates[0]['avgPlacement']:.2f} · {candidates[0]['sampleCount']}局"+(' · 少' if candidates[0]['sampleCount']<50 else '')
-                        if len(candidates)==1 and candidates[0]['sampleCount']>0 else '— 无该阶段数据' if len(matches)==1 else '— 无数据/未识别')
+                entity=str(rune['id'])
+                expected[entity]={stage:hex_metric(rows,entity,stage,
+                    scope='comp' if path.endswith('/hexes') else 'global')
+                    for stage in ['2-1','3-2','4-2']}
         elif path.endswith('/hero-equips'):
             for form in ['heroEquips','hero3Equips']:
                 expected[form]={}

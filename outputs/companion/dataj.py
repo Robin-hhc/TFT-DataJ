@@ -239,11 +239,14 @@ class DataJ:
         self.validate_item_rows(rows, 'heroId')
         return result
 
-    def explore(self, kind, entity):
+    def explore(self, kind, entity, *, hex_stage=None):
         if kind not in ('hex','hero','equip','trait'):
             raise ValueError('unsupported filter')
+        if hex_stage is not None and (kind != 'hex' or hex_stage not in ('2-1','3-2','4-2')):
+            raise ValueError('unsupported hex stage')
+        hex_round = str(('2-1','3-2','4-2').index(hex_stage)) if hex_stage is not None else ''
         rule = {'starCount':'','type':kind,'targetId':str(entity['id']),'enable':True,
-                'targetName':entity['name'],'hexRound':'','nameMatch':False,
+                'targetName':entity['name'],'hexRound':hex_round,'nameMatch':False,
                 'equipCarry':'','equipCount':'','exclude':False}
         if kind == 'trait':
             rule['traitLevel'] = str(entity.get('num',''))

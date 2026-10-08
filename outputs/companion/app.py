@@ -17,6 +17,7 @@ import win_capture as win
 from core import Session, parse_comp_url
 from hex_catalog import canonical_hex_catalog
 from dataj import DataJ, SourceError, COMP_MIN_SAMPLE
+from hex_stats import lookup_comp_hexes
 from snapshot_stats import stage_stat, STAGES
 from vision import Vision, capture_image, capture_stage, tracked_signature, unchanged
 from scene_gate import may_be_choice
@@ -100,10 +101,14 @@ def fill_table(widget, rows):
             widget.setItem(row,col,item)
 
 
-def stat_text(row):
+def stat_text(row, *, identified=True, scope='global'):
+    if not identified:return '— 未识别'
     if row['status']=='ok':
         return f"{row['avg_placement']:.2f} · {row['sample_count']}局"+(' · 少' if row['sample_count']<50 else '')
-    return '— 无该阶段数据' if row['status']=='no_stage_data' else '— 无数据/未识别'
+    return {'no_stage_data':'— 无该阶段数据',
+            'missing_or_ambiguous_entity':'— 本阵容暂无统计' if scope=='comp' else '— 暂无全局统计',
+            'unsupported_stage':'— 阶段待确认',
+            'invalid_stat':'— 统计不可用'}.get(row['status'],'— 统计不可用')
 
 
 class CardOverlay(QLabel):
@@ -1126,6 +1131,7 @@ class Companion(QWidget):
             self.hide_overlays();self.choice_table.setRowCount(0)
             for card in self.result_cards:card.clear(self.session.target is not None)
         token=self.session.token();stage=self.session.stage;target=self.session.target;adapter=self.adapter
+        supplement=not self.offline
         self.stats_inflight_token=token
         def fetch():
             global_result=adapter.hexes()
@@ -1133,7 +1139,9 @@ class Companion(QWidget):
         def done(payload,comp_finished=False):
             if self.stats_inflight_token==token:self.stats_inflight_token=None
             if not self.session.accepts(token):return
-            if live and (self.panel_open() or not self.binding or win.foreground_root()!=self.binding.hwnd):return
+            # A current response remains useful during a brief focus change.
+            # Painting still requires a fresh foreground capture below; dropping
+            # the second response here leaves the first payload pending forever.
             global_result,comp_result=payload
             if live:
                 missing=[entity for entity in ids if entity is not None
@@ -1142,27 +1150,50 @@ class Companion(QWidget):
                 if missing:self.bugs.hex_statistics('hex_data_gap',evidence={'stage':stage,'missing_ids':missing,'global_statistics':relevant})
                 if target and comp_finished and comp_result is None:
                     self.bugs.hex_statistics('hex_comp_query_failed',evidence={'stage':stage,'global_statistics':relevant})
-            rendered=[];available=0
-            for entity,name in zip(ids,names):
+            supplement_errors=comp_result.get('supplement_errors',{}) if comp_result else {}
+            supplemented=comp_result.get('supplemented_ids',[]) if comp_result else []
+            comp_sources=comp_result.get('supplement_sources',{}) if comp_result else {}
+            if retained and not comp_finished:
+                supplemented=retained.get('comp_supplemented_ids',[])
+                comp_sources=retained.get('comp_supplement_sources',{})
+            rendered=[];available=0;comp_available=0
+            for index,(entity,name) in enumerate(zip(ids,names)):
                 global_stat=stage_stat(global_result['data'],entity,stage)
                 comp_stat=stage_stat(comp_result['data'],entity,stage) if comp_result else None
                 available+=global_stat['status']=='ok' or (comp_stat is not None and comp_stat['status']=='ok')
-                comp_text=stat_text(comp_stat) if comp_stat else ('阵容数据暂不可用' if comp_finished else '阵容数据读取中…') if target else '未固定阵容'
-                rendered.append([name,stat_text(global_stat),comp_text])
+                comp_available+=comp_stat is not None and comp_stat['status']=='ok'
+                if not target:comp_text='未固定阵容'
+                elif entity is None:comp_text='— 未识别'
+                elif comp_stat and comp_stat['status']=='ok':comp_text=stat_text(comp_stat,scope='comp')
+                elif str(entity) in supplement_errors:comp_text='阵容补查失败'
+                elif comp_stat:comp_text=stat_text(comp_stat,scope='comp')
+                else:comp_text='阵容数据暂不可用' if comp_finished else '阵容数据读取中…'
+                if retained and not comp_finished and target and entity is not None:
+                    previous=retained['rows'][index][2]
+                    if re.fullmatch(r'[1-8]\.\d{2} · [1-9]\d*局(?: · 少)?',previous):
+                        comp_text=previous;comp_available+=1
+                rendered.append([name,stat_text(global_stat,identified=entity is not None),comp_text])
             self.stats_payload={'rows':rendered,'live':live,'created':time.monotonic(),'token':token,
-                                'retryable':bool(target and comp_finished and comp_result is None)}
-            if not self.offline:record('stats_ready',available=available,live=live)
+                                'retryable':bool(target and comp_finished and (comp_result is None or supplement_errors)),
+                                'comp_supplemented_ids':supplemented,
+                                'comp_supplement_sources':comp_sources,
+                                'comp_supplement_errors':supplement_errors}
+            if not self.offline:record('stats_ready',available=available,live=live,stage=stage,target=target,
+                                      confirmed_ids=ids,comp_available=comp_available,
+                                      supplemented_ids=supplemented,comp_error_ids=list(supplement_errors))
             fill_table(self.choice_table,rendered)
             for card,row in zip(self.result_cards,rendered):card.update_result(row)
             stamp=datetime.fromtimestamp(global_result['fetched_at']).strftime('%m-%d %H:%M')
             self.choice_note.setText(f'S18 · {adapter.patch} · {stage} · 全局数据获取 {stamp}；全局与阵容分别统计')
+            if supplemented:self.choice_note.setText(self.choice_note.text()+f'；{len(supplemented)}项阵容阶段补查，少=不足50局')
             count=sum(entity is not None for entity in ids)
             if available==0:self.set_activity('no_stage_data',f'已确认 {count}/3 个海克斯，但来源暂无对应阶段的均排。')
             else:self.set_activity('results' if count==3 else 'partial_results',
                                   (f'已有 {available} 个选项的均排，返回游戏即可查看。' if live else f'已显示 {available} 个选项的均排，仅在面板查看。') if count==3 else f'已确认 {count}/3 个海克斯；不确定的选项不会猜测。')
             if live:self.display_overlays()
             if target and not comp_finished:
-                self.submit(self.network,lambda:(global_result,adapter.hexes(target)),
+                self.submit(self.network,lambda:(global_result,
+                            lookup_comp_hexes(adapter,target,stage,zip(ids,names)) if supplement else adapter.hexes(target)),
                             lambda value:done(value,True),lambda _:done((global_result,None),True))
         def failed(_):
             if self.stats_inflight_token==token:self.stats_inflight_token=None

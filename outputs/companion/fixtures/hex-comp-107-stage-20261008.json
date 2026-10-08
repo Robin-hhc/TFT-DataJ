@@ -1,0 +1,4334 @@
+{
+  "schema_version": 1,
+  "set_id": 18,
+  "patch": "18.3",
+  "comp_id": "107",
+  "source_note": "Exact public DataJ values frozen 2026-10-08; direct hexes response retains every row; global response retains the three 3-2 screenshot augment rows; explorer responses retain only compId107 rows. Retained rows and statistics are unchanged; SHA hashes identify complete original source bodies. No private screenshots or user game metadata included.",
+  "direct": {
+    "source": "https://www.dataj.cc/api/web/comp/107/hexes?setId=18&gameVersion=18.3",
+    "fetched_at": "2026-10-08T15:09:32Z",
+    "response_sha256": "f5e75afb524098433a49ba2ee4405ffac81a8fe1f777ba1778ded6b5b1741a82",
+    "data": {
+      "compId": "107",
+      "hexes": [
+        {
+          "hexId": 20767,
+          "name": "欧米茄之怪",
+          "icon": "https://game.gtimg.cn/images/lol/act/jkzlk/gamedata/hex/riftbeastaugment22.png",
+          "level": 2,
+          "sampleCount": 1654,
+          "playRate": 25.85,
+          "avgPlacement": 4.63,
+          "top4Rate": 45.71,
+          "topRate": 10.1,
+          "rounds": [
+            "2-1",
+            "3-2",
+            "4-2"
+          ],
+          "roundStats": [
+            {
+              "round": 0,
+              "roundLabel": "2-1",
+              "sampleCount": 827,
+              "playRate": 12.93,
+              "avgPlacement": 4.67,
+              "top4Rate": 46.07,
+              "topRate": 7.98,
+              "placementDelta": 0.19
+            },
+            {
+              "round": 1,
+              "roundLabel": "3-2",
+              "sampleCount": 304,
+              "playRate": 4.75,
+              "avgPlacement": 4.63,
+              "top4Rate": 44.08,
+              "topRate": 11.51,
+              "placementDelta": 0.13
+            },
+            {
+              "round": 2,
+              "roundLabel": "4-2",
+              "sampleCount": 523,
+              "playRate": 8.17,
+              "avgPlacement": 4.57,
+              "top4Rate": 46.08,
+              "topRate": 12.62,
+              "placementDelta": 0.07
+            }
+          ],
+          "tier": "A",
+          "placementDelta": 0.17
+        },
+        {
+          "hexId": 20586,
+          "name": "炽天使之拥",
+          "icon": "https://game.gtimg.cn/images/lol/act/jkzlk/gamedata/hex/seraphimsstaff2.png",
+          "level": 2,
+          "sampleCount": 1195,
+          "playRate": 18.68,
+          "avgPlacement": 4.43,
+          "top4Rate": 50.79,
+          "topRate": 11.55,
+          "rounds": [
+            "2-1",
+            "3-2"
+          ],
+          "roundStats": [
+            {
+              "round": 0,
+              "roundLabel": "2-1",
+              "sampleCount": 930,
+              "playRate": 14.54,
+              "avgPlacement": 4.44,
+              "top4Rate": 51.08,
+              "topRate": 10.54,
+              "placementDelta": -0.08
+            },
+            {
+              "round": 1,
+              "roundLabel": "3-2",
+              "sampleCount": 265,
+              "playRate": 4.14,
+              "avgPlacement": 4.39,
+              "top4Rate": 49.81,
+              "topRate": 15.09,
+              "placementDelta": -0.12
+            }
+          ],
+          "tier": "B",
+          "placementDelta": -0.09
+        },
+        {
+          "hexId": 20750,
+          "name": "纵深 II",
+          "icon": "https://game.gtimg.cn/images/lol/act/jkzlk/gamedata/hex/verticality2.png",
+          "level": 2,
+          "sampleCount": 867,
+          "playRate": 13.55,
+          "avgPlacement": 4.5,
+          "top4Rate": 49.83,
+          "topRate": 9.34,
+          "rounds": [
+            "2-1",
+            "3-2",
+            "4-2"
+          ],
+          "roundStats": [
+            {
+              "round": 0,
+              "roundLabel": "2-1",
+              "sampleCount": 3,
+              "playRate": 0.05,
+              "avgPlacement": 4.33,
+              "top4Rate": 66.67,
+              "topRate": 0,
+              "placementDelta": -0.18
+            },
+            {
+              "round": 1,
+              "roundLabel": "3-2",
+              "sampleCount": 251,
+              "playRate": 3.92,
+              "avgPlacement": 4.41,
+              "top4Rate": 52.19,
+              "topRate": 9.16,
+              "placementDelta": -0.1
+            },
+            {
+              "round": 2,
+              "roundLabel": "4-2",
+              "sampleCount": 613,
+              "playRate": 9.58,
+              "avgPlacement": 4.53,
+              "top4Rate": 48.78,
+              "topRate": 9.46,
+              "placementDelta": 0.03
+            }
+          ],
+          "tier": "C",
+          "placementDelta": -0.01
+        },
+        {
+          "hexId": 20502,
+          "name": "更要命的帽子",
+          "icon": "https://game.gtimg.cn/images/lol/act/jkzlk/gamedata/hex/deadliercaps3.png",
+          "level": 3,
+          "sampleCount": 807,
+          "playRate": 12.61,
+          "avgPlacement": 4.57,
+          "top4Rate": 48.08,
+          "topRate": 16.6,
+          "rounds": [
+            "2-1"
+          ],
+          "roundStats": [
+            {
+              "round": 0,
+              "roundLabel": "2-1",
+              "sampleCount": 807,
+              "playRate": 12.61,
+              "avgPlacement": 4.57,
+              "top4Rate": 48.08,
+              "topRate": 16.6,
+              "placementDelta": 0.07
+            }
+          ],
+          "tier": "C",
+          "placementDelta": 0.07
+        },
+        {
+          "hexId": 20619,
+          "name": "双城赢家",
+          "icon": "https://game.gtimg.cn/images/lol/act/jkzlk/gamedata/hex/arcaneviktory2.png",
+          "level": 2,
+          "sampleCount": 515,
+          "playRate": 8.05,
+          "avgPlacement": 4.5,
+          "top4Rate": 48.74,
+          "topRate": 8.74,
+          "rounds": [
+            "2-1",
+            "3-2",
+            "4-2"
+          ],
+          "roundStats": [
+            {
+              "round": 0,
+              "roundLabel": "2-1",
+              "sampleCount": 1,
+              "playRate": 0.02,
+              "avgPlacement": 7,
+              "top4Rate": 0,
+              "topRate": 0,
+              "placementDelta": 2.49
+            },
+            {
+              "round": 1,
+              "roundLabel": "3-2",
+              "sampleCount": 150,
+              "playRate": 2.34,
+              "avgPlacement": 4.69,
+              "top4Rate": 44.67,
+              "topRate": 6,
+              "placementDelta": 0.19
+            },
+            {
+              "round": 2,
+              "roundLabel": "4-2",
+              "sampleCount": 364,
+              "playRate": 5.69,
+              "avgPlacement": 4.42,
+              "top4Rate": 50.55,
+              "topRate": 9.89,
+              "placementDelta": -0.09
+            }
+          ],
+          "tier": "C",
+          "placementDelta": -0.01
+        },
+        {
+          "hexId": 2021,
+          "name": "飞升",
+          "icon": "https://game.gtimg.cn/images/lol/act/jkzlk/gamedata/hex/finalascension2.png",
+          "level": 2,
+          "sampleCount": 506,
+          "playRate": 7.91,
+          "avgPlacement": 3.99,
+          "top4Rate": 57.71,
+          "topRate": 17.19,
+          "rounds": [
+            "3-2",
+            "4-2"
+          ],
+          "roundStats": [
+            {
+              "round": 1,
+              "roundLabel": "3-2",
+              "sampleCount": 152,
+              "playRate": 2.38,
+              "avgPlacement": 4.02,
+              "top4Rate": 57.24,
+              "topRate": 17.76,
+              "placementDelta": -0.5
+            },
+            {
+              "round": 2,
+              "roundLabel": "4-2",
+              "sampleCount": 354,
+              "playRate": 5.53,
+              "avgPlacement": 3.98,
+              "top4Rate": 57.91,
+              "topRate": 16.95,
+              "placementDelta": -0.56
+            }
+          ],
+          "tier": "B",
+          "placementDelta": -0.56
+        },
+        {
+          "hexId": 30750,
+          "name": "纵深 III",
+          "icon": "https://game.gtimg.cn/images/lol/act/jkzlk/gamedata/hex/verticality3.png",
+          "level": 3,
+          "sampleCount": 446,
+          "playRate": 6.97,
+          "avgPlacement": 4.6,
+          "top4Rate": 46.41,
+          "topRate": 8.74,
+          "rounds": [
+            "3-2",
+            "4-2"
+          ],
+          "roundStats": [
+            {
+              "round": 1,
+              "roundLabel": "3-2",
+              "sampleCount": 194,
+              "playRate": 3.03,
+              "avgPlacement": 4.71,
+              "top4Rate": 44.85,
+              "topRate": 8.25,
+              "placementDelta": 0.21
+            },
+            {
+              "round": 2,
+              "roundLabel": "4-2",
+              "sampleCount": 252,
+              "playRate": 3.94,
+              "avgPlacement": 4.52,
+              "top4Rate": 47.62,
+              "topRate": 9.13,
+              "placementDelta": 0.02
+            }
+          ],
+          "tier": "D",
+          "placementDelta": 0.1
+        },
+        {
+          "hexId": 20041,
+          "name": "双排",
+          "icon": "https://game.gtimg.cn/images/lol/act/jkzlk/gamedata/hex/douqueue2.png",
+          "level": 2,
+          "sampleCount": 369,
+          "playRate": 5.77,
+          "avgPlacement": 4.58,
+          "top4Rate": 49.32,
+          "topRate": 8.13,
+          "rounds": [
+            "3-2",
+            "4-2"
+          ],
+          "roundStats": [
+            {
+              "round": 1,
+              "roundLabel": "3-2",
+              "sampleCount": 9,
+              "playRate": 0.14,
+              "avgPlacement": 4.89,
+              "top4Rate": 44.44,
+              "topRate": 0,
+              "placementDelta": 0.39
+            },
+            {
+              "round": 2,
+              "roundLabel": "4-2",
+              "sampleCount": 360,
+              "playRate": 5.63,
+              "avgPlacement": 4.57,
+              "top4Rate": 49.44,
+              "topRate": 8.33,
+              "placementDelta": 0.07
+            }
+          ],
+          "tier": "D",
+          "placementDelta": 0.08
+        },
+        {
+          "hexId": 10750,
+          "name": "纵深 I",
+          "icon": "https://game.gtimg.cn/images/lol/act/jkzlk/gamedata/hex/verticality1.png",
+          "level": 1,
+          "sampleCount": 368,
+          "playRate": 5.75,
+          "avgPlacement": 4.29,
+          "top4Rate": 51.09,
+          "topRate": 14.95,
+          "rounds": [
+            "2-1",
+            "3-2",
+            "4-2"
+          ],
+          "roundStats": [
+            {
+              "round": 0,
+              "roundLabel": "2-1",
+              "sampleCount": 6,
+              "playRate": 0.09,
+              "avgPlacement": 3.67,
+              "top4Rate": 66.67,
+              "topRate": 16.67,
+              "placementDelta": -0.84
+            },
+            {
+              "round": 1,
+              "roundLabel": "3-2",
+              "sampleCount": 303,
+              "playRate": 4.74,
+              "avgPlacement": 4.31,
+              "top4Rate": 50.83,
+              "topRate": 14.52,
+              "placementDelta": -0.21
+            },
+            {
+              "round": 2,
+              "roundLabel": "4-2",
+              "sampleCount": 59,
+              "playRate": 0.92,
+              "avgPlacement": 4.24,
+              "top4Rate": 50.85,
+              "topRate": 16.95,
+              "placementDelta": -0.27
+            }
+          ],
+          "tier": "C",
+          "placementDelta": -0.23
+        },
+        {
+          "hexId": 2184,
+          "name": "大百宝袋",
+          "icon": "https://game.gtimg.cn/images/lol/act/jkzlk/gamedata/hex/grabbag2.png",
+          "level": 2,
+          "sampleCount": 317,
+          "playRate": 4.95,
+          "avgPlacement": 4.53,
+          "top4Rate": 48.58,
+          "topRate": 9.78,
+          "rounds": [
+            "2-1",
+            "3-2",
+            "4-2"
+          ],
+          "roundStats": [
+            {
+              "round": 0,
+              "roundLabel": "2-1",
+              "sampleCount": 1,
+              "playRate": 0.02,
+              "avgPlacement": 7,
+              "top4Rate": 0,
+              "topRate": 0,
+              "placementDelta": 2.49
+            },
+            {
+              "round": 1,
+              "roundLabel": "3-2",
+              "sampleCount": 112,
+              "playRate": 1.75,
+              "avgPlacement": 4.45,
+              "top4Rate": 50,
+              "topRate": 6.25,
+              "placementDelta": -0.06
+            },
+            {
+              "round": 2,
+              "roundLabel": "4-2",
+              "sampleCount": 204,
+              "playRate": 3.19,
+              "avgPlacement": 4.56,
+              "top4Rate": 48.04,
+              "topRate": 11.76,
+              "placementDelta": 0.06
+            }
+          ],
+          "tier": "D",
+          "placementDelta": 0.03
+        },
+        {
+          "hexId": 4804,
+          "name": "英勇福袋++",
+          "icon": "https://game.gtimg.cn/images/lol/act/jkzlk/gamedata/hex/heroicgrabbag2.png",
+          "level": 2,
+          "sampleCount": 309,
+          "playRate": 4.83,
+          "avgPlacement": 4.42,
+          "top4Rate": 52.43,
+          "topRate": 10.36,
+          "rounds": [
+            "3-2",
+            "4-2"
+          ],
+          "roundStats": [
+            {
+              "round": 1,
+              "roundLabel": "3-2",
+              "sampleCount": 3,
+              "playRate": 0.05,
+              "avgPlacement": 2.67,
+              "top4Rate": 100,
+              "topRate": 33.33,
+              "placementDelta": -1.84
+            },
+            {
+              "round": 2,
+              "roundLabel": "4-2",
+              "sampleCount": 306,
+              "playRate": 4.78,
+              "avgPlacement": 4.44,
+              "top4Rate": 51.96,
+              "topRate": 10.13,
+              "placementDelta": -0.07
+            }
+          ],
+          "tier": "D",
+          "placementDelta": -0.09
+        },
+        {
+          "hexId": 3093,
+          "name": "便携锻炉",
+          "icon": "https://game.gtimg.cn/images/lol/act/jkzlk/gamedata/hex/portableforge2.png",
+          "level": 2,
+          "sampleCount": 290,
+          "playRate": 4.53,
+          "avgPlacement": 4.57,
+          "top4Rate": 48.62,
+          "topRate": 10.69,
+          "rounds": [
+            "2-1",
+            "3-2",
+            "4-2"
+          ],
+          "roundStats": [
+            {
+              "round": 0,
+              "roundLabel": "2-1",
+              "sampleCount": 104,
+              "playRate": 1.63,
+              "avgPlacement": 4.33,
+              "top4Rate": 54.81,
+              "topRate": 15.38,
+              "placementDelta": -0.18
+            },
+            {
+              "round": 1,
+              "roundLabel": "3-2",
+              "sampleCount": 80,
+              "playRate": 1.25,
+              "avgPlacement": 4.68,
+              "top4Rate": 45,
+              "topRate": 6.25,
+              "placementDelta": 0.18
+            },
+            {
+              "round": 2,
+              "roundLabel": "4-2",
+              "sampleCount": 106,
+              "playRate": 1.66,
+              "avgPlacement": 4.72,
+              "top4Rate": 45.28,
+              "topRate": 9.43,
+              "placementDelta": 0.22
+            }
+          ],
+          "tier": "D",
+          "placementDelta": 0.07
+        },
+        {
+          "hexId": 2069,
+          "name": "嘀嘀街区",
+          "icon": "https://game.gtimg.cn/images/lol/act/jkzlk/gamedata/hex/trade2.png",
+          "level": 2,
+          "sampleCount": 279,
+          "playRate": 4.36,
+          "avgPlacement": 4.57,
+          "top4Rate": 45.52,
+          "topRate": 8.96,
+          "rounds": [
+            "2-1"
+          ],
+          "roundStats": [
+            {
+              "round": 0,
+              "roundLabel": "2-1",
+              "sampleCount": 279,
+              "playRate": 4.36,
+              "avgPlacement": 4.57,
+              "top4Rate": 45.52,
+              "topRate": 8.96,
+              "placementDelta": 0.07
+            }
+          ],
+          "tier": "D",
+          "placementDelta": 0.07
+        },
+        {
+          "hexId": 30179,
+          "name": "加冕礼",
+          "icon": "https://game.gtimg.cn/images/lol/act/jkzlk/gamedata/hex/coronation3.png",
+          "level": 3,
+          "sampleCount": 275,
+          "playRate": 4.3,
+          "avgPlacement": 4.55,
+          "top4Rate": 44.73,
+          "topRate": 11.27,
+          "rounds": [
+            "2-1",
+            "3-2",
+            "4-2"
+          ],
+          "roundStats": [
+            {
+              "round": 0,
+              "roundLabel": "2-1",
+              "sampleCount": 2,
+              "playRate": 0.03,
+              "avgPlacement": 3.5,
+              "top4Rate": 50,
+              "topRate": 0,
+              "placementDelta": -1.01
+            },
+            {
+              "round": 1,
+              "roundLabel": "3-2",
+              "sampleCount": 142,
+              "playRate": 2.22,
+              "avgPlacement": 4.74,
+              "top4Rate": 39.44,
+              "topRate": 9.86,
+              "placementDelta": 0.24
+            },
+            {
+              "round": 2,
+              "roundLabel": "4-2",
+              "sampleCount": 131,
+              "playRate": 2.05,
+              "avgPlacement": 4.36,
+              "top4Rate": 50.38,
+              "topRate": 12.98,
+              "placementDelta": -0.15
+            }
+          ],
+          "tier": "D",
+          "placementDelta": 0.05
+        },
+        {
+          "hexId": 1625,
+          "name": "别再错过",
+          "icon": "https://game.gtimg.cn/images/lol/act/jkzlk/gamedata/hex/missedconnections1.png",
+          "level": 1,
+          "sampleCount": 272,
+          "playRate": 4.25,
+          "avgPlacement": 4.28,
+          "top4Rate": 54.78,
+          "topRate": 10.29,
+          "rounds": [
+            "2-1",
+            "3-2",
+            "4-2"
+          ],
+          "roundStats": [
+            {
+              "round": 0,
+              "roundLabel": "2-1",
+              "sampleCount": 4,
+              "playRate": 0.06,
+              "avgPlacement": 4.5,
+              "top4Rate": 50,
+              "topRate": 0,
+              "placementDelta": -0.01
+            },
+            {
+              "round": 1,
+              "roundLabel": "3-2",
+              "sampleCount": 239,
+              "playRate": 3.74,
+              "avgPlacement": 4.28,
+              "top4Rate": 54.81,
+              "topRate": 10.04,
+              "placementDelta": -0.23
+            },
+            {
+              "round": 2,
+              "roundLabel": "4-2",
+              "sampleCount": 29,
+              "playRate": 0.45,
+              "avgPlacement": 4.31,
+              "top4Rate": 55.17,
+              "topRate": 13.79,
+              "placementDelta": -0.2
+            }
+          ],
+          "tier": "C",
+          "placementDelta": -0.24
+        },
+        {
+          "hexId": 30617,
+          "name": "男爵幻域",
+          "icon": "https://game.gtimg.cn/images/lol/act/jkzlk/gamedata/hex/thebaronslair3.png",
+          "level": 3,
+          "sampleCount": 263,
+          "playRate": 4.11,
+          "avgPlacement": 4.86,
+          "top4Rate": 41.83,
+          "topRate": 7.22,
+          "rounds": [
+            "3-2",
+            "4-2"
+          ],
+          "roundStats": [
+            {
+              "round": 1,
+              "roundLabel": "3-2",
+              "sampleCount": 130,
+              "playRate": 2.03,
+              "avgPlacement": 4.88,
+              "top4Rate": 40.77,
+              "topRate": 7.69,
+              "placementDelta": 0.38
+            },
+            {
+              "round": 2,
+              "roundLabel": "4-2",
+              "sampleCount": 133,
+              "playRate": 2.08,
+              "avgPlacement": 4.83,
+              "top4Rate": 42.86,
+              "topRate": 6.77,
+              "placementDelta": 0.33
+            }
+          ],
+          "tier": "D",
+          "placementDelta": 0.37
+        },
+        {
+          "hexId": 20698,
+          "name": "镀金钢铁",
+          "icon": "https://game.gtimg.cn/images/lol/act/jkzlk/gamedata/hex/gildedsteel2.png",
+          "level": 2,
+          "sampleCount": 259,
+          "playRate": 4.05,
+          "avgPlacement": 4.65,
+          "top4Rate": 44.79,
+          "topRate": 7.72,
+          "rounds": [
+            "4-2"
+          ],
+          "roundStats": [
+            {
+              "round": 2,
+              "roundLabel": "4-2",
+              "sampleCount": 259,
+              "playRate": 4.05,
+              "avgPlacement": 4.65,
+              "top4Rate": 44.79,
+              "topRate": 7.72,
+              "placementDelta": 0.15
+            }
+          ],
+          "tier": "D",
+          "placementDelta": 0.15
+        },
+        {
+          "hexId": 20141,
+          "name": "专属定制",
+          "icon": "https://game.gtimg.cn/images/lol/act/jkzlk/gamedata/hex/exclusivecustomization2.png",
+          "level": 2,
+          "sampleCount": 243,
+          "playRate": 3.8,
+          "avgPlacement": 4.63,
+          "top4Rate": 43.62,
+          "topRate": 9.47,
+          "rounds": [
+            "2-1",
+            "3-2",
+            "4-2"
+          ],
+          "roundStats": [
+            {
+              "round": 0,
+              "roundLabel": "2-1",
+              "sampleCount": 2,
+              "playRate": 0.03,
+              "avgPlacement": 1.5,
+              "top4Rate": 100,
+              "topRate": 50,
+              "placementDelta": -3.01
+            },
+            {
+              "round": 1,
+              "roundLabel": "3-2",
+              "sampleCount": 118,
+              "playRate": 1.84,
+              "avgPlacement": 4.59,
+              "top4Rate": 41.53,
+              "topRate": 9.32,
+              "placementDelta": 0.09
+            },
+            {
+              "round": 2,
+              "roundLabel": "4-2",
+              "sampleCount": 123,
+              "playRate": 1.92,
+              "avgPlacement": 4.72,
+              "top4Rate": 44.72,
+              "topRate": 8.94,
+              "placementDelta": 0.22
+            }
+          ],
+          "tier": "D",
+          "placementDelta": 0.13
+        },
+        {
+          "hexId": 3269,
+          "name": "诅咒冠冕",
+          "icon": "https://game.gtimg.cn/images/lol/act/jkzlk/gamedata/hex/cursedcrown3.png",
+          "level": 3,
+          "sampleCount": 235,
+          "playRate": 3.67,
+          "avgPlacement": 4.37,
+          "top4Rate": 51.91,
+          "topRate": 18.3,
+          "rounds": [
+            "2-1",
+            "3-2"
+          ],
+          "roundStats": [
+            {
+              "round": 0,
+              "roundLabel": "2-1",
+              "sampleCount": 118,
+              "playRate": 1.84,
+              "avgPlacement": 4.08,
+              "top4Rate": 55.93,
+              "topRate": 20.34,
+              "placementDelta": -0.43
+            },
+            {
+              "round": 1,
+              "roundLabel": "3-2",
+              "sampleCount": 117,
+              "playRate": 1.83,
+              "avgPlacement": 4.66,
+              "top4Rate": 47.86,
+              "topRate": 16.24,
+              "placementDelta": 0.16
+            }
+          ],
+          "tier": "C",
+          "placementDelta": -0.14
+        },
+        {
+          "hexId": 30027,
+          "name": "爆炸式增长+",
+          "icon": "https://game.gtimg.cn/images/lol/act/jkzlk/gamedata/hex/explosivegrowth2.png",
+          "level": 2,
+          "sampleCount": 234,
+          "playRate": 3.66,
+          "avgPlacement": 4.31,
+          "top4Rate": 53.42,
+          "topRate": 11.54,
+          "rounds": [
+            "3-2",
+            "4-2"
+          ],
+          "roundStats": [
+            {
+              "round": 1,
+              "roundLabel": "3-2",
+              "sampleCount": 3,
+              "playRate": 0.05,
+              "avgPlacement": 4.67,
+              "top4Rate": 33.33,
+              "topRate": 0,
+              "placementDelta": 0.16
+            },
+            {
+              "round": 2,
+              "roundLabel": "4-2",
+              "sampleCount": 231,
+              "playRate": 3.61,
+              "avgPlacement": 4.31,
+              "top4Rate": 53.68,
+              "topRate": 11.69,
+              "placementDelta": -0.2
+            }
+          ],
+          "tier": "C",
+          "placementDelta": -0.2
+        },
+        {
+          "hexId": 1021,
+          "name": "部分飞升",
+          "icon": "https://game.gtimg.cn/images/lol/act/jkzlk/gamedata/hex/ascension1.png",
+          "level": 1,
+          "sampleCount": 221,
+          "playRate": 3.45,
+          "avgPlacement": 4.34,
+          "top4Rate": 48.87,
+          "topRate": 13.57,
+          "rounds": [
+            "2-1",
+            "3-2",
+            "4-2"
+          ],
+          "roundStats": [
+            {
+              "round": 0,
+              "roundLabel": "2-1",
+              "sampleCount": 3,
+              "playRate": 0.05,
+              "avgPlacement": 5.67,
+              "top4Rate": 0,
+              "topRate": 0,
+              "placementDelta": 1.17
+            },
+            {
+              "round": 1,
+              "roundLabel": "3-2",
+              "sampleCount": 175,
+              "playRate": 2.74,
+              "avgPlacement": 4.32,
+              "top4Rate": 49.14,
+              "topRate": 12.57,
+              "placementDelta": -0.19
+            },
+            {
+              "round": 2,
+              "roundLabel": "4-2",
+              "sampleCount": 43,
+              "playRate": 0.67,
+              "avgPlacement": 4.33,
+              "top4Rate": 51.16,
+              "topRate": 18.6,
+              "placementDelta": -0.18
+            }
+          ],
+          "tier": "D",
+          "placementDelta": -0.17
+        },
+        {
+          "hexId": 3851,
+          "name": "混沌召唤",
+          "icon": "https://game.gtimg.cn/images/lol/act/jkzlk/gamedata/hex/calltochaos3.png",
+          "level": 3,
+          "sampleCount": 181,
+          "playRate": 2.83,
+          "avgPlacement": 4.49,
+          "top4Rate": 46.96,
+          "topRate": 11.05,
+          "rounds": [
+            "3-2",
+            "4-2"
+          ],
+          "roundStats": [
+            {
+              "round": 1,
+              "roundLabel": "3-2",
+              "sampleCount": 2,
+              "playRate": 0.03,
+              "avgPlacement": 3,
+              "top4Rate": 50,
+              "topRate": 50,
+              "placementDelta": -1.51
+            },
+            {
+              "round": 2,
+              "roundLabel": "4-2",
+              "sampleCount": 179,
+              "playRate": 2.8,
+              "avgPlacement": 4.51,
+              "top4Rate": 46.93,
+              "topRate": 10.61,
+              "placementDelta": 0
+            }
+          ],
+          "tier": "D",
+          "placementDelta": -0.02
+        },
+        {
+          "hexId": 1646,
+          "name": "团队建设",
+          "icon": "https://game.gtimg.cn/images/lol/act/jkzlk/gamedata/hex/buildinganarmy1.png",
+          "level": 1,
+          "sampleCount": 179,
+          "playRate": 2.8,
+          "avgPlacement": 4.75,
+          "top4Rate": 43.02,
+          "topRate": 8.94,
+          "rounds": [
+            "2-1",
+            "3-2"
+          ],
+          "roundStats": [
+            {
+              "round": 0,
+              "roundLabel": "2-1",
+              "sampleCount": 52,
+              "playRate": 0.81,
+              "avgPlacement": 4.9,
+              "top4Rate": 36.54,
+              "topRate": 9.62,
+              "placementDelta": 0.4
+            },
+            {
+              "round": 1,
+              "roundLabel": "3-2",
+              "sampleCount": 127,
+              "playRate": 1.98,
+              "avgPlacement": 4.69,
+              "top4Rate": 45.67,
+              "topRate": 8.66,
+              "placementDelta": 0.19
+            }
+          ],
+          "tier": "D",
+          "placementDelta": 0.25
+        },
+        {
+          "hexId": 3132,
+          "name": "光明圣物",
+          "icon": "https://game.gtimg.cn/images/lol/act/jkzlk/gamedata/hex/radiantrelics3.png",
+          "level": 3,
+          "sampleCount": 176,
+          "playRate": 2.75,
+          "avgPlacement": 4.31,
+          "top4Rate": 47.73,
+          "topRate": 11.36,
+          "rounds": [
+            "2-1",
+            "3-2",
+            "4-2"
+          ],
+          "roundStats": [
+            {
+              "round": 0,
+              "roundLabel": "2-1",
+              "sampleCount": 63,
+              "playRate": 0.98,
+              "avgPlacement": 4.24,
+              "top4Rate": 49.21,
+              "topRate": 11.11,
+              "placementDelta": -0.27
+            },
+            {
+              "round": 1,
+              "roundLabel": "3-2",
+              "sampleCount": 56,
+              "playRate": 0.88,
+              "avgPlacement": 4.41,
+              "top4Rate": 46.43,
+              "topRate": 7.14,
+              "placementDelta": -0.1
+            },
+            {
+              "round": 2,
+              "roundLabel": "4-2",
+              "sampleCount": 57,
+              "playRate": 0.89,
+              "avgPlacement": 4.3,
+              "top4Rate": 47.37,
+              "topRate": 15.79,
+              "placementDelta": -0.21
+            }
+          ],
+          "tier": "D",
+          "placementDelta": -0.2
+        },
+        {
+          "hexId": 20593,
+          "name": "单身板甲",
+          "icon": "https://game.gtimg.cn/images/lol/act/jkzlk/gamedata/hex/soloplate2.png",
+          "level": 2,
+          "sampleCount": 172,
+          "playRate": 2.69,
+          "avgPlacement": 4.21,
+          "top4Rate": 55.81,
+          "topRate": 8.72,
+          "rounds": [
+            "2-1",
+            "3-2"
+          ],
+          "roundStats": [
+            {
+              "round": 0,
+              "roundLabel": "2-1",
+              "sampleCount": 95,
+              "playRate": 1.48,
+              "avgPlacement": 3.98,
+              "top4Rate": 60,
+              "topRate": 11.58,
+              "placementDelta": -0.53
+            },
+            {
+              "round": 1,
+              "roundLabel": "3-2",
+              "sampleCount": 77,
+              "playRate": 1.2,
+              "avgPlacement": 4.49,
+              "top4Rate": 50.65,
+              "topRate": 5.19,
+              "placementDelta": -0.02
+            }
+          ],
+          "tier": "C",
+          "placementDelta": -0.3
+        },
+        {
+          "hexId": 10631,
+          "name": "小小福袋",
+          "icon": "https://game.gtimg.cn/images/lol/act/jkzlk/gamedata/hex/smallgrabbag1.png",
+          "level": 1,
+          "sampleCount": 171,
+          "playRate": 2.67,
+          "avgPlacement": 4.16,
+          "top4Rate": 58.48,
+          "topRate": 12.28,
+          "rounds": [
+            "2-1",
+            "3-2",
+            "4-2"
+          ],
+          "roundStats": [
+            {
+              "round": 0,
+              "roundLabel": "2-1",
+              "sampleCount": 2,
+              "playRate": 0.03,
+              "avgPlacement": 1.5,
+              "top4Rate": 100,
+              "topRate": 50,
+              "placementDelta": -3.01
+            },
+            {
+              "round": 1,
+              "roundLabel": "3-2",
+              "sampleCount": 142,
+              "playRate": 2.22,
+              "avgPlacement": 4.16,
+              "top4Rate": 59.15,
+              "topRate": 11.97,
+              "placementDelta": -0.35
+            },
+            {
+              "round": 2,
+              "roundLabel": "4-2",
+              "sampleCount": 27,
+              "playRate": 0.42,
+              "avgPlacement": 4.33,
+              "top4Rate": 51.85,
+              "topRate": 11.11,
+              "placementDelta": -0.18
+            }
+          ],
+          "tier": "C",
+          "placementDelta": -0.36
+        },
+        {
+          "hexId": 2128,
+          "name": "珠光莲花 I",
+          "icon": "https://game.gtimg.cn/images/lol/act/jkzlk/gamedata/hex/jeweledlotus2.png",
+          "level": 2,
+          "sampleCount": 170,
+          "playRate": 2.66,
+          "avgPlacement": 4.52,
+          "top4Rate": 51.76,
+          "topRate": 10.59,
+          "rounds": [
+            "3-2",
+            "4-2"
+          ],
+          "roundStats": [
+            {
+              "round": 1,
+              "roundLabel": "3-2",
+              "sampleCount": 57,
+              "playRate": 0.89,
+              "avgPlacement": 4.47,
+              "top4Rate": 49.12,
+              "topRate": 12.28,
+              "placementDelta": -0.04
+            },
+            {
+              "round": 2,
+              "roundLabel": "4-2",
+              "sampleCount": 113,
+              "playRate": 1.77,
+              "avgPlacement": 4.54,
+              "top4Rate": 53.1,
+              "topRate": 9.73,
+              "placementDelta": 0.04
+            }
+          ],
+          "tier": "D",
+          "placementDelta": 0.01
+        },
+        {
+          "hexId": 20015,
+          "name": "反响",
+          "icon": "https://game.gtimg.cn/images/lol/act/jkzlk/gamedata/hex/replication2.png",
+          "level": 2,
+          "sampleCount": 162,
+          "playRate": 2.53,
+          "avgPlacement": 4.49,
+          "top4Rate": 46.91,
+          "topRate": 8.64,
+          "rounds": [
+            "2-1",
+            "3-2"
+          ],
+          "roundStats": [
+            {
+              "round": 0,
+              "roundLabel": "2-1",
+              "sampleCount": 74,
+              "playRate": 1.16,
+              "avgPlacement": 4.27,
+              "top4Rate": 51.35,
+              "topRate": 8.11,
+              "placementDelta": -0.24
+            },
+            {
+              "round": 1,
+              "roundLabel": "3-2",
+              "sampleCount": 88,
+              "playRate": 1.38,
+              "avgPlacement": 4.67,
+              "top4Rate": 43.18,
+              "topRate": 9.09,
+              "placementDelta": 0.17
+            }
+          ],
+          "tier": "D",
+          "placementDelta": -0.02
+        },
+        {
+          "hexId": 20205,
+          "name": "魔法投掷",
+          "icon": "https://game.gtimg.cn/images/lol/act/jkzlk/gamedata/hex/amagicalroll2.png",
+          "level": 2,
+          "sampleCount": 160,
+          "playRate": 2.5,
+          "avgPlacement": 4.48,
+          "top4Rate": 53.75,
+          "topRate": 6.25,
+          "rounds": [
+            "3-2"
+          ],
+          "roundStats": [
+            {
+              "round": 1,
+              "roundLabel": "3-2",
+              "sampleCount": 160,
+              "playRate": 2.5,
+              "avgPlacement": 4.48,
+              "top4Rate": 53.75,
+              "topRate": 6.25,
+              "placementDelta": -0.03
+            }
+          ],
+          "tier": "D",
+          "placementDelta": -0.03
+        },
+        {
+          "hexId": 20471,
+          "name": "泪流成河",
+          "icon": "https://game.gtimg.cn/images/lol/act/jkzlk/gamedata/hex/crymeariver2.png",
+          "level": 2,
+          "sampleCount": 150,
+          "playRate": 2.34,
+          "avgPlacement": 4.67,
+          "top4Rate": 42.67,
+          "topRate": 7.33,
+          "rounds": [
+            "2-1",
+            "3-2"
+          ],
+          "roundStats": [
+            {
+              "round": 0,
+              "roundLabel": "2-1",
+              "sampleCount": 85,
+              "playRate": 1.33,
+              "avgPlacement": 4.93,
+              "top4Rate": 35.29,
+              "topRate": 7.06,
+              "placementDelta": 0.43
+            },
+            {
+              "round": 1,
+              "roundLabel": "3-2",
+              "sampleCount": 65,
+              "playRate": 1.02,
+              "avgPlacement": 4.34,
+              "top4Rate": 52.31,
+              "topRate": 7.69,
+              "placementDelta": -0.17
+            }
+          ],
+          "tier": "D",
+          "placementDelta": 0.17
+        },
+        {
+          "hexId": 30180,
+          "name": "腰带溢流",
+          "icon": "https://game.gtimg.cn/images/lol/act/jkzlk/gamedata/hex/beltoverflow3.png",
+          "level": 3,
+          "sampleCount": 150,
+          "playRate": 2.34,
+          "avgPlacement": 4.01,
+          "top4Rate": 59.33,
+          "topRate": 18,
+          "rounds": [
+            "3-2",
+            "4-2"
+          ],
+          "roundStats": [
+            {
+              "round": 1,
+              "roundLabel": "3-2",
+              "sampleCount": 71,
+              "playRate": 1.11,
+              "avgPlacement": 4.21,
+              "top4Rate": 59.15,
+              "topRate": 16.9,
+              "placementDelta": -0.3
+            },
+            {
+              "round": 2,
+              "roundLabel": "4-2",
+              "sampleCount": 79,
+              "playRate": 1.23,
+              "avgPlacement": 3.84,
+              "top4Rate": 59.49,
+              "topRate": 18.99,
+              "placementDelta": -0.67
+            }
+          ],
+          "tier": "C",
+          "placementDelta": -0.51
+        },
+        {
+          "hexId": 2110,
+          "name": "源计划上行链路",
+          "icon": "https://game.gtimg.cn/images/lol/act/jkzlk/gamedata/hex/cyberneticuplink2.png",
+          "level": 2,
+          "sampleCount": 149,
+          "playRate": 2.33,
+          "avgPlacement": 4.6,
+          "top4Rate": 46.98,
+          "topRate": 10.07,
+          "rounds": [
+            "3-2",
+            "4-2"
+          ],
+          "roundStats": [
+            {
+              "round": 1,
+              "roundLabel": "3-2",
+              "sampleCount": 68,
+              "playRate": 1.06,
+              "avgPlacement": 4.66,
+              "top4Rate": 42.65,
+              "topRate": 7.35,
+              "placementDelta": 0.16
+            },
+            {
+              "round": 2,
+              "roundLabel": "4-2",
+              "sampleCount": 81,
+              "playRate": 1.27,
+              "avgPlacement": 4.56,
+              "top4Rate": 50.62,
+              "topRate": 12.35,
+              "placementDelta": 0.06
+            }
+          ],
+          "tier": "D",
+          "placementDelta": 0.1
+        },
+        {
+          "hexId": 3069,
+          "name": "嘀嘀街区加强版",
+          "icon": "https://game.gtimg.cn/images/lol/act/jkzlk/gamedata/hex/trade2.png",
+          "level": 2,
+          "sampleCount": 147,
+          "playRate": 2.3,
+          "avgPlacement": 4.78,
+          "top4Rate": 45.58,
+          "topRate": 12.24,
+          "rounds": [
+            "2-1",
+            "3-2"
+          ],
+          "roundStats": [
+            {
+              "round": 0,
+              "roundLabel": "2-1",
+              "sampleCount": 8,
+              "playRate": 0.13,
+              "avgPlacement": 4.25,
+              "top4Rate": 37.5,
+              "topRate": 25,
+              "placementDelta": -0.26
+            },
+            {
+              "round": 1,
+              "roundLabel": "3-2",
+              "sampleCount": 139,
+              "playRate": 2.17,
+              "avgPlacement": 4.81,
+              "top4Rate": 46.04,
+              "topRate": 11.51,
+              "placementDelta": 0.31
+            }
+          ],
+          "tier": "D",
+          "placementDelta": 0.28
+        },
+        {
+          "hexId": 20629,
+          "name": "杖之工匠",
+          "icon": "https://game.gtimg.cn/images/lol/act/jkzlk/gamedata/hex/rodsmith2.png",
+          "level": 2,
+          "sampleCount": 141,
+          "playRate": 2.2,
+          "avgPlacement": 4.17,
+          "top4Rate": 53.19,
+          "topRate": 14.89,
+          "rounds": [
+            "3-2",
+            "4-2"
+          ],
+          "roundStats": [
+            {
+              "round": 1,
+              "roundLabel": "3-2",
+              "sampleCount": 2,
+              "playRate": 0.03,
+              "avgPlacement": 4.5,
+              "top4Rate": 50,
+              "topRate": 0,
+              "placementDelta": -0.01
+            },
+            {
+              "round": 2,
+              "roundLabel": "4-2",
+              "sampleCount": 139,
+              "playRate": 2.17,
+              "avgPlacement": 4.17,
+              "top4Rate": 53.24,
+              "topRate": 15.11,
+              "placementDelta": -0.34
+            }
+          ],
+          "tier": "C",
+          "placementDelta": -0.34
+        },
+        {
+          "hexId": 20630,
+          "name": "剑之工匠",
+          "icon": "https://game.gtimg.cn/images/lol/act/jkzlk/gamedata/hex/swordsmith2.png",
+          "level": 2,
+          "sampleCount": 128,
+          "playRate": 2,
+          "avgPlacement": 4.05,
+          "top4Rate": 61.72,
+          "topRate": 8.59,
+          "rounds": [
+            "3-2",
+            "4-2"
+          ],
+          "roundStats": [
+            {
+              "round": 1,
+              "roundLabel": "3-2",
+              "sampleCount": 1,
+              "playRate": 0.02,
+              "avgPlacement": 6,
+              "top4Rate": 0,
+              "topRate": 0,
+              "placementDelta": 1.49
+            },
+            {
+              "round": 2,
+              "roundLabel": "4-2",
+              "sampleCount": 127,
+              "playRate": 1.98,
+              "avgPlacement": 4.03,
+              "top4Rate": 62.2,
+              "topRate": 8.66,
+              "placementDelta": -0.49
+            }
+          ],
+          "tier": "C",
+          "placementDelta": -0.46
+        },
+        {
+          "hexId": 1134,
+          "name": "嘀个痛快！ I",
+          "icon": "https://game.gtimg.cn/images/lol/act/jkzlk/gamedata/hex/rollingfordays1.png",
+          "level": 1,
+          "sampleCount": 127,
+          "playRate": 1.98,
+          "avgPlacement": 4.69,
+          "top4Rate": 43.31,
+          "topRate": 8.66,
+          "rounds": [
+            "2-1",
+            "3-2",
+            "4-2"
+          ],
+          "roundStats": [
+            {
+              "round": 0,
+              "roundLabel": "2-1",
+              "sampleCount": 2,
+              "playRate": 0.03,
+              "avgPlacement": 4.5,
+              "top4Rate": 50,
+              "topRate": 0,
+              "placementDelta": -0.01
+            },
+            {
+              "round": 1,
+              "roundLabel": "3-2",
+              "sampleCount": 111,
+              "playRate": 1.73,
+              "avgPlacement": 4.69,
+              "top4Rate": 42.34,
+              "topRate": 8.11,
+              "placementDelta": 0.19
+            },
+            {
+              "round": 2,
+              "roundLabel": "4-2",
+              "sampleCount": 14,
+              "playRate": 0.22,
+              "avgPlacement": 4.71,
+              "top4Rate": 50,
+              "topRate": 14.29,
+              "placementDelta": 0.2
+            }
+          ],
+          "tier": "D",
+          "placementDelta": 0.19
+        },
+        {
+          "hexId": 2189,
+          "name": "纷乱头脑",
+          "icon": "https://game.gtimg.cn/images/lol/act/jkzlk/gamedata/hex/dizzy2.png",
+          "level": 2,
+          "sampleCount": 126,
+          "playRate": 1.97,
+          "avgPlacement": 4.56,
+          "top4Rate": 46.83,
+          "topRate": 11.9,
+          "rounds": [
+            "2-1"
+          ],
+          "roundStats": [
+            {
+              "round": 0,
+              "roundLabel": "2-1",
+              "sampleCount": 126,
+              "playRate": 1.97,
+              "avgPlacement": 4.56,
+              "top4Rate": 46.83,
+              "topRate": 11.9,
+              "placementDelta": 0.06
+            }
+          ],
+          "tier": "D",
+          "placementDelta": 0.06
+        },
+        {
+          "hexId": 10752,
+          "name": "弈子配送+",
+          "icon": "https://game.gtimg.cn/images/lol/act/jkzlk/gamedata/hex/champdelivery1.png",
+          "level": 1,
+          "sampleCount": 126,
+          "playRate": 1.97,
+          "avgPlacement": 4.67,
+          "top4Rate": 45.24,
+          "topRate": 11.9,
+          "rounds": [
+            "2-1",
+            "3-2"
+          ],
+          "roundStats": [
+            {
+              "round": 0,
+              "roundLabel": "2-1",
+              "sampleCount": 3,
+              "playRate": 0.05,
+              "avgPlacement": 5,
+              "top4Rate": 66.67,
+              "topRate": 0,
+              "placementDelta": 0.49
+            },
+            {
+              "round": 1,
+              "roundLabel": "3-2",
+              "sampleCount": 123,
+              "playRate": 1.92,
+              "avgPlacement": 4.67,
+              "top4Rate": 44.72,
+              "topRate": 12.2,
+              "placementDelta": 0.17
+            }
+          ],
+          "tier": "D",
+          "placementDelta": 0.17
+        },
+        {
+          "hexId": 30034,
+          "name": "大而有力",
+          "icon": "https://game.gtimg.cn/images/lol/act/jkzlk/gamedata/hex/giantandmighty3.png",
+          "level": 3,
+          "sampleCount": 115,
+          "playRate": 1.8,
+          "avgPlacement": 4.27,
+          "top4Rate": 53.04,
+          "topRate": 13.91,
+          "rounds": [
+            "3-2",
+            "4-2"
+          ],
+          "roundStats": [
+            {
+              "round": 1,
+              "roundLabel": "3-2",
+              "sampleCount": 46,
+              "playRate": 0.72,
+              "avgPlacement": 3.98,
+              "top4Rate": 63.04,
+              "topRate": 13.04,
+              "placementDelta": -0.53
+            },
+            {
+              "round": 2,
+              "roundLabel": "4-2",
+              "sampleCount": 69,
+              "playRate": 1.08,
+              "avgPlacement": 4.46,
+              "top4Rate": 46.38,
+              "topRate": 14.49,
+              "placementDelta": -0.05
+            }
+          ],
+          "tier": "C",
+          "placementDelta": -0.24
+        },
+        {
+          "hexId": 1148,
+          "name": "潘朵拉的备战席",
+          "icon": "https://game.gtimg.cn/images/lol/act/jkzlk/gamedata/hex/pandora_sbench1.png",
+          "level": 1,
+          "sampleCount": 109,
+          "playRate": 1.7,
+          "avgPlacement": 4.91,
+          "top4Rate": 38.53,
+          "topRate": 9.17,
+          "rounds": [
+            "2-1",
+            "3-2"
+          ],
+          "roundStats": [
+            {
+              "round": 0,
+              "roundLabel": "2-1",
+              "sampleCount": 61,
+              "playRate": 0.95,
+              "avgPlacement": 4.9,
+              "top4Rate": 34.43,
+              "topRate": 6.56,
+              "placementDelta": 0.4
+            },
+            {
+              "round": 1,
+              "roundLabel": "3-2",
+              "sampleCount": 48,
+              "playRate": 0.75,
+              "avgPlacement": 4.92,
+              "top4Rate": 43.75,
+              "topRate": 12.5,
+              "placementDelta": 0.42
+            }
+          ],
+          "tier": "D",
+          "placementDelta": 0.41
+        },
+        {
+          "hexId": 2007,
+          "name": "潘朵拉的装备 II",
+          "icon": "https://game.gtimg.cn/images/lol/act/jkzlk/gamedata/hex/pandora2.png",
+          "level": 2,
+          "sampleCount": 108,
+          "playRate": 1.69,
+          "avgPlacement": 5.02,
+          "top4Rate": 38.89,
+          "topRate": 6.48,
+          "rounds": [
+            "2-1",
+            "3-2",
+            "4-2"
+          ],
+          "roundStats": [
+            {
+              "round": 0,
+              "roundLabel": "2-1",
+              "sampleCount": 27,
+              "playRate": 0.42,
+              "avgPlacement": 4.89,
+              "top4Rate": 44.44,
+              "topRate": 7.41,
+              "placementDelta": 0.39
+            },
+            {
+              "round": 1,
+              "roundLabel": "3-2",
+              "sampleCount": 41,
+              "playRate": 0.64,
+              "avgPlacement": 5.07,
+              "top4Rate": 36.59,
+              "topRate": 7.32,
+              "placementDelta": 0.57
+            },
+            {
+              "round": 2,
+              "roundLabel": "4-2",
+              "sampleCount": 40,
+              "playRate": 0.63,
+              "avgPlacement": 5.05,
+              "top4Rate": 37.5,
+              "topRate": 5,
+              "placementDelta": 0.55
+            }
+          ],
+          "tier": "D",
+          "placementDelta": 0.52
+        },
+        {
+          "hexId": 4158,
+          "name": "节外生枝+",
+          "icon": "https://game.gtimg.cn/images/lol/act/jkzlk/gamedata/hex/branchingout1.png",
+          "level": 1,
+          "sampleCount": 106,
+          "playRate": 1.66,
+          "avgPlacement": 4.11,
+          "top4Rate": 58.49,
+          "topRate": 5.66,
+          "rounds": [
+            "2-1",
+            "3-2"
+          ],
+          "roundStats": [
+            {
+              "round": 0,
+              "roundLabel": "2-1",
+              "sampleCount": 1,
+              "playRate": 0.02,
+              "avgPlacement": 5,
+              "top4Rate": 0,
+              "topRate": 0,
+              "placementDelta": 0.49
+            },
+            {
+              "round": 1,
+              "roundLabel": "3-2",
+              "sampleCount": 105,
+              "playRate": 1.64,
+              "avgPlacement": 4.1,
+              "top4Rate": 59.05,
+              "topRate": 5.71,
+              "placementDelta": -0.41
+            }
+          ],
+          "tier": "C",
+          "placementDelta": -0.4
+        },
+        {
+          "hexId": 30706,
+          "name": "前线地基",
+          "icon": "https://game.gtimg.cn/images/lol/act/jkzlk/gamedata/hex/frontlinefoundation2.png",
+          "level": 2,
+          "sampleCount": 105,
+          "playRate": 1.64,
+          "avgPlacement": 4.75,
+          "top4Rate": 46.67,
+          "topRate": 3.81,
+          "rounds": [
+            "2-1"
+          ],
+          "roundStats": [
+            {
+              "round": 0,
+              "roundLabel": "2-1",
+              "sampleCount": 105,
+              "playRate": 1.64,
+              "avgPlacement": 4.75,
+              "top4Rate": 46.67,
+              "topRate": 3.81,
+              "placementDelta": 0.25
+            }
+          ],
+          "tier": "D",
+          "placementDelta": 0.25
+        },
+        {
+          "hexId": 3804,
+          "name": "英勇福袋+",
+          "icon": "https://game.gtimg.cn/images/lol/act/jkzlk/gamedata/hex/heroicgrabbag2.png",
+          "level": 2,
+          "sampleCount": 104,
+          "playRate": 1.63,
+          "avgPlacement": 5.06,
+          "top4Rate": 38.46,
+          "topRate": 3.85,
+          "rounds": [
+            "2-1",
+            "3-2"
+          ],
+          "roundStats": [
+            {
+              "round": 0,
+              "roundLabel": "2-1",
+              "sampleCount": 1,
+              "playRate": 0.02,
+              "avgPlacement": 7,
+              "top4Rate": 0,
+              "topRate": 0,
+              "placementDelta": 2.49
+            },
+            {
+              "round": 1,
+              "roundLabel": "3-2",
+              "sampleCount": 103,
+              "playRate": 1.61,
+              "avgPlacement": 5.04,
+              "top4Rate": 38.83,
+              "topRate": 3.88,
+              "placementDelta": 0.54
+            }
+          ],
+          "tier": "D",
+          "placementDelta": 0.56
+        },
+        {
+          "hexId": 2705,
+          "name": "成吨的属性！",
+          "icon": "https://game.gtimg.cn/images/lol/act/jkzlk/gamedata/hex/tonsofstats2.png",
+          "level": 2,
+          "sampleCount": 103,
+          "playRate": 1.61,
+          "avgPlacement": 4.87,
+          "top4Rate": 40.78,
+          "topRate": 9.71,
+          "rounds": [
+            "3-2",
+            "4-2"
+          ],
+          "roundStats": [
+            {
+              "round": 1,
+              "roundLabel": "3-2",
+              "sampleCount": 37,
+              "playRate": 0.58,
+              "avgPlacement": 4.76,
+              "top4Rate": 48.65,
+              "topRate": 5.41,
+              "placementDelta": 0.26
+            },
+            {
+              "round": 2,
+              "roundLabel": "4-2",
+              "sampleCount": 66,
+              "playRate": 1.03,
+              "avgPlacement": 4.94,
+              "top4Rate": 36.36,
+              "topRate": 12.12,
+              "placementDelta": 0.44
+            }
+          ],
+          "tier": "D",
+          "placementDelta": 0.37
+        },
+        {
+          "hexId": 30655,
+          "name": "棱彩命运+",
+          "icon": "https://game.gtimg.cn/images/lol/act/jkzlk/gamedata/hex/silverdestinygoldendestinyprismaticdestiny3.png",
+          "level": 3,
+          "sampleCount": 103,
+          "playRate": 1.61,
+          "avgPlacement": 4.5,
+          "top4Rate": 48.54,
+          "topRate": 12.62,
+          "rounds": [
+            "2-1",
+            "3-2"
+          ],
+          "roundStats": [
+            {
+              "round": 0,
+              "roundLabel": "2-1",
+              "sampleCount": 2,
+              "playRate": 0.03,
+              "avgPlacement": 5,
+              "top4Rate": 50,
+              "topRate": 0,
+              "placementDelta": 0.49
+            },
+            {
+              "round": 1,
+              "roundLabel": "3-2",
+              "sampleCount": 101,
+              "playRate": 1.58,
+              "avgPlacement": 4.49,
+              "top4Rate": 48.51,
+              "topRate": 12.87,
+              "placementDelta": -0.02
+            }
+          ],
+          "tier": "D",
+          "placementDelta": -0.01
+        },
+        {
+          "hexId": 20224,
+          "name": "强化之能量",
+          "icon": "https://game.gtimg.cn/images/lol/act/jkzlk/gamedata/hex/powerup1.png",
+          "level": 1,
+          "sampleCount": 99,
+          "playRate": 1.55,
+          "avgPlacement": 4.54,
+          "top4Rate": 46.46,
+          "topRate": 10.1,
+          "rounds": [
+            "2-1",
+            "3-2"
+          ],
+          "roundStats": [
+            {
+              "round": 0,
+              "roundLabel": "2-1",
+              "sampleCount": 37,
+              "playRate": 0.58,
+              "avgPlacement": 4.86,
+              "top4Rate": 43.24,
+              "topRate": 5.41,
+              "placementDelta": 0.36
+            },
+            {
+              "round": 1,
+              "roundLabel": "3-2",
+              "sampleCount": 62,
+              "playRate": 0.97,
+              "avgPlacement": 4.34,
+              "top4Rate": 48.39,
+              "topRate": 12.9,
+              "placementDelta": -0.17
+            }
+          ],
+          "tier": "D",
+          "placementDelta": 0.03
+        },
+        {
+          "hexId": 20225,
+          "name": "金色炊具",
+          "icon": "https://game.gtimg.cn/images/lol/act/jkzlk/gamedata/hex/cookingpot2.png",
+          "level": 2,
+          "sampleCount": 99,
+          "playRate": 1.55,
+          "avgPlacement": 4.01,
+          "top4Rate": 62.63,
+          "topRate": 13.13,
+          "rounds": [
+            "2-1"
+          ],
+          "roundStats": [
+            {
+              "round": 0,
+              "roundLabel": "2-1",
+              "sampleCount": 99,
+              "playRate": 1.55,
+              "avgPlacement": 4.01,
+              "top4Rate": 62.63,
+              "topRate": 13.13,
+              "placementDelta": -0.5
+            }
+          ],
+          "tier": "C",
+          "placementDelta": -0.5
+        },
+        {
+          "hexId": 20494,
+          "name": "白银命运+",
+          "icon": "https://game.gtimg.cn/images/lol/act/jkzlk/gamedata/hex/silverdestinygoldendestinyprismaticdestiny1.png",
+          "level": 1,
+          "sampleCount": 96,
+          "playRate": 1.5,
+          "avgPlacement": 4.6,
+          "top4Rate": 47.92,
+          "topRate": 10.42,
+          "rounds": [
+            "2-1",
+            "3-2"
+          ],
+          "roundStats": [
+            {
+              "round": 0,
+              "roundLabel": "2-1",
+              "sampleCount": 4,
+              "playRate": 0.06,
+              "avgPlacement": 4.75,
+              "top4Rate": 50,
+              "topRate": 0,
+              "placementDelta": 0.24
+            },
+            {
+              "round": 1,
+              "roundLabel": "3-2",
+              "sampleCount": 92,
+              "playRate": 1.44,
+              "avgPlacement": 4.6,
+              "top4Rate": 47.83,
+              "topRate": 10.87,
+              "placementDelta": 0.1
+            }
+          ],
+          "tier": "D",
+          "placementDelta": 0.1
+        },
+        {
+          "hexId": 10559,
+          "name": "轻量魔法投掷",
+          "icon": "https://game.gtimg.cn/images/lol/act/jkzlk/gamedata/hex/slightlymagicroll1.png",
+          "level": 1,
+          "sampleCount": 93,
+          "playRate": 1.45,
+          "avgPlacement": 4.43,
+          "top4Rate": 48.39,
+          "topRate": 4.3,
+          "rounds": [
+            "2-1"
+          ],
+          "roundStats": [
+            {
+              "round": 0,
+              "roundLabel": "2-1",
+              "sampleCount": 93,
+              "playRate": 1.45,
+              "avgPlacement": 4.43,
+              "top4Rate": 48.39,
+              "topRate": 4.3,
+              "placementDelta": -0.08
+            }
+          ],
+          "tier": "D",
+          "placementDelta": -0.08
+        },
+        {
+          "hexId": 20681,
+          "name": "蔓延之根+",
+          "icon": "https://game.gtimg.cn/images/lol/act/jkzlk/gamedata/hex/spreadingroots2.png",
+          "level": 2,
+          "sampleCount": 92,
+          "playRate": 1.44,
+          "avgPlacement": 4.43,
+          "top4Rate": 50,
+          "topRate": 14.13,
+          "rounds": [
+            "2-1",
+            "3-2"
+          ],
+          "roundStats": [
+            {
+              "round": 0,
+              "roundLabel": "2-1",
+              "sampleCount": 1,
+              "playRate": 0.02,
+              "avgPlacement": 1,
+              "top4Rate": 100,
+              "topRate": 100,
+              "placementDelta": -3.51
+            },
+            {
+              "round": 1,
+              "roundLabel": "3-2",
+              "sampleCount": 91,
+              "playRate": 1.42,
+              "avgPlacement": 4.47,
+              "top4Rate": 49.45,
+              "topRate": 13.19,
+              "placementDelta": -0.04
+            }
+          ],
+          "tier": "D",
+          "placementDelta": -0.08
+        },
+        {
+          "hexId": 3128,
+          "name": "珠光莲花 II",
+          "icon": "https://game.gtimg.cn/images/lol/act/jkzlk/gamedata/hex/jeweledlotus3.png",
+          "level": 3,
+          "sampleCount": 91,
+          "playRate": 1.42,
+          "avgPlacement": 4.51,
+          "top4Rate": 45.05,
+          "topRate": 16.48,
+          "rounds": [
+            "2-1",
+            "3-2",
+            "4-2"
+          ],
+          "roundStats": [
+            {
+              "round": 0,
+              "roundLabel": "2-1",
+              "sampleCount": 3,
+              "playRate": 0.05,
+              "avgPlacement": 5.33,
+              "top4Rate": 33.33,
+              "topRate": 0,
+              "placementDelta": 0.82
+            },
+            {
+              "round": 1,
+              "roundLabel": "3-2",
+              "sampleCount": 39,
+              "playRate": 0.61,
+              "avgPlacement": 4.41,
+              "top4Rate": 48.72,
+              "topRate": 15.38,
+              "placementDelta": -0.1
+            },
+            {
+              "round": 2,
+              "roundLabel": "4-2",
+              "sampleCount": 49,
+              "playRate": 0.77,
+              "avgPlacement": 4.53,
+              "top4Rate": 42.86,
+              "topRate": 18.37,
+              "placementDelta": 0.02
+            }
+          ],
+          "tier": "D",
+          "placementDelta": 0
+        },
+        {
+          "hexId": 30181,
+          "name": "法杖溢流",
+          "icon": "https://game.gtimg.cn/images/lol/act/jkzlk/gamedata/hex/wandoverflow3.png",
+          "level": 3,
+          "sampleCount": 91,
+          "playRate": 1.42,
+          "avgPlacement": 4.1,
+          "top4Rate": 58.24,
+          "topRate": 16.48,
+          "rounds": [
+            "2-1",
+            "3-2",
+            "4-2"
+          ],
+          "roundStats": [
+            {
+              "round": 0,
+              "roundLabel": "2-1",
+              "sampleCount": 1,
+              "playRate": 0.02,
+              "avgPlacement": 4,
+              "top4Rate": 100,
+              "topRate": 0,
+              "placementDelta": -0.51
+            },
+            {
+              "round": 1,
+              "roundLabel": "3-2",
+              "sampleCount": 51,
+              "playRate": 0.8,
+              "avgPlacement": 3.78,
+              "top4Rate": 64.71,
+              "topRate": 19.61,
+              "placementDelta": -0.73
+            },
+            {
+              "round": 2,
+              "roundLabel": "4-2",
+              "sampleCount": 39,
+              "playRate": 0.61,
+              "avgPlacement": 4.51,
+              "top4Rate": 48.72,
+              "topRate": 12.82,
+              "placementDelta": 0
+            }
+          ],
+          "tier": "C",
+          "placementDelta": -0.41
+        },
+        {
+          "hexId": 1006,
+          "name": "装备百宝袋 I",
+          "icon": "https://game.gtimg.cn/images/lol/act/jkzlk/gamedata/hex/itemgrabbag1.png",
+          "level": 1,
+          "sampleCount": 90,
+          "playRate": 1.41,
+          "avgPlacement": 4.37,
+          "top4Rate": 51.11,
+          "topRate": 10,
+          "rounds": [
+            "2-1",
+            "3-2",
+            "4-2"
+          ],
+          "roundStats": [
+            {
+              "round": 0,
+              "roundLabel": "2-1",
+              "sampleCount": 28,
+              "playRate": 0.44,
+              "avgPlacement": 4.11,
+              "top4Rate": 60.71,
+              "topRate": 10.71,
+              "placementDelta": -0.4
+            },
+            {
+              "round": 1,
+              "roundLabel": "3-2",
+              "sampleCount": 53,
+              "playRate": 0.83,
+              "avgPlacement": 4.42,
+              "top4Rate": 47.17,
+              "topRate": 11.32,
+              "placementDelta": -0.09
+            },
+            {
+              "round": 2,
+              "roundLabel": "4-2",
+              "sampleCount": 9,
+              "playRate": 0.14,
+              "avgPlacement": 4.89,
+              "top4Rate": 44.44,
+              "topRate": 0,
+              "placementDelta": 0.39
+            }
+          ],
+          "tier": "D",
+          "placementDelta": -0.14
+        },
+        {
+          "hexId": 30599,
+          "name": "灵魂唤醒",
+          "icon": "https://game.gtimg.cn/images/lol/act/jkzlk/gamedata/hex/awakenedsoul3.png",
+          "level": 3,
+          "sampleCount": 90,
+          "playRate": 1.41,
+          "avgPlacement": 4.39,
+          "top4Rate": 57.78,
+          "topRate": 10,
+          "rounds": [
+            "3-2",
+            "4-2"
+          ],
+          "roundStats": [
+            {
+              "round": 1,
+              "roundLabel": "3-2",
+              "sampleCount": 35,
+              "playRate": 0.55,
+              "avgPlacement": 4.26,
+              "top4Rate": 54.29,
+              "topRate": 11.43,
+              "placementDelta": -0.25
+            },
+            {
+              "round": 2,
+              "roundLabel": "4-2",
+              "sampleCount": 55,
+              "playRate": 0.86,
+              "avgPlacement": 4.47,
+              "top4Rate": 60,
+              "topRate": 9.09,
+              "placementDelta": -0.04
+            }
+          ],
+          "tier": "D",
+          "placementDelta": -0.12
+        },
+        {
+          "hexId": 20027,
+          "name": "爆炸式增长",
+          "icon": "https://game.gtimg.cn/images/lol/act/jkzlk/gamedata/hex/explosivegrowth2.png",
+          "level": 2,
+          "sampleCount": 85,
+          "playRate": 1.33,
+          "avgPlacement": 4.73,
+          "top4Rate": 45.88,
+          "topRate": 3.53,
+          "rounds": [
+            "2-1",
+            "3-2"
+          ],
+          "roundStats": [
+            {
+              "round": 0,
+              "roundLabel": "2-1",
+              "sampleCount": 1,
+              "playRate": 0.02,
+              "avgPlacement": 6,
+              "top4Rate": 0,
+              "topRate": 0,
+              "placementDelta": 1.49
+            },
+            {
+              "round": 1,
+              "roundLabel": "3-2",
+              "sampleCount": 84,
+              "playRate": 1.31,
+              "avgPlacement": 4.71,
+              "top4Rate": 46.43,
+              "topRate": 3.57,
+              "placementDelta": 0.21
+            }
+          ],
+          "tier": "D",
+          "placementDelta": 0.23
+        },
+        {
+          "hexId": 10614,
+          "name": "手气不错",
+          "icon": "https://game.gtimg.cn/images/lol/act/jkzlk/gamedata/hex/feelinglucky1.png",
+          "level": 1,
+          "sampleCount": 84,
+          "playRate": 1.31,
+          "avgPlacement": 4.18,
+          "top4Rate": 55.95,
+          "topRate": 11.9,
+          "rounds": [
+            "2-1",
+            "3-2"
+          ],
+          "roundStats": [
+            {
+              "round": 0,
+              "roundLabel": "2-1",
+              "sampleCount": 2,
+              "playRate": 0.03,
+              "avgPlacement": 3.5,
+              "top4Rate": 50,
+              "topRate": 0,
+              "placementDelta": -1.01
+            },
+            {
+              "round": 1,
+              "roundLabel": "3-2",
+              "sampleCount": 82,
+              "playRate": 1.28,
+              "avgPlacement": 4.2,
+              "top4Rate": 56.1,
+              "topRate": 12.2,
+              "placementDelta": -0.31
+            }
+          ],
+          "tier": "C",
+          "placementDelta": -0.33
+        },
+        {
+          "hexId": 20477,
+          "name": "黄金命运",
+          "icon": "https://game.gtimg.cn/images/lol/act/jkzlk/gamedata/hex/silverdestinygoldendestinyprismaticdestiny2.png",
+          "level": 2,
+          "sampleCount": 84,
+          "playRate": 1.31,
+          "avgPlacement": 4.33,
+          "top4Rate": 51.19,
+          "topRate": 15.48,
+          "rounds": [
+            "2-1"
+          ],
+          "roundStats": [
+            {
+              "round": 0,
+              "roundLabel": "2-1",
+              "sampleCount": 84,
+              "playRate": 1.31,
+              "avgPlacement": 4.33,
+              "top4Rate": 51.19,
+              "topRate": 15.48,
+              "placementDelta": -0.18
+            }
+          ],
+          "tier": "D",
+          "placementDelta": -0.18
+        },
+        {
+          "hexId": 1003,
+          "name": "花到上头",
+          "icon": "https://game.gtimg.cn/images/lol/act/jkzlk/gamedata/hex/hyperroll2.png",
+          "level": 2,
+          "sampleCount": 83,
+          "playRate": 1.3,
+          "avgPlacement": 4.14,
+          "top4Rate": 49.4,
+          "topRate": 8.43,
+          "rounds": [
+            "2-1"
+          ],
+          "roundStats": [
+            {
+              "round": 0,
+              "roundLabel": "2-1",
+              "sampleCount": 83,
+              "playRate": 1.3,
+              "avgPlacement": 4.14,
+              "top4Rate": 49.4,
+              "topRate": 8.43,
+              "placementDelta": -0.37
+            }
+          ],
+          "tier": "D",
+          "placementDelta": -0.37
+        },
+        {
+          "hexId": 1007,
+          "name": "潘朵拉的装备 I",
+          "icon": "https://game.gtimg.cn/images/lol/act/jkzlk/gamedata/hex/pandora1.png",
+          "level": 1,
+          "sampleCount": 83,
+          "playRate": 1.3,
+          "avgPlacement": 4.33,
+          "top4Rate": 48.19,
+          "topRate": 15.66,
+          "rounds": [
+            "2-1",
+            "3-2",
+            "4-2"
+          ],
+          "roundStats": [
+            {
+              "round": 0,
+              "roundLabel": "2-1",
+              "sampleCount": 22,
+              "playRate": 0.34,
+              "avgPlacement": 4.73,
+              "top4Rate": 40.91,
+              "topRate": 18.18,
+              "placementDelta": 0.23
+            },
+            {
+              "round": 1,
+              "roundLabel": "3-2",
+              "sampleCount": 55,
+              "playRate": 0.86,
+              "avgPlacement": 4.05,
+              "top4Rate": 52.73,
+              "topRate": 16.36,
+              "placementDelta": -0.46
+            },
+            {
+              "round": 2,
+              "roundLabel": "4-2",
+              "sampleCount": 6,
+              "playRate": 0.09,
+              "avgPlacement": 5.33,
+              "top4Rate": 33.33,
+              "topRate": 0,
+              "placementDelta": 0.83
+            }
+          ],
+          "tier": "D",
+          "placementDelta": -0.18
+        },
+        {
+          "hexId": 2008,
+          "name": "打捞桶+",
+          "icon": "https://game.gtimg.cn/images/lol/act/jkzlk/gamedata/hex/salvage2.png",
+          "level": 2,
+          "sampleCount": 82,
+          "playRate": 1.28,
+          "avgPlacement": 4.8,
+          "top4Rate": 43.9,
+          "topRate": 7.32,
+          "rounds": [
+            "2-1",
+            "3-2",
+            "4-2"
+          ],
+          "roundStats": [
+            {
+              "round": 0,
+              "roundLabel": "2-1",
+              "sampleCount": 1,
+              "playRate": 0.02,
+              "avgPlacement": 3,
+              "top4Rate": 100,
+              "topRate": 0,
+              "placementDelta": -1.51
+            },
+            {
+              "round": 1,
+              "roundLabel": "3-2",
+              "sampleCount": 32,
+              "playRate": 0.5,
+              "avgPlacement": 4.06,
+              "top4Rate": 62.5,
+              "topRate": 12.5,
+              "placementDelta": -0.45
+            },
+            {
+              "round": 2,
+              "roundLabel": "4-2",
+              "sampleCount": 49,
+              "playRate": 0.77,
+              "avgPlacement": 5.33,
+              "top4Rate": 30.61,
+              "topRate": 4.08,
+              "placementDelta": 0.83
+            }
+          ],
+          "tier": "D",
+          "placementDelta": 0.3
+        },
+        {
+          "hexId": 3007,
+          "name": "潘朵拉的装备 III",
+          "icon": "https://game.gtimg.cn/images/lol/act/jkzlk/gamedata/hex/pandora3.png",
+          "level": 3,
+          "sampleCount": 81,
+          "playRate": 1.27,
+          "avgPlacement": 4.38,
+          "top4Rate": 48.15,
+          "topRate": 13.58,
+          "rounds": [
+            "2-1",
+            "3-2",
+            "4-2"
+          ],
+          "roundStats": [
+            {
+              "round": 0,
+              "roundLabel": "2-1",
+              "sampleCount": 27,
+              "playRate": 0.42,
+              "avgPlacement": 3.93,
+              "top4Rate": 59.26,
+              "topRate": 11.11,
+              "placementDelta": -0.58
+            },
+            {
+              "round": 1,
+              "roundLabel": "3-2",
+              "sampleCount": 33,
+              "playRate": 0.52,
+              "avgPlacement": 4.79,
+              "top4Rate": 42.42,
+              "topRate": 15.15,
+              "placementDelta": 0.29
+            },
+            {
+              "round": 2,
+              "roundLabel": "4-2",
+              "sampleCount": 21,
+              "playRate": 0.33,
+              "avgPlacement": 4.33,
+              "top4Rate": 42.86,
+              "topRate": 14.29,
+              "placementDelta": -0.18
+            }
+          ],
+          "tier": "D",
+          "placementDelta": -0.13
+        },
+        {
+          "hexId": 20642,
+          "name": "摇钱树",
+          "icon": "https://game.gtimg.cn/images/lol/act/jkzlk/gamedata/hex/money-monsoon3.png",
+          "level": 3,
+          "sampleCount": 80,
+          "playRate": 1.25,
+          "avgPlacement": 4.61,
+          "top4Rate": 45,
+          "topRate": 15,
+          "rounds": [
+            "3-2",
+            "4-2"
+          ],
+          "roundStats": [
+            {
+              "round": 1,
+              "roundLabel": "3-2",
+              "sampleCount": 3,
+              "playRate": 0.05,
+              "avgPlacement": 4,
+              "top4Rate": 100,
+              "topRate": 0,
+              "placementDelta": -0.51
+            },
+            {
+              "round": 2,
+              "roundLabel": "4-2",
+              "sampleCount": 77,
+              "playRate": 1.2,
+              "avgPlacement": 4.64,
+              "top4Rate": 42.86,
+              "topRate": 15.58,
+              "placementDelta": 0.14
+            }
+          ],
+          "tier": "D",
+          "placementDelta": 0.11
+        },
+        {
+          "hexId": 3917,
+          "name": "物尽其用+",
+          "icon": "https://game.gtimg.cn/images/lol/act/jkzlk/gamedata/hex/slammin2.png",
+          "level": 2,
+          "sampleCount": 77,
+          "playRate": 1.2,
+          "avgPlacement": 4.09,
+          "top4Rate": 57.14,
+          "topRate": 15.58,
+          "rounds": [
+            "3-2"
+          ],
+          "roundStats": [
+            {
+              "round": 1,
+              "roundLabel": "3-2",
+              "sampleCount": 77,
+              "playRate": 1.2,
+              "avgPlacement": 4.09,
+              "top4Rate": 57.14,
+              "topRate": 15.58,
+              "placementDelta": -0.42
+            }
+          ],
+          "tier": "C",
+          "placementDelta": -0.42
+        },
+        {
+          "hexId": 20722,
+          "name": "黄金赌约+",
+          "icon": "https://game.gtimg.cn/images/lol/act/jkzlk/gamedata/hex/goldengamble3.png",
+          "level": 3,
+          "sampleCount": 77,
+          "playRate": 1.2,
+          "avgPlacement": 4.42,
+          "top4Rate": 50.65,
+          "topRate": 14.29,
+          "rounds": [
+            "2-1",
+            "3-2"
+          ],
+          "roundStats": [
+            {
+              "round": 0,
+              "roundLabel": "2-1",
+              "sampleCount": 1,
+              "playRate": 0.02,
+              "avgPlacement": 6,
+              "top4Rate": 0,
+              "topRate": 0,
+              "placementDelta": 1.49
+            },
+            {
+              "round": 1,
+              "roundLabel": "3-2",
+              "sampleCount": 76,
+              "playRate": 1.19,
+              "avgPlacement": 4.39,
+              "top4Rate": 51.32,
+              "topRate": 14.47,
+              "placementDelta": -0.12
+            }
+          ],
+          "tier": "D",
+          "placementDelta": -0.09
+        },
+        {
+          "hexId": 20723,
+          "name": "黄金赌约++",
+          "icon": "https://game.gtimg.cn/images/lol/act/jkzlk/gamedata/hex/goldengamble3.png",
+          "level": 3,
+          "sampleCount": 77,
+          "playRate": 1.2,
+          "avgPlacement": 4.81,
+          "top4Rate": 45.45,
+          "topRate": 7.79,
+          "rounds": [
+            "4-2"
+          ],
+          "roundStats": [
+            {
+              "round": 2,
+              "roundLabel": "4-2",
+              "sampleCount": 77,
+              "playRate": 1.2,
+              "avgPlacement": 4.81,
+              "top4Rate": 45.45,
+              "topRate": 7.79,
+              "placementDelta": 0.31
+            }
+          ],
+          "tier": "D",
+          "placementDelta": 0.31
+        },
+        {
+          "hexId": 20654,
+          "name": "获得21金币",
+          "icon": "https://game.gtimg.cn/images/lol/act/jkzlk/gamedata/hex/windfall2.png",
+          "level": 2,
+          "sampleCount": 76,
+          "playRate": 1.19,
+          "avgPlacement": 4.63,
+          "top4Rate": 42.11,
+          "topRate": 10.53,
+          "rounds": [
+            "2-1",
+            "3-2"
+          ],
+          "roundStats": [
+            {
+              "round": 0,
+              "roundLabel": "2-1",
+              "sampleCount": 4,
+              "playRate": 0.06,
+              "avgPlacement": 4.5,
+              "top4Rate": 50,
+              "topRate": 25,
+              "placementDelta": -0.01
+            },
+            {
+              "round": 1,
+              "roundLabel": "3-2",
+              "sampleCount": 72,
+              "playRate": 1.13,
+              "avgPlacement": 4.64,
+              "top4Rate": 41.67,
+              "topRate": 9.72,
+              "placementDelta": 0.14
+            }
+          ],
+          "tier": "D",
+          "placementDelta": 0.13
+        },
+        {
+          "hexId": 30187,
+          "name": "锅铲厨房",
+          "icon": "https://game.gtimg.cn/images/lol/act/jkzlk/gamedata/hex/tacticianskitchen3.png",
+          "level": 3,
+          "sampleCount": 76,
+          "playRate": 1.19,
+          "avgPlacement": 4.53,
+          "top4Rate": 53.95,
+          "topRate": 9.21,
+          "rounds": [
+            "2-1"
+          ],
+          "roundStats": [
+            {
+              "round": 0,
+              "roundLabel": "2-1",
+              "sampleCount": 76,
+              "playRate": 1.19,
+              "avgPlacement": 4.53,
+              "top4Rate": 53.95,
+              "topRate": 9.21,
+              "placementDelta": 0.02
+            }
+          ],
+          "tier": "D",
+          "placementDelta": 0.02
+        },
+        {
+          "hexId": 20478,
+          "name": "黄金命运+",
+          "icon": "https://game.gtimg.cn/images/lol/act/jkzlk/gamedata/hex/silverdestinygoldendestinyprismaticdestiny2.png",
+          "level": 2,
+          "sampleCount": 74,
+          "playRate": 1.16,
+          "avgPlacement": 4.77,
+          "top4Rate": 43.24,
+          "topRate": 10.81,
+          "rounds": [
+            "3-2"
+          ],
+          "roundStats": [
+            {
+              "round": 1,
+              "roundLabel": "3-2",
+              "sampleCount": 74,
+              "playRate": 1.16,
+              "avgPlacement": 4.77,
+              "top4Rate": 43.24,
+              "topRate": 10.81,
+              "placementDelta": 0.27
+            }
+          ],
+          "tier": "D",
+          "placementDelta": 0.27
+        },
+        {
+          "hexId": 30009,
+          "name": "投资++",
+          "icon": "https://game.gtimg.cn/images/lol/act/jkzlk/gamedata/hex/invested3.png",
+          "level": 3,
+          "sampleCount": 69,
+          "playRate": 1.08,
+          "avgPlacement": 5.19,
+          "top4Rate": 39.13,
+          "topRate": 1.45,
+          "rounds": [
+            "4-2"
+          ],
+          "roundStats": [
+            {
+              "round": 2,
+              "roundLabel": "4-2",
+              "sampleCount": 69,
+              "playRate": 1.08,
+              "avgPlacement": 5.19,
+              "top4Rate": 39.13,
+              "topRate": 1.45,
+              "placementDelta": 0.69
+            }
+          ],
+          "tier": "D",
+          "placementDelta": 0.69
+        },
+        {
+          "hexId": 10196,
+          "name": "弑君突刺",
+          "icon": "https://game.gtimg.cn/images/lol/act/jkzlk/gamedata/hex/kingslayer1.png",
+          "level": 1,
+          "sampleCount": 68,
+          "playRate": 1.06,
+          "avgPlacement": 4.96,
+          "top4Rate": 44.12,
+          "topRate": 8.82,
+          "rounds": [
+            "2-1",
+            "3-2"
+          ],
+          "roundStats": [
+            {
+              "round": 0,
+              "roundLabel": "2-1",
+              "sampleCount": 27,
+              "playRate": 0.42,
+              "avgPlacement": 4.26,
+              "top4Rate": 55.56,
+              "topRate": 14.81,
+              "placementDelta": -0.25
+            },
+            {
+              "round": 1,
+              "roundLabel": "3-2",
+              "sampleCount": 41,
+              "playRate": 0.64,
+              "avgPlacement": 5.41,
+              "top4Rate": 36.59,
+              "topRate": 4.88,
+              "placementDelta": 0.91
+            }
+          ],
+          "tier": "D",
+          "placementDelta": 0.46
+        },
+        {
+          "hexId": 20489,
+          "name": "应急护盾",
+          "icon": "https://game.gtimg.cn/images/lol/act/jkzlk/gamedata/hex/plotarmor2.png",
+          "level": 2,
+          "sampleCount": 66,
+          "playRate": 1.03,
+          "avgPlacement": 4.32,
+          "top4Rate": 51.52,
+          "topRate": 12.12,
+          "rounds": [
+            "3-2",
+            "4-2"
+          ],
+          "roundStats": [
+            {
+              "round": 1,
+              "roundLabel": "3-2",
+              "sampleCount": 20,
+              "playRate": 0.31,
+              "avgPlacement": 4.05,
+              "top4Rate": 60,
+              "topRate": 10,
+              "placementDelta": -0.46
+            },
+            {
+              "round": 2,
+              "roundLabel": "4-2",
+              "sampleCount": 46,
+              "playRate": 0.72,
+              "avgPlacement": 4.43,
+              "top4Rate": 47.83,
+              "topRate": 13.04,
+              "placementDelta": -0.08
+            }
+          ],
+          "tier": "D",
+          "placementDelta": -0.19
+        },
+        {
+          "hexId": 3276,
+          "name": "幸运手套+",
+          "icon": "https://game.gtimg.cn/images/lol/act/jkzlk/gamedata/hex/luckygloves3.png",
+          "level": 3,
+          "sampleCount": 65,
+          "playRate": 1.02,
+          "avgPlacement": 4.49,
+          "top4Rate": 50.77,
+          "topRate": 7.69,
+          "rounds": [
+            "3-2",
+            "4-2"
+          ],
+          "roundStats": [
+            {
+              "round": 1,
+              "roundLabel": "3-2",
+              "sampleCount": 30,
+              "playRate": 0.47,
+              "avgPlacement": 4.47,
+              "top4Rate": 53.33,
+              "topRate": 3.33,
+              "placementDelta": -0.04
+            },
+            {
+              "round": 2,
+              "roundLabel": "4-2",
+              "sampleCount": 35,
+              "playRate": 0.55,
+              "avgPlacement": 4.51,
+              "top4Rate": 48.57,
+              "topRate": 11.43,
+              "placementDelta": 0
+            }
+          ],
+          "tier": "D",
+          "placementDelta": -0.02
+        },
+        {
+          "hexId": 20721,
+          "name": "黄金赌约",
+          "icon": "https://game.gtimg.cn/images/lol/act/jkzlk/gamedata/hex/goldengamble3.png",
+          "level": 3,
+          "sampleCount": 64,
+          "playRate": 1,
+          "avgPlacement": 4.7,
+          "top4Rate": 48.44,
+          "topRate": 6.25,
+          "rounds": [
+            "2-1"
+          ],
+          "roundStats": [
+            {
+              "round": 0,
+              "roundLabel": "2-1",
+              "sampleCount": 64,
+              "playRate": 1,
+              "avgPlacement": 4.7,
+              "top4Rate": 48.44,
+              "topRate": 6.25,
+              "placementDelta": 0.2
+            }
+          ],
+          "tier": "D",
+          "placementDelta": 0.2
+        }
+      ]
+    }
+  },
+  "explorer": [
+    {
+      "source": "https://www.dataj.cc/api/web/explorer/query",
+      "request": {
+        "version": "18.3",
+        "setId": 18,
+        "filter": {
+          "rules": [
+            {
+              "starCount": "",
+              "type": "hex",
+              "targetId": "20742",
+              "enable": true,
+              "targetName": "四之力",
+              "hexRound": "1",
+              "nameMatch": false,
+              "equipCarry": "",
+              "equipCount": "",
+              "exclude": false
+            }
+          ],
+          "combinator": "and"
+        }
+      },
+      "data": {
+        "comps": [
+          {
+            "compId": "107",
+            "name": "野怪小蓝",
+            "heroes": [
+              {
+                "id": "2233",
+                "heroId": "1511",
+                "heroName": "苍蓝哨戒",
+                "heroType": 0,
+                "isCarry": true,
+                "isSubCarry": false,
+                "isCore": true,
+                "price": 1
+              },
+              {
+                "id": "2238",
+                "heroId": "5458",
+                "heroName": "远古巨龙",
+                "heroType": 0,
+                "isCarry": false,
+                "isSubCarry": true,
+                "isCore": true,
+                "price": 5
+              },
+              {
+                "id": "2236",
+                "heroId": "4500",
+                "heroName": "苍蓝雕纹魔像",
+                "heroType": 0,
+                "isCarry": false,
+                "isSubCarry": false,
+                "isCore": true,
+                "price": 4
+              },
+              {
+                "id": "2234",
+                "heroId": "3503",
+                "heroName": "远古石甲虫",
+                "heroType": 0,
+                "isCarry": false,
+                "isSubCarry": false,
+                "isCore": true,
+                "price": 3
+              },
+              {
+                "id": "2239",
+                "heroId": "5451",
+                "heroName": "塔里克",
+                "heroType": 0,
+                "isCarry": false,
+                "isSubCarry": false,
+                "isCore": false,
+                "price": 5
+              },
+              {
+                "id": "2240",
+                "heroId": "5452",
+                "heroName": "纳尔",
+                "heroType": 0,
+                "isCarry": false,
+                "isSubCarry": false,
+                "isCore": false,
+                "price": 5
+              },
+              {
+                "id": "2237",
+                "heroId": "4506",
+                "heroName": "绯红印记树怪",
+                "heroType": 0,
+                "isCarry": false,
+                "isSubCarry": false,
+                "isCore": false,
+                "price": 4
+              },
+              {
+                "id": "2235",
+                "heroId": "2500",
+                "heroName": "峡谷迅捷蟹",
+                "heroType": 0,
+                "isCarry": false,
+                "isSubCarry": false,
+                "isCore": false,
+                "price": 2
+              }
+            ],
+            "traits": [
+              {
+                "id": "84660103",
+                "name": "峡谷野怪"
+              },
+              {
+                "id": "85200101",
+                "name": "斗士"
+              },
+              {
+                "id": "84800101",
+                "name": "神谕"
+              },
+              {
+                "id": "83720101",
+                "name": "重装战士"
+              },
+              {
+                "id": "83840101",
+                "name": "宝石骑士"
+              },
+              {
+                "id": "83850101",
+                "name": "顶级掠食者"
+              }
+            ],
+            "equips": [
+              {
+                "heroId": "1511",
+                "equipId": "2038",
+                "compHeroId": "2233"
+              },
+              {
+                "heroId": "1511",
+                "equipId": "2017",
+                "compHeroId": "2233"
+              },
+              {
+                "heroId": "1511",
+                "equipId": "2017",
+                "compHeroId": "2233"
+              },
+              {
+                "heroId": "3503",
+                "equipId": "2034",
+                "compHeroId": "2234"
+              },
+              {
+                "heroId": "3503",
+                "equipId": "2028",
+                "compHeroId": "2234"
+              },
+              {
+                "heroId": "3503",
+                "equipId": "2025",
+                "compHeroId": "2234"
+              },
+              {
+                "heroId": "4500",
+                "equipId": "2023",
+                "compHeroId": "2236"
+              },
+              {
+                "heroId": "4500",
+                "equipId": "2029",
+                "compHeroId": "2236"
+              },
+              {
+                "heroId": "4500",
+                "equipId": "2019",
+                "compHeroId": "2236"
+              },
+              {
+                "heroId": "5458",
+                "equipId": "2039",
+                "compHeroId": "2238"
+              },
+              {
+                "heroId": "5458",
+                "equipId": "2007",
+                "compHeroId": "2238"
+              },
+              {
+                "heroId": "5458",
+                "equipId": "2001",
+                "compHeroId": "2238"
+              }
+            ],
+            "conditions": [],
+            "top4Rate": 53.85,
+            "topRate": 15.38,
+            "pickRate": 0.01,
+            "avgPlacement": 4.23,
+            "sampleCount": 13,
+            "tier": "C"
+          }
+        ]
+      },
+      "fetched_at": "2026-10-08T15:11:09.313045+00:00",
+      "response_sha256": "f4d3f9319f8a80248cb1478db4c12f607faf4ccec14bd0c43b6dc2b5bfa300d5"
+    },
+    {
+      "source": "https://www.dataj.cc/api/web/explorer/query",
+      "request": {
+        "version": "18.3",
+        "setId": 18,
+        "filter": {
+          "rules": [
+            {
+              "starCount": "",
+              "type": "hex",
+              "targetId": "30668",
+              "enable": true,
+              "targetName": "厨神阿福",
+              "hexRound": "1",
+              "nameMatch": false,
+              "equipCarry": "",
+              "equipCount": "",
+              "exclude": false
+            }
+          ],
+          "combinator": "and"
+        }
+      },
+      "data": {
+        "comps": [
+          {
+            "compId": "107",
+            "name": "野怪小蓝",
+            "heroes": [
+              {
+                "id": "2233",
+                "heroId": "1511",
+                "heroName": "苍蓝哨戒",
+                "heroType": 0,
+                "isCarry": true,
+                "isSubCarry": false,
+                "isCore": true,
+                "price": 1
+              },
+              {
+                "id": "2238",
+                "heroId": "5458",
+                "heroName": "远古巨龙",
+                "heroType": 0,
+                "isCarry": false,
+                "isSubCarry": true,
+                "isCore": true,
+                "price": 5
+              },
+              {
+                "id": "2236",
+                "heroId": "4500",
+                "heroName": "苍蓝雕纹魔像",
+                "heroType": 0,
+                "isCarry": false,
+                "isSubCarry": false,
+                "isCore": true,
+                "price": 4
+              },
+              {
+                "id": "2234",
+                "heroId": "3503",
+                "heroName": "远古石甲虫",
+                "heroType": 0,
+                "isCarry": false,
+                "isSubCarry": false,
+                "isCore": true,
+                "price": 3
+              },
+              {
+                "id": "2239",
+                "heroId": "5451",
+                "heroName": "塔里克",
+                "heroType": 0,
+                "isCarry": false,
+                "isSubCarry": false,
+                "isCore": false,
+                "price": 5
+              },
+              {
+                "id": "2240",
+                "heroId": "5452",
+                "heroName": "纳尔",
+                "heroType": 0,
+                "isCarry": false,
+                "isSubCarry": false,
+                "isCore": false,
+                "price": 5
+              },
+              {
+                "id": "2237",
+                "heroId": "4506",
+                "heroName": "绯红印记树怪",
+                "heroType": 0,
+                "isCarry": false,
+                "isSubCarry": false,
+                "isCore": false,
+                "price": 4
+              },
+              {
+                "id": "2235",
+                "heroId": "2500",
+                "heroName": "峡谷迅捷蟹",
+                "heroType": 0,
+                "isCarry": false,
+                "isSubCarry": false,
+                "isCore": false,
+                "price": 2
+              }
+            ],
+            "traits": [
+              {
+                "id": "84660103",
+                "name": "峡谷野怪"
+              },
+              {
+                "id": "85200101",
+                "name": "斗士"
+              },
+              {
+                "id": "84800101",
+                "name": "神谕"
+              },
+              {
+                "id": "83720101",
+                "name": "重装战士"
+              },
+              {
+                "id": "83840101",
+                "name": "宝石骑士"
+              },
+              {
+                "id": "83850101",
+                "name": "顶级掠食者"
+              }
+            ],
+            "equips": [
+              {
+                "heroId": "1511",
+                "equipId": "2038",
+                "compHeroId": "2233"
+              },
+              {
+                "heroId": "1511",
+                "equipId": "2017",
+                "compHeroId": "2233"
+              },
+              {
+                "heroId": "1511",
+                "equipId": "2017",
+                "compHeroId": "2233"
+              },
+              {
+                "heroId": "3503",
+                "equipId": "2034",
+                "compHeroId": "2234"
+              },
+              {
+                "heroId": "3503",
+                "equipId": "2028",
+                "compHeroId": "2234"
+              },
+              {
+                "heroId": "3503",
+                "equipId": "2025",
+                "compHeroId": "2234"
+              },
+              {
+                "heroId": "4500",
+                "equipId": "2023",
+                "compHeroId": "2236"
+              },
+              {
+                "heroId": "4500",
+                "equipId": "2029",
+                "compHeroId": "2236"
+              },
+              {
+                "heroId": "4500",
+                "equipId": "2019",
+                "compHeroId": "2236"
+              },
+              {
+                "heroId": "5458",
+                "equipId": "2039",
+                "compHeroId": "2238"
+              },
+              {
+                "heroId": "5458",
+                "equipId": "2007",
+                "compHeroId": "2238"
+              },
+              {
+                "heroId": "5458",
+                "equipId": "2001",
+                "compHeroId": "2238"
+              }
+            ],
+            "conditions": [],
+            "top4Rate": 53.85,
+            "topRate": 7.69,
+            "pickRate": 0.01,
+            "avgPlacement": 4.54,
+            "sampleCount": 13,
+            "tier": "C"
+          }
+        ]
+      },
+      "fetched_at": "2026-10-08T15:11:11.406309+00:00",
+      "response_sha256": "5c737013b5bb93320bd14c101204b96a0b7c21aef335cb44c63ccc08051ef037"
+    },
+    {
+      "source": "https://www.dataj.cc/api/web/explorer/query",
+      "request": {
+        "version": "18.3",
+        "setId": 18,
+        "filter": {
+          "rules": [
+            {
+              "starCount": "",
+              "type": "hex",
+              "targetId": "20708",
+              "enable": true,
+              "targetName": "电火花 II",
+              "hexRound": "1",
+              "nameMatch": false,
+              "equipCarry": "",
+              "equipCount": "",
+              "exclude": false
+            }
+          ],
+          "combinator": "and"
+        }
+      },
+      "data": {
+        "comps": [
+          {
+            "compId": "107",
+            "name": "野怪小蓝",
+            "heroes": [
+              {
+                "id": "2233",
+                "heroId": "1511",
+                "heroName": "苍蓝哨戒",
+                "heroType": 0,
+                "isCarry": true,
+                "isSubCarry": false,
+                "isCore": true,
+                "price": 1
+              },
+              {
+                "id": "2238",
+                "heroId": "5458",
+                "heroName": "远古巨龙",
+                "heroType": 0,
+                "isCarry": false,
+                "isSubCarry": true,
+                "isCore": true,
+                "price": 5
+              },
+              {
+                "id": "2236",
+                "heroId": "4500",
+                "heroName": "苍蓝雕纹魔像",
+                "heroType": 0,
+                "isCarry": false,
+                "isSubCarry": false,
+                "isCore": true,
+                "price": 4
+              },
+              {
+                "id": "2234",
+                "heroId": "3503",
+                "heroName": "远古石甲虫",
+                "heroType": 0,
+                "isCarry": false,
+                "isSubCarry": false,
+                "isCore": true,
+                "price": 3
+              },
+              {
+                "id": "2239",
+                "heroId": "5451",
+                "heroName": "塔里克",
+                "heroType": 0,
+                "isCarry": false,
+                "isSubCarry": false,
+                "isCore": false,
+                "price": 5
+              },
+              {
+                "id": "2240",
+                "heroId": "5452",
+                "heroName": "纳尔",
+                "heroType": 0,
+                "isCarry": false,
+                "isSubCarry": false,
+                "isCore": false,
+                "price": 5
+              },
+              {
+                "id": "2237",
+                "heroId": "4506",
+                "heroName": "绯红印记树怪",
+                "heroType": 0,
+                "isCarry": false,
+                "isSubCarry": false,
+                "isCore": false,
+                "price": 4
+              },
+              {
+                "id": "2235",
+                "heroId": "2500",
+                "heroName": "峡谷迅捷蟹",
+                "heroType": 0,
+                "isCarry": false,
+                "isSubCarry": false,
+                "isCore": false,
+                "price": 2
+              }
+            ],
+            "traits": [
+              {
+                "id": "84660103",
+                "name": "峡谷野怪"
+              },
+              {
+                "id": "85200101",
+                "name": "斗士"
+              },
+              {
+                "id": "84800101",
+                "name": "神谕"
+              },
+              {
+                "id": "83720101",
+                "name": "重装战士"
+              },
+              {
+                "id": "83840101",
+                "name": "宝石骑士"
+              },
+              {
+                "id": "83850101",
+                "name": "顶级掠食者"
+              }
+            ],
+            "equips": [
+              {
+                "heroId": "1511",
+                "equipId": "2038",
+                "compHeroId": "2233"
+              },
+              {
+                "heroId": "1511",
+                "equipId": "2017",
+                "compHeroId": "2233"
+              },
+              {
+                "heroId": "1511",
+                "equipId": "2017",
+                "compHeroId": "2233"
+              },
+              {
+                "heroId": "3503",
+                "equipId": "2034",
+                "compHeroId": "2234"
+              },
+              {
+                "heroId": "3503",
+                "equipId": "2028",
+                "compHeroId": "2234"
+              },
+              {
+                "heroId": "3503",
+                "equipId": "2025",
+                "compHeroId": "2234"
+              },
+              {
+                "heroId": "4500",
+                "equipId": "2023",
+                "compHeroId": "2236"
+              },
+              {
+                "heroId": "4500",
+                "equipId": "2029",
+                "compHeroId": "2236"
+              },
+              {
+                "heroId": "4500",
+                "equipId": "2019",
+                "compHeroId": "2236"
+              },
+              {
+                "heroId": "5458",
+                "equipId": "2039",
+                "compHeroId": "2238"
+              },
+              {
+                "heroId": "5458",
+                "equipId": "2007",
+                "compHeroId": "2238"
+              },
+              {
+                "heroId": "5458",
+                "equipId": "2001",
+                "compHeroId": "2238"
+              }
+            ],
+            "conditions": [],
+            "top4Rate": 50,
+            "topRate": 12.5,
+            "pickRate": 0.03,
+            "avgPlacement": 4.75,
+            "sampleCount": 8,
+            "tier": null
+          }
+        ]
+      },
+      "fetched_at": "2026-10-08T15:11:13.082636+00:00",
+      "response_sha256": "afe5c1d9fc082b17d99bf35c8d4b7af8ea610eaae004a5ca5f346a826244e558"
+    },
+    {
+      "source": "https://www.dataj.cc/api/web/explorer/query",
+      "request": {
+        "version": "18.3",
+        "setId": 18,
+        "filter": {
+          "rules": [
+            {
+              "starCount": "",
+              "type": "hex",
+              "targetId": "10616",
+              "enable": true,
+              "targetName": "拥抱 II",
+              "hexRound": "2",
+              "nameMatch": false,
+              "equipCarry": "",
+              "equipCount": "",
+              "exclude": false
+            }
+          ],
+          "combinator": "and"
+        }
+      },
+      "data": {
+        "comps": [
+          {
+            "compId": "107",
+            "name": "野怪小蓝",
+            "heroes": [
+              {
+                "id": "2233",
+                "heroId": "1511",
+                "heroName": "苍蓝哨戒",
+                "heroType": 0,
+                "isCarry": true,
+                "isSubCarry": false,
+                "isCore": true,
+                "price": 1
+              },
+              {
+                "id": "2238",
+                "heroId": "5458",
+                "heroName": "远古巨龙",
+                "heroType": 0,
+                "isCarry": false,
+                "isSubCarry": true,
+                "isCore": true,
+                "price": 5
+              },
+              {
+                "id": "2236",
+                "heroId": "4500",
+                "heroName": "苍蓝雕纹魔像",
+                "heroType": 0,
+                "isCarry": false,
+                "isSubCarry": false,
+                "isCore": true,
+                "price": 4
+              },
+              {
+                "id": "2234",
+                "heroId": "3503",
+                "heroName": "远古石甲虫",
+                "heroType": 0,
+                "isCarry": false,
+                "isSubCarry": false,
+                "isCore": true,
+                "price": 3
+              },
+              {
+                "id": "2239",
+                "heroId": "5451",
+                "heroName": "塔里克",
+                "heroType": 0,
+                "isCarry": false,
+                "isSubCarry": false,
+                "isCore": false,
+                "price": 5
+              },
+              {
+                "id": "2240",
+                "heroId": "5452",
+                "heroName": "纳尔",
+                "heroType": 0,
+                "isCarry": false,
+                "isSubCarry": false,
+                "isCore": false,
+                "price": 5
+              },
+              {
+                "id": "2237",
+                "heroId": "4506",
+                "heroName": "绯红印记树怪",
+                "heroType": 0,
+                "isCarry": false,
+                "isSubCarry": false,
+                "isCore": false,
+                "price": 4
+              },
+              {
+                "id": "2235",
+                "heroId": "2500",
+                "heroName": "峡谷迅捷蟹",
+                "heroType": 0,
+                "isCarry": false,
+                "isSubCarry": false,
+                "isCore": false,
+                "price": 2
+              }
+            ],
+            "traits": [
+              {
+                "id": "84660103",
+                "name": "峡谷野怪"
+              },
+              {
+                "id": "85200101",
+                "name": "斗士"
+              },
+              {
+                "id": "84800101",
+                "name": "神谕"
+              },
+              {
+                "id": "83720101",
+                "name": "重装战士"
+              },
+              {
+                "id": "83840101",
+                "name": "宝石骑士"
+              },
+              {
+                "id": "83850101",
+                "name": "顶级掠食者"
+              }
+            ],
+            "equips": [
+              {
+                "heroId": "1511",
+                "equipId": "2038",
+                "compHeroId": "2233"
+              },
+              {
+                "heroId": "1511",
+                "equipId": "2017",
+                "compHeroId": "2233"
+              },
+              {
+                "heroId": "1511",
+                "equipId": "2017",
+                "compHeroId": "2233"
+              },
+              {
+                "heroId": "3503",
+                "equipId": "2034",
+                "compHeroId": "2234"
+              },
+              {
+                "heroId": "3503",
+                "equipId": "2028",
+                "compHeroId": "2234"
+              },
+              {
+                "heroId": "3503",
+                "equipId": "2025",
+                "compHeroId": "2234"
+              },
+              {
+                "heroId": "4500",
+                "equipId": "2023",
+                "compHeroId": "2236"
+              },
+              {
+                "heroId": "4500",
+                "equipId": "2029",
+                "compHeroId": "2236"
+              },
+              {
+                "heroId": "4500",
+                "equipId": "2019",
+                "compHeroId": "2236"
+              },
+              {
+                "heroId": "5458",
+                "equipId": "2039",
+                "compHeroId": "2238"
+              },
+              {
+                "heroId": "5458",
+                "equipId": "2007",
+                "compHeroId": "2238"
+              },
+              {
+                "heroId": "5458",
+                "equipId": "2001",
+                "compHeroId": "2238"
+              }
+            ],
+            "conditions": [],
+            "top4Rate": 21.74,
+            "topRate": 8.7,
+            "pickRate": 0.02,
+            "avgPlacement": 5.26,
+            "sampleCount": 23,
+            "tier": "D"
+          }
+        ]
+      },
+      "fetched_at": "2026-10-08T15:11:57.106334+00:00",
+      "response_sha256": "ddd43eab4973f1d72a1cc7034fbed008964ce3dbd62c60964b65b7f25f55f57c"
+    },
+    {
+      "source": "https://www.dataj.cc/api/web/explorer/query",
+      "request": {
+        "version": "18.3",
+        "setId": 18,
+        "filter": {
+          "rules": [
+            {
+              "starCount": "",
+              "type": "hex",
+              "targetId": "20489",
+              "enable": true,
+              "targetName": "应急护盾",
+              "hexRound": "1",
+              "nameMatch": false,
+              "equipCarry": "",
+              "equipCount": "",
+              "exclude": false
+            }
+          ],
+          "combinator": "and"
+        }
+      },
+      "data": {
+        "comps": [
+          {
+            "compId": "107",
+            "name": "野怪小蓝",
+            "heroes": [
+              {
+                "id": "2233",
+                "heroId": "1511",
+                "heroName": "苍蓝哨戒",
+                "heroType": 0,
+                "isCarry": true,
+                "isSubCarry": false,
+                "isCore": true,
+                "price": 1
+              },
+              {
+                "id": "2238",
+                "heroId": "5458",
+                "heroName": "远古巨龙",
+                "heroType": 0,
+                "isCarry": false,
+                "isSubCarry": true,
+                "isCore": true,
+                "price": 5
+              },
+              {
+                "id": "2236",
+                "heroId": "4500",
+                "heroName": "苍蓝雕纹魔像",
+                "heroType": 0,
+                "isCarry": false,
+                "isSubCarry": false,
+                "isCore": true,
+                "price": 4
+              },
+              {
+                "id": "2234",
+                "heroId": "3503",
+                "heroName": "远古石甲虫",
+                "heroType": 0,
+                "isCarry": false,
+                "isSubCarry": false,
+                "isCore": true,
+                "price": 3
+              },
+              {
+                "id": "2239",
+                "heroId": "5451",
+                "heroName": "塔里克",
+                "heroType": 0,
+                "isCarry": false,
+                "isSubCarry": false,
+                "isCore": false,
+                "price": 5
+              },
+              {
+                "id": "2240",
+                "heroId": "5452",
+                "heroName": "纳尔",
+                "heroType": 0,
+                "isCarry": false,
+                "isSubCarry": false,
+                "isCore": false,
+                "price": 5
+              },
+              {
+                "id": "2237",
+                "heroId": "4506",
+                "heroName": "绯红印记树怪",
+                "heroType": 0,
+                "isCarry": false,
+                "isSubCarry": false,
+                "isCore": false,
+                "price": 4
+              },
+              {
+                "id": "2235",
+                "heroId": "2500",
+                "heroName": "峡谷迅捷蟹",
+                "heroType": 0,
+                "isCarry": false,
+                "isSubCarry": false,
+                "isCore": false,
+                "price": 2
+              }
+            ],
+            "traits": [
+              {
+                "id": "84660103",
+                "name": "峡谷野怪"
+              },
+              {
+                "id": "85200101",
+                "name": "斗士"
+              },
+              {
+                "id": "84800101",
+                "name": "神谕"
+              },
+              {
+                "id": "83720101",
+                "name": "重装战士"
+              },
+              {
+                "id": "83840101",
+                "name": "宝石骑士"
+              },
+              {
+                "id": "83850101",
+                "name": "顶级掠食者"
+              }
+            ],
+            "equips": [
+              {
+                "heroId": "1511",
+                "equipId": "2038",
+                "compHeroId": "2233"
+              },
+              {
+                "heroId": "1511",
+                "equipId": "2017",
+                "compHeroId": "2233"
+              },
+              {
+                "heroId": "1511",
+                "equipId": "2017",
+                "compHeroId": "2233"
+              },
+              {
+                "heroId": "3503",
+                "equipId": "2034",
+                "compHeroId": "2234"
+              },
+              {
+                "heroId": "3503",
+                "equipId": "2028",
+                "compHeroId": "2234"
+              },
+              {
+                "heroId": "3503",
+                "equipId": "2025",
+                "compHeroId": "2234"
+              },
+              {
+                "heroId": "4500",
+                "equipId": "2023",
+                "compHeroId": "2236"
+              },
+              {
+                "heroId": "4500",
+                "equipId": "2029",
+                "compHeroId": "2236"
+              },
+              {
+                "heroId": "4500",
+                "equipId": "2019",
+                "compHeroId": "2236"
+              },
+              {
+                "heroId": "5458",
+                "equipId": "2039",
+                "compHeroId": "2238"
+              },
+              {
+                "heroId": "5458",
+                "equipId": "2007",
+                "compHeroId": "2238"
+              },
+              {
+                "heroId": "5458",
+                "equipId": "2001",
+                "compHeroId": "2238"
+              }
+            ],
+            "conditions": [],
+            "top4Rate": 60,
+            "topRate": 10,
+            "pickRate": 0.02,
+            "avgPlacement": 4.05,
+            "sampleCount": 20,
+            "tier": "C"
+          }
+        ]
+      },
+      "fetched_at": "2026-10-08T15:11:58.601278+00:00",
+      "response_sha256": "fe672ce3adefd7195545920f198f25f9e2421879dce1581886629d15c88afdf5"
+    },
+    {
+      "source": "https://www.dataj.cc/api/web/explorer/query",
+      "request": {
+        "version": "18.3",
+        "setId": 18,
+        "filter": {
+          "rules": [
+            {
+              "starCount": "",
+              "type": "hex",
+              "targetId": "20489",
+              "enable": true,
+              "targetName": "应急护盾",
+              "hexRound": "2",
+              "nameMatch": false,
+              "equipCarry": "",
+              "equipCount": "",
+              "exclude": false
+            }
+          ],
+          "combinator": "and"
+        }
+      },
+      "data": {
+        "comps": [
+          {
+            "compId": "107",
+            "name": "野怪小蓝",
+            "heroes": [
+              {
+                "id": "2233",
+                "heroId": "1511",
+                "heroName": "苍蓝哨戒",
+                "heroType": 0,
+                "isCarry": true,
+                "isSubCarry": false,
+                "isCore": true,
+                "price": 1
+              },
+              {
+                "id": "2238",
+                "heroId": "5458",
+                "heroName": "远古巨龙",
+                "heroType": 0,
+                "isCarry": false,
+                "isSubCarry": true,
+                "isCore": true,
+                "price": 5
+              },
+              {
+                "id": "2236",
+                "heroId": "4500",
+                "heroName": "苍蓝雕纹魔像",
+                "heroType": 0,
+                "isCarry": false,
+                "isSubCarry": false,
+                "isCore": true,
+                "price": 4
+              },
+              {
+                "id": "2234",
+                "heroId": "3503",
+                "heroName": "远古石甲虫",
+                "heroType": 0,
+                "isCarry": false,
+                "isSubCarry": false,
+                "isCore": true,
+                "price": 3
+              },
+              {
+                "id": "2239",
+                "heroId": "5451",
+                "heroName": "塔里克",
+                "heroType": 0,
+                "isCarry": false,
+                "isSubCarry": false,
+                "isCore": false,
+                "price": 5
+              },
+              {
+                "id": "2240",
+                "heroId": "5452",
+                "heroName": "纳尔",
+                "heroType": 0,
+                "isCarry": false,
+                "isSubCarry": false,
+                "isCore": false,
+                "price": 5
+              },
+              {
+                "id": "2237",
+                "heroId": "4506",
+                "heroName": "绯红印记树怪",
+                "heroType": 0,
+                "isCarry": false,
+                "isSubCarry": false,
+                "isCore": false,
+                "price": 4
+              },
+              {
+                "id": "2235",
+                "heroId": "2500",
+                "heroName": "峡谷迅捷蟹",
+                "heroType": 0,
+                "isCarry": false,
+                "isSubCarry": false,
+                "isCore": false,
+                "price": 2
+              }
+            ],
+            "traits": [
+              {
+                "id": "84660103",
+                "name": "峡谷野怪"
+              },
+              {
+                "id": "85200101",
+                "name": "斗士"
+              },
+              {
+                "id": "84800101",
+                "name": "神谕"
+              },
+              {
+                "id": "83720101",
+                "name": "重装战士"
+              },
+              {
+                "id": "83840101",
+                "name": "宝石骑士"
+              },
+              {
+                "id": "83850101",
+                "name": "顶级掠食者"
+              }
+            ],
+            "equips": [
+              {
+                "heroId": "1511",
+                "equipId": "2038",
+                "compHeroId": "2233"
+              },
+              {
+                "heroId": "1511",
+                "equipId": "2017",
+                "compHeroId": "2233"
+              },
+              {
+                "heroId": "1511",
+                "equipId": "2017",
+                "compHeroId": "2233"
+              },
+              {
+                "heroId": "3503",
+                "equipId": "2034",
+                "compHeroId": "2234"
+              },
+              {
+                "heroId": "3503",
+                "equipId": "2028",
+                "compHeroId": "2234"
+              },
+              {
+                "heroId": "3503",
+                "equipId": "2025",
+                "compHeroId": "2234"
+              },
+              {
+                "heroId": "4500",
+                "equipId": "2023",
+                "compHeroId": "2236"
+              },
+              {
+                "heroId": "4500",
+                "equipId": "2029",
+                "compHeroId": "2236"
+              },
+              {
+                "heroId": "4500",
+                "equipId": "2019",
+                "compHeroId": "2236"
+              },
+              {
+                "heroId": "5458",
+                "equipId": "2039",
+                "compHeroId": "2238"
+              },
+              {
+                "heroId": "5458",
+                "equipId": "2007",
+                "compHeroId": "2238"
+              },
+              {
+                "heroId": "5458",
+                "equipId": "2001",
+                "compHeroId": "2238"
+              }
+            ],
+            "conditions": [],
+            "top4Rate": 47.83,
+            "topRate": 13.04,
+            "pickRate": 0.02,
+            "avgPlacement": 4.43,
+            "sampleCount": 46,
+            "tier": "B"
+          }
+        ]
+      },
+      "fetched_at": "2026-10-08T15:11:15.908517+00:00",
+      "response_sha256": "2dfad29be2d71d62bb7aff43a5cd52d620bcc18d0d4944a10a76892988a37bcd"
+    }
+  ],
+  "global": {
+    "source": "https://www.dataj.cc/api/web/stats/hex?setId=18&gameVersion=18.3",
+    "fetched_at": "2026-10-08T15:09:31Z",
+    "response_sha256": "c865eb063349ea483994832d6357152fd7e7f2be2fb2d849c338930e68b078ea",
+    "data": [
+      {
+        "hexId": 30668,
+        "name": "厨神阿福",
+        "icon": "https://game.gtimg.cn/images/lol/act/jkzlk/gamedata/hex/ultrarapidfire2.png",
+        "sampleCount": 11830,
+        "playRate": 0.36,
+        "avgPlacement": 4.57,
+        "top4Rate": 48.38,
+        "topRate": 15.46,
+        "rounds": [
+          "2-1",
+          "3-2",
+          "4-2"
+        ],
+        "roundStats": [
+          {
+            "round": 0,
+            "roundLabel": "2-1",
+            "sampleCount": 6281,
+            "playRate": 0.19,
+            "avgPlacement": 4.64,
+            "top4Rate": 47.09,
+            "topRate": 13.55
+          },
+          {
+            "round": 1,
+            "roundLabel": "3-2",
+            "sampleCount": 2311,
+            "playRate": 0.07,
+            "avgPlacement": 4.53,
+            "top4Rate": 49.11,
+            "topRate": 18
+          },
+          {
+            "round": 2,
+            "roundLabel": "4-2",
+            "sampleCount": 3238,
+            "playRate": 0.1,
+            "avgPlacement": 4.44,
+            "top4Rate": 50.34,
+            "topRate": 17.36
+          }
+        ]
+      },
+      {
+        "hexId": 20742,
+        "name": "四之力",
+        "icon": "https://game.gtimg.cn/images/lol/act/jkzlk/gamedata/hex/fourcing2.png",
+        "sampleCount": 1871,
+        "playRate": 0.06,
+        "avgPlacement": 4.9,
+        "top4Rate": 43.19,
+        "topRate": 10.64,
+        "rounds": [
+          "3-2"
+        ],
+        "roundStats": [
+          {
+            "round": 1,
+            "roundLabel": "3-2",
+            "sampleCount": 1852,
+            "playRate": 0.06,
+            "avgPlacement": 4.91,
+            "top4Rate": 43.09,
+            "topRate": 10.48
+          }
+        ]
+      },
+      {
+        "hexId": 20708,
+        "name": "电火花 II",
+        "icon": "https://game.gtimg.cn/images/lol/act/jkzlk/gamedata/hex/electrocharging2.png",
+        "sampleCount": 1148,
+        "playRate": 0.04,
+        "avgPlacement": 4.62,
+        "top4Rate": 48,
+        "topRate": 10.02,
+        "rounds": [
+          "2-1",
+          "3-2",
+          "4-2"
+        ],
+        "roundStats": [
+          {
+            "round": 0,
+            "roundLabel": "2-1",
+            "sampleCount": 267,
+            "playRate": 0.01,
+            "avgPlacement": 4.87,
+            "top4Rate": 45.32,
+            "topRate": 7.12
+          },
+          {
+            "round": 1,
+            "roundLabel": "3-2",
+            "sampleCount": 283,
+            "playRate": 0.01,
+            "avgPlacement": 4.45,
+            "top4Rate": 52.65,
+            "topRate": 13.78
+          },
+          {
+            "round": 2,
+            "roundLabel": "4-2",
+            "sampleCount": 598,
+            "playRate": 0.02,
+            "avgPlacement": 4.59,
+            "top4Rate": 46.99,
+            "topRate": 9.53
+          }
+        ]
+      }
+    ]
+  }
+}

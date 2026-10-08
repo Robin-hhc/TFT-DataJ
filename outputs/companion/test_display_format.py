@@ -51,6 +51,25 @@ class DisplayFormatting(unittest.TestCase):
         self.assertEqual(stat_text({'status':'ok','avg_placement':3.5,'sample_count':49}),'3.50 · 49局 · 少')
         self.assertEqual(stat_text({'status':'ok','avg_placement':3.5,'sample_count':50}),'3.50 · 50局')
 
+    def test_identified_hex_without_statistics_is_not_an_ocr_failure(self):
+        missing={'status':'missing_or_ambiguous_entity','avg_placement':None}
+        self.assertEqual(stat_text(missing,identified=True,scope='global'),'— 暂无全局统计')
+        self.assertEqual(stat_text(missing,identified=True,scope='comp'),'— 本阵容暂无统计')
+        self.assertEqual(stat_text(missing,identified=False,scope='global'),'— 未识别')
+        self.assertEqual(stat_text(missing,identified=False,scope='comp'),'— 未识别')
+        # An unresolved current entity cannot display a valid older row either.
+        self.assertEqual(stat_text({'status':'ok','avg_placement':3.5,'sample_count':100},
+            identified=False,scope='comp'),'— 未识别')
+
+    def test_hex_missing_stage_invalid_value_and_unknown_stage_have_distinct_labels(self):
+        for status,expected in [('no_stage_data','— 无该阶段数据'),
+                                ('invalid_stat','— 统计不可用'),
+                                ('unsupported_stage','— 阶段待确认')]:
+            for scope in ('global','comp'):
+                with self.subTest(status=status,scope=scope):
+                    self.assertEqual(stat_text({'status':status,'avg_placement':None},
+                        identified=True,scope=scope),expected)
+
     def test_zero_sample_hex_cannot_display_stage_or_overall_average(self):
         from snapshot_stats import stage_stat
         rows=[{'hexId':1023,'avgPlacement':4.6,'sampleCount':500,
@@ -60,7 +79,7 @@ class DisplayFormatting(unittest.TestCase):
             value=stat_text(stage_stat(rows,'1023','2-1'))
             rune.update_result(['应急护甲 I',value,'未固定阵容'])
             self.assertEqual(rune.average_label.text(),'—')
-            self.assertEqual(rune.sample.text(),'无数据/未识别')
+            self.assertEqual(rune.sample.text(),'统计不可用')
             self.assertNotIn('1.20',rune.average_label.text())
             self.assertNotIn('4.60',rune.average_label.text())
         finally:rune.close();rune.deleteLater();self.qt.processEvents()
