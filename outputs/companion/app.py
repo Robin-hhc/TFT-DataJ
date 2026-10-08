@@ -901,7 +901,7 @@ class Companion(QWidget):
         self.capture_pending=False;self.invalidate()
         self.set_activity('capture_failed','暂时无法读取游戏画面。请保持 MuMu 在前台；助手会继续尝试。')
 
-    def choices_changed(self,once=False):
+    def choices_changed(self,once=False,*,reset_cooldown=True):
         """Discard old ranks while keeping a bounded re-recognition request."""
         manual=self.once_active
         rechecking=self.choice_recheck_required
@@ -910,6 +910,9 @@ class Companion(QWidget):
         retry=once or self.once_ocr_pending or manual or self.automatic.isChecked()
         self.invalidate()
         self.choice_recheck_required=rechecking or confirmed
+        # A newly changed group must not inherit the previous group's OCR
+        # cooldown. Unverifiable pixels still use the normal retry backoff.
+        if reset_cooldown and self.choice_recheck_required:self.next_ocr_allowed=0
         self.once_active=manual;self.once_deadline=deadline;self.once_ocr_pending=retry
         if self.automatic.isChecked():self.stage_window_until=max(self.stage_window_until,time.monotonic()+15)
 
@@ -1009,7 +1012,7 @@ class Companion(QWidget):
         retained_payload=self.stats_payload if retain_confirmed else None
         def wait_for_signature():
             deadline=self.once_deadline
-            self.choices_changed()
+            self.choices_changed(reset_cooldown=False)
             # Unverifiable pixels cannot renew a manual request's deadline.
             self.once_deadline=deadline
             if not self.offline:record('ocr_verification_pending',reason='unreliable_signature')
@@ -1040,9 +1043,9 @@ class Companion(QWidget):
             self.observed(obs,live)
         def done(result):
             obs,signature=result
-            self.next_ocr_allowed=time.monotonic()+1.5
             if not self.offline:record('ocr_complete',scene=obs.get('scene'),reason=obs.get('reason'),diagnostic_frame=obs.get('diagnostic_frame'),stage=obs.get('round'),elapsed_ms=obs.get('elapsed_ms'),resolutions=[c.get('resolution',{}).get('status') for c in obs.get('cards',[])],unresolved=[{'slot':c.get('slot'),'status':c.get('resolution',{}).get('status'),'readings':c.get('resolution',{}).get('readings',[]),'candidate_ids':[str(r.get('id')) for r in c.get('resolution',{}).get('candidates',[])],'description_readings':[s[:260] for s in c.get('resolution',{}).get('description_readings',[])]} for c in obs.get('cards',[]) if not c.get('resolution',{}).get('id')],session_valid=self.session.accepts(token))
             if not self.session.accepts(token):self.ocr_busy=False;return
+            self.next_ocr_allowed=time.monotonic()+1.5
             latest=self.last_frame
             if live and obs.get('scene')=='choice_candidates' and latest is not image:
                 def check_latest(frame,remaining=2):
@@ -1075,9 +1078,10 @@ class Companion(QWidget):
             else:finish(obs,signature)
         def failed(_):
             self.ocr_busy=False
+            if not self.session.accepts(token):return
             self.next_ocr_allowed=time.monotonic()+2
             if not self.offline:record('ocr_failed')
-            if self.session.accepts(token):self.set_activity('ocr_failed','识别未成功，助手会继续尝试。也可以稍后用截图排查。')
+            self.set_activity('ocr_failed','识别未成功，助手会继续尝试。也可以稍后用截图排查。')
         def recognize():
             observation=self.vision.analyze_fast(image,catalog) if live else self.vision.analyze(image,catalog)
             if live and not self.offline and self.save_diagnostic_frames:
@@ -1291,7 +1295,8 @@ class Companion(QWidget):
         checking=(self.capture_pending and self.rank_capture_started is not None
                   and now-self.rank_capture_started<=1.25 and now-self.last_capture<=2.75)
         if now-self.last_capture>1.5 and not checking:self.hide_overlays()
-        capture_interval=.5 if self.last_observation else 1.0
+        capture_interval=.5 if (self.last_observation or self.choice_recheck_required
+                                or self.pending_choice_confirmation) else 1.0
         stage_active=self.automatic.isChecked() and (self.offline or self.last_observation is not None or time.monotonic()<self.stage_window_until)
         if (stage_active or self.once_active) and time.monotonic()-self.last_capture>capture_interval:
             self.request_capture()

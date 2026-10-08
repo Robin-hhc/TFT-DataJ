@@ -108,22 +108,20 @@ class RuntimeStability(unittest.TestCase):
         self.assertEqual(ocr.call_count,1);self.assertTrue(self.p.session.accepts(token))
         self.assertTrue(self.p.once_active);self.assertGreater(self.p.once_deadline,time.monotonic())
 
-    def test_changed_cards_after_stage_window_retry_when_cooldown_ends(self):
+    def test_changed_cards_after_stage_window_do_not_wait_for_previous_group_cooldown(self):
         self.seed_results();self.p.stage_window_until=0;self.p.last_probe_stage='2-1'
         self.p.next_ocr_allowed=time.monotonic()+2
         with patch('app.unchanged',return_value=False),patch.object(self.p,'analyze') as ocr:
             self.accept()
-            self.assertFalse(ocr.called)
-            self.p.last_capture=time.monotonic()-1.1
+            ocr.assert_called_once()
+            self.assertEqual(self.p.next_ocr_allowed,0)
+            self.p.last_capture=time.monotonic()-.6
             self.p.last_stage_probe=time.monotonic()
             with patch.object(self.p,'request_capture') as capture,patch.object(self.p.items,'tick'):
                 self.p.offline=False
                 try:self.p.tick()
                 finally:self.p.offline=True
             self.assertEqual(capture.call_count,1)
-            self.p.next_ocr_allowed=0
-            self.accept()
-            self.assertEqual(ocr.call_count,1)
 
     def test_manual_refresh_retries_failed_comp_statistics_without_repeating_ocr(self):
         payload=self.seed_results();payload['retryable']=True
