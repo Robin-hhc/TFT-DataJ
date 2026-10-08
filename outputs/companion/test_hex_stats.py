@@ -61,6 +61,14 @@ class StageExplorerTests(unittest.TestCase):
                 self.adapter.explore(kind, {'id':'20742','name':'测试'}, hex_stage=stage)
         self.assertEqual(self.calls, [])
 
+    def test_required_comp_rejects_invalid_identity_or_non_stage_scope_before_network(self):
+        for kind, stage, comp in [('hex','3-2','invalid'), ('hex','3-2','0'),
+                                  ('hex',None,'107'), ('equip',None,'107')]:
+            with self.subTest(kind=kind, stage=stage, comp=comp), self.assertRaises(ValueError):
+                self.adapter.explore(kind, {'id':'20742','name':'四之力'},
+                                     hex_stage=stage, required_comp=comp)
+        self.assertEqual(self.calls, [])
+
 
 class CompHexLookupTests(unittest.TestCase):
     def setUp(self):
@@ -181,6 +189,69 @@ class CompHexLookupTests(unittest.TestCase):
         self.assertEqual(set(result['supplement_errors']), {'20742'})
         self.assertEqual(result['supplement_errors']['20742'], '阵容阶段补查暂不可用')
         self.assertEqual(result['supplemented_ids'], ['30668'])
+
+    def test_invalid_cached_supplement_is_refetched_when_source_recovers(self):
+        self.assert_cached_supplement_recovers('missing')
+
+    def test_malformed_cached_supplement_is_refetched_when_source_recovers(self):
+        self.assert_cached_supplement_recovers('invalid')
+
+    def test_duplicate_cached_supplement_is_refetched_when_source_recovers(self):
+        self.assert_cached_supplement_recovers('duplicate')
+
+    def assert_cached_supplement_recovers(self, corruption):
+        healthy = deepcopy(self.responses[('20742','1')])
+        clock = [1000.0]
+        requested_at = []
+
+        def response(request):
+            requested_at.append(clock[0])
+            return self.handle(request)
+
+        adapter = DataJ(patch='18.3', db=Path(self.temp.name)/'recover-invalid.db',
+                        transport=httpx.MockTransport(response))
+        with patch('dataj.time.monotonic', side_effect=lambda: clock[0]), patch(
+                'dataj.time.sleep', side_effect=lambda delay: clock.__setitem__(0, clock[0]+delay)):
+            self.lookup('3-2', [('30668','厨神阿福')], adapter=adapter)
+            rows = self.responses[('20742','1')]['comps']
+            if corruption == 'missing':
+                del rows[0]['avgPlacement']
+            elif corruption == 'invalid':
+                rows[0]['avgPlacement'] = None
+            else:
+                rows.append(deepcopy(rows[0]))
+            broken = self.lookup('3-2', [('20742','四之力'), ('30668','厨神阿福')], adapter=adapter)
+            self.assertEqual(set(broken['supplement_errors']), {'20742'})
+            self.assertEqual(stage_stat(broken['data'], '30668', '3-2')['avg_placement'], 4.54)
+            self.responses[('20742','1')] = healthy
+
+            recovered = self.lookup('3-2', [('20742','四之力'), ('30668','厨神阿福')], adapter=adapter)
+            self.assertEqual(recovered['supplement_errors'], {})
+            self.assertEqual(stage_stat(recovered['data'], '20742', '3-2'), {
+                'status':'ok', 'avg_placement':4.23, 'sample_count':13, 'stage':'3-2'})
+            self.assertTrue(recovered['cached'], 'The valid primary response must remain cached')
+            self.assertTrue(recovered['supplement_sources']['30668']['cached'])
+            self.assertFalse(recovered['supplement_sources']['20742']['cached'])
+
+            repeated = self.lookup('3-2', [('20742','四之力'), ('30668','厨神阿福')], adapter=adapter)
+            self.assertEqual(repeated['supplement_errors'], {})
+            self.assertTrue(all(source['cached'] for source in repeated['supplement_sources'].values()))
+        self.assertEqual([json.loads(request.content)['filter']['rules'][0]['targetId']
+                          for request in self.explorer_calls()], ['30668','20742','20742'])
+        self.assertEqual(requested_at, [1000.0, 1001.0, 1002.0, 1003.0],
+                         'Cache recovery must still obey normal one-second request pacing')
+
+    def test_empty_and_zero_sample_supplements_remain_valid_cached_missing_data(self):
+        self.responses[('20742','1')]['comps'][0]['sampleCount'] = 0
+        self.responses[('30668','1')] = {'comps':[]}
+        entities = [('20742','四之力'), ('30668','厨神阿福')]
+        first = self.lookup('3-2', entities)
+        repeated = self.lookup('3-2', entities)
+        for result in (first, repeated):
+            self.assertEqual(result['supplement_errors'], {})
+            self.assertEqual(result['supplemented_ids'], [])
+        self.assertEqual(len(self.explorer_calls()), 2)
+        self.assertEqual(len(self.calls), 3, 'Legitimate missing data must retain its cached response')
 
     def test_primary_scope_failure_is_raised_without_explorer_fallback(self):
         self.direct['compId'] = '999'

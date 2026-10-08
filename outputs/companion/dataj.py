@@ -239,11 +239,16 @@ class DataJ:
         self.validate_item_rows(rows, 'heroId')
         return result
 
-    def explore(self, kind, entity, *, hex_stage=None):
+    def explore(self, kind, entity, *, hex_stage=None, required_comp=None):
+        """Query one condition, optionally requiring exact comp-stage metrics."""
         if kind not in ('hex','hero','equip','trait'):
             raise ValueError('unsupported filter')
         if hex_stage is not None and (kind != 'hex' or hex_stage not in ('2-1','3-2','4-2')):
             raise ValueError('unsupported hex stage')
+        if required_comp is not None:
+            required_comp = self.entity_id(required_comp)
+            if kind != 'hex' or hex_stage is None:
+                raise ValueError('required composition needs a hex stage')
         hex_round = str(('2-1','3-2','4-2').index(hex_stage)) if hex_stage is not None else ''
         rule = {'starCount':'','type':kind,'targetId':str(entity['id']),'enable':True,
                 'targetName':entity['name'],'hexRound':hex_round,'nameMatch':False,
@@ -252,7 +257,21 @@ class DataJ:
             rule['traitLevel'] = str(entity.get('num',''))
         body = {'version':self.patch,'setId':self.set_id,'filter':{'rules':[rule],'combinator':'and'}}
         result=self.request('/explorer/query', body=body)
-        if not isinstance(result['data'],dict) or not isinstance(result['data'].get('comps'),list):
-            raise SourceError('检索结果字段变化')
-        self.validate_comps(result['data']['comps'])
+        try:
+            if not isinstance(result['data'],dict) or not isinstance(result['data'].get('comps'),list):
+                raise SourceError('检索结果字段变化')
+            self.validate_comps(result['data']['comps'])
+            if required_comp is not None:
+                for row in result['data']['comps']:
+                    if str(row['compId']) == required_comp:
+                        self.validate_statistics(row, required=True)
+        except SourceError:
+            if required_comp is not None:
+                key = json.dumps(['POST','/explorer/query',
+                    {'setId':self.set_id,'gameVersion':self.patch},body], sort_keys=True, ensure_ascii=False)
+                with self.lock:
+                    with closing(sqlite3.connect(self.db, isolation_level=None)) as conn:
+                        # A concurrent replacement must survive this response's failure.
+                        conn.execute('DELETE FROM cache WHERE key=? AND fetched=?', (key,result['fetched_at']))
+            raise
         return result

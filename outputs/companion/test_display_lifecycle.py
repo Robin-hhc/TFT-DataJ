@@ -15,7 +15,7 @@ from unittest.mock import patch
 import httpx
 from PIL import Image
 from PySide6.QtWidgets import QLabel
-from app import QApplication, Companion
+from app import QApplication, CardOverlay, Companion
 from display_audit import ReplayDataJ, plain, table_rows
 from item_overlay import ItemOverlay
 
@@ -232,13 +232,15 @@ class DisplayLifecycle(unittest.TestCase):
         self.assertTrue(p.web.isHidden());self.assertFalse(p.guide_allow_latest)
         self.assertTrue(p.guide_retry.isHidden());self.assertTrue(p.copy_button.isEnabled())
 
-    def test_item_reset_version_and_focus_drop_late_results(self):
+    def test_item_reset_version_and_hex_focus_gate(self):
         self.item();self.set_version('18.2');self.item();self.complete(1);self.flush()
         self.assertIn('6.25',plain(self.p.items.overlays[0].global_line.text()))
         self.item();self.p.invalidate();self.flush();self.assertFalse(self.p.items.active)
         self.hex(live=True)
-        with patch('app.win.foreground_root',return_value=99):self.flush()
-        self.assertEqual(self.p.choice_table.rowCount(),0)
+        with patch('app.win.foreground_root',return_value=99),patch.object(CardOverlay,'place') as place:
+            self.flush()
+            self.assertEqual(self.p.choice_table.item(0,1).text(),'6.25 · 51局')
+            place.assert_not_called()
 
     def test_partial_hex_failure_preserves_global_without_global_as_comp(self):
         self.p.session.set_target('112');self.failure=('/comp/112/hexes',429);self.hex();self.flush()

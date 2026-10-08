@@ -35,14 +35,14 @@ def lookup_comp_hexes(adapter, comp, stage, entities):
                 'missing_or_ambiguous_entity', 'no_stage_data'):
             continue
         try:
-            result = adapter.explore('hex', {'id':identity,'name':name}, hex_stage=stage)
+            result = adapter.explore('hex', {'id':identity,'name':name},
+                                     hex_stage=stage, required_comp=comp)
             matches = [row for row in result['data']['comps'] if str(row.get('compId')) == str(comp)]
             if not matches:
                 continue
             if len(matches) != 1:
                 raise SourceError('阵容补查身份重复')
             selected = matches[0]
-            DataJ.validate_statistics(selected, required=True)
             if selected['sampleCount'] == 0:
                 continue
             part = {'round':STAGES[stage], 'roundLabel':stage,

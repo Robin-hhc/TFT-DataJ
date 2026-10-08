@@ -236,8 +236,8 @@ def check_comp_hex_supplements():
 
     reviewed={
         '20742':('四之力',4.23,13),
-        '30668':('厨神',4.54,13),
-        '20708':('电火花',4.75,8),
+        '30668':('厨神阿福',4.54,13),
+        '20708':('电火花 II',4.75,8),
     }
     entities=[(identity,row[0]) for identity,row in reviewed.items()]
     requests=[]

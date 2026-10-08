@@ -27,6 +27,7 @@
 - 全局结果先显示。阵容表缺 ID 或当前阶段时，后台按同赛季、版本、强化 ID、阶段及阵容 ID 精确补查。每组选项最多三个去重条件；不补查未识别项，不逐帧发请求。
 - 已有阵容阶段统计优先；补查只补当前阶段，不改原表或整体统计。空结果、零样本不造均排，低于 50 局保留数值并标「少」。缓存键包含版本、ID、阶段条件。
 - 单项失败保留已得到的其他结果，保留来源 60 秒冷却，剩余受冷却影响的项明确显示补查失败；侧键重试复用正常缓存。重试期间保留同组选项已有的有效阵容排名。
+- 补查响应即使HTTP成功，也必须通过身份和必需统计字段校验；无效响应不能在缓存中阻碍后续重试。修复来源后可正常重查，有效的其他条件仍复用缓存，请求节流不变。
 - 「未识别」「暂无全局统计」「本阵容暂无统计」「无该阶段数据」「查询暂不可用」分别显示。查询失败不当作零样本，来源缺项不写成识别失败。
 
 ## 验证与证据
@@ -40,7 +41,7 @@
 本机证据保存在 `work/hex-comp-data-audit-20261008/`、`work/hex-comp-state-audit-oct8/`、`work/hex-missing-20261008/`；完整游戏截图不入库、不进便携包。截图发生刷新动画的原图不当作稳定识别正例。
 
 ```powershell
-work\p0-runtime\Scripts\python.exe -X utf8 tools\validate_data.py --include-private --release-gate --bug-cases-dir work\live-match-20261007\reviewed-cases --report work\data-validation\v0.2.8-source.json
+work\p0-runtime\Scripts\python.exe -X utf8 tools\validate_data.py --include-private --release-gate --bug-cases-dir work\live-match-20261007\reviewed-cases --report work\data-validation\v0.2.8-source-final.json
 ```
 
 本轮通过范围是来源、回调、数据显示与截图回放；没有新增实机游戏、物理侧键、帧率或桌面逐帧闪烁结论。
