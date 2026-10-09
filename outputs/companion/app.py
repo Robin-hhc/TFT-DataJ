@@ -30,6 +30,7 @@ from ui_theme import STYLE, ResultCard, Rune, label
 from diagnostics import record, FrameRecorder
 from bug_reporting import BugReporter
 from item_controller import ItemController, inspect_items
+from item_vision import item_signature
 from entity_identity import EntityResolver
 from selected_resources import SelectedResources, SelectionEntity
 from selection_controller import SelectionController
@@ -939,9 +940,13 @@ class Companion(QWidget):
         item_reference_boxes=tuple(self.items.boxes)
         captured_at=time.monotonic() if captured_at is None else captured_at
         def inspect():
-            # Three refresh controls identify the augment scene; board shapes
-            # below it must not hijack recognition as an item-card proposal.
-            items=([],None) if may_be_choice(image) else inspect_items(image,item_reference_boxes)
+            # Refresh shapes are a coarse augment proposal. They may suppress
+            # new item proposals, but cannot discard independently verified
+            # item titles. Changed/missing titles still clear the item session.
+            if may_be_choice(image):
+                items=([],item_signature(image,item_reference_boxes)) if item_reference_boxes else ([],None)
+            else:
+                items=inspect_items(image,item_reference_boxes)
             signature=tracked_signature(image,observation) if observation else None
             return items,signature
         def done(prepared):

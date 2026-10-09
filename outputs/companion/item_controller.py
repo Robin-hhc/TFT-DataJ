@@ -19,7 +19,10 @@ def inspect_items(image,reference_boxes=()):
     boxes=item_boxes(image)
     # Animated outlines can move without moving the actual title. Keep verified
     # crop coordinates for small box noise; changed title pixels still invalidate.
-    signature_boxes=reference_boxes if nearby_boxes(boxes,reference_boxes,image.size) else boxes
+    # An outline proposal can disappear under animation/overlays. Inspect the
+    # already confirmed titles anyway; ingest may retain them only if every
+    # title and the selection header still match the previous frame.
+    signature_boxes=reference_boxes if (not boxes or nearby_boxes(boxes,reference_boxes,image.size)) else boxes
     return boxes,item_signature(image,signature_boxes)
 
 
@@ -98,6 +101,10 @@ class ItemController:
         p=self.panel
         frame_time=time.monotonic() if frame_time is None else frame_time
         boxes,signature=inspect_items(image,self.boxes) if prepared is None else prepared
+        if (not boxes and self.active and self.observation
+            and tuple(self.observation.get('image_size',()))==image.size
+            and same_item_text(signature,self.signature)):
+            boxes=list(self.boxes)
         if not boxes:
             if self.active or self.boxes:self.reset()
             return False

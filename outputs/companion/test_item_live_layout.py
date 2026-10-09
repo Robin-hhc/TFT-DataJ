@@ -3,8 +3,10 @@ from pathlib import Path
 import json
 import unittest
 
-from PIL import Image
+from PIL import Image, ImageDraw
+import numpy as np
 from bootstrap import ROOT
+from item_controller import inspect_items
 from item_vision import analyze_items, item_boxes, item_signature, same_item_text
 
 
@@ -59,6 +61,41 @@ class ItemLiveLayoutTests(unittest.TestCase):
         self.assertEqual([card['resolution'].get('name') for card in result['cards']], [
             '光明版狂徒铠甲', '光明版强袭者的链枷', '光明版适应性头盔', '光明版秘法手套', '光明版纳什之牙'])
         self.assertEqual({card['resolution']['candidates'][0]['type'] for card in result['cards']}, {'光明武器'})
+
+
+class PrivateArtifactPixelRecoveryTests(unittest.TestCase):
+    def test_real_four_artifact_titles_survive_changed_outline_brightness(self):
+        filename = ROOT/'work/item-choice-samples/user-p3-720p-2232s.png'
+        if not filename.exists():
+            self.skipTest('Private original artifact-choice image is not installed')
+        with Image.open(filename) as source:
+            frame = source.convert('RGB')
+        boxes = item_boxes(frame)
+        self.assertEqual(len(boxes), 4)
+        pixels = np.asarray(frame).copy()
+        for left, top, right, bottom in boxes:
+            height = bottom-top
+            # Preserve every pixel in the actual title crop and shared header.
+            for upper, lower in ((top, round(top+height*.44)),
+                                 (round(top+height*.68), bottom)):
+                pixels[upper:lower, left:right] = (pixels[upper:lower, left:right]*.65).astype('uint8')
+        dimmed = Image.fromarray(pixels)
+        self.assertEqual(item_boxes(dimmed), [], 'The original outline-dropout repro no longer applies')
+        original = item_signature(frame, boxes)
+        detected, tracked = inspect_items(dimmed, boxes)
+        self.assertEqual(detected, [])
+        self.assertTrue(same_item_text(tracked, original))
+        regions = [(left, round(top+(bottom-top)*.44), right, round(top+(bottom-top)*.68))
+                   for left, top, right, bottom in boxes]
+        top = np.median([box[1] for box in boxes])
+        height = np.median([box[3]-box[1] for box in boxes])
+        regions.append((round(frame.width*.4), round(top-height*.48),
+                        round(frame.width*.6), round(top-height*.08)))
+        for region in regions:
+            with self.subTest(erased_region=region):
+                changed = dimmed.copy()
+                ImageDraw.Draw(changed).rectangle(region, fill='black')
+                self.assertFalse(same_item_text(inspect_items(changed, boxes)[1], original))
 
 
 if __name__ == '__main__':

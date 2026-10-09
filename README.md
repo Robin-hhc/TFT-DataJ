@@ -2,11 +2,11 @@
 
 ## Windows 便携版
 
-[下载v0.2.11便携测试版](https://github.com/Robin-hhc/TFT-DataJ/releases/tag/v0.2.11)：先退出旧助手，完整解压 `TFT-DataJ-0.2.11-windows-x64.zip` 后双击 **TFT-DataJ.exe**，不需要安装Python或OCR环境。保留旁边的 `_internal` 文件夹；可以为EXE创建快捷方式。目标系统为Windows 10/11 x64，最新统计与攻略仍需联网。
+[下载v0.2.12便携测试版](https://github.com/Robin-hhc/TFT-DataJ/releases/tag/v0.2.12)：先退出旧助手，完整解压 `TFT-DataJ-0.2.12-windows-x64.zip` 后双击 **TFT-DataJ.exe**，不需要安装Python或OCR环境。保留旁边的 `_internal` 文件夹；可以为EXE创建快捷方式。目标系统为Windows 10/11 x64，最新统计与攻略仍需联网。
 
-v0.2.11选定阵容后立即预读主表，再按当前或下一次海克斯阶段优先，后台补齐未来阶段缺项；有效排名和空结果保留整局，超过十五分钟不重复读取。后台最多一路请求、至少间隔一秒，当前选择查询优先；选择期间仍约每0.5秒检查。 [发布说明](docs/releases/v0.2.11.md) · [全量预读验收](docs/testing/hex-full-prewarm-20261009.md)
+v0.2.12修复奥恩装备卡框短暂识别不到时排名消失、在途查询中断的问题；标题和图像尺寸保持一致就保留已确认装备数据，真正换选项仍立即清空旧排名。包含定阵海克斯全量预读和整局缓存。 [发布说明](docs/releases/v0.2.12.md) · [奥恩修复验收](docs/testing/ornn-display-20261009.md)
 
-[本版改动与升级](docs/releases/v0.2.11.md) · [安装、快捷键与已知限制](docs/releases/v0.2.1.md) · [更新记录](CHANGELOG.md) · [问题反馈](https://github.com/Robin-hhc/TFT-DataJ/issues)
+[本版改动与升级](docs/releases/v0.2.12.md) · [安装、快捷键与已知限制](docs/releases/v0.2.1.md) · [更新记录](CHANGELOG.md) · [问题反馈](https://github.com/Robin-hhc/TFT-DataJ/issues)
 
 本机产物在 [dist目录](dist/)，构建与验证说明见 [Windows便携包](packaging/README.md)。设置与缓存保存在 `%LOCALAPPDATA%\TFT-DataJ`；包中不包含本机游戏截图、录像及旧缓存。每版发布前须在构建机的隔离目录和清理过的环境中验证实际EXE；尚未在第二台物理电脑实测。
 
