@@ -8,6 +8,7 @@ from copy import deepcopy
 import json
 from pathlib import Path
 import tempfile
+import threading
 import time
 from types import SimpleNamespace
 import unittest
@@ -36,6 +37,8 @@ class HexCompSupplementUI(unittest.TestCase):
         self.pending = []
         self.calls = []
         self.fail_ids = set()
+        self.success_before_failure = {}
+        self.failure_wait_timeouts = []
         self.empty_ids = set()
         self.responses = {
             (item['request']['filter']['rules'][0]['targetId'],
@@ -113,6 +116,10 @@ class HexCompSupplementUI(unittest.TestCase):
             identity = rule['targetId']
             self.assertIn(identity, self.IDS)
             if identity in self.fail_ids:
+                for successful_id, ready in self.success_before_failure.items():
+                    if not ready.wait(2):
+                        self.failure_wait_timeouts.append(successful_id)
+                        raise AssertionError('Prior successful supplement never completed: ' + successful_id)
                 raise httpx.ConnectError('single supplement failure', request=request)
             data = {'comps': []} if identity in self.empty_ids else self.responses[(identity, '1')]
         return httpx.Response(200, json={'success': True, 'code': 200, 'data': data})
@@ -185,15 +192,30 @@ class HexCompSupplementUI(unittest.TestCase):
 
     def test_last_failed_supplement_keeps_other_two_and_global_values_then_recovers(self):
         self.fail_ids.add(self.IDS[2])
-        self.query()
-        self.complete()
-        self.complete()
+        self.success_before_failure = {identity: threading.Event() for identity in self.IDS[:2]}
+        completed_successes = set()
+        supplements = self.p.adapter.iter_comp_hex_supplements
+        def successful_results(*args, **kwargs):
+            # Candidate order is not completion order. This scenario requires
+            # both validated successes before the third request can fail.
+            for identity, result, error in supplements(*args, **kwargs):
+                if identity in self.success_before_failure and result is not None and error is None:
+                    completed_successes.add(identity)
+                    self.success_before_failure[identity].set()
+                yield identity, result, error
+        with patch.object(self.p.adapter, 'iter_comp_hex_supplements', side_effect=successful_results):
+            self.query()
+            self.complete()
+            self.complete()
+        self.assertEqual(self.failure_wait_timeouts, [], 'The late-failure ordering gate timed out')
+        self.assertEqual(completed_successes, set(self.IDS[:2]))
         rows = self.p.stats_payload['rows']
         self.assertEqual(rows[0][2], self.EXPECTED[0])
         self.assertEqual(rows[1][2], self.EXPECTED[1])
         self.assertEqual(rows[2][2], '阵容补查失败')
         self.assertTrue(self.p.stats_payload['retryable'])
         self.assert_global_controls()
+        self.assertGreater(self.p.adapter.next_request - time.monotonic(), 2)
         retained_sources = deepcopy(self.p.stats_payload['comp_supplement_sources'])
         calls = len(self.calls)
         self.fail_ids.clear()
