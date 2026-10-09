@@ -18,6 +18,7 @@ from core import Session, parse_comp_url
 from hex_catalog import canonical_hex_catalog
 from dataj import DataJ, SourceError, COMP_MIN_SAMPLE
 from hex_stats import lookup_comp_hexes
+from hex_prewarm import HexPrewarm
 from snapshot_stats import stage_stat, STAGES
 from vision import Vision, capture_image, capture_stage, tracked_signature, unchanged
 from scene_gate import may_be_choice
@@ -215,6 +216,8 @@ class Companion(QWidget):
         # and shares the adapter's cache and failure cooldown.
         self.hex_network=QThreadPool(self);self.hex_network.setMaxThreadCount(2)
         self.comp_stats_update=None
+        self.hex_prewarm=None
+        self.hex_priority_release=None
         self.comp_stats_progress.connect(self.accept_comp_stats_progress)
         self.ocr_pool=QThreadPool(self);self.ocr_pool.setMaxThreadCount(1)
         self.capture_pool=QThreadPool(self);self.capture_pool.setMaxThreadCount(1)
@@ -707,6 +710,7 @@ class Companion(QWidget):
         try:adapter=DataJ(patch=self.patch.currentText().strip())
         except ValueError as exc:self.status.setText(str(exc));return
         if adapter.patch==self.adapter.patch:return
+        self.stop_hex_prewarm()
         self.adapter=adapter;self.session.patch=adapter.patch;self.catalog={}
         self.condition_generation+=1;self.invalidate();self.clear_equipment()
         self.explorer_generation+=1;self.comp_generation+=1
@@ -737,6 +741,7 @@ class Companion(QWidget):
         if hasattr(self,'items'):self.items.hide()
 
     def invalidate(self):
+        self.release_hex_priority()
         if hasattr(self,'selections'):self.selections.scene_left()
         if hasattr(self,'items'):self.items.reset()
         self.partial_retries=0
@@ -1134,6 +1139,30 @@ class Companion(QWidget):
         if update and update[0]==token and self.session.accepts(token):
             update[1](payload,False,True)
 
+    def release_hex_priority(self, release=None):
+        active=self.hex_priority_release if release is None else release
+        if active:
+            active()
+            if self.hex_priority_release is active:self.hex_priority_release=None
+
+    def stop_hex_prewarm(self):
+        self.release_hex_priority()
+        old=self.hex_prewarm;self.hex_prewarm=None
+        if old:old.cancel()
+        return old
+
+    def start_hex_prewarm(self,comp):
+        self.stop_hex_prewarm()
+        if self.offline:return
+        adapter=self.adapter;session_id=self.session.session_id
+        def current():
+            return (session_id==self.session.session_id and adapter is self.adapter
+                    and comp==self.session.target)
+        self.hex_prewarm=HexPrewarm(adapter,comp,current=current)
+        hint=self.last_probe_stage or self.stage.currentText()
+        self.hex_prewarm.start(hint)
+        record('hex_prewarm_started',target=comp,patch=adapter.patch,round_hint=hint)
+
     def query_stats(self,ids,names,live,refresh=False):
         if not self.versions_ready:return
         same_choices=self.session.stage==self.stage.currentText() and self.session.choices==tuple(ids)
@@ -1143,6 +1172,7 @@ class Companion(QWidget):
                 self.display_overlays();return
         retained=(self.stats_payload if refresh and live and same_choices and self.stats_payload
                   and self.stats_payload['live'] and self.session.accepts(self.stats_payload['token']) else None)
+        self.release_hex_priority()
         self.session.set_choices(self.stage.currentText(),ids)
         self.set_activity('querying','正在获取海克斯均排…')
         if retained:retained['token']=self.session.token()
@@ -1150,15 +1180,22 @@ class Companion(QWidget):
             self.hide_overlays();self.choice_table.setRowCount(0)
             for card in self.result_cards:card.clear(self.session.target is not None)
         token=self.session.token();stage=self.session.stage;target=self.session.target;adapter=self.adapter
+        prewarm=self.hex_prewarm
+        if prewarm and (prewarm.adapter is not adapter or prewarm.comp!=target):prewarm=None
+        source=prewarm or adapter
+        release=prewarm.begin_interactive() if prewarm else None
+        self.hex_priority_release=release
+        if prewarm:prewarm.prioritize(stage)
         supplement=not self.offline
         self.comp_stats_update=None
         self.stats_inflight_token=token
         def current():return self.session.accepts(token) and adapter is self.adapter
         def fetch():
             if not current():return None,None
-            global_result=adapter.hexes()
+            global_result=source.hexes()
             return global_result,None
         def done(payload,comp_finished=False,comp_progress=False):
+            if release and (comp_finished or not target or not current()):self.release_hex_priority(release)
             if not current():return
             if comp_finished or not target:
                 if self.stats_inflight_token==token:self.stats_inflight_token=None
@@ -1229,13 +1266,14 @@ class Companion(QWidget):
                 self.comp_stats_update=token,done
                 def comp_fetch():
                     if not current():return global_result,None
-                    result=(lookup_comp_hexes(adapter,target,stage,zip(ids,names),current=current,
+                    result=(lookup_comp_hexes(source,target,stage,zip(ids,names),current=current,
                             on_progress=lambda result:self.comp_stats_progress.emit((token,(global_result,result))))
                             if supplement else adapter.hexes(target))
                     return global_result,result
                 self.submit(self.hex_network,comp_fetch,
                             lambda value:done(value,True),lambda _:done((global_result,None),True))
         def failed(_):
+            if release:self.release_hex_priority(release)
             if self.stats_inflight_token==token:self.stats_inflight_token=None
             if self.comp_stats_update and self.comp_stats_update[0]==token:self.comp_stats_update=None
             if self.session.accepts(token):
@@ -1286,6 +1324,7 @@ class Companion(QWidget):
                 if not same_choice:self.invalidate()
                 self.stage_window_until=time.monotonic()+60 if stage in STAGES else 0
                 self.last_probe_stage=stage
+                if self.hex_prewarm:self.hex_prewarm.prioritize(stage)
                 if stage in STAGES and not same_choice:self.once_ocr_pending=True
         def failed(_):self.stage_probe_pending=False
         self.submit(self.ocr_pool,lambda:self.vision.read_round_crop(capture_stage(binding)),done,failed)
@@ -1406,6 +1445,7 @@ class Companion(QWidget):
         try:comp=parse_comp_url(self.comp_url.text())
         except ValueError as exc:self.status.setText(str(exc));return
         self.session.set_target(comp);self.invalidate();self.clear_equipment();self.comp_detail=None
+        self.start_hex_prewarm(comp)
         self.heroes.blockSignals(True);self.heroes.clear();self.heroes.blockSignals(False)
         self.populate_hero_buttons()
         self.copy_button.setEnabled(False);self.web.stop();self.web.hide();self.web.setUrl(QUrl('about:blank'))
@@ -1435,14 +1475,10 @@ class Companion(QWidget):
             self.open_guide('https://www.dataj.cc/comp/'+comp)
             self.status.setText('已固定 '+detail.get('name',comp))
             self.items.prewarm(comp)
-            if not self.offline:
-                def prewarm_hexes():
-                    if current():adapter.hexes()
-                    if current():adapter.hexes(comp)
-                self.submit(self.hex_network,prewarm_hexes,lambda _:None,lambda _:None)
         self.submit(self.network,lambda:adapter.comp(comp),done,failed)
 
     def unpin(self):
+        self.stop_hex_prewarm()
         self.comp_generation+=1
         self.session.set_target(None);self.invalidate();self.comp_detail=None;self.target_label.setText('选择阵容')
         self.copy_button.setEnabled(False);self.browser.set_pinned(None)
@@ -1490,6 +1526,7 @@ class Companion(QWidget):
         self.submit(self.network,lambda:adapter.equipment(comp,hero),done,lambda _:self.equip_note.setText('出装读取失败，请重试。') if generation==self.equip_generation else None)
 
     def shutdown(self):
+        prewarm=self.stop_hex_prewarm()
         if not self.offline:
             self.mouse_settings.setValue('panel_geometry',self.saveGeometry())
             self.mouse_settings.setValue('mark_position',self.mark.pos());self.mouse_settings.sync()
@@ -1497,6 +1534,7 @@ class Companion(QWidget):
         self.timer.stop();self.hide_overlays();self.mark.hide()
         self.bugs.shutdown()
         self.items.shutdown()
+        if prewarm:prewarm.wait(5)
         for pool in (self.capture_pool,self.ocr_pool,self.network,self.hex_network):pool.clear();pool.waitForDone()
 
 

@@ -300,6 +300,76 @@ def check_comp_hex_supplements():
             'request_bodies':requests}
 
 
+def check_hex_prewarm():
+    """Exercise full prewarm and pin-lifetime caching using synthetic HTTP only."""
+    import sqlite3
+    import tempfile
+    from contextlib import closing
+    import httpx
+    from dataj import DataJ
+    from hex_prewarm import HexPrewarm
+    from hex_stats import lookup_comp_hexes
+    from snapshot_stats import stage_stat
+
+    reviewed={'20742':('四之力',4.23,13),'30668':('厨神阿福',4.54,13),
+              '20708':('电火花 II',4.75,8)}
+    empty=('10616','拥抱 II')
+    requests=[]
+    def transport(request):
+        requests.append(request)
+        if request.url.path.endswith('/stats/hex'):
+            data=[{'hexId':identity,'name':name,'roundStats':[{
+                'round':1,'roundLabel':'3-2','avgPlacement':4.5,'sampleCount':100}]}
+                for identity,name in [(identity,row[0]) for identity,row in reviewed.items()]+[empty]]
+        elif request.url.path.endswith('/comp/107/hexes'):
+            data={'compId':'107','hexes':[]}
+        else:
+            assert request.url.path=='/api/web/explorer/query',request.url
+            body=json.loads(request.content);rule=body['filter']['rules'][0]
+            assert (body['setId'],body['version'],rule['hexRound'])==(18,'18.3','1'),body
+            identity=rule['targetId']
+            if identity==empty[0]:data={'comps':[]}
+            else:
+                name,average,samples=reviewed[identity]
+                assert rule['targetName']==name,rule
+                data={'comps':[{'compId':'107','name':'便携预读测试阵容',
+                                'avgPlacement':average,'sampleCount':samples}]}
+        return httpx.Response(200,json={'code':200,'success':True,'data':data})
+
+    with tempfile.TemporaryDirectory(prefix='TFT-DataJ-prewarm-diagnostic-') as directory:
+        adapter=DataJ(patch='18.3',db=Path(directory)/'cache.sqlite',
+                      transport=httpx.MockTransport(transport))
+        warm=HexPrewarm(adapter,'107')
+        try:
+            warm.start('3-2')
+            assert warm.wait(15),'Pinned background prewarm did not finish'
+            assert warm.snapshot()['status']=='complete',warm.snapshot()
+            assert len(requests)==6,'Expected two main tables and four exact candidate queries'
+            with closing(sqlite3.connect(adapter.db,isolation_level=None)) as connection:
+                connection.execute('UPDATE cache SET fetched=0')
+            before=len(requests)
+            assert warm.hexes()['cached'] and warm.hexes('107')['cached']
+            result=lookup_comp_hexes(warm,'107','3-2',[(identity,row[0]) for identity,row in reviewed.items()])
+            statistics=[]
+            for identity,(_,average,samples) in reviewed.items():
+                actual=stage_stat(result['data'],identity,'3-2')
+                assert actual=={'status':'ok','avg_placement':average,'sample_count':samples,'stage':'3-2'},actual
+                assert result['supplement_sources'][identity]['cached']
+                statistics.append({'hex_id':identity,'average':average,'samples':samples})
+            for _ in range(2):
+                negative=lookup_comp_hexes(warm,'107','3-2',[empty])
+                assert not negative['supplement_errors'] and not negative['pending_ids'],negative
+                assert stage_stat(negative['data'],empty[0],'3-2')['status']=='missing_or_ambiguous_entity'
+            assert len(requests)==before,'Pin-lifetime result unexpectedly queried expired disk cache'
+            return {'evidence':'synthetic MockTransport; no live API or game operation',
+                    'scope':{'set_id':18,'patch':'18.3','comp':'107','stage':'3-2'},
+                    'retained_after_disk_expiry':True,'empty_result_retained':True,
+                    'foreground_http_count':len(requests)-before,'background_http_count':before,
+                    'statistics':statistics}
+        finally:
+            warm.cancel();assert warm.wait(5),'Background worker did not stop'
+
+
 def check_identity_and_bug_archive():
     """Exercise new packaged modules with bounded synthetic evidence, offline."""
     import hashlib
@@ -398,6 +468,8 @@ def main():
         report['checks'].append('packaged canonical single-condition inputs, explicit selection, chips, overflow, pinned version switch and new game')
         report['comp_hex_supplements']=check_comp_hex_supplements()
         report['checks'].append('packaged exact-stage comp hex supplements and repeated lookup cache via embedded mock transport')
+        report['hex_prewarm']=check_hex_prewarm()
+        report['checks'].append('packaged full pinned hex prewarm and positive/empty session cache beyond disk expiry')
         report['identity_and_bug_archive']=check_identity_and_bug_archive()
         report['checks'].append('packaged hex alias identity, variant rejection and lossless pending bug archive deduplication')
         if args.explorer_fixture:

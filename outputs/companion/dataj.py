@@ -34,6 +34,9 @@ class DataJ:
         self.lock = threading.Lock()
         self.request_lock = threading.Lock()
         self.http_slots = threading.BoundedSemaphore(3)
+        self.background_slot = threading.BoundedSemaphore(1)
+        self._background_next_request = 0.0
+        self._background_wait = threading.Event()
         self._hex_inflight = {}
         self.next_request = 0.0
         with closing(sqlite3.connect(self.db, isolation_level=None)) as conn:
@@ -84,27 +87,63 @@ class DataJ:
 
     def request(self, path, body=None, ttl=900, **extra):
         method, params, key = self._request_identity(path, body, extra)
-        # A slow guide request cannot delay already-cached live statistics.
-        with self.lock:
-            cached = self._cached_request(path, key, ttl)
-            if cached:return cached
-        # Ordinary callers retain their serialized, completion-plus-one-second
-        # policy. Separating this lock avoids blocking the three-option batch.
-        with self.request_lock:
+        shareable = (path == '/stats/hex' or
+                     re.fullmatch(r'/comp/[1-9][0-9]*/hexes', path) or
+                     (path == '/explorer/query' and body is not None))
+        while True:
+            # Cached statistics and already-issued prefetches do not queue
+            # behind a slow ordinary guide request.
             with self.lock:
                 cached = self._cached_request(path, key, ttl)
                 if cached:return cached
-                delay = self.next_request-time.monotonic()
-            if delay > 2:
-                raise SourceError('来源暂时不可用，稍后手动重试')
-            if delay > 0:
-                time.sleep(delay)
-            with self.http_slots:
-                with self.lock:
-                    if self.next_request-time.monotonic() > 2:
-                        raise SourceError('来源暂时不可用，稍后手动重试')
-                with httpx.Client(timeout=15, follow_redirects=False, transport=self.transport) as client:
-                    return self._send_request(client, method, path, params, body, key)
+                shared = self._hex_inflight.get(key) if shareable else None
+            if shared is None:
+                # Owners retain the ordinary serialized, completion-plus-one-
+                # second policy. Joining an issued background query happens
+                # below, outside this lock.
+                with self.request_lock:
+                    with self.lock:
+                        cached = self._cached_request(path, key, ttl)
+                        if cached:return cached
+                        shared = self._hex_inflight.get(key) if shareable else None
+                        delay = self.next_request-time.monotonic()
+                    if shared is None:
+                        if delay > 2:
+                            raise SourceError('来源暂时不可用，稍后手动重试')
+                        if delay > 0:
+                            time.sleep(delay)
+                        with self.http_slots:
+                            with self.lock:
+                                cached = self._cached_request(path, key, ttl)
+                                if cached:return cached
+                                if self.next_request-time.monotonic() > 2:
+                                    raise SourceError('来源暂时不可用，稍后手动重试')
+                                shared = self._hex_inflight.get(key) if shareable else None
+                                owner = shared is None
+                                if owner and shareable:
+                                    shared = Future()
+                                    self._hex_inflight[key] = shared
+                            if owner:
+                                try:
+                                    with httpx.Client(timeout=15, follow_redirects=False,
+                                                      transport=self.transport) as client:
+                                        result = self._send_request(client, method, path, params, body, key)
+                                except BaseException as exc:
+                                    if shareable:
+                                        with self.lock:self._hex_inflight.pop(key, None)
+                                        shared.set_exception(exc)
+                                    raise
+                                else:
+                                    if shareable:
+                                        with self.lock:self._hex_inflight.pop(key, None)
+                                        shared.set_result(result)
+                                    return result
+            try:
+                return shared.result()
+            except _HexBatchCancelled:
+                # A queued background owner canceled before issuing HTTP.
+                # The live caller can now apply its own ordinary policy.
+                continue
 
     def _hex_batch_request(self, client, current, path, body=None, ttl=900, **extra):
         """Exact explorer requests only; a batch never bypasses failure cooldown."""
@@ -163,6 +202,119 @@ class DataJ:
             return result
         finally:
             if acquired:self.http_slots.release()
+
+    def _prefetch_request(self, current, path, body=None, ttl=900, **extra):
+        """Background work owns at most one of the adapter's three HTTP slots."""
+        method, params, key = self._request_identity(path, body, extra)
+        while current():
+            with self.lock:
+                cached = self._cached_request(path, key, ttl)
+                if cached:return cached
+                if self.next_request-time.monotonic() > 2:
+                    raise SourceError('来源暂时不可用，稍后手动重试')
+                shared = self._hex_inflight.get(key)
+            if shared is None:
+                background = acquired = owner = issued = False
+                try:
+                    while current():
+                        if self.background_slot.acquire(timeout=.05):
+                            background = True
+                            break
+                    if not background or not current():raise _HexBatchCancelled()
+                    while current():
+                        # The completion interval belongs to this adapter, so
+                        # changing pinned controllers cannot reset it. Waiting
+                        # borrows no HTTP slot; newly cached/live results can
+                        # bypass it without issuing more background work.
+                        with self.lock:
+                            cached = self._cached_request(path, key, ttl)
+                            if cached:return cached
+                            now = time.monotonic()
+                            if self.next_request-now > 2:
+                                raise SourceError('来源暂时不可用，稍后手动重试')
+                            shared = self._hex_inflight.get(key)
+                            delay = self._background_next_request-now
+                        if shared is not None or delay <= 0:break
+                        self._background_wait.wait(min(delay, .05))
+                    if not current():raise _HexBatchCancelled()
+                    if shared is None:
+                        while current():
+                            if self.http_slots.acquire(timeout=.05):
+                                acquired = True
+                                break
+                        if not acquired or not current():raise _HexBatchCancelled()
+                        # Queued background work owns no future. Recheck the live
+                        # owner and cache after both slots, then register for I/O.
+                        with self.lock:
+                            cached = self._cached_request(path, key, ttl)
+                            if cached:return cached
+                            if self.next_request-time.monotonic() > 2:
+                                raise SourceError('来源暂时不可用，稍后手动重试')
+                            if not current():raise _HexBatchCancelled()
+                            shared = self._hex_inflight.get(key)
+                            owner = shared is None
+                            if owner:
+                                shared = Future()
+                                self._hex_inflight[key] = shared
+                    if owner:
+                        if not current():raise _HexBatchCancelled()
+                        with httpx.Client(timeout=httpx.Timeout(4, connect=2), follow_redirects=False,
+                                          transport=self.transport) as client:
+                            if not current():raise _HexBatchCancelled()
+                            issued = True
+                            result = self._send_request(client, method, path, params, body, key)
+                except BaseException as exc:
+                    if owner:
+                        with self.lock:self._hex_inflight.pop(key, None)
+                        shared.set_exception(exc)
+                    raise
+                else:
+                    if owner:
+                        with self.lock:self._hex_inflight.pop(key, None)
+                        shared.set_result(result)
+                        return result
+                finally:
+                    if issued:
+                        with self.lock:
+                            self._background_next_request = time.monotonic()+1
+                    if acquired:self.http_slots.release()
+                    if background:self.background_slot.release()
+            # A background waiter borrows the issued result, never an extra
+            # HTTP slot. Cancellation lets it stop without disturbing the owner.
+            while current():
+                try:
+                    return shared.result(timeout=.05)
+                except FutureTimeout:
+                    continue
+                except _HexBatchCancelled:
+                    break
+        raise _HexBatchCancelled()
+
+    def prefetch_comp_hex(self, comp, stage, entity_tuple, *, current=lambda: True):
+        """Warm one pinned-composition augment at its exact acquisition stage."""
+        comp = self.entity_id(comp)
+        identity, name = entity_tuple
+        identity = self.entity_id(identity)
+        if not isinstance(name, str) or not name.strip():
+            raise ValueError('unconfirmed hex name')
+        def request(path, body=None, ttl=900, **extra):
+            return self._prefetch_request(current, path, body, ttl, **extra)
+        try:
+            result = self.explore('hex', {'id':identity, 'name':name.strip()},
+                                  hex_stage=stage, required_comp=comp, _request=request)
+            return result if current() else None
+        except _HexBatchCancelled:
+            return None
+
+    def prefetch_hexes(self, comp=None, *, current=lambda: True):
+        """Warm a validated main table without the ordinary request queue."""
+        def request(path, body=None, ttl=900, **extra):
+            return self._prefetch_request(current, path, body, ttl, **extra)
+        try:
+            result = self.hexes(comp, _request=request)
+            return result if current() else None
+        except _HexBatchCancelled:
+            return None
 
     def iter_comp_hex_supplements(self, comp, stage, entities, *, current=lambda: True):
         """Yield independent exact-stage results as each of <=3 queries finishes."""
@@ -233,10 +385,10 @@ class DataJ:
                 response=client.get('https://www.dataj.cc/comp');response.raise_for_status()
         return self.parse_versions(response.text)
 
-    def hexes(self, comp=None):
+    def hexes(self, comp=None, *, _request=None):
         if comp is not None and not re.fullmatch(r'[1-9][0-9]*',str(comp)):
             raise ValueError('invalid comp ID')
-        result = self.request('/stats/hex' if comp is None else f'/comp/{comp}/hexes')
+        result = (_request or self.request)('/stats/hex' if comp is None else f'/comp/{comp}/hexes')
         if comp is not None and (not isinstance(result['data'],dict) or str(result['data'].get('compId'))!=str(comp)):
             raise SourceError('阵容强化响应对象不匹配')
         rows = result['data'] if comp is None else result['data'].get('hexes')
