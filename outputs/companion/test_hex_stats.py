@@ -4,6 +4,7 @@ import importlib
 import json
 from pathlib import Path
 import tempfile
+import threading
 import time
 import unittest
 from unittest.mock import patch
@@ -238,8 +239,8 @@ class CompHexLookupTests(unittest.TestCase):
             self.assertTrue(all(source['cached'] for source in repeated['supplement_sources'].values()))
         self.assertEqual([json.loads(request.content)['filter']['rules'][0]['targetId']
                           for request in self.explorer_calls()], ['30668','20742','20742'])
-        self.assertEqual(requested_at, [1000.0, 1001.0, 1002.0, 1003.0],
-                         'Cache recovery must still obey normal one-second request pacing')
+        self.assertEqual(requested_at, [1000.0]*4,
+                         'Current-group supplements must not accumulate ordinary one-second pacing')
 
     def test_empty_and_zero_sample_supplements_remain_valid_cached_missing_data(self):
         self.responses[('20742','1')]['comps'][0]['sampleCount'] = 0
@@ -307,18 +308,31 @@ class CompHexLookupTests(unittest.TestCase):
         with patch('dataj.time.sleep'):
             result = self.lookup('3-2', [('20742','四之力'), ('30668','厨神阿福'),
                                         ('20708','电火花 II')], adapter=adapter)
-        self.assertEqual(set(result['supplement_errors']), {'20742','30668','20708'})
-        self.assertEqual(result['supplemented_ids'], [])
-        self.assertEqual(len(self.explorer_calls()), 1)
+        self.assertIn('20742', result['supplement_errors'])
+        self.assertEqual(set(result['supplement_errors']) | set(result['supplemented_ids']),
+                         {'20742','30668','20708'})
+        self.assertLessEqual(len(self.explorer_calls()), 3)
         self.assertEqual(stage_stat(result['data'], '20489', '4-2')['avg_placement'], 4.43)
+        calls = len(self.calls)
         with self.assertRaises(SourceError):
             adapter.request('/comp/rank')
-        self.assertEqual(len(self.calls), 2)
+        self.assertEqual(len(self.calls), calls, 'Failure blocks newly started HTTP requests')
 
     def test_real_adapter_last_failure_retains_the_first_two_successful_supplements(self):
         self.failures[('20708','1')] = 503
+        completed = {identity:threading.Event() for identity in ('20742','30668')}
+        def ordered_failure(request):
+            if request.method=='POST':
+                identity=json.loads(request.content)['filter']['rules'][0]['targetId']
+                if identity=='20708':
+                    if not all(event.wait(.7) for event in completed.values()):
+                        raise AssertionError('Other two supplements did not start in parallel')
+                result=self.handle(request)
+                if identity in completed:completed[identity].set()
+                return result
+            return self.handle(request)
         adapter = DataJ(patch='18.3', db=Path(self.temp.name)/'real-last-failure.db',
-                        transport=httpx.MockTransport(self.handle))
+                        transport=httpx.MockTransport(ordered_failure))
         with patch('dataj.time.sleep'):
             result = self.lookup('3-2', [('20742','四之力'), ('30668','厨神阿福'),
                                         ('20708','电火花 II')], adapter=adapter)

@@ -1,8 +1,9 @@
-"""Small, serialized DataJ adapter. No per-frame network access or stale fallback."""
+"""Serialized DataJ queries, with one bounded augment-selection batch seam."""
 from __future__ import annotations
 import json
 import math
 from contextlib import closing
+from concurrent.futures import Future, ThreadPoolExecutor, as_completed, TimeoutError as FutureTimeout
 import re
 import sqlite3
 import threading
@@ -19,6 +20,10 @@ class SourceError(RuntimeError):
     pass
 
 
+class _HexBatchCancelled(Exception):
+    pass
+
+
 class DataJ:
     def __init__(self, set_id=18, patch='18.2a', db=None, transport=None):
         if set_id != 18 or not re.fullmatch(r'18\.\d+(?:\.?[a-z])?', patch):
@@ -27,11 +32,14 @@ class DataJ:
         self.db = db or STATE_DIR/'cache.sqlite'
         self.transport = transport
         self.lock = threading.Lock()
+        self.request_lock = threading.Lock()
+        self.http_slots = threading.BoundedSemaphore(3)
+        self._hex_inflight = {}
         self.next_request = 0.0
         with closing(sqlite3.connect(self.db, isolation_level=None)) as conn:
             conn.execute('CREATE TABLE IF NOT EXISTS cache (key TEXT PRIMARY KEY, fetched REAL NOT NULL, body TEXT NOT NULL)')
 
-    def request(self, path, body=None, ttl=900, **extra):
+    def _request_identity(self, path, body, extra):
         allowed = re.fullmatch(r'/gamedata|/stats/(?:hex|equip)|/stats/equip/[1-9][0-9]*/heroes|/comp/rank|/explorer/query|/comp/[1-9][0-9]*(?:/hexes|/hero-equips|/equips|/equip-heroes)?', path)
         if not allowed:
             raise ValueError('unsupported DataJ endpoint')
@@ -41,32 +49,161 @@ class DataJ:
         params.update(extra)
         method = 'POST' if body is not None else 'GET'
         key = json.dumps([method,path,params,body], sort_keys=True, ensure_ascii=False)
+        return method, params, key
+
+    def _cached_request(self, path, key, ttl):
+        """Caller holds the state lock; each query owns its SQLite connection."""
+        with closing(sqlite3.connect(self.db, isolation_level=None)) as conn:
+            cached = conn.execute('SELECT fetched, body FROM cache WHERE key=?',(key,)).fetchone()
+        if cached and 0 <= time.time()-cached[0] < ttl:
+            return {'data':json.loads(cached[1]),'fetched_at':cached[0],'cached':True,
+                    'source':'https://www.dataj.cc/api/web'+path}
+
+    def _send_request(self, client, method, path, params, body, key):
+        """An HTTP slot is held, but network I/O never holds the state lock."""
+        try:
+            response = client.request(method, 'https://www.dataj.cc/api/web'+path,
+                                      params=params if body is None else None, json=body)
+            with self.lock:
+                # A different in-flight request may already have failed. A late
+                # success must not shorten that shared source cooldown.
+                self.next_request = max(self.next_request, time.monotonic()+1)
+            response.raise_for_status()
+            payload = response.json()
+            if not isinstance(payload,dict) or payload.get('success') is not True or payload.get('code') != 200 or 'data' not in payload:
+                raise SourceError('来源响应结构变化，已停止展示')
+            fetched = time.time()
+            with self.lock:
+                with closing(sqlite3.connect(self.db, isolation_level=None)) as conn:
+                    conn.execute('INSERT OR REPLACE INTO cache VALUES(?,?,?)',(key,fetched,json.dumps(payload['data'],ensure_ascii=False)))
+            return {'data':payload['data'],'fetched_at':fetched,'cached':False,'source':str(response.url)}
+        except (httpx.HTTPError, ValueError, SourceError) as exc:
+            with self.lock:
+                self.next_request = max(self.next_request, time.monotonic()+60)
+            raise SourceError('DataJ 请求失败或结构变化；本次不使用旧均排') from exc
+
+    def request(self, path, body=None, ttl=900, **extra):
+        method, params, key = self._request_identity(path, body, extra)
+        # A slow guide request cannot delay already-cached live statistics.
         with self.lock:
-            with closing(sqlite3.connect(self.db, isolation_level=None)) as conn:
-                cached = conn.execute('SELECT fetched, body FROM cache WHERE key=?',(key,)).fetchone()
-            if cached and 0 <= time.time()-cached[0] < ttl:
-                return {'data':json.loads(cached[1]),'fetched_at':cached[0],'cached':True,'source':'https://www.dataj.cc/api/web'+path}
-            delay = self.next_request-time.monotonic()
+            cached = self._cached_request(path, key, ttl)
+            if cached:return cached
+        # Ordinary callers retain their serialized, completion-plus-one-second
+        # policy. Separating this lock avoids blocking the three-option batch.
+        with self.request_lock:
+            with self.lock:
+                cached = self._cached_request(path, key, ttl)
+                if cached:return cached
+                delay = self.next_request-time.monotonic()
             if delay > 2:
                 raise SourceError('来源暂时不可用，稍后手动重试')
             if delay > 0:
                 time.sleep(delay)
-            try:
+            with self.http_slots:
+                with self.lock:
+                    if self.next_request-time.monotonic() > 2:
+                        raise SourceError('来源暂时不可用，稍后手动重试')
                 with httpx.Client(timeout=15, follow_redirects=False, transport=self.transport) as client:
-                    response = client.request(method, 'https://www.dataj.cc/api/web'+path,
-                                              params=params if body is None else None, json=body)
-                self.next_request = time.monotonic()+1
-                response.raise_for_status()
-                payload = response.json()
-                if not isinstance(payload,dict) or payload.get('success') is not True or payload.get('code') != 200 or 'data' not in payload:
-                    raise SourceError('来源响应结构变化，已停止展示')
-                fetched = time.time()
-                with closing(sqlite3.connect(self.db, isolation_level=None)) as conn:
-                    conn.execute('INSERT OR REPLACE INTO cache VALUES(?,?,?)',(key,fetched,json.dumps(payload['data'],ensure_ascii=False)))
-                return {'data':payload['data'],'fetched_at':fetched,'cached':False,'source':str(response.url)}
-            except (httpx.HTTPError, ValueError, SourceError) as exc:
-                self.next_request = time.monotonic()+60
-                raise SourceError('DataJ 请求失败或结构变化；本次不使用旧均排') from exc
+                    return self._send_request(client, method, path, params, body, key)
+
+    def _hex_batch_request(self, client, current, path, body=None, ttl=900, **extra):
+        """Exact explorer requests only; a batch never bypasses failure cooldown."""
+        if path != '/explorer/query' or body is None:
+            raise ValueError('unsupported augment batch request')
+        method, params, key = self._request_identity(path, body, extra)
+        if not current():raise _HexBatchCancelled()
+        with self.lock:
+            cached = self._cached_request(path, key, ttl)
+            if cached:return cached
+            if self.next_request-time.monotonic() > 2:
+                raise SourceError('来源暂时不可用，稍后手动重试')
+            shared = self._hex_inflight.get(key)
+            owner = shared is None
+            if owner:
+                shared = Future()
+                self._hex_inflight[key] = shared
+        if not owner:
+            while current():
+                try:
+                    return shared.result(timeout=.05)
+                except FutureTimeout:
+                    continue
+                except _HexBatchCancelled:
+                    # A newer group may have shared an older group's queued
+                    # request. It can take ownership after that group cancels.
+                    return self._hex_batch_request(client, current, path, body, ttl, **extra)
+            raise _HexBatchCancelled()
+        acquired = False
+        try:
+            while current():
+                if self.http_slots.acquire(timeout=.05):
+                    acquired = True
+                    break
+            if not acquired or not current():raise _HexBatchCancelled()
+            with self.lock:
+                cached = self._cached_request(path, key, ttl)
+                if cached:
+                    result = cached
+                elif self.next_request-time.monotonic() > 2:
+                    raise SourceError('来源暂时不可用，稍后手动重试')
+                else:
+                    result = None
+            if result is None:
+                if not current():raise _HexBatchCancelled()
+                result = self._send_request(client, method, path, params, body, key)
+        except BaseException as exc:
+            with self.lock:
+                self._hex_inflight.pop(key, None)
+            shared.set_exception(exc)
+            raise
+        else:
+            with self.lock:
+                self._hex_inflight.pop(key, None)
+            shared.set_result(result)
+            return result
+        finally:
+            if acquired:self.http_slots.release()
+
+    def iter_comp_hex_supplements(self, comp, stage, entities, *, current=lambda: True):
+        """Yield independent exact-stage results as each of <=3 queries finishes."""
+        comp = self.entity_id(comp)
+        if stage not in ('2-1','3-2','4-2'):
+            raise ValueError('unsupported hex stage')
+        candidates = {}
+        for identity, name in entities:
+            identity = self.entity_id(identity)
+            if not isinstance(name, str) or not name.strip():
+                raise ValueError('unconfirmed hex name')
+            name = name.strip()
+            if identity in candidates and candidates[identity] != name:
+                raise ValueError('conflicting hex identity')
+            candidates[identity] = name
+            if len(candidates) > 3:raise ValueError('too many hex candidates')
+        if not candidates or not current():return
+        with httpx.Client(timeout=httpx.Timeout(4, connect=2), follow_redirects=False,
+                          limits=httpx.Limits(max_connections=3, max_keepalive_connections=3),
+                          transport=self.transport) as client:
+            def fetch(identity, name):
+                if not current():return identity, None, None
+                def request(path, body=None, ttl=900, **extra):
+                    return self._hex_batch_request(client, current, path, body, ttl, **extra)
+                try:
+                    result = self.explore('hex', {'id':identity, 'name':name},
+                                          hex_stage=stage, required_comp=comp, _request=request)
+                    return identity, result, None
+                except _HexBatchCancelled:
+                    return identity, None, None
+                except SourceError as error:
+                    return identity, None, error
+            with ThreadPoolExecutor(max_workers=3) as pool:
+                futures = [pool.submit(fetch, identity, name) for identity, name in candidates.items()]
+                for future in as_completed(futures):
+                    if not current():
+                        for pending in futures:pending.cancel()
+                        return
+                    identity, result, error = future.result()
+                    if result is not None or error is not None:
+                        yield identity, result, error
 
     def catalog(self):
         result = self.request('/gamedata', ttl=3600)
@@ -91,8 +228,9 @@ class DataJ:
         raise SourceError('版本列表暂不可用')
 
     def versions(self):
-        with httpx.Client(timeout=15,follow_redirects=False,transport=self.transport) as client:
-            response=client.get('https://www.dataj.cc/comp');response.raise_for_status()
+        with self.http_slots:
+            with httpx.Client(timeout=15,follow_redirects=False,transport=self.transport) as client:
+                response=client.get('https://www.dataj.cc/comp');response.raise_for_status()
         return self.parse_versions(response.text)
 
     def hexes(self, comp=None):
@@ -239,7 +377,7 @@ class DataJ:
         self.validate_item_rows(rows, 'heroId')
         return result
 
-    def explore(self, kind, entity, *, hex_stage=None, required_comp=None):
+    def explore(self, kind, entity, *, hex_stage=None, required_comp=None, _request=None):
         """Query one condition, optionally requiring exact comp-stage metrics."""
         if kind not in ('hex','hero','equip','trait'):
             raise ValueError('unsupported filter')
@@ -256,7 +394,7 @@ class DataJ:
         if kind == 'trait':
             rule['traitLevel'] = str(entity.get('num',''))
         body = {'version':self.patch,'setId':self.set_id,'filter':{'rules':[rule],'combinator':'and'}}
-        result=self.request('/explorer/query', body=body)
+        result=(_request or self.request)('/explorer/query', body=body)
         try:
             if not isinstance(result['data'],dict) or not isinstance(result['data'].get('comps'),list):
                 raise SourceError('检索结果字段变化')

@@ -10,7 +10,7 @@ from dataj import DataJ, SourceError
 from snapshot_stats import STAGES, stage_stat
 
 
-def lookup_comp_hexes(adapter, comp, stage, entities):
+def lookup_comp_hexes(adapter, comp, stage, entities, *, on_progress=None, current=lambda:True):
     comp = DataJ.entity_id(comp)
     if stage not in STAGES:
         raise ValueError('unsupported hex stage')
@@ -27,23 +27,45 @@ def lookup_comp_hexes(adapter, comp, stage, entities):
         candidates[identity] = name
         if len(candidates) > 3:
             raise ValueError('too many hex candidates')
+    if not current():
+        return None
     primary = adapter.hexes(comp)
+    if not current():
+        return None
     rows = deepcopy(primary['data'])
     supplemented, errors, sources = [], {}, {}
-    for identity, name in candidates.items():
-        if stage_stat(rows, identity, stage)['status'] not in (
-                'missing_or_ambiguous_entity', 'no_stage_data'):
-            continue
+    pending = {identity:name for identity,name in candidates.items()
+               if stage_stat(rows, identity, stage)['status'] in (
+                   'missing_or_ambiguous_entity', 'no_stage_data')}
+
+    def snapshot():
+        # Every queued UI update owns its rows: later completions cannot mutate
+        # a snapshot that the GUI thread has not consumed yet.
+        return {**primary, 'data':deepcopy(rows),
+                'supplemented_ids':[identity for identity in candidates if identity in supplemented],
+                'supplement_errors':dict(errors), 'supplement_sources':deepcopy(sources),
+                'pending_ids':list(pending)}
+
+    if pending and on_progress:
+        on_progress(snapshot())
+    for identity, result, error in adapter.iter_comp_hex_supplements(
+            comp, stage, list(pending.items()), current=current):
+        if not current():
+            return None
+        name = candidates[identity]
+        pending.pop(identity, None)
         try:
-            result = adapter.explore('hex', {'id':identity,'name':name},
-                                     hex_stage=stage, required_comp=comp)
+            if error:
+                raise error
             matches = [row for row in result['data']['comps'] if str(row.get('compId')) == str(comp)]
             if not matches:
+                if on_progress:on_progress(snapshot())
                 continue
             if len(matches) != 1:
                 raise SourceError('阵容补查身份重复')
             selected = matches[0]
             if selected['sampleCount'] == 0:
+                if on_progress:on_progress(snapshot())
                 continue
             part = {'round':STAGES[stage], 'roundLabel':stage,
                     'avgPlacement':selected['avgPlacement'], 'sampleCount':selected['sampleCount']}
@@ -60,5 +82,5 @@ def lookup_comp_hexes(adapter, comp, stage, entities):
                                           'comp':str(comp), 'stage':stage, 'hex_id':identity}}
         except SourceError:
             errors[identity] = '阵容阶段补查暂不可用'
-    return {**primary, 'data':rows, 'supplemented_ids':supplemented,
-            'supplement_errors':errors, 'supplement_sources':sources}
+        if on_progress:on_progress(snapshot())
+    return snapshot() if current() else None

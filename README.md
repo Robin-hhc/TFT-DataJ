@@ -2,11 +2,11 @@
 
 ## Windows 便携版
 
-[下载v0.2.9便携测试版](https://github.com/Robin-hhc/TFT-DataJ/releases/tag/v0.2.9)：先退出旧助手，完整解压 `TFT-DataJ-0.2.9-windows-x64.zip` 后双击 **TFT-DataJ.exe**，不需要安装Python或OCR环境。保留旁边的 `_internal` 文件夹；可以为EXE创建快捷方式。目标系统为Windows 10/11 x64，最新统计与攻略仍需联网。
+[下载v0.2.10便携测试版](https://github.com/Robin-hhc/TFT-DataJ/releases/tag/v0.2.10)：先退出旧助手，完整解压 `TFT-DataJ-0.2.10-windows-x64.zip` 后双击 **TFT-DataJ.exe**，不需要安装Python或OCR环境。保留旁边的 `_internal` 文件夹；可以为EXE创建快捷方式。目标系统为Windows 10/11 x64，最新统计与攻略仍需联网。
 
-v0.2.9让海克斯选择、刷新重读及后继帧确认保持约0.5秒检查；新选项不再受旧组1.5秒OCR冷却拖延，过期回调也不能延长冷却。同组选项继续复用识别与排名。 [发布说明](docs/releases/v0.2.9.md) · [定阵海克斯来源核验](docs/testing/hex-comp-statistics-20261008.md)
+v0.2.10加快定阵海克斯排名：定阵预读主表，已有项先显示，当前三项缺失数据并行补查并逐项更新；缓存不等待慢攻略任务，过时组选项停止继续发请求。选择期间仍约每0.5秒检查。 [发布说明](docs/releases/v0.2.10.md) · [延迟修复与接口计时](docs/testing/hex-comp-latency-20261009.md)
 
-[本版改动与升级](docs/releases/v0.2.9.md) · [安装、快捷键与已知限制](docs/releases/v0.2.1.md) · [更新记录](CHANGELOG.md) · [问题反馈](https://github.com/Robin-hhc/TFT-DataJ/issues)
+[本版改动与升级](docs/releases/v0.2.10.md) · [安装、快捷键与已知限制](docs/releases/v0.2.1.md) · [更新记录](CHANGELOG.md) · [问题反馈](https://github.com/Robin-hhc/TFT-DataJ/issues)
 
 本机产物在 [dist目录](dist/)，构建与验证说明见 [Windows便携包](packaging/README.md)。设置与缓存保存在 `%LOCALAPPDATA%\TFT-DataJ`；包中不包含本机游戏截图、录像及旧缓存。每版发布前须在构建机的隔离目录和清理过的环境中验证实际EXE；尚未在第二台物理电脑实测。
 

@@ -1,28 +1,28 @@
 # Windows便携包
 
-[下载v0.2.9便携测试版](https://github.com/Robin-hhc/TFT-DataJ/releases/tag/v0.2.9)。完整解压后双击 `TFT-DataJ.exe`，保留 `_internal`。无需Python、pip或OCR安装，设置与缓存保存到 `%LOCALAPPDATA%\TFT-DataJ`。
+[下载v0.2.10便携测试版](https://github.com/Robin-hhc/TFT-DataJ/releases/tag/v0.2.10)。完整解压后双击 `TFT-DataJ.exe`，保留 `_internal`。无需Python、pip或OCR安装，设置与缓存保存到 `%LOCALAPPDATA%\TFT-DataJ`。
 
 目标为Windows 10/11 x64。默认用CPU识别，DataJ统计和攻略需要联网；网络失败不会使用其他版本数据。更新时退出旧版、解压新版，用户目录中的设置保留。当前是未签名的便携测试构建，没有安装器、自动更新或Windows ARM原生包。
 
 ## 构建
 
-下列命令与产物名对应v0.2.9；每版都应从最终提交重新构建并验证实际ZIP，源码与现场记录不替代包验证。
+下列命令与产物名对应v0.2.10；每版都应从最终提交重新构建并验证实际ZIP，源码与现场记录不替代包验证。
 
 构建者需要Windows x64及Python 3.12，使用独立虚拟环境；使用者不需要这些步骤。
 
 ```powershell
 py -3.12 -m venv .venv
 .venv\Scripts\python.exe -m pip install -r packaging\requirements-build.txt
-.venv\Scripts\python.exe -X utf8 packaging\build_windows.py --version 0.2.9
+.venv\Scripts\python.exe -X utf8 packaging\build_windows.py --version 0.2.10
 ```
 
-当前开发机也可使用 `work/p0-runtime/Scripts/python.exe -X utf8 packaging/build_windows.py --version 0.2.9`。显式指定新版本，不覆盖已有 ZIP；本轮源码变化后必须完整构建，不能以 `--skip-build` 复用v0.2.8。依赖锁定不再包含开发机的 `file:///C:/Users/...` 安装路径；构建脚本在缺少模型时从RapidOCR官方模型仓库下载，并逐一验证SHA-256。运行助手不会自动下载模型。
+当前开发机也可使用 `work/p0-runtime/Scripts/python.exe -X utf8 packaging/build_windows.py --version 0.2.10`。显式指定新版本，不覆盖已有 ZIP；本轮源码变化后必须完整构建，不能以 `--skip-build` 复用v0.2.9。依赖锁定不再包含开发机的 `file:///C:/Users/...` 安装路径；构建脚本在缺少模型时从RapidOCR官方模型仓库下载，并逐一验证SHA-256。运行助手不会自动下载模型。
 
 应用图标源文件是 `outputs/companion/assets/app-icon.svg`。修改后运行 `work/p0-runtime/Scripts/python.exe -X utf8 tools/build_app_icon.py`，生成 PNG 和包含 16/24/32/48/64/128/256px 的 ICO。打包配置将 ICO 嵌入 EXE，同时供 Qt 窗口使用；图标文件也纳入构建指纹，不能以旧构建跳过新图标。
 
 产物：
 
-- `dist/TFT-DataJ-0.2.9-windows-x64.zip`：整体复制到其他电脑的便携包。
+- `dist/TFT-DataJ-0.2.10-windows-x64.zip`：整体复制到其他电脑的便携包。
 - 同名 `.zip.sha256`：ZIP校验值。
 - 同名 `.validation.json`：从ZIP解压后实际EXE的隔离验证结果。
 - `work/package-build/dist/TFT-DataJ/`：未压缩目录，含EXE、运行库、模型、说明、许可与逐文件哈希清单。
@@ -34,19 +34,19 @@ py -3.12 -m venv .venv
 构建完成后自动把实际ZIP解压到仓库外的临时目录，目录含中文和空格；使用仅含Windows系统目录的PATH、空的用户配置目录和无效的PYTHONHOME/PYTHONPATH启动EXE。不会修改系统环境或已有用户设置，不操作游戏。
 
 ```powershell
-work\p0-runtime\Scripts\python.exe -X utf8 packaging\verify_windows.py dist\TFT-DataJ-0.2.9-windows-x64.zip --online
+work\p0-runtime\Scripts\python.exe -X utf8 packaging\verify_windows.py dist\TFT-DataJ-0.2.10-windows-x64.zip --online
 ```
 
 检查包内每个清单文件的哈希、完整界面实例、UI资源、三份内置模型、ONNX CPU识别、WebEngine子进程和本地页面、Windows TLS。加 `--online` 时实测DataJ目录HTTPS请求和真实英雄头像。开发机有原始2-1截图时，额外复制到验证目录做真实画面识别，截图不会进入ZIP。
 
-v0.2.9新增15项海克斯检查调度回归，覆盖刷新后半秒检查、旧组冷却和过期回调、独立后继帧、同组复用与连续刷新。完整源码617项、356组冻结数据显示及8项故障注入通过；留存4K图片16秒回放的25次检查只执行1次真实OCR。详见[v0.2.9发布说明](../docs/releases/v0.2.9.md)。本轮不启动MuMu，检查间隔不等于端到端延迟或游戏FPS验收。定阵补查的来源核验保留在[核验记录](../docs/testing/hex-comp-statistics-20261008.md)，历史实战与装备在线验证见[v0.2.7发布说明](../docs/releases/v0.2.7.md)。
+v0.2.10新增20项定阵海克斯延迟与并发回归，覆盖逐项显示、三项并发、同键单飞、旧任务取消、HTTP上限、共享失败冷却、缓存快速返回与坏缓存恢复。源码门槛637项、356组冻结数据显示及8项故障注入；真实HTTPS探针空缓存7.047→3.266秒，主表预读后三项未缓存补查0.250秒。详见[v0.2.10发布说明](../docs/releases/v0.2.10.md)。数字不含截图、OCR或游戏FPS；本轮不启动MuMu。定阵补查的来源核验保留在[核验记录](../docs/testing/hex-comp-statistics-20261008.md)，历史实战与装备在线验证见[v0.2.7发布说明](../docs/releases/v0.2.7.md)。
 
 每次发布均需从本版源代码重新构建，并以上述命令验证实际ZIP；此前候选包不能代替交付包验证。门槛包含356组数据显示、真实2-1静态截图的三项ID `1023 / 1479 / 1006`、模型、WebEngine、联网DataJ与头像。保留打包后等价海克斯身份、问题图无损保存/去重/pending，以及真实4K巨人腰带 `equip/1007` 主标题诊断；新增实际EXE内的三项精确阶段补查、请求范围及缓存诊断，该项使用内嵌MockTransport，不把它称为联网实测。验证器把本机哈希锁定的私人原图复制到外部临时目录，图片不进入ZIP。实际执行项及结果保存为本版 `.validation.json`，下载校验值见 `.zip.sha256`。发布页先保持草稿，待CI通过、实际ZIP验证通过且ZIP与校验附件均上传完成后，发布为预发行测试版。
 
 源码和已核对私有原图可通过统一入口复验：
 
 ```powershell
-work\p0-runtime\Scripts\python.exe -X utf8 tools\validate_data.py --include-private --release-gate --bug-cases-dir work\live-match-20261007\reviewed-cases --report work\data-validation\v0.2.9-source-final.json
+work\p0-runtime\Scripts\python.exe -X utf8 tools\validate_data.py --include-private --release-gate --bug-cases-dir work\live-match-20261007\reviewed-cases --report work\data-validation\v0.2.10-source-final.json
 ```
 
 只有合法 `expected.json` 的问题图会运行OCR；待核对图另列 pending，不算通过。这条路径验证场景、身份、详情种类与海克斯阶段，不证明排名正确，也不会进入游戏或联网。

@@ -147,7 +147,7 @@ class HexCompSupplementUI(unittest.TestCase):
         self.complete()
         self.assert_global_controls()
         self.assertEqual([row[2] for row in self.p.stats_payload['rows']], self.EXPECTED)
-        self.assertEqual(self.explorer_ids(), self.IDS)
+        self.assertCountEqual(self.explorer_ids(), self.IDS)
         self.assertFalse(self.p.stats_payload['retryable'])
         self.assertEqual(self.p.stats_payload['comp_supplemented_ids'], self.IDS)
         for identity, samples in zip(self.IDS, [13, 13, 8]):
@@ -169,7 +169,7 @@ class HexCompSupplementUI(unittest.TestCase):
         self.query()
         self.assertEqual(len(self.calls), calls)
         self.assertEqual(len(self.pending), 0)
-        self.assertEqual(self.explorer_ids(), self.IDS)
+        self.assertCountEqual(self.explorer_ids(), self.IDS)
 
     def test_successful_empty_exact_query_is_missing_comp_data_not_unrecognized(self):
         self.empty_ids.add(self.IDS[0])
@@ -217,17 +217,27 @@ class HexCompSupplementUI(unittest.TestCase):
         self.query()
         self.complete()
         self.complete()
-        self.assertEqual(self.explorer_ids(), [self.IDS[0]], 'Cooldown must block further HTTP attempts')
-        self.assertEqual([row[2] for row in self.p.stats_payload['rows']], ['阵容补查失败'] * 3)
+        self.assertIn(self.IDS[0], self.explorer_ids())
+        self.assertLessEqual(len(self.explorer_ids()), 3, 'At most the current three candidates may be in flight')
+        rows = self.p.stats_payload['rows']
+        self.assertEqual(rows[0][2], '阵容补查失败')
+        for index in (1,2):
+            expected = self.EXPECTED[index] if self.IDS[index] in self.explorer_ids() else '阵容补查失败'
+            self.assertEqual(rows[index][2], expected)
         self.assertTrue(self.p.stats_payload['retryable'])
         self.assert_global_controls()
         self.assertGreater(self.p.adapter.next_request - time.monotonic(), 2)
+        calls = len(self.calls)
+        self.query(refresh=True)
+        self.complete()
+        self.complete()
+        self.assertEqual(len(self.calls), calls, 'A later retry must respect the shared failure cooldown')
 
     def test_unrecognized_candidate_never_creates_an_explorer_rule(self):
         self.query([self.IDS[0], None, self.IDS[2]])
         self.complete()
         self.complete()
-        self.assertEqual(self.explorer_ids(), [self.IDS[0], self.IDS[2]])
+        self.assertCountEqual(self.explorer_ids(), [self.IDS[0], self.IDS[2]])
         rows = self.p.stats_payload['rows']
         self.assertEqual(rows[1][1:], ['— 未识别', '— 未识别'])
         self.assertEqual(rows[0][2], self.EXPECTED[0])

@@ -179,6 +179,8 @@ class ElidedLabel(QLabel):
 
 
 class Companion(QWidget):
+    comp_stats_progress = Signal(object)
+
     def __init__(self, offline=False, offline_catalog=None):
         super().__init__()
         self.setWindowTitle('DataJ 阵容助手')
@@ -208,6 +210,12 @@ class Companion(QWidget):
         self.adapter=DataJ()
         self.vision=Vision()
         self.network=QThreadPool(self);self.network.setMaxThreadCount(1)
+        # Interactive ranks must not wait behind guide/equipment requests or
+        # the obsolete group's remaining supplements. HTTP remains bounded
+        # and shares the adapter's cache and failure cooldown.
+        self.hex_network=QThreadPool(self);self.hex_network.setMaxThreadCount(2)
+        self.comp_stats_update=None
+        self.comp_stats_progress.connect(self.accept_comp_stats_progress)
         self.ocr_pool=QThreadPool(self);self.ocr_pool.setMaxThreadCount(1)
         self.capture_pool=QThreadPool(self);self.capture_pool.setMaxThreadCount(1)
         self.jobs=set()
@@ -733,6 +741,7 @@ class Companion(QWidget):
         if hasattr(self,'items'):self.items.reset()
         self.partial_retries=0
         self.stats_inflight_token=None
+        self.comp_stats_update=None
         self.session.invalidate();self.signature=None;self.stable=0;self.stats_payload=None;self.last_observation=None
         self.last_frame=None
         self.choice_recheck_required=False
@@ -1119,6 +1128,12 @@ class Companion(QWidget):
         names=[p.currentText().split(' · ')[0] for p in self.picks]
         self.query_stats(ids,names,False)
 
+    def accept_comp_stats_progress(self, event):
+        token,payload=event
+        update=self.comp_stats_update
+        if update and update[0]==token and self.session.accepts(token):
+            update[1](payload,False,True)
+
     def query_stats(self,ids,names,live,refresh=False):
         if not self.versions_ready:return
         same_choices=self.session.stage==self.stage.currentText() and self.session.choices==tuple(ids)
@@ -1136,13 +1151,18 @@ class Companion(QWidget):
             for card in self.result_cards:card.clear(self.session.target is not None)
         token=self.session.token();stage=self.session.stage;target=self.session.target;adapter=self.adapter
         supplement=not self.offline
+        self.comp_stats_update=None
         self.stats_inflight_token=token
+        def current():return self.session.accepts(token) and adapter is self.adapter
         def fetch():
+            if not current():return None,None
             global_result=adapter.hexes()
             return global_result,None
-        def done(payload,comp_finished=False):
-            if self.stats_inflight_token==token:self.stats_inflight_token=None
-            if not self.session.accepts(token):return
+        def done(payload,comp_finished=False,comp_progress=False):
+            if not current():return
+            if comp_finished or not target:
+                if self.stats_inflight_token==token:self.stats_inflight_token=None
+                if self.comp_stats_update and self.comp_stats_update[0]==token:self.comp_stats_update=None
             # A current response remains useful during a brief focus change.
             # Painting still requires a fresh foreground capture below; dropping
             # the second response here leaves the first payload pending forever.
@@ -1156,10 +1176,11 @@ class Companion(QWidget):
                     self.bugs.hex_statistics('hex_comp_query_failed',evidence={'stage':stage,'global_statistics':relevant})
             supplement_errors=comp_result.get('supplement_errors',{}) if comp_result else {}
             supplemented=comp_result.get('supplemented_ids',[]) if comp_result else []
-            comp_sources=comp_result.get('supplement_sources',{}) if comp_result else {}
-            if retained and not comp_finished:
-                supplemented=retained.get('comp_supplemented_ids',[])
-                comp_sources=retained.get('comp_supplement_sources',{})
+            comp_sources=dict(comp_result.get('supplement_sources',{})) if comp_result else {}
+            pending_ids=comp_result.get('pending_ids',[]) if comp_result else []
+            if retained and not comp_finished and comp_result is None:
+                supplemented=list(retained.get('comp_supplemented_ids',[]))
+                comp_sources=dict(retained.get('comp_supplement_sources',{}))
             rendered=[];available=0;comp_available=0
             for index,(entity,name) in enumerate(zip(ids,names)):
                 global_stat=stage_stat(global_result['data'],entity,stage)
@@ -1170,18 +1191,27 @@ class Companion(QWidget):
                 elif entity is None:comp_text='— 未识别'
                 elif comp_stat and comp_stat['status']=='ok':comp_text=stat_text(comp_stat,scope='comp')
                 elif str(entity) in supplement_errors:comp_text='阵容补查失败'
+                elif str(entity) in pending_ids:comp_text='阵容数据读取中…'
                 elif comp_stat:comp_text=stat_text(comp_stat,scope='comp')
                 else:comp_text='阵容数据暂不可用' if comp_finished else '阵容数据读取中…'
-                if retained and not comp_finished and target and entity is not None:
+                if (retained and not comp_finished and target and entity is not None
+                        and not (comp_stat and comp_stat['status']=='ok')):
                     previous=retained['rows'][index][2]
                     if re.fullmatch(r'[1-8]\.\d{2} · [1-9]\d*局(?: · 少)?',previous):
                         comp_text=previous;comp_available+=1
+                        identity=str(entity)
+                        if identity in retained.get('comp_supplement_sources',{}) and identity not in comp_sources:
+                            comp_sources[identity]=retained['comp_supplement_sources'][identity]
+                            supplemented.append(identity)
                 rendered.append([name,stat_text(global_stat,identified=entity is not None),comp_text])
+            supplemented=[identity for identity in dict.fromkeys(str(i) for i in ids if i is not None)
+                          if identity in supplemented]
             self.stats_payload={'rows':rendered,'live':live,'created':time.monotonic(),'token':token,
                                 'retryable':bool(target and comp_finished and (comp_result is None or supplement_errors)),
                                 'comp_supplemented_ids':supplemented,
                                 'comp_supplement_sources':comp_sources,
-                                'comp_supplement_errors':supplement_errors}
+                                'comp_supplement_errors':supplement_errors,
+                                'comp_pending_ids':pending_ids}
             if not self.offline:record('stats_ready',available=available,live=live,stage=stage,target=target,
                                       confirmed_ids=ids,comp_available=comp_available,
                                       supplemented_ids=supplemented,comp_error_ids=list(supplement_errors))
@@ -1195,19 +1225,26 @@ class Companion(QWidget):
             else:self.set_activity('results' if count==3 else 'partial_results',
                                   (f'已有 {available} 个选项的均排，返回游戏即可查看。' if live else f'已显示 {available} 个选项的均排，仅在面板查看。') if count==3 else f'已确认 {count}/3 个海克斯；不确定的选项不会猜测。')
             if live:self.display_overlays()
-            if target and not comp_finished:
-                self.submit(self.network,lambda:(global_result,
-                            lookup_comp_hexes(adapter,target,stage,zip(ids,names)) if supplement else adapter.hexes(target)),
+            if target and not comp_finished and not comp_progress:
+                self.comp_stats_update=token,done
+                def comp_fetch():
+                    if not current():return global_result,None
+                    result=(lookup_comp_hexes(adapter,target,stage,zip(ids,names),current=current,
+                            on_progress=lambda result:self.comp_stats_progress.emit((token,(global_result,result))))
+                            if supplement else adapter.hexes(target))
+                    return global_result,result
+                self.submit(self.hex_network,comp_fetch,
                             lambda value:done(value,True),lambda _:done((global_result,None),True))
         def failed(_):
             if self.stats_inflight_token==token:self.stats_inflight_token=None
+            if self.comp_stats_update and self.comp_stats_update[0]==token:self.comp_stats_update=None
             if self.session.accepts(token):
                 if live:self.bugs.hex_statistics('hex_query_failed',evidence={'stage':stage,'requested_ids':ids})
                 self.stats_payload=None
                 self.choice_table.setRowCount(0)
                 for card in self.result_cards:card.clear(self.session.target is not None)
                 self.hide_overlays();self.set_activity('stats_failed','暂时取不到均排，请按正常节奏选择。助手稍后会重试。')
-        self.submit(self.network,fetch,done,failed)
+        self.submit(self.hex_network,fetch,done,failed)
 
     def display_overlays(self):
         payload=self.stats_payload
@@ -1398,6 +1435,11 @@ class Companion(QWidget):
             self.open_guide('https://www.dataj.cc/comp/'+comp)
             self.status.setText('已固定 '+detail.get('name',comp))
             self.items.prewarm(comp)
+            if not self.offline:
+                def prewarm_hexes():
+                    if current():adapter.hexes()
+                    if current():adapter.hexes(comp)
+                self.submit(self.hex_network,prewarm_hexes,lambda _:None,lambda _:None)
         self.submit(self.network,lambda:adapter.comp(comp),done,failed)
 
     def unpin(self):
@@ -1451,10 +1493,11 @@ class Companion(QWidget):
         if not self.offline:
             self.mouse_settings.setValue('panel_geometry',self.saveGeometry())
             self.mouse_settings.setValue('mark_position',self.mark.pos());self.mouse_settings.sync()
+        self.session.invalidate();self.comp_stats_update=None;self.stats_inflight_token=None
         self.timer.stop();self.hide_overlays();self.mark.hide()
         self.bugs.shutdown()
         self.items.shutdown()
-        for pool in (self.capture_pool,self.ocr_pool,self.network):pool.clear();pool.waitForDone()
+        for pool in (self.capture_pool,self.ocr_pool,self.network,self.hex_network):pool.clear();pool.waitForDone()
 
 
 def main():

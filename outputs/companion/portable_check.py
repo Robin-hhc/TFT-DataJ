@@ -293,7 +293,7 @@ def check_comp_hex_supplements():
     return {'evidence':'synthetic MockTransport diagnostic only; not live API, OCR or game validation',
             'scope':{'set_id':18,'patch':'18.3','comp':'107','stage':'3-2'},
             'primary_table_empty':True,'http_request_count':len(requests),
-            'repeat_lookup_fully_cached':True,'normal_request_pacing_preserved':True,
+            'repeat_lookup_fully_cached':True,'current_group_bounded_parallel_supplements':True,
             'elapsed_seconds':round(time.monotonic()-started,3),
             'statistics':[{'hex_id':identity,'name':name,'average':average,'samples':samples}
                           for identity,(name,average,samples) in reviewed.items()],

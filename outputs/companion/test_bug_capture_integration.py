@@ -93,7 +93,7 @@ class BugCaptureIntegration(unittest.TestCase):
         self.p.last_observation=self.observation
         self.p.adapter.hexes=lambda comp=None:(_ for _ in ()).throw(RuntimeError('source offline'))
         self.p.query_stats(['1','2','1625'],['甲','乙','别再错过'],True)
-        self.run_job(self.p.network);self.run_job(self.p.bugs.pool)
+        self.run_job(self.p.hex_network);self.run_job(self.p.bugs.pool)
         case=self.saved()[0]
         self.assertEqual(case['reason'],'hex_query_failed')
         self.assertEqual(case['evidence']['requested_ids'],['1','2','1625'])
