@@ -10,6 +10,7 @@ from snapshot_stats import stage_stat
 
 
 FIXTURE = json.loads((Path(__file__).parent / 'fixtures/hex-identity-20261007.json').read_text(encoding='utf-8'))
+GAP_FIXTURE = json.loads((Path(__file__).parent / 'fixtures/hex-catalog-gap-20261010.json').read_text(encoding='utf-8'))
 
 
 class HexCatalogTests(unittest.TestCase):
@@ -65,6 +66,38 @@ class HexCatalogTests(unittest.TestCase):
                       [{**stat, 'roundStats': [{**part, 'sampleCount': 0} for part in stat['roundStats']]}]):
             with self.subTest(stats=stats):
                 self.assertEqual(len(self.project(pair, stats)), 2)
+
+    def test_real_missing_unsuffixed_title_never_resolves_to_a_plus_variant(self):
+        catalog = self.project(GAP_FIXTURE['catalog'], GAP_FIXTURE['statistics'])
+        result = resolve_name(['白银命运'] * 7, catalog)
+        self.assertEqual(result['status'], 'unrecognized')
+        self.assertIsNone(result.get('id'))
+        self.assertEqual(result['candidates'], [])
+        self.assertEqual({row['name'] for row in catalog}, {'白银命运+', '白银命运++'})
+        self.assertEqual(stage_stat(GAP_FIXTURE['statistics'], result.get('id'), '2-1'),
+                         {'status': 'missing_or_ambiguous_entity', 'avg_placement': None})
+
+    def test_real_plus_variants_keep_their_own_ids_and_stage_statistics(self):
+        catalog = self.project(GAP_FIXTURE['catalog'], GAP_FIXTURE['statistics'])
+        for name, identity, stage, average, count in [
+                ('白银命运+', '20494', '3-2', 4.45, 4927),
+                ('白银命运++', '30494', '4-2', 4.35, 1839)]:
+            with self.subTest(name=name):
+                result = resolve_name([name] * 7, catalog)
+                self.assertEqual(result['status'], 'resolved')
+                self.assertEqual(result['id'], identity)
+                self.assertEqual(result['name'], name)
+                self.assertEqual(stage_stat(GAP_FIXTURE['statistics'], result['id'], stage),
+                                 {'status': 'ok', 'avg_placement': average,
+                                  'sample_count': count, 'stage': stage})
+
+    def test_real_missing_stage_never_uses_overall_or_other_stage_statistics(self):
+        for identity, missing_stages in [('20494', ('2-1', '4-2')),
+                                         ('30494', ('2-1', '3-2'))]:
+            for stage in missing_stages:
+                with self.subTest(identity=identity, stage=stage):
+                    self.assertEqual(stage_stat(GAP_FIXTURE['statistics'], identity, stage),
+                                     {'status': 'no_stage_data', 'avg_placement': None})
 
 
 if __name__ == '__main__':

@@ -207,7 +207,7 @@ class HexRefreshCadence(unittest.TestCase):
         self.assertEqual(len(self.jobs), 1)
         self.assertTrue(self.p.capture_pending)
 
-    def test_unverifiable_signature_does_not_cancel_retry_backoff(self):
+    def test_unverifiable_signature_waits_for_pixels_beyond_retry_backoff(self):
         obs = self.observation()
         self.p.analyze(self.frame, True)
         _, done, _ = self.jobs.pop()
@@ -222,6 +222,11 @@ class HexRefreshCadence(unittest.TestCase):
         self.clock = 101.51
         self.p.accept_frame((self.frame.copy(), self.binding), False,
                             (([], None), None), self.clock)
+        # Animation recovery now waits for readable strokes rather than
+        # rerunning OCR merely because the previous backoff has elapsed.
+        self.assertEqual(self.jobs, [])
+        self.clock = 101.6
+        self.accept(self.frame.copy(), self.changed)
         self.assertEqual(len(self.jobs), 1)
 
     def test_unknown_choice_page_keeps_retry_backoff(self):

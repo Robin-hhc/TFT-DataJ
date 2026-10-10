@@ -12,9 +12,11 @@ import unittest
 from unittest.mock import patch
 import weakref
 
+import numpy as np
 from PIL import Image
 from app import Companion, QApplication
 from bug_cases import BugCaseStore
+from vision import TextSignature
 
 
 class BugCaptureIntegration(unittest.TestCase):
@@ -70,7 +72,10 @@ class BugCaptureIntegration(unittest.TestCase):
         return [json.loads(path.read_text(encoding='utf-8')) for path in self.directory.glob('case-*/case.json')]
 
     def test_accepted_live_ocr_routes_exact_captured_frame_and_catalog_to_archive(self):
+        # This routing test supplies a worker-confirmed title signature. A
+        # plain synthetic frame alone cannot authorize automatic bug storage.
         with patch.object(self.p.vision,'analyze_fast',return_value=self.observation),\
+             patch('app.tracked_signature',return_value=TextSignature((np.ones((8,20),dtype=bool),))),\
              patch('bug_reporting.capture_image') as extra_capture:
             self.p.analyze(self.p.last_frame,True);self.run_job(self.p.ocr_pool)
             extra_capture.assert_not_called()

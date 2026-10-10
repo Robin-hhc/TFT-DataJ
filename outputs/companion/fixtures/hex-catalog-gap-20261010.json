@@ -1,0 +1,93 @@
+{
+  "source": "https://www.dataj.cc/api/web/gamedata?setId=18",
+  "stats_source": "https://www.dataj.cc/api/web/stats/hex?setId=18&gameVersion=18.3",
+  "fetched_date": "2026-10-10",
+  "timezone": "Asia/Shanghai",
+  "set_id": 18,
+  "patch": "18.3",
+  "catalog_response_sha256": "137ce15181d46bd22a6f5711c48be15c44094049ee1cbcdedefc9fef983aaca0",
+  "statistics_response_sha256": "40a5c86e7936dcf123accff9af32b726fcf02466f85c78c886478b4e960ddcc7",
+  "catalog_response_hex_count": 263,
+  "statistics_response_hex_count": 225,
+  "scope": "Exact two-row subset of the complete saved responses; the complete catalog and statistics contained no unsuffixed 白银命运 row. The screenshot title and 2-coin description are distinct from these 4-coin and 7-coin variants. No unsuffixed identity or ranking is inferred.",
+  "catalog": [
+    {
+      "id": "20494",
+      "name": "白银命运+",
+      "descText": "获得1个随机白银阶强化符文和4金币。",
+      "icon": "https://img.dataj.cc/images/hex/silverdestinygoldendestinyprismaticdestiny1.png",
+      "level": 1,
+      "isLegend": 0,
+      "heroEnhancementType": 0,
+      "fetterId": null,
+      "fetterType": "0",
+      "setId": "18",
+      "season": "S19",
+      "version": "18.18.1"
+    },
+    {
+      "id": "30494",
+      "name": "白银命运++",
+      "descText": "获得1个随机白银阶强化符文和7金币。",
+      "icon": "https://img.dataj.cc/images/hex/silverdestinygoldendestinyprismaticdestiny1.png",
+      "level": 1,
+      "isLegend": 0,
+      "heroEnhancementType": 0,
+      "fetterId": null,
+      "fetterType": "0",
+      "setId": "18",
+      "season": "S19",
+      "version": "18.18.1"
+    }
+  ],
+  "statistics": [
+    {
+      "hexId": 20494,
+      "name": "白银命运+",
+      "icon": "https://game.gtimg.cn/images/lol/act/jkzlk/gamedata/hex/silverdestinygoldendestinyprismaticdestiny1.png",
+      "sampleCount": 5017,
+      "playRate": 0.13,
+      "avgPlacement": 4.45,
+      "top4Rate": 51.15,
+      "topRate": 12.86,
+      "rounds": [
+        "3-2"
+      ],
+      "roundStats": [
+        {
+          "round": 1,
+          "roundLabel": "3-2",
+          "sampleCount": 4927,
+          "playRate": 0.12,
+          "avgPlacement": 4.45,
+          "top4Rate": 51.19,
+          "topRate": 12.95
+        }
+      ]
+    },
+    {
+      "hexId": 30494,
+      "name": "白银命运++",
+      "icon": "https://game.gtimg.cn/images/lol/act/jkzlk/gamedata/hex/silverdestinygoldendestinyprismaticdestiny1.png",
+      "sampleCount": 1846,
+      "playRate": 0.05,
+      "avgPlacement": 4.35,
+      "top4Rate": 52.98,
+      "topRate": 13.76,
+      "rounds": [
+        "4-2"
+      ],
+      "roundStats": [
+        {
+          "round": 2,
+          "roundLabel": "4-2",
+          "sampleCount": 1839,
+          "playRate": 0.05,
+          "avgPlacement": 4.35,
+          "top4Rate": 52.96,
+          "topRate": 13.81
+        }
+      ]
+    }
+  ]
+}

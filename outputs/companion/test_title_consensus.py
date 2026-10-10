@@ -22,7 +22,7 @@ class TitleConsensusTests(unittest.TestCase):
     def test_two_exact_high_confidence_views_required(self):
         initial=[('',0)]*5
         self.assertEqual(self.recognize(initial+[('护甲 I',.95)]*2)['id'],'1')
-        self.assertEqual(self.recognize(initial+[('护甲 I',.95),('护甲 I',.89)])['status'],'unrecognized')
+        self.assertEqual(self.recognize(initial+[('护甲 I',.95),('护甲 I',.89),('',0)])['status'],'unrecognized')
 
     def test_numeric_suffix_not_rewritten(self):
         self.assertEqual(self.recognize([('护甲1',.99)]*7)['status'],'unrecognized')
@@ -50,8 +50,8 @@ class TitleConsensusTests(unittest.TestCase):
         self.assertEqual(self.recognize(output,self.celestial_catalog())['status'],'conflict')
 
     def test_one_or_low_confidence_quality_read_is_not_confirmation(self):
-        for output in ([('',0)]*5+[('星界赐福Ⅲ',.99),('',0)],
-                       [('',0)]*5+[('星界赐福Ⅲ',.99),('星界赐福Ⅲ',.899)]):
+        for output in ([('',0)]*5+[('星界赐福Ⅲ',.99),('',0),('',0)],
+                       [('',0)]*5+[('星界赐福Ⅲ',.99),('星界赐福Ⅲ',.899),('',0)]):
             with self.subTest(output=output):
                 self.assertEqual(self.recognize(output,self.celestial_catalog())['status'],'unrecognized')
 
@@ -66,6 +66,35 @@ class TitleConsensusTests(unittest.TestCase):
         self.assertEqual(result['status'],'needs_confirmation')
         self.assertEqual(result['suggested_id'],'3022')
         self.assertNotIn('id',result)
+
+    def test_real_plus_title_can_confirm_one_exact_wide_read_with_an_independent_tight_read(self):
+        catalog=[{'id':'30678','name':'秘法帮派 II+'},
+                 {'id':'30679','name':'秘法帮派 II++'}]
+        output=[('秘法帮派ⅡI++',.99)]*3+[('秘法帮派Ⅱ1++',.99),
+                ('秘法帮派Ⅱ++',.89),('秘法帮派ⅡI++',.99),
+                ('秘法帮派II++',.95),('秘法帮派Ⅱ++',.97)]
+        result=self.recognize(output,catalog)
+        self.assertEqual(result['status'],'resolved')
+        self.assertEqual(result['id'],'30679')
+        self.assertEqual(result['name'],'秘法帮派 II++')
+
+    def test_exact_consensus_can_span_binary_and_wide_views_without_an_extra_read(self):
+        catalog=[{'id':'30679','name':'秘法帮派 II++'}]
+        output=[('秘法帮派ⅡI++',.99)]*3+[('秘法帮派Ⅱ1++',.99),
+                ('秘法帮派Ⅱ++',.97),('秘法帮派ⅡI++',.99),
+                ('秘法帮派II++',.95)]
+        result=self.recognize(output,catalog)
+        self.assertEqual(result['id'],'30679')
+
+    def test_tight_final_read_cannot_confirm_low_confidence_or_a_different_plus_variant(self):
+        catalog=[{'id':'30678','name':'秘法帮派 II+'},
+                 {'id':'30679','name':'秘法帮派 II++'}]
+        prefix=[('秘法帮派ⅡI++',.99)]*5+[('',0),('秘法帮派II++',.95)]
+        for final in [('秘法帮派Ⅱ++',.89),('秘法帮派II+',.99),('',0)]:
+            with self.subTest(final=final):
+                result=self.recognize(prefix+[final],catalog)
+                self.assertNotEqual(result['status'],'resolved')
+                self.assertNotIn('id',result)
 
 
 if __name__=='__main__':unittest.main()

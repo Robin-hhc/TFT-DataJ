@@ -1,0 +1,105 @@
+{
+  "source": "private original game screenshot, cropped title only; no player identifiers",
+  "captured_at": "2026-10-10T12:09:40.669+00:00",
+  "source_image_sha256": "5d68983521cf65191ae6700f79575bbd5db628cb9e180145d544476331bbbf67",
+  "crop": [
+    561,
+    734,
+    1252,
+    842
+  ],
+  "crop_sha256": "746831fbfeb19c511d68a81d9bcc1011552bbfc7dd2f58368f93d189a2346612",
+  "set_id": 18,
+  "patch": "18.3",
+  "expected": {
+    "name": "秘法帮派 II++",
+    "id": "30679"
+  },
+  "review_note": "Independent original-title review: two Roman strokes then two plus signs; description gives 2 Thief gloves now and one after 3 player combats. Recorded DataJ exact metadata maps to 30679; not III and not single-plus 30678.",
+  "catalog": [
+    {
+      "id": "1068",
+      "name": "秘法帮派",
+      "descText": "获得1个秘法手套",
+      "icon": "https://img.dataj.cc/images/hex/bandthieves1.png",
+      "level": 1,
+      "isLegend": 0,
+      "heroEnhancementType": 0,
+      "fetterId": null,
+      "fetterType": "0",
+      "setId": "18",
+      "season": "S19",
+      "version": "18.18.1"
+    },
+    {
+      "id": "3068",
+      "name": "秘法帮派 II",
+      "descText": "获得2个【秘法手套】，在5个玩家对战回合后，获得额外1个。",
+      "icon": "https://img.dataj.cc/images/hex/bandthieves3.png",
+      "level": 3,
+      "isLegend": 0,
+      "heroEnhancementType": 0,
+      "fetterId": null,
+      "fetterType": "0",
+      "setId": "18",
+      "season": "S19",
+      "version": "18.18.1b"
+    },
+    {
+      "id": "30678",
+      "name": "秘法帮派 II+",
+      "descText": "获得2个【秘法手套】。在5场玩家对战回合后，获得另一个。",
+      "icon": "https://img.dataj.cc/images/hex/bandthieves3.png",
+      "level": 3,
+      "isLegend": 0,
+      "heroEnhancementType": 0,
+      "fetterId": null,
+      "fetterType": "0",
+      "setId": "18",
+      "season": "S19",
+      "version": "18.18.1"
+    },
+    {
+      "id": "30679",
+      "name": "秘法帮派 II++",
+      "descText": "获得2个【秘法手套】。在3场玩家对战回合后，获得另一个。",
+      "icon": "https://img.dataj.cc/images/hex/bandthieves3.png",
+      "level": 3,
+      "isLegend": 0,
+      "heroEnhancementType": 0,
+      "fetterId": null,
+      "fetterType": "0",
+      "setId": "18",
+      "season": "S19",
+      "version": "18.18.1"
+    }
+  ],
+  "statistics": [
+    {
+      "hexId": 30679,
+      "name": "秘法帮派 II++",
+      "icon": "https://game.gtimg.cn/images/lol/act/jkzlk/gamedata/hex/bandthieves3.png",
+      "sampleCount": 380,
+      "playRate": 0.01,
+      "avgPlacement": 4.53,
+      "top4Rate": 49.74,
+      "topRate": 12.37,
+      "rounds": [
+        "4-2"
+      ],
+      "roundStats": [
+        {
+          "round": 2,
+          "roundLabel": "4-2",
+          "sampleCount": 376,
+          "playRate": 0.01,
+          "avgPlacement": 4.53,
+          "top4Rate": 49.73,
+          "topRate": 12.5
+        }
+      ]
+    }
+  ],
+  "statistics_source": "https://www.dataj.cc/api/web/stats/hex?setId=18&gameVersion=18.3",
+  "statistics_fetched_date": "2026-10-10"
+}

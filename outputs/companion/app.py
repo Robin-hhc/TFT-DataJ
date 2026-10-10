@@ -3,6 +3,7 @@ from __future__ import annotations
 import argparse
 import ctypes as c
 from ctypes import wintypes as w
+from copy import deepcopy
 from datetime import datetime
 import json
 import os
@@ -238,6 +239,7 @@ class Companion(QWidget):
         self.signature=None
         self.choice_recheck_required=False
         self.pending_choice_confirmation=None
+        self.unverified_choice_observation=None
         self.stable=0
         self.last_capture=0.0
         self.last_ocr=0.0
@@ -752,6 +754,7 @@ class Companion(QWidget):
         self.last_frame=None
         self.choice_recheck_required=False
         self.pending_choice_confirmation=None
+        self.unverified_choice_observation=None
         self.once_active=False
         self.once_ocr_pending=False
         self.was_available=False
@@ -937,18 +940,20 @@ class Companion(QWidget):
         token=self.session.token();observation=self.last_observation
         if observation is None and self.pending_choice_confirmation:
             observation=self.pending_choice_confirmation[1]
+        if observation is None:observation=self.unverified_choice_observation
         item_reference_boxes=tuple(self.items.boxes)
         captured_at=time.monotonic() if captured_at is None else captured_at
         def inspect():
             # Refresh shapes are a coarse augment proposal. They may suppress
             # new item proposals, but cannot discard independently verified
             # item titles. Changed/missing titles still clear the item session.
-            if may_be_choice(image):
+            choice_present=may_be_choice(image)
+            if choice_present:
                 items=([],item_signature(image,item_reference_boxes)) if item_reference_boxes else ([],None)
             else:
                 items=inspect_items(image,item_reference_boxes)
             signature=tracked_signature(image,observation) if observation else None
-            return items,signature
+            return items,signature,choice_present
         def done(prepared):
             self.capture_pending=False
             self.rank_capture_started=None
@@ -966,7 +971,12 @@ class Companion(QWidget):
         if (not self.binding or not win.same_target(self.binding,binding) or self.panel_open()
             or win.foreground_root()!=binding.hwnd):return
         self.last_capture=captured_at
-        items,signature=prepared
+        items,signature=prepared[:2]
+        choice_present=prepared[2] if len(prepared)>2 else None
+        if self.unverified_choice_observation and choice_present is False:
+            # The permissive proposal gate is worker-side evidence of exit;
+            # it never authorizes an identity or supplies ranking data.
+            self.unverified_choice_observation=None
         if self.last_observation:
             if not unchanged(signature,self.signature):
                 # Keep a manual request armed when it actually discovers new cards.
@@ -997,8 +1007,17 @@ class Companion(QWidget):
             self.choices_changed(once)
             self.last_frame=image
         if self.items.ingest(image,binding,force=once or self.once_ocr_pending,prepared=items,frame_time=captured_at):
+            self.unverified_choice_observation=None
             self.once_ocr_pending=False
             return
+        if self.unverified_choice_observation:
+            # Refresh animations cannot supply identities. Reuse the existing
+            # half-second capture's small text signature until titles return;
+            # unreadable frames must not repeatedly invoke the OCR engine.
+            if not unchanged(signature,signature):return
+            self.unverified_choice_observation=None
+            self.next_ocr_allowed=0
+            self.once_ocr_pending=True
         if once:self.once_ocr_pending=True
         # Retry a transient unreadable title twice, using already scheduled captures.
         # Keep existing ranks visible; normal session checks still reject changed cards.
@@ -1029,9 +1048,18 @@ class Companion(QWidget):
         token=self.session.token();catalog=self.catalog['hex']
         retained_observation=self.last_observation if retain_confirmed else None
         retained_payload=self.stats_payload if retain_confirmed else None
-        def wait_for_signature():
+        def wait_for_signature(observation):
             deadline=self.once_deadline
             self.choices_changed(reset_cooldown=False)
+            # Keep only ROI coordinates; old identities, statistics and full
+            # frames are discarded. Every context reset clears this gate.
+            if (observation.get('scene') in ('choice_candidates','choice_unresolved')
+                and observation.get('round') in STAGES and len(observation.get('cards',[]))==3):
+                regions={key:observation.get(key)
+                         for key in ('round_box','header_box','layout_method')}
+                regions['cards']=[{key:card[key] for key in ('box','description_box') if key in card}
+                                  for card in observation['cards']]
+                self.unverified_choice_observation=deepcopy(regions)
             # Unverifiable pixels cannot renew a manual request's deadline.
             self.once_deadline=deadline
             if not self.offline:record('ocr_verification_pending',reason='unreliable_signature')
@@ -1051,13 +1079,14 @@ class Companion(QWidget):
                 and time.monotonic()-self.last_capture<=1.5):
                 if not self.offline:record('ocr_partial_retained')
                 self.display_overlays();return
-            if live:self.bugs.observed_hex(obs,image)
-            if (live and obs.get('scene')=='choice_candidates' and obs.get('round') in STAGES
+            if (live and obs.get('scene') in ('choice_candidates','choice_unresolved')
+                and obs.get('round') in STAGES and len(obs.get('cards',[]))==3
                 and not unchanged(signature,signature)):
                 # Never publish a frame the next capture cannot verify. Actual
                 # legible beige titles pass the contrast-based stroke extractor.
-                wait_for_signature()
+                wait_for_signature(obs)
                 return
+            if live:self.bugs.observed_hex(obs,image)
             if live:self.signature=signature
             self.observed(obs,live)
         def done(result):
@@ -1081,7 +1110,7 @@ class Companion(QWidget):
                         if not unchanged(signature,current):
                             self.ocr_busy=False
                             if not unchanged(signature,signature) or not unchanged(current,current):
-                                wait_for_signature();return
+                                wait_for_signature(obs);return
                             self.choices_changed()
                             self.set_activity('frame_changed','选择画面发生变化，正在重新识别…');return
                         self.choice_recheck_required=False
@@ -1105,7 +1134,9 @@ class Companion(QWidget):
             observation=self.vision.analyze_fast(image,catalog) if live else self.vision.analyze(image,catalog)
             if live and not self.offline and self.save_diagnostic_frames:
                 observation['diagnostic_frame']=self.frame_recorder.save(image,observation)
-            return observation,tracked_signature(image,observation) if live and observation.get('scene')=='choice_candidates' else None
+            return observation,tracked_signature(image,observation) if (live
+                and observation.get('scene') in ('choice_candidates','choice_unresolved')
+                and len(observation.get('cards',[]))==3) else None
         self.submit(self.ocr_pool,recognize,done,failed)
 
     def observed(self,obs,live):
@@ -1350,7 +1381,9 @@ class Companion(QWidget):
         reason=win.capture_block_reason(self.binding,current,win.foreground_root()) if self.binding else 'no_binding'
         if self.panel_open() or reason:
             self.hide_overlays()
-            if self.was_available or self.signature is not None or self.pending_choice_confirmation or (self.ocr_busy and self.ocr_live) or self.once_active or self.items.active or self.items.recognizing:self.invalidate()
+            if (self.was_available or self.signature is not None or self.pending_choice_confirmation
+                or self.unverified_choice_observation or (self.ocr_busy and self.ocr_live)
+                or self.once_active or self.items.active or self.items.recognizing):self.invalidate()
             self.was_available=False
             if self.automatic.isChecked() and not self.panel_open():
                 if reason=='target_changed_or_closed':
@@ -1377,8 +1410,10 @@ class Companion(QWidget):
                   and now-self.rank_capture_started<=1.25 and now-self.last_capture<=2.75)
         if now-self.last_capture>1.5 and not checking:self.hide_overlays()
         capture_interval=.5 if (self.last_observation or self.choice_recheck_required
+                                or self.unverified_choice_observation
                                 or self.pending_choice_confirmation) else 1.0
-        stage_active=self.automatic.isChecked() and (self.offline or self.last_observation is not None or time.monotonic()<self.stage_window_until)
+        stage_active=self.automatic.isChecked() and (self.offline or self.last_observation is not None
+                     or self.unverified_choice_observation or time.monotonic()<self.stage_window_until)
         if (stage_active or self.once_active) and time.monotonic()-self.last_capture>capture_interval:
             self.request_capture()
 

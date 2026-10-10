@@ -142,10 +142,26 @@ class Vision:
                     supported=resolve_name(widened,catalog)
                     combined=resolve_name(readings+widened,catalog)
                     readings+=widened
-                    if supported['status']=='resolved' and combined['status']=='resolved':
+                    if combined['status']=='resolved':
+                        # Exact agreement may span a binary and a wider color
+                        # view; both are direct reads with the same confidence
+                        # threshold. Requiring one retry pair to agree loses
+                        # valid consensus already present across these views.
                         resolution={**combined,'method':'tight_wide_two_views'}
                     elif combined['status'] in ('conflict','ambiguous'):
                         resolution=combined
+                    elif combined['status']=='unrecognized' and len(combined.get('candidates',[]))==1:
+                        # One complete catalog title is evidence to try one
+                        # independent color crop, not authority to assign its ID.
+                        # Avoid extra reads for missing catalog names or conflicts.
+                        result=self.engine(np.asarray(tight)[:,:,::-1].copy(),
+                                           use_det=False,use_cls=False,return_word_box=False)
+                        readings.append(result.txts[0] if result.txts and result.scores[0]>=.90 else '')
+                        confirmed=resolve_name(readings,catalog)
+                        if confirmed['status']=='resolved':
+                            resolution={**confirmed,'method':'tight_color_two_views'}
+                        elif confirmed['status'] in ('conflict','ambiguous'):
+                            resolution=confirmed
         glyph=roman_evidence(crop)
         if glyph and resolution['status']=='unrecognized':
             prefix=crop.crop((0,0,glyph['prefix_right']+2,crop.height))
