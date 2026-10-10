@@ -1,5 +1,6 @@
 """Exercise the actual public validation command's preflight, without recursion."""
 import json
+import hashlib
 import os
 from pathlib import Path
 import subprocess
@@ -43,13 +44,15 @@ class RegressionEntrypointTests(unittest.TestCase):
         }
         self.manifest.write_text(json.dumps(registry), encoding='utf-8')
 
-    def invoke(self, *, registry=None, baseline=None, report=None, base_ref=None):
+    def invoke(self, *, registry=None, baseline=None, report=None, base_ref=None, cases_dir=None):
         command = [sys.executable, '-X', 'utf8', str(TOOL),
                    '--regressions', str(registry or self.manifest),
                    '--bug-review-baseline', str(baseline or BASELINE),
                    '--report', str(report or self.report)]
         if base_ref is not None:
             command.extend(['--regression-base-ref', base_ref])
+        if cases_dir is not None:
+            command.extend(['--bug-cases-dir', str(cases_dir)])
         environment = os.environ.copy()
         environment[GUARD] = '1'
         return subprocess.run(command, cwd=ROOT, env=environment,
@@ -110,6 +113,43 @@ class RegressionEntrypointTests(unittest.TestCase):
         baseline = self.temp / 'approved-hashes.json'
         baseline.write_bytes(BASELINE.read_bytes())
         self.assert_report_collision_rejected(baseline, baseline=baseline)
+
+    def test_actual_tool_cannot_overwrite_a_frozen_fixture_even_on_preflight_failure(self):
+        # Own temporary evidence, never a checked-in original: the old error
+        # writer corrupted this file before rejecting the missing test ID.
+        with tempfile.TemporaryDirectory(dir=ROOT / 'work') as directory:
+            original = Path(directory) / 'frozen-original.png'
+            original.write_bytes(b'independently checked original pixels')
+            self.write_registry()
+            registry = json.loads(self.manifest.read_text(encoding='utf-8'))
+            registry['fixtures'].append({'path': original.relative_to(ROOT).as_posix(),
+                                         'sha256': hashlib.sha256(original.read_bytes()).hexdigest(),
+                                         'format': 'bytes'})
+            self.manifest.write_text(json.dumps(registry), encoding='utf-8')
+            self.assert_report_collision_rejected(original)
+
+    def test_alternative_baseline_cannot_bypass_the_default_approved_archive(self):
+        self.write_registry()
+        baseline = self.temp / 'empty-approvals.json'
+        baseline.write_text('{"schema_version":1,"cases":[]}', encoding='utf-8')
+        self.assert_preflight_failed(self.invoke(baseline=baseline), 'independent archive')
+
+    def test_alternative_baseline_can_be_used_for_an_explicit_independent_archive(self):
+        self.write_registry()
+        baseline = self.temp / 'independent-approvals.json'
+        baseline.write_text('{"schema_version":1,"cases":[]}', encoding='utf-8')
+        # A separate archive is legitimate. The deliberately missing test is
+        # the next failure; no suite or private image replay is started.
+        self.assert_preflight_failed(self.invoke(baseline=baseline, cases_dir=self.temp / 'independent-cases'),
+                                     'missing test')
+
+    def test_explicit_default_archive_does_not_authorize_an_empty_baseline(self):
+        from bootstrap import STATE_DIR
+        self.write_registry()
+        baseline = self.temp / 'empty-approvals.json'
+        baseline.write_text('{"schema_version":1,"cases":[]}', encoding='utf-8')
+        self.assert_preflight_failed(self.invoke(baseline=baseline, cases_dir=STATE_DIR / 'bug-cases'),
+                                     'independent archive')
 
 
 if __name__ == '__main__':

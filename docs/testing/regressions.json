@@ -800,7 +800,7 @@
       "coverage": "automated",
       "verified_scope": "catalogprojection/exactsuffix/conflict拒绝；genuine II++ publictitlecrop hash+OCR",
       "limits": [
-        "本次pipelineagent已将 II++ 从private module移到public，审计revision未提交该工作变化；非全海克斯图鉴"
+        "II++ 的匿名真实标题裁图已进入公共 OCR 回归；真实整屏识别仍为私人扩展，并非所有海克斯都已有图片用例"
       ],
       "origin_commits": [
         "d037215",
@@ -1165,6 +1165,22 @@
         },
         {
           "id": "test_regression_registry.RegressionRegistryTests.test_skipped_subtest_is_not_recorded_as_a_passed_parent",
+          "scope": "public"
+        },
+        {
+          "id": "test_regression_entrypoint.RegressionEntrypointTests.test_actual_tool_cannot_overwrite_a_frozen_fixture_even_on_preflight_failure",
+          "scope": "public"
+        },
+        {
+          "id": "test_regression_entrypoint.RegressionEntrypointTests.test_alternative_baseline_cannot_bypass_the_default_approved_archive",
+          "scope": "public"
+        },
+        {
+          "id": "test_regression_entrypoint.RegressionEntrypointTests.test_explicit_default_archive_does_not_authorize_an_empty_baseline",
+          "scope": "public"
+        },
+        {
+          "id": "test_regression_entrypoint.RegressionEntrypointTests.test_alternative_baseline_can_be_used_for_an_explicit_independent_archive",
           "scope": "public"
         }
       ]

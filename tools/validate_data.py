@@ -14,6 +14,23 @@ PRIVATE = {'test_user_layout', 'test_live_failure', 'test_scene_gate', 'test_liv
 REGISTRY = ROOT / 'docs/testing/regressions.json'
 
 
+class OutputCollision(ValueError):
+    pass
+
+
+def protected_inputs(registry):
+    paths = set()
+    for fixture in registry.get('fixtures', []):
+        if isinstance(fixture, dict) and isinstance(fixture.get('path'), str):
+            paths.add((ROOT / fixture['path']).resolve())
+    for row in registry.get('regressions', []):
+        if isinstance(row, dict):
+            for path in row.get('evidence', []):
+                if isinstance(path, str):
+                    paths.add((ROOT / path).resolve())
+    return paths
+
+
 def test_leaves(suite):
     for test in suite:
         if isinstance(test, unittest.TestSuite):
@@ -94,15 +111,20 @@ def main(argv=None):
         parser.error(str(error))
     try:
         registry = json.loads(args.regressions.read_text(encoding='utf-8'))
+        current_project = json.loads(REGISTRY.read_text(encoding='utf-8'))
+        if args.report.resolve() in protected_inputs(registry) | protected_inputs(current_project):
+            raise OutputCollision('report must not overwrite frozen fixtures or registered evidence')
         review_path = (ROOT / registry.get('private_review_baseline', 'docs/testing/private-bug-baseline.json')).resolve()
         if not review_path.is_relative_to(ROOT) or not review_path.is_file():
             raise ValueError('Missing or invalid project private review baseline')
         if args.report.resolve() == review_path:
-            raise ValueError('report must not overwrite approved review baseline')
+            raise OutputCollision('report must not overwrite approved review baseline')
+        if args.bug_review_baseline and args.bug_review_baseline.resolve() != review_path:
+            if args.bug_cases_dir is None or case_archive.resolve() == (STATE_DIR / 'bug-cases').resolve():
+                raise ValueError('Alternative review baseline requires an explicit independent archive')
         suite, inventory, excluded = collect_tests(args.include_private)
         # Always compare the canonical versioned history, even for a custom registry.
         old_registry = previous_json(REGISTRY, args.regression_base_ref)
-        current_project = json.loads(REGISTRY.read_text(encoding='utf-8'))
         validate_registry(current_project, ROOT, inventory, baseline=old_registry)
         registered = validate_registry(registry, ROOT, inventory,
                                        baseline=old_registry if args.regressions.resolve() == REGISTRY.resolve() else None)
@@ -117,7 +139,7 @@ def main(argv=None):
         report = {'status': 'failed', 'tests': 0,
                   'regressions': {'status': 'failed', 'phase': 'preflight', 'reason': str(error)}}
         # Collision failures must never overwrite inputs, including custom baseline paths.
-        if 'overwrite' not in str(error):
+        if not isinstance(error, OutputCollision):
             write_report(report, args.report, case_archive)
         print('Regression preflight failed:', error)
         return 1
@@ -132,6 +154,8 @@ def main(argv=None):
               (args.release_gate and bool(gaps)) or regressions['status'] != 'passed')
     baseline_path = args.bug_review_baseline or review_path
     review_check = validate_review_baseline(case_archive, baseline_path, verify_files=args.include_private)
+    project_review_check = (review_check if baseline_path.resolve() == review_path else
+                            validate_review_baseline(STATE_DIR / 'bug-cases', review_path, verify_files=False))
     failed |= review_check['status'] != 'passed'
     bug_cases = {'status': 'not_run', 'reason': 'Private local bug screenshots; use --include-private'}
     if args.include_private:
@@ -145,6 +169,7 @@ def main(argv=None):
               'display_summary': dict(Counter(r['domain'] + ':' + r['status'] for r in cases)),
               'source_gaps': gaps, 'reference': 'API + verified website display rules; not website DOM comparison',
               'bug_cases': bug_cases, 'review_baseline': review_check,
+              'project_review_baseline': project_review_check,
               'source_revision': subprocess.check_output(['git', 'rev-parse', 'HEAD'], cwd=ROOT, text=True).strip(),
               'source_tree_dirty': bool(subprocess.check_output(['git', 'status', '--porcelain'], cwd=ROOT))}
     write_report(report, args.report, case_archive)

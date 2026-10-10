@@ -79,7 +79,7 @@ python -X utf8 tools/validate_data.py --include-private --release-gate --report 
 
 如归档来自 EXE，给完整入口追加 `--bug-cases-dir` 和实际目录。独立的新归档还须显式给出自己的 `--bug-review-baseline`，报告会标明所用索引；不能借此声称已经验过源码归档的 30 例。开发机可将 `python` 换成 `work\p0-runtime\Scripts\python.exe`。公共 CI 不读取私人原图，其私有样本检查只验证索引结构并明确标记未执行；本机完整入口才校验批准文件和实际原图回放。
 
-报告的 `test_outcomes` 保存实际方法结果，`regressions.cases` 按历史问题列出对应方法、执行范围与限制，`review_baseline` 列出批准文件完整性，`bug_cases` 列出独立原图回放结果。公共的 25 份冻结素材绑定 SHA-256，文本统一为 UTF-8/LF 后计算，避免 Windows 换行差异误报；既有素材不能靠更新哈希替换，新的来源或预期使用新文件路径并独立核对。
+报告的 `test_outcomes` 保存实际方法结果，`regressions.cases` 按历史问题列出对应方法、执行范围与限制，`review_baseline` 列出批准文件完整性，`bug_cases` 列出独立原图回放结果。默认源码归档禁止用替代索引减少批准样本；只有显式指定不同归档时才允许独立索引，`project_review_baseline` 仍保留源码索引的未执行范围。公共的 25 份冻结素材绑定 SHA-256，文本统一为 UTF-8/LF 后计算，避免 Windows 换行差异误报；既有素材不能靠更新哈希替换，新的来源或预期使用新文件路径并独立核对。报告不得覆盖登记素材、证据、台账或批准索引，失败报告也遵守此限制。
 
 CI 完整获取 Git 历史，推送时与前一提交、PR 时与目标分支提交比较台账及批准索引。本机默认与已提交 `HEAD` 比较，也可显式传入 `--regression-base-ref 提交SHA`；不可用提交直接失败。历史项不可删除；确需替换测试或降低覆盖范围，须填写本次新的 `coverage_change_note`，旧理由不能反复授权新的保护缺失。该字段是审阅记录，不能自动证明理由充分。
 
