@@ -603,6 +603,30 @@
         {
           "id": "test_condition_trigger_priority.ConditionTriggerPriorityTests.test_repeated_manual_capture_and_ocr_do_not_queue_another_request",
           "scope": "public"
+        },
+        {
+          "id": "test_condition_trigger_priority.ConditionTriggerPriorityTests.test_automatic_capture_or_ocr_waiting_deadline_is_not_extended",
+          "scope": "public"
+        },
+        {
+          "id": "test_condition_trigger_priority.ConditionTriggerPriorityTests.test_first_condition_request_during_automatic_live_ocr_is_not_lost",
+          "scope": "public"
+        },
+        {
+          "id": "test_condition_trigger_priority.ConditionTriggerPriorityTests.test_first_condition_request_during_ordinary_automatic_capture_is_not_lost",
+          "scope": "public"
+        },
+        {
+          "id": "test_condition_trigger_priority.ConditionTriggerPriorityTests.test_pending_condition_after_automatic_ocr_precedes_another_automatic_capture",
+          "scope": "public"
+        },
+        {
+          "id": "test_condition_trigger_priority.ConditionTriggerPriorityTests.test_repeated_requests_during_automatic_live_ocr_are_coalesced",
+          "scope": "public"
+        },
+        {
+          "id": "test_condition_trigger_priority.ConditionTriggerPriorityTests.test_repeated_requests_during_ordinary_automatic_capture_are_coalesced",
+          "scope": "public"
         }
       ]
     },
@@ -716,7 +740,7 @@
       "history_key": "condition-details",
       "title": "从游戏详情取条件",
       "coverage": "partial",
-      "verified_scope": "actual giantbelt private OCR+public glove/tear anonymouspixels；primarykind/id不记selected",
+      "verified_scope": "actual giantbelt private OCR+public glove/tear anonymouspixels；primarykind/id不记selected；实际Qt item/stage/普通自动截图及live OCR期间首次请求、合并、有限等待与上下文保护",
       "limits": [
         "口称暴风之剑1001没有独立实际gold，sword目录原图是巨人腰带1007；双行已拥有hex列表未支持；实时侧键未完整现场验"
       ],
@@ -811,6 +835,50 @@
         },
         {
           "id": "test_condition_trigger_priority.ConditionTriggerPriorityTests.test_geometry_change_while_resuming_does_not_rebind_waiting_request",
+          "scope": "public"
+        },
+        {
+          "id": "test_condition_trigger_priority.ConditionTriggerPriorityTests.test_automatic_capture_or_ocr_waiting_deadline_is_not_extended",
+          "scope": "public"
+        },
+        {
+          "id": "test_condition_trigger_priority.ConditionTriggerPriorityTests.test_configured_side_button_during_ordinary_automatic_capture_keeps_foreground_guards",
+          "scope": "public"
+        },
+        {
+          "id": "test_condition_trigger_priority.ConditionTriggerPriorityTests.test_context_change_during_automatic_capture_or_ocr_cancels_waiting_request",
+          "scope": "public"
+        },
+        {
+          "id": "test_condition_trigger_priority.ConditionTriggerPriorityTests.test_failed_ordinary_automatic_capture_or_inspection_releases_one_condition_request",
+          "scope": "public"
+        },
+        {
+          "id": "test_condition_trigger_priority.ConditionTriggerPriorityTests.test_first_condition_request_during_automatic_live_ocr_is_not_lost",
+          "scope": "public"
+        },
+        {
+          "id": "test_condition_trigger_priority.ConditionTriggerPriorityTests.test_first_condition_request_during_ordinary_automatic_capture_is_not_lost",
+          "scope": "public"
+        },
+        {
+          "id": "test_condition_trigger_priority.ConditionTriggerPriorityTests.test_legacy_one_shot_capture_and_ocr_do_not_queue_condition_request",
+          "scope": "public"
+        },
+        {
+          "id": "test_condition_trigger_priority.ConditionTriggerPriorityTests.test_nonautomatic_or_file_ocr_does_not_queue_condition_request",
+          "scope": "public"
+        },
+        {
+          "id": "test_condition_trigger_priority.ConditionTriggerPriorityTests.test_pending_condition_after_automatic_ocr_precedes_another_automatic_capture",
+          "scope": "public"
+        },
+        {
+          "id": "test_condition_trigger_priority.ConditionTriggerPriorityTests.test_repeated_requests_during_automatic_live_ocr_are_coalesced",
+          "scope": "public"
+        },
+        {
+          "id": "test_condition_trigger_priority.ConditionTriggerPriorityTests.test_repeated_requests_during_ordinary_automatic_capture_are_coalesced",
           "scope": "public"
         }
       ]

@@ -20,7 +20,15 @@ class ConditionController:
 
     def background_probe_busy(self):
         p=self.panel
-        return not self.active and not p.ocr_busy and (p.items.probing or p.stage_probe_pending)
+        if self.active or p.once_active:return False
+        if p.ocr_busy:
+            # ocr_live belongs to ordinary augment OCR only while neither the
+            # item reader nor stage probe owns the shared OCR pool.
+            return (p.automatic.isChecked() and p.ocr_live
+                    and not p.items.recognizing and not p.stage_probe_pending)
+        return (p.items.probing or p.stage_probe_pending
+                or (p.automatic.isChecked() and p.capture_pending
+                    and p.rank_capture_started is not None))
 
     def cancel_pending(self):
         self.pending=None;self.pending_timer.stop()

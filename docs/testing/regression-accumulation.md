@@ -50,7 +50,7 @@
 
 ## 已批准的私有样本
 
-[private-bug-baseline.json](private-bug-baseline.json) 登记现有 **30 份**已独立核对的病例，每份锁定 `frame.png`、`case.json`、`expected.json` 三个 SHA-256。索引不包含图片、玩家上下文或 OCR 内容。完整本机验证要求这些批准文件存在、哈希一致且 oracle 合法；删除 `expected.json` 后不能悄悄退回 pending。
+[private-bug-baseline.json](private-bug-baseline.json) 登记现有 **31 份**已独立核对的病例，每份锁定 `frame.png`、`case.json`、`expected.json` 三个 SHA-256。第 31 份为 2026-10-11 独立核对的“拥抱 I”漏识别原图，旧 30 份及批准哈希全部保留，见[现场验收记录](../development-records/2026-10-11-live-match-conditions.md)。索引不包含图片、玩家上下文或 OCR 内容。完整本机验证要求这些批准文件存在、哈希一致且 oracle 合法；删除 `expected.json` 后不能悄悄退回 pending。
 
 其他已查看但没有完整 oracle 的记录仍另列 pending。身份回放只验证场景、身份、类别和海克斯回合，不证明排名、浮层像素或性能正确。涉及这些问题须补对应来源和界面链路回归。
 
@@ -77,7 +77,7 @@ python -X utf8 tools/check_data_mutations.py
 python -X utf8 tools/validate_data.py --include-private --release-gate --report work/data-validation/with-private.json
 ```
 
-如归档来自 EXE，给完整入口追加 `--bug-cases-dir` 和实际目录。独立的新归档还须显式给出自己的 `--bug-review-baseline`，报告会标明所用索引；不能借此声称已经验过源码归档的 30 例。开发机可将 `python` 换成 `work\p0-runtime\Scripts\python.exe`。公共 CI 不读取私人原图，其私有样本检查只验证索引结构并明确标记未执行；本机完整入口才校验批准文件和实际原图回放。
+如归档来自 EXE，给完整入口追加 `--bug-cases-dir` 和实际目录。独立的新归档还须显式给出自己的 `--bug-review-baseline`，报告会标明所用索引；不能借此声称已经验过源码归档的 31 例。开发机可将 `python` 换成 `work\p0-runtime\Scripts\python.exe`。公共 CI 不读取私人原图，其私有样本检查只验证索引结构并明确标记未执行；本机完整入口才校验批准文件和实际原图回放。
 
 报告的 `test_outcomes` 保存实际方法结果，`regressions.cases` 按历史问题列出对应方法、执行范围与限制，`review_baseline` 列出批准文件完整性，`bug_cases` 列出独立原图回放结果。默认源码归档禁止用替代索引减少批准样本；只有显式指定不同归档时才允许独立索引，`project_review_baseline` 仍保留源码索引的未执行范围。公共的 25 份冻结素材绑定 SHA-256，文本统一为 UTF-8/LF 后计算，避免 Windows 换行差异误报；既有素材不能靠更新哈希替换，新的来源或预期使用新文件路径并独立核对。报告不得覆盖登记素材、证据、台账或批准索引，失败报告也遵守此限制。
 
@@ -87,6 +87,6 @@ CI 完整获取 Git 历史，推送时与前一提交、PR 时与目标分支提
 
 ## 仍需补证据的情况
 
-“大剑”详情反馈的独立实图实际是巨人腰带，不能冒称已验证暴风之剑；后者仍需真实图片用例。MuMu 合成器中的闪现、真实游戏 FPS、物理鼠标侧键与点击穿透、另一台实体电脑的 EXE 兼容仍需现场或专项采集。自动记为已选缺完整物理选择证据，双行已拥有海克斯列表也尚未纳入当前单详情读取入口。
+早期“大剑”反馈的独立实图实际是巨人腰带，不能用那张图片证明暴风之剑。2026-10-11 第三局新增了真正暴风之剑主标题原图，先独立冻结 equip / 1001，再核对实际读取、检索请求及成功重试后的 Qt 展示，详见[现场验收记录](../development-records/2026-10-11-live-match-conditions.md)；该现场证据尚未单独加入上述私有自动回放基线，不能把两种覆盖混为一谈。MuMu 合成器中的闪现、真实游戏 FPS、物理鼠标侧键与点击穿透、另一台实体电脑的 EXE 兼容仍需现场或专项采集。自动记为已选缺完整物理选择证据，双行已拥有海克斯列表也尚未纳入当前单详情读取入口。
 
 这些限制已保留在台账中。积累机制保护已确认的失败及验收范围，后续取得新证据后继续追加，不把当前样本集合解释为所有历史问题都已完整解决。

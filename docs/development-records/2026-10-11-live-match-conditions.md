@@ -1,5 +1,7 @@
 # 2026-10-11：匹配模式与截图取条件现场复验
 
+截至 02:34，普通自动截图 / OCR 请求补修已完成独立审阅及新的完整验证：公共 816 / 私有 839、31 批准原图、8 数据故障注入全部通过，313 文件零漂移。准备推送并启动新进程进行第四局实测；以下保留各阶段的原始结论，第三局现场证据仍只绑定旧源码 56369c8。
+
 ## 目标与范围
 
 - 用户授权：控制已打开的 MuMu，在匹配模式检查、修复问题并上库，修复后再实测；重点核对截图自动识别检索条件。
@@ -10,7 +12,7 @@
 - 设计与历史：详情取条件、REG-010/014/015/019/022/024，按统一流程与回归积累执行。
 - 原始日志、请求、响应与私人画面保留 `work/live-match-20261011-r1/`，不上传玩家原图。
 
-## 复现、正确答案与实现
+## 初次复现、正确答案与实现（01:15 前）
 
 - 现场识别预期由主标题、主体图标/布局和冻结来源目录独立核对，不能从 OCR 输出推导。第一局商店英雄与羁绊并排的原图，独立主体为卡蜜尔 / hero 1505；它不属于当前支持的详情布局，不能把空条件直接定为 OCR 错字。
 - 确认的生产缺陷：后台装备/阶段探测占用捕获时，`ConditionController.trigger()` 和侧键入口直接返回，首次明确的取条件请求没有捕获、读取或提示。现场调用留下探测忙碌和没有条件读出的观察；公共回归通过真实隐藏 Qt、Companion 工作池和阻塞探测，独立复现请求丢失。
@@ -75,7 +77,7 @@
 - 第二局结算已正常退出，17:20:07 UTC 回到标准匹配房间；第三局未开始。旧源码 QA run `d7eb27bf1e34eefb3c4881e17b5b31c6` 于 17:23:06 UTC 通过正常 quit 槽关闭；推送后重新启动最终源码再实测，避免旧进程冒充新修复。
 - 最终独立审阅分 Standards / Spec 两轴，各自无阻塞发现；`review-standards-final.json` 与 `review-spec-final.json` 绑定同一 9 文件哈希、起始 SHA 和 scoped tracked diff SHA-256 `1cb1d397a19ec2d246e1293c7aba7123aa31cb73e8c0ca71208c407024fe0bee`。审阅不替代运行检查。REG-019 精确追加 8 方法后索引 SHA-256 `c73899dd71c8e95ad04c43f2b0a6f636970228d50b0ec322adb2bd402fb02bc8`；主设计同步两处已采用的实现边界。
 
-## 最终联合验证（2026-10-11 01:33 起追加）
+## 前一版联合验证（2026-10-11 01:33 起追加）
 
 - 起始 SHA 仍固定为 `c2f1b2b18373c7a0077181abff4b0503a5582d8c`。最终源码、工具、全部公开/私有测试、历史保护及批准原图共 313 文件冻结于 `validation-final/tested-source-before.json`，对应已测 tracked diff 和两个新增测试原文另存本地。独立新增方法是 24 个；相比开工 registry 新增 28 条登记引用，含 REG-010 对 4 个方法的交叉关联。最终为 25 主题 / 209 方法引用 / 25 夹具；旧方法、scope、fixtures 及批准文件均保留。
 - 公共命令：`work/p0-runtime/Scripts/python.exe -X utf8 tools/validate_data.py --release-gate --regression-base-ref c2f1b2b18373c7a0077181abff4b0503a5582d8c --report work/live-match-20261011-r1/validation-final/public.json`。exit 0，440.335 s，805 个实际方法全 passed，errors / failures 为 0，skipped 为空；24 新增方法全实际执行。356 显示检查（116 / 144 / 72 / 24）全 pass，`source_gaps=[]`，历史保护 passed。
@@ -83,3 +85,55 @@
 - 私有命令：`work/p0-runtime/Scripts/python.exe -X utf8 tools/validate_data.py --include-private --release-gate --regression-base-ref c2f1b2b18373c7a0077181abff4b0503a5582d8c --report work/live-match-20261011-r1/validation-final/with-private.json`。exit 0，457.207 s，828 实际方法全 passed，errors / failures 为 0，skipped 为空；新增 24 方法全部执行，7 私有扩展实际执行；356 显示检查全通过、无来源缺口，25 / 209 / 25 历史保护通过。
 - 私有 report SHA-256 `a6ef5428c36710aac10d29f498639fdab1a5c9c61e78f9a55f62e683367c5549`。31 批准原图全部 verified、31 身份回放全部 passed；总清点 36 / approved 31 / pending 5 / invalid 0 / failed 0 / skipped 0。5 待核仍不计通过，313 文件再次零漂移。
 - 数据故障注入命令：`work/p0-runtime/Scripts/python.exe -X utf8 tools/check_data_mutations.py --report work/live-match-20261011-r1/validation-final/mutations.json`。exit 0，3.078 s，8 项逐项 caught / 0 escaped；三项验证严格串行，测试期间没有游戏操作、实机捕获或其他本地重负载作业并行。完整命令、原始日志、逐方法结果与报告哈希存于 `validation-final/`。
+
+## 上库与修复后进程（2026-10-11 01:43 起）
+
+- 最终统一摘要 `validation-final/final-summary.json` SHA-256 `f831129c76b4989fd8ab78aebf026f8c30881d5056416725bcf3aa5b2268d835`，13 项断言全 true；mutations report SHA-256 `b25db0a17de94b7dfb35450df55b250d697716c478c105847e4775dd6339361b`。正式提交前 `git diff --check`、`git diff --cached --check` 均 exit 0，12 个明确文件暂存；记录索引只暂存新增一行，其他工作树改动保留。`staged-scoped-audit.json` 证明 staged 内容与独立审阅/最终受测文件一致，scoped diff SHA-256 `f6244cdce01378c256b073978f11fbb47f29906ad61821a7cf4631c008afb5e5`。
+- 源码提交 `56369c847f025b9726f48ca441ea52293947e120`（`fix: preserve condition requests and recover short augment titles`），普通推送 `git push origin 56369c847f025b9726f48ca441ea52293947e120:refs/heads/main` exit 0；`git ls-remote origin refs/heads/main` 核对同一 SHA。确切源码 [CI 38072823119](https://github.com/Robin-hhc/TFT-DataJ/actions/runs/38072823119) 已开始，最终状态及 artifact 核对待追加；不引用 c2f1b2b 的旧 CI。
+- 17:42:36 UTC 用 `work/p0-runtime/Scripts/python.exe -X utf8 work/live-match-20261011-r1/qa_runner.py --start-collapsed` 启动新的普通在线 app.main（局部只读观察与正常 Qt 槽），`DATAJ_QA_SOURCE_ROOT` 未设置。新 PID 107276 / run `62cb5b238692ece8676c8a70eb414173`，166 运行时 Python 文件字节与最终统一验证冻结哈希一致，本轮 scoped 源码无未提交差异。`post-push-runtime-identity.json` 将源码提交、远端、启动命令、driver 哈希与新进程关联；这不是打包 EXE 或物理侧键验证。
+- 新进程只读启动快照 `responses/eb8b7e1c011948659c7407960248cfb0.json`：统计 patch 18.3 / set 18，目录 259 hex / 157 equip / 86 hero / 90 trait；绑定 MuMu HWND 459956 / PID 110104，3840×2160 / DPI 192；活动 paused，scope null，已选空，样本门槛 50、均排排序、搜索空，0 jobs。第三局从新的当前画面进入标准匹配，与远端 CI 并行，本地重验证全部结束。真实详情正例及后续请求/实际 Qt 结果仍待独立核图与连续证据，不将启动成功直接算功能通过。
+
+## 源码 CI 收口（2026-10-11 01:49）
+
+- 上述源码 [CI 38072823119](https://github.com/Robin-hhc/TFT-DataJ/actions/runs/38072823119) 已 completed / success，`headSha` 精确等于 `56369c847f025b9726f48ca441ea52293947e120`。运行元数据与下载产物保存在新目录 `work/live-match-20261011-r1/ci-source-56369c8/`，没有覆盖本机报告。
+- 独立审计 `ci-audit.json` 20 项断言全 true：报告源码同 SHA、clean；805 实际方法和 24 新增方法全 passed、0 errors / failures / skips；REG 25 / 209 / 25 全通过，历史比较 base 为开工 c2f1b2b，旧 ID、scope、fixtures、批准哈希无删变；356 离线显示检查全通过，离线矩阵无来源缺口；8 数据故障注入全 caught。
+- CI 的 7 私有扩展明确 not_run，31 批准原图仅 schema-only / 31 not_run，不能替代本机私有 828 方法及 31 原图复验，更不能证明真实游戏、物理侧键、EXE 或 FPS。`ci-audit.json` / `offline.json` / `mutations.json` SHA-256 分别为 `18cf702a0ec01383d9fd68a4b8fbf3bf945941112aacd15e0d0a19c9de00f12d` / `8c756afb8e86e84c49e50d59070c336be588d23a9ee47949bf4d03f8a4599e6f` / `610abb365693b18a60411bc351c2acb80c7128fc0f44aae33d9db0deceb5e203`。
+
+## 继续发现：普通自动整帧截图仍会吞首次条件请求（2026-10-11 01:52）
+
+- 对 56369c8 的另一路后台所有权检查，实际 `Companion.tick → request_capture → capture_pool` 延迟整帧截图期间，点击真正 Qt 读取按钮产生一次 `readRequested`。此时 `capture_pending=true`、`rank_capture_started` 有值、`items.probing=false`、`stage_probe_pending=false`、`conditions.active=false`、`ocr_busy=false`、`once_active=false`。原 `background_probe_busy()` 只接纳 item / stage，因此没有 pending，自动任务结束后手动 capture / read 均为 0、输入未变。
+- `work/live-match-20261011-r1/trigger-auto-review/repro.py`、`repro.log`、`repro.json` 保存初次 RED：1 个明确断言失败、0 errors / skips，0.498 s，实际 Qt 工作池与回调；5 份源码前后零漂移。该复现控制像素、延迟、窗口身份及 HTTP，不冒称物理侧键或现场时序。已经开始扩展有限等待的后台路径，保留现有手动处理中重复请求不排队的断言、2 s 总期限及上下文保护。
+- 上述 805 / 828 / 8 与源码 CI 只证明此前 56369c8，不证明随后修订。新的最终受测 diff、统一检查、上库 SHA / CI 和重启后的游戏实测会单独追加，不覆盖先前结果。
+
+## 普通自动路径补修及第三局真实链路（2026-10-11 02:13）
+
+- 新增 11 个永久方法先 RED：9 方法 failed、2 个排除对照 passed；含 subtests 共 12 failures，0 errors / skips，`trigger-auto-review/red.json`。真实 `tick → request_capture → captured → analyze_fast` 工作线程阻塞时，自动 live OCR 同样没有接纳明确条件请求。随后才修改后台所有权判断及完成 / 失败 / 主循环的恢复优先级，不能把 11 方法表述为全部 RED 失败。
+- 补修只改变普通自动截图 / 自动 live OCR 的接纳与调度；条件读取已 active、旧版手动 once、非自动或文件 OCR 均不接纳等待。截图检查完成后有效 pending 先于自动分析启动；等待时 tick 不排下一轮自动任务。仍保持 2 秒、合并不延期、冻结输入 / 版本 / 会话 / 窗口 / 几何 / 前台以及 fresh manual 原图互斥路由。普通浮层 invalidate 只改变 Session.revision，保留 session_id，不单独取消有效条件请求；新局等真实边界仍取消。
+- GREEN 为旧 16 + 新 11 = 27 实际方法全 passed，0 errors / failures / skips，实际 native exit 0，6.898 s，旧 16 方法 AST 全保留。首次绿色运行曾有 offscreen Qt 收尾异常、进程 exit 1，原日志保留；仅在本地 runner 消费正常 DeferredDelete 后重跑同组断言得到真实 exit 0，未修改生产或断言来收绿。两个内存坏变体恢复旧 admission、旧 completion / tick priority，各 2 方法全失败、0 errors、实际 exit 1。
+- `trigger-auto-review/extension-summary.json` SHA-256 `012280b0950e9f6e88d0d9f8ecdec8ea0aabb5cb5e90063a3eb762edf2c675b5` 保存确切命令、11 IDs、原日志和哈希。生产 `app.py` / `condition_controller.py` / 测试 SHA-256 分别 `3db081e694217ce60aaad96bd6b7a72a58d16f6bca77e661ebaf21adcea1eee7` / `2043f5d2e7085b7b3b704cc36644d7562f429848a903a0f0d0455c3a8beb720b` / `f44a75e6f529f161e17d15da8b62aae771dd3bbb1f49acb0b9bdec52b8d90f60`。
+- REG-014 追加全部 11 个 public 方法，REG-010 交叉关联 6 个调度 / 合并 / 期限方法；总计 25 主题 / 226 引用 / 25 fixtures。相对开工新增 35 个独立方法、45 条登记引用；保留旧 ID / scopes / 原图、31 批准索引和 partial 覆盖。`trigger-auto-review/registry-append-audit.json` 保存追加核对，registry SHA-256 `ae56ceed25ae5a7f681c550b8fc39f72801d265622705871bda390bd45fa39ab`。
+- 新扩展独立 Spec 和 Standards 均无阻断发现：`trigger-auto-review/review-spec.json`、`post-push-independent/post-push-standards-review.json`，后者 SHA-256 `a8ae58296db533d37a30576613b1c3668bec484f477067cab83e1ee452f93655`，5 文件 scoped diff SHA-256 `15f1cf32e7491f2a358eca77131fbaf446a18a0673f07768b7eab06d753194b4`。两个审查核对旧断言和基线、固定文件哈希，无源漂移；审查不替代统一执行。
+- 第三局现场进程仍加载已推送 56369c8（PID 107276 / run 62cb5b238692ece8676c8a70eb414173），不能作为新补修的现场通过证明。三张生产 MSS 普通棋盘 / 选秀负例 560903 / 047562 / 34c918，先独立核图再检查 actual reader / Qt / settled 与请求，均 unknown / none、scope 和已选不变、无新详情查询；`post-push-independent/three-no-detail-negatives-joined-audit.json` SHA-256 `0afdacdeb1db1fa44c7d5e407626f70e674607f1c9da97ddd824eb88066d5798`。
+- 17:58:21 UTC 正常点开左装备栏，取得真正暴风之剑单详情；17:58:41.141 生产原图 e9d64884eea188b102cc66a95c528231，SHA-256 `6ecd1d73747ba318f177ec56990a01a37dfc7317cea3cf788b076204f2aa1959`。独立原图主标题 + 预先冻结目录得到 equip / 1001（基础装备），随后真实 reader 为 condition_detail / detail / resolved，单条件请求与独立预期精确一致：18.3 / set18、type equip、targetId 1001、targetName 暴风之剑、空附加过滤，不记本局已选。
+- 首次新 HTTP 请求 ReadTimeout（约 15.56 s），没有 response 字节或可用排名。实际 Qt 清旧卡、保留正确条件，显示读取失败与重试；`e9d64884eea188b102cc66a95c528231-joined-audit.json` SHA-256 `261beb905cb4acefdbd655d2f1c0f3fa21f92bccabf5b33485d42aff8ff1d623`，不称首次统计成功。
+- 18:05:34.723 正常同条件重新提交，query 75ef2f0914d3ac63242fbf47131fd774 得到新 HTTP 201 / JSON code200、success true，非缓存；原 response 176258 bytes。独立投影先从 38 行按样本 >=50 保留 21、排除 17，再均排升序，首 8 ID 为 120 / 87 / 104 / 113 / 116 / 99 / 114 / 100，均排 3.89 / 3.96 / 3.98 / 4.24 / 4.25 / 4.26 / 4.27 / 4.41，两位出场率不乘 100。18:07:26 实际 Qt 快照 8a14a23a026c441caf5d97a343a08f7f，8 个真实 card 字段、顺序和统计文字全部一致，条件 1001、已选空、jobs0。实际 viewport 仅首两卡完整和第三标题可见；不冒称同一 viewport 已显示全部八卡。`75ef2f0914d3ac63242fbf47131fd774-success-joined-audit.json` SHA-256 `226ae02b22cb26389e0a245e6dcd439fb1fc6721ec36328cf4df603311ad2ee8`。
+- 点备战英雄曾实际展开阿兹尔右详情，但取条件时已切回合、详情关闭；后一次在淘汰结算，均不能算英雄识别正例。第三局第八名，18:11:42 通过正常 quit 槽关闭自己 QA，确认 PID 消失，保留退出记录；游戏通过正常结果页返回大厅。新的受影响检查、普通自动路径性能对照及公共 / 私有 / mutations 在 `validation-automatic-final/` 串行执行，期间停止游戏操作与实机捕获。
+
+## 补修受影响检查与性能对照（2026-10-11 02:19）
+
+- 受影响 10 套件共 129 个实际方法全部 passed，errors / failures / skips 为 0，实际 native exit 0；unittest 47.749 s，进程 48.985 s。`validation-automatic-final/affected.run.json` 和原日志绑定 313 文件冻结，前后零漂移；run report SHA-256 `b534fd052379eb2d1d71d24e4123bea125d26fea207cb478ea1b7d2c51acafbd`。
+- 普通自动路径串行对照使用 `trigger-auto-review/benchmark_ordinary_auto_capture.py`，旧 56369c8 内存加载与当前工作树各 8 次空闲 / 自动截图忙单次 / 自动截图忙六连点。两版本空闲各 8/8；旧版两个忙场景各 0/8 执行，新版各 8/8，且每次一份 fresh manual capture / 一次真实 ConditionReader，巨人腰带 1007 与预先批准 oracle 一致，已选资源均为 0。
+- 两版本实际 native exit 0，进程 21.552 / 11.966 s；250 ms 受控阻塞后，新版按钮到捕获中位数 250.972 / 250.001 ms、到 reader 结束 411.077 / 420.606 ms，P95 437.508 / 435.942 ms，GUI 心跳间隔 P95 约 11.7 ms。旧版没有执行的请求不能比较读取耗时；固定原图 / 控制窗口和 HTTP、排除引擎预热，不能推断现场截图 / 网络耗时、游戏 FPS 或物理按键。
+- 对照 Mock 调用历史保留图片副本，工作集阶梯增长不能作为生产泄漏证据。baseline / final 原报告 SHA-256 为 `7ea11426507511f6b7e158ba1848876b6ecb3ba271ce7ee4be05bfa157af50fe` / `d94136674923c63435f04c41648a28236a789d201f8c494628532905333a39b1`。后续公共 / 私有 / mutations 仍在严格串行执行，尚不计最终统一通过。
+## 补修公共验证（2026-10-11 02:25 起追加）
+
+- 公共命令 `work/p0-runtime/Scripts/python.exe -X utf8 tools/validate_data.py --release-gate --regression-base-ref c2f1b2b18373c7a0077181abff4b0503a5582d8c --report work/live-match-20261011-r1/validation-automatic-final/public.json`，实际 native exit 0，471.062 s。816 实际方法全部 passed，35 新增方法逐项执行；errors / failures / skips 为 0，313 文件零漂移，旧 16 调度方法 AST 保留。REG 25 / 226 / 25、356 显示检查和历史保护全通过，source_gaps 为空。
+- public report / log SHA-256 分别为 `6879cf2dafedcde157f3c454396021f237a0b79be1a6fcb3fa6cf4948a491304` / `351554cdae7b130ecdacf5d722320e1041c131b445fb38c2d031ea08e02e64cd`。7 私有扩展明确 not_run；31 批准图仅 schema 检查 / 31 not_run，不能计为原图回放。私有统一入口及 mutations 紧接其后串行执行。
+- 纯说明 `docs/testing/regression-accumulation.md` 同步当前 31 批准数量、第 31 拥抱 I 记录及第三局 BF1001 真正现场证据链接；明确 BF 尚未单列自动回放基线，保留硬件限制。独立核对全部 4 个本地链接存在、旧 30 entries 完整相同、e9 失败与 75ef 重试审计支持文义，`git diff --check` exit 0。文档 SHA-256 `6a54d0bac3ce9c57796f00e81f180409dd9ced59b32ecd273b1461d7777f6070`，不属于运行冻结范围，不因此重跑或改变原图/源码。
+## 补修最终统一验证（2026-10-11 02:34）
+
+- 私有命令 `work/p0-runtime/Scripts/python.exe -X utf8 tools/validate_data.py --include-private --release-gate --regression-base-ref c2f1b2b18373c7a0077181abff4b0503a5582d8c --report work/live-match-20261011-r1/validation-automatic-final/with-private.json`，actual native exit 0，486.138 s；839 实际方法全部 passed、35 新增方法全部执行，errors / failures / skips 均 0。7 私有套件 23 方法实际 passed；31 批准文件 verified、31 身份回放 passed，total36 / pending5，待核项不计通过。
+- 私有报告 / 日志 SHA-256 `ed19ceaae71db7b348b35428f94008b3b296c582fa69dd1b8964ddfaff0e608a` / `372e2d7fba39b0d725c9acf80e02d779aac21d743aea9c61a71edcdf925dab02`。REG 25 / 226 / 25、356 显示检查全部通过，source_gaps 为空，313 文件再次零漂移。
+- 故障注入命令 `work/p0-runtime/Scripts/python.exe -X utf8 tools/check_data_mutations.py --report work/live-match-20261011-r1/validation-automatic-final/mutations.json`，actual native exit 0，3.279 s；8 项逐项 caught、0 escaped，报告 SHA-256 `b25db0a17de94b7dfb35450df55b250d697716c478c105847e4775dd6339361b`。
+- `validation-automatic-final/final-summary.json` SHA-256 `3508f0d8b00f28360637200bf368cc2afa438cfd0290da19b22a1db3203f9d2c`，19 项断言全 true：受影响 / 两份对照 / 公共 / 私有 / mutations 六阶段严格串行，源冻结313项零漂移、新35方法全部实际执行、旧16 AST不变、旧25主题181引用25夹具及30原图哈希完整保留。受测 tracked diff SHA-256 `ea4c9b0bc4377794fd63dff046996abf2472cbc16a5b18472bf40769647133a1`；报告 head563加已测dirty diff，起始比较仍是c2f，尚不冒称干净clone或第四局证明。
+- 本轮补修上库仅7明确文件：app / condition_controller / test_condition_trigger_priority、regressions、主设计、regression-accumulation说明、此验收记录；不暂存其他人的流程 / 打包 / 索引改动。新的源码SHA、远端CI与重启游戏证据将在后续追加。

@@ -883,7 +883,9 @@ class Companion(QWidget):
             else:self.rank_capture_started=None
         def failed(message):
             self.capture_pending=False
+            self.rank_capture_started=None
             if self.session.accepts(token):self.capture_failed(message)
+            self.conditions.resume_pending()
         def begin():
             def capture():
                 result=capture_image(binding)
@@ -937,11 +939,13 @@ class Companion(QWidget):
         def done(prepared):
             self.capture_pending=False
             self.rank_capture_started=None
+            if self.conditions.resume_pending():return
             if self.session.accepts(token):self.accept_frame(result,once,prepared,captured_at)
         def failed(message):
             self.capture_pending=False
             self.rank_capture_started=None
             if self.session.accepts(token):self.capture_failed(message)
+            self.conditions.resume_pending()
         self.submit(self.capture_pool,inspect,done,failed)
 
     def accept_frame(self,result,once,prepared,captured_at):
@@ -1371,6 +1375,8 @@ class Companion(QWidget):
             if not self.automatic.isChecked():self.invalidate()
         geometry=(current.rect,current.dpi)
         if geometry!=self.geometry:self.invalidate();self.geometry=geometry;self.binding=current
+        if self.conditions.pending is not None:
+            if self.conditions.resume_pending() or self.conditions.pending is not None:return
         if self.automatic.isChecked() and not self.offline and time.monotonic()-self.last_stage_probe>=3:self.probe_stage()
         if not self.once_ocr_pending and not self.offline:self.items.tick()
         if self.items.active or self.items.recognizing:return
