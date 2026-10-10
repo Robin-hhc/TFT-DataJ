@@ -19,6 +19,10 @@ class OutputCollision(ValueError):
 
 
 def protected_inputs(registry):
+    if not isinstance(registry, dict):
+        raise ValueError('Registry must be a JSON object')
+    if not isinstance(registry.get('fixtures'), list) or not isinstance(registry.get('regressions'), list):
+        raise ValueError('Registry fixtures and regressions must be lists')
     paths = set()
     for fixture in registry.get('fixtures', []):
         if isinstance(fixture, dict) and isinstance(fixture.get('path'), str):
@@ -100,6 +104,7 @@ def main(argv=None):
     from regression_registry import validate_registry, compare_review_baselines, evaluate_regressions, RecordingResult
     case_archive = args.bug_cases_dir or STATE_DIR / 'bug-cases'
     try:
+        validate_report_path(args.report, STATE_DIR / 'bug-cases')
         validate_report_path(args.report, case_archive)
         protected = {args.regressions.resolve(), REGISTRY.resolve(),
                      (ROOT / 'docs/testing/private-bug-baseline.json').resolve()}
@@ -109,12 +114,18 @@ def main(argv=None):
             raise InvalidCase('report must not overwrite regression registry or approved review baseline')
     except (OSError, InvalidCase) as error:
         parser.error(str(error))
+    protection_ready = False
     try:
-        registry = json.loads(args.regressions.read_text(encoding='utf-8'))
+        # Establish canonical protection before reading any custom input. If
+        # protection cannot be established, diagnostic output stays on stdout.
         current_project = json.loads(REGISTRY.read_text(encoding='utf-8'))
-        if args.report.resolve() in protected_inputs(registry) | protected_inputs(current_project):
+        if args.report.resolve() in protected_inputs(current_project):
             raise OutputCollision('report must not overwrite frozen fixtures or registered evidence')
-        review_path = (ROOT / registry.get('private_review_baseline', 'docs/testing/private-bug-baseline.json')).resolve()
+        registry = json.loads(args.regressions.read_text(encoding='utf-8'))
+        if args.report.resolve() in protected_inputs(registry):
+            raise OutputCollision('report must not overwrite frozen fixtures or registered evidence')
+        protection_ready = True
+        review_path = (ROOT / current_project.get('private_review_baseline', 'docs/testing/private-bug-baseline.json')).resolve()
         if not review_path.is_relative_to(ROOT) or not review_path.is_file():
             raise ValueError('Missing or invalid project private review baseline')
         if args.report.resolve() == review_path:
@@ -139,7 +150,7 @@ def main(argv=None):
         report = {'status': 'failed', 'tests': 0,
                   'regressions': {'status': 'failed', 'phase': 'preflight', 'reason': str(error)}}
         # Collision failures must never overwrite inputs, including custom baseline paths.
-        if not isinstance(error, OutputCollision):
+        if protection_ready and not isinstance(error, OutputCollision):
             write_report(report, args.report, case_archive)
         print('Regression preflight failed:', error)
         return 1

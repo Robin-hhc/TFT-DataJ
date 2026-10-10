@@ -1182,6 +1182,14 @@
         {
           "id": "test_regression_entrypoint.RegressionEntrypointTests.test_alternative_baseline_can_be_used_for_an_explicit_independent_archive",
           "scope": "public"
+        },
+        {
+          "id": "test_regression_entrypoint.RegressionEntrypointTests.test_malformed_custom_registry_cannot_overwrite_canonical_evidence",
+          "scope": "public"
+        },
+        {
+          "id": "test_regression_entrypoint.RegressionEntrypointTests.test_independent_archive_mode_still_protects_default_source_originals",
+          "scope": "public"
         }
       ]
     }

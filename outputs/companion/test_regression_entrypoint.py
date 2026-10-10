@@ -151,6 +151,52 @@ class RegressionEntrypointTests(unittest.TestCase):
         self.assert_preflight_failed(self.invoke(baseline=baseline, cases_dir=STATE_DIR / 'bug-cases'),
                                      'independent archive')
 
+    def mirror_invocation(self, root, arguments):
+        # A disposable ROOT plus bootstrap isolates the real entrypoint's file
+        # writer. No real frozen fixture or private screenshot is ever mutated.
+        script = (
+            'import sys,types; from pathlib import Path; '
+            f'sys.path[:0]=[{str(ROOT / "tools")!r},{str(ROOT / "outputs/companion")!r}]; '
+            'import validate_data; root=Path(sys.argv[1]); '
+            'validate_data.ROOT=root; validate_data.REGISTRY=root/"regressions.json"; '
+            'bootstrap=types.ModuleType("bootstrap"); bootstrap.STATE_DIR=root/"state"; '
+            'sys.modules["bootstrap"]=bootstrap; '
+            'raise SystemExit(validate_data.main(sys.argv[2:]))')
+        return subprocess.run([sys.executable, '-X', 'utf8', '-c', script, str(root), *arguments],
+                              cwd=ROOT, capture_output=True, text=True, encoding='utf-8', timeout=30)
+
+    def test_malformed_custom_registry_cannot_overwrite_canonical_evidence(self):
+        original = self.temp / 'accepted.png'
+        original.write_bytes(b'original independent public evidence')
+        (self.temp / 'regressions.json').write_text(json.dumps({
+            'schema_version': 1, 'regressions': [], 'fixtures': [
+                {'path': original.name, 'format': 'bytes',
+                 'sha256': hashlib.sha256(original.read_bytes()).hexdigest()}]}), encoding='utf-8')
+        for malformed in ('{"fixtures":null,"regressions":[]}', '{broken JSON'):
+            with self.subTest(malformed=malformed):
+                custom = self.temp / 'bad-registry.json'
+                custom.write_text(malformed, encoding='utf-8')
+                before = original.read_bytes()
+                result = self.mirror_invocation(self.temp, ['--regressions', str(custom), '--report', str(original)])
+                self.assertNotEqual(result.returncode, 0, result.stdout + result.stderr)
+                self.assertEqual(original.read_bytes(), before, 'Invalid input must not turn evidence into a report')
+
+    def test_independent_archive_mode_still_protects_default_source_originals(self):
+        source_frame = self.temp / 'state/bug-cases/case-original/frame.png'
+        source_frame.parent.mkdir(parents=True)
+        source_frame.write_bytes(b'original private screenshot')
+        registry = self.temp / 'regressions.json'
+        registry.write_text('{"schema_version":1,"fixtures":[],"regressions":[]}', encoding='utf-8')
+        alternative = self.temp / 'independent.json'
+        alternative.write_text('{"schema_version":1,"cases":[]}', encoding='utf-8')
+        before = source_frame.read_bytes()
+        result = self.mirror_invocation(self.temp, ['--regressions', str(registry), '--report', str(source_frame),
+                                                   '--bug-cases-dir', str(self.temp / 'other-cases'),
+                                                   '--bug-review-baseline', str(alternative)])
+        self.assertNotEqual(result.returncode, 0, result.stdout + result.stderr)
+        self.assertEqual(source_frame.read_bytes(), before)
+        self.assertRegex((result.stdout + result.stderr).lower(), r'report[^\n]*outside[^\n]*archive')
+
 
 if __name__ == '__main__':
     unittest.main()
