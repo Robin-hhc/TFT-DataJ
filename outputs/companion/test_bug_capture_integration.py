@@ -94,6 +94,19 @@ class BugCaptureIntegration(unittest.TestCase):
             self.p.analyze(image,False);self.run_job(self.p.ocr_pool)
         self.assertFalse(any(pool is self.p.bugs.pool for pool,*_ in self.pending))
 
+    def test_animation_with_unknown_round_never_queues_real_archive_writer(self):
+        observation=deepcopy(self.observation)
+        observation.update(scene='choice_unresolved',round=None)
+        for card in observation['cards']:
+            card['resolution']={'status':'unrecognized','readings':['','','']}
+        with patch.object(self.p.vision,'analyze_fast',return_value=observation), \
+             patch('app.tracked_signature',return_value=TextSignature((np.zeros((8,20),dtype=bool),))):
+            self.p.analyze(self.p.last_frame,True)
+            self.run_job(self.p.ocr_pool)
+        self.assertFalse(any(pool is self.p.bugs.pool for pool,*_ in self.pending))
+        self.assertIsNotNone(self.p.unverified_choice_observation)
+        self.assertEqual(self.saved(),[])
+
     def test_actual_query_failure_callback_keeps_original_game_evidence(self):
         self.p.last_observation=self.observation
         self.p.adapter.hexes=lambda comp=None:(_ for _ in ()).throw(RuntimeError('source offline'))

@@ -977,6 +977,7 @@ class Companion(QWidget):
             # The permissive proposal gate is worker-side evidence of exit;
             # it never authorizes an identity or supplies ranking data.
             self.unverified_choice_observation=None
+            self.choice_recheck_required=False
         if self.last_observation:
             if not unchanged(signature,self.signature):
                 # Keep a manual request armed when it actually discovers new cards.
@@ -1008,6 +1009,7 @@ class Companion(QWidget):
             self.last_frame=image
         if self.items.ingest(image,binding,force=once or self.once_ocr_pending,prepared=items,frame_time=captured_at):
             self.unverified_choice_observation=None
+            self.choice_recheck_required=False
             self.once_ocr_pending=False
             return
         if self.unverified_choice_observation:
@@ -1054,12 +1056,13 @@ class Companion(QWidget):
             # Keep only ROI coordinates; old identities, statistics and full
             # frames are discarded. Every context reset clears this gate.
             if (observation.get('scene') in ('choice_candidates','choice_unresolved')
-                and observation.get('round') in STAGES and len(observation.get('cards',[]))==3):
+                and len(observation.get('cards',[]))==3):
                 regions={key:observation.get(key)
                          for key in ('round_box','header_box','layout_method')}
                 regions['cards']=[{key:card[key] for key in ('box','description_box') if key in card}
                                   for card in observation['cards']]
                 self.unverified_choice_observation=deepcopy(regions)
+                self.choice_recheck_required=True
             # Unverifiable pixels cannot renew a manual request's deadline.
             self.once_deadline=deadline
             if not self.offline:record('ocr_verification_pending',reason='unreliable_signature')
@@ -1080,7 +1083,7 @@ class Companion(QWidget):
                 if not self.offline:record('ocr_partial_retained')
                 self.display_overlays();return
             if (live and obs.get('scene') in ('choice_candidates','choice_unresolved')
-                and obs.get('round') in STAGES and len(obs.get('cards',[]))==3
+                and len(obs.get('cards',[]))==3
                 and not unchanged(signature,signature)):
                 # Never publish a frame the next capture cannot verify. Actual
                 # legible beige titles pass the contrast-based stroke extractor.
@@ -1095,7 +1098,10 @@ class Companion(QWidget):
             if not self.session.accepts(token):self.ocr_busy=False;return
             self.next_ocr_allowed=time.monotonic()+1.5
             latest=self.last_frame
-            if live and obs.get('scene')=='choice_candidates' and latest is not image:
+            verify_choice=(obs.get('scene')=='choice_candidates' or
+                           (obs.get('scene')=='choice_unresolved' and obs.get('round') in STAGES
+                            and len(obs.get('cards',[]))==3))
+            if live and verify_choice and latest is not image:
                 def check_latest(frame,remaining=2):
                     def checked(current):
                         if not self.session.accepts(token):self.ocr_busy=False;return
@@ -1117,7 +1123,7 @@ class Companion(QWidget):
                         finish(obs,current)
                     self.submit(self.capture_pool,lambda:tracked_signature(frame,obs) if frame else None,checked,failed)
                 check_latest(latest)
-            elif (live and self.choice_recheck_required and obs.get('scene')=='choice_candidates'
+            elif (live and self.choice_recheck_required and obs.get('scene') in ('choice_candidates','choice_unresolved')
                   and obs.get('round') in STAGES and unchanged(signature,signature)):
                 self.ocr_busy=False
                 self.pending_choice_confirmation=(image,obs,signature,finish)
