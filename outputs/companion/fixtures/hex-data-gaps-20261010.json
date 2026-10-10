@@ -1,0 +1,239 @@
+{
+  "schema_version": 1,
+  "source_manifest": {
+    "checked_at": "2026-10-10T11:59:40.174593+00:00",
+    "set_id": 18,
+    "patch": "18.3",
+    "catalog": {
+      "url": "https://www.dataj.cc/api/web/gamedata?setId=18",
+      "sha256": "137ce15181d46bd22a6f5711c48be15c44094049ee1cbcdedefc9fef983aaca0"
+    },
+    "statistics": {
+      "url": "https://www.dataj.cc/api/web/stats/hex?setId=18&gameVersion=18.3",
+      "sha256": "40a5c86e7936dcf123accff9af32b726fcf02466f85c78c886478b4e960ddcc7"
+    },
+    "note": "Hashes bind saved UTF-8 JSON snapshots; responses were parsed and serialized, not raw HTTP body bytes."
+  },
+  "catalog_response_hex_count": 263,
+  "statistics_response_hex_count": 225,
+  "scope": "Exact five catalog rows and two statistics rows from the complete saved responses. Full-table review found no statistics rows for 20764, 20763 or 3705. Names never authorize using another ID. Catalog 20764 and 30764 are both level 2 but differ in the granted hero; 2705 and 3705 are level 2 and level 3. No player screenshots or personal context are included.",
+  "oracle": {
+    "basis": "Reviewed source catalog descriptions and explicit roundStats values, independently recorded before calling production projection, resolution or rendering.",
+    "missing_global_ids": [
+      "20764",
+      "20763",
+      "3705"
+    ],
+    "title_ambiguities": [
+      {
+        "name": "兽性本能",
+        "ids": [
+          "20764",
+          "30764"
+        ]
+      },
+      {
+        "name": "成吨的属性！",
+        "ids": [
+          "2705",
+          "3705"
+        ]
+      }
+    ],
+    "resolutions": [
+      {
+        "id": "20764",
+        "name": "兽性本能",
+        "description": "立刻获得1个【蔚】，在3个回合后，获得1个【奈德丽】。"
+      },
+      {
+        "id": "30764",
+        "name": "兽性本能",
+        "description": "立刻获得1个【蔚】，在3个回合后，获得1个【希维尔】。"
+      },
+      {
+        "id": "20763",
+        "name": "巨化术"
+      },
+      {
+        "id": "2705",
+        "name": "成吨的属性！",
+        "description": "你的弈子们获得44生命值、4%物理加成、4%法术加成、4护甲、4魔抗、4%攻击速度和4法力值。"
+      },
+      {
+        "id": "3705",
+        "name": "成吨的属性！",
+        "description": "你的弈子们获得88生命值、8%物理加成、8%法术加成、8护甲、8魔抗、8%攻击速度和8法力值。"
+      }
+    ],
+    "available_stages": [
+      {
+        "id": "2705",
+        "stage": "3-2",
+        "avg_placement": 4.47,
+        "sample_count": 1424,
+        "global_text": "4.47 · 1424局"
+      },
+      {
+        "id": "2705",
+        "stage": "4-2",
+        "avg_placement": 4.32,
+        "sample_count": 2445,
+        "global_text": "4.32 · 2445局"
+      },
+      {
+        "id": "30764",
+        "stage": "3-2",
+        "avg_placement": 4.79,
+        "sample_count": 2021,
+        "global_text": "4.79 · 2021局"
+      }
+    ],
+    "missing_stages": [
+      {
+        "id": "2705",
+        "stage": "2-1"
+      },
+      {
+        "id": "30764",
+        "stage": "2-1"
+      },
+      {
+        "id": "30764",
+        "stage": "4-2"
+      }
+    ]
+  },
+  "catalog": [
+    {
+      "id": "2705",
+      "name": "成吨的属性！",
+      "descText": "你的弈子们获得44生命值、4%物理加成、4%法术加成、4护甲、4魔抗、4%攻击速度和4法力值。",
+      "icon": "https://img.dataj.cc/images/hex/tonsofstats2.png",
+      "level": 2,
+      "isLegend": 0,
+      "heroEnhancementType": 0,
+      "fetterId": null,
+      "fetterType": "0",
+      "setId": "18",
+      "season": "S19",
+      "version": "18.18.1"
+    },
+    {
+      "id": "3705",
+      "name": "成吨的属性！",
+      "descText": "你的弈子们获得88生命值、8%物理加成、8%法术加成、8护甲、8魔抗、8%攻击速度和8法力值。",
+      "icon": "https://img.dataj.cc/images/hex/tonsofstats3.png",
+      "level": 3,
+      "isLegend": 0,
+      "heroEnhancementType": 0,
+      "fetterId": null,
+      "fetterType": "0",
+      "setId": "18",
+      "season": "S19",
+      "version": "18.18.1"
+    },
+    {
+      "id": "20763",
+      "name": "巨化术",
+      "descText": "【花仙子】弈子的【皮克斯仙灵】体型变大，并提供50%额外物理加成和法术加成。【花仙子】弈子们立刻获得10%物理加成和法术加成。获得1个【霞】和1个【洛】。",
+      "icon": "https://img.dataj.cc/images/hex/faeaugment2.png",
+      "level": 2,
+      "isLegend": 0,
+      "heroEnhancementType": 0,
+      "fetterId": null,
+      "fetterType": "0",
+      "setId": "18",
+      "season": "S19",
+      "version": "18.18.1"
+    },
+    {
+      "id": "20764",
+      "name": "兽性本能",
+      "descText": "【野兽之灵】额外提供一种【兽灵赐福】。立刻获得1个【蔚】，在3个回合后，获得1个【奈德丽】。  灵龟：每4秒，你的队伍治疗其4最大生命值。蛮熊：【野兽之灵】的伤害会处决生命值低于12的敌人。猛虎：在6秒后，【野兽之灵】弈子们获得35攻击速度，你的队伍获得15攻击速度。凤凰：【野兽之灵】每参与15次击杀，获得1件基础装备。至多获得4件。  参与击杀数：0",
+      "icon": "https://img.dataj.cc/images/hex/primalaugment2.png",
+      "level": 2,
+      "isLegend": 0,
+      "heroEnhancementType": 0,
+      "fetterId": null,
+      "fetterType": "0",
+      "setId": "18",
+      "season": "S19",
+      "version": "18.18.1b"
+    },
+    {
+      "id": "30764",
+      "name": "兽性本能",
+      "descText": "【野兽之灵】额外提供一种【兽灵赐福】。立刻获得1个【蔚】，在3个回合后，获得1个【希维尔】。  灵龟：每4秒，你的队伍治疗其4最大生命值。蛮熊：【野兽之灵】的伤害会处决生命值低于12的敌人。猛虎：在6秒后，【野兽之灵】弈子们获得35攻击速度，你的队伍获得15攻击速度。凤凰：【野兽之灵】每参与15次击杀，获得1件基础装备。至多获得4件。  参与击杀数：0",
+      "icon": "https://img.dataj.cc/images/hex/primalaugment2.png",
+      "level": 2,
+      "isLegend": 0,
+      "heroEnhancementType": 0,
+      "fetterId": null,
+      "fetterType": "0",
+      "setId": "18",
+      "season": "S19",
+      "version": "18.18.1b"
+    }
+  ],
+  "statistics": [
+    {
+      "hexId": 2705,
+      "name": "成吨的属性！",
+      "icon": "https://game.gtimg.cn/images/lol/act/jkzlk/gamedata/hex/tonsofstats2.png",
+      "sampleCount": 3885,
+      "playRate": 0.1,
+      "avgPlacement": 4.37,
+      "top4Rate": 52.56,
+      "topRate": 12.69,
+      "rounds": [
+        "3-2",
+        "4-2"
+      ],
+      "roundStats": [
+        {
+          "round": 1,
+          "roundLabel": "3-2",
+          "sampleCount": 1424,
+          "playRate": 0.04,
+          "avgPlacement": 4.47,
+          "top4Rate": 51.19,
+          "topRate": 11.94
+        },
+        {
+          "round": 2,
+          "roundLabel": "4-2",
+          "sampleCount": 2445,
+          "playRate": 0.06,
+          "avgPlacement": 4.32,
+          "top4Rate": 53.29,
+          "topRate": 13.13
+        }
+      ]
+    },
+    {
+      "hexId": 30764,
+      "name": "兽性本能",
+      "icon": "https://game.gtimg.cn/images/lol/act/jkzlk/gamedata/hex/primalaugment2.png",
+      "sampleCount": 2042,
+      "playRate": 0.05,
+      "avgPlacement": 4.79,
+      "top4Rate": 43.88,
+      "topRate": 10.48,
+      "rounds": [
+        "3-2"
+      ],
+      "roundStats": [
+        {
+          "round": 1,
+          "roundLabel": "3-2",
+          "sampleCount": 2021,
+          "playRate": 0.05,
+          "avgPlacement": 4.79,
+          "top4Rate": 43.74,
+          "topRate": 10.49
+        }
+      ]
+    }
+  ]
+}

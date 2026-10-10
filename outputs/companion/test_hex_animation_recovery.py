@@ -195,6 +195,33 @@ class HexAnimationRecovery(unittest.TestCase):
             query.assert_not_called()
             report.assert_called_once()
 
+    def test_recovered_unknown_round_requires_independent_frame_and_no_rankings(self):
+        observation = self.observation()
+        observation.update(scene='choice_unresolved', round=None)
+        for card in observation['cards']:
+            card['resolution'] = {'status': 'unrecognized', 'readings': ['来源缺名'] * 3}
+        self.p.invalidate()
+        self.p.last_frame = self.frame
+        self.p.analyze(self.frame, True)
+        _, done, _ = self.jobs.pop()
+        done((observation, TextSignature((np.zeros((8, 20), dtype=bool),))))
+        self.clock += .5
+        recovery_frame = self.frame.copy()
+        with patch.object(self.p, 'query_stats') as query, \
+             patch.object(self.p.bugs, 'observed_hex') as report:
+            self.accept(recovery_frame, self.changed)
+            _, recovered, _ = self.jobs.pop()
+            recovered((observation, self.changed))
+            report.assert_not_called()
+            query.assert_not_called()
+            self.assertIsNotNone(self.p.pending_choice_confirmation)
+            self.clock += .5
+            self.accept(recovery_frame.copy(), self.changed)
+            report.assert_called_once()
+            query.assert_not_called()
+        self.assertIsNone(self.p.stats_payload)
+        self.assertIsNone(self.p.unverified_choice_observation)
+
     def test_stable_catalog_miss_is_reported_after_frame_confirmation(self):
         observation = self.observation()
         observation['cards'][0]['raw_text'] = '白银命运'

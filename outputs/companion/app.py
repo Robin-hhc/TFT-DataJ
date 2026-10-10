@@ -1099,7 +1099,7 @@ class Companion(QWidget):
             self.next_ocr_allowed=time.monotonic()+1.5
             latest=self.last_frame
             verify_choice=(obs.get('scene')=='choice_candidates' or
-                           (obs.get('scene')=='choice_unresolved' and obs.get('round') in STAGES
+                           (obs.get('scene')=='choice_unresolved'
                             and len(obs.get('cards',[]))==3))
             if live and verify_choice and latest is not image:
                 def check_latest(frame,remaining=2):
@@ -1124,7 +1124,7 @@ class Companion(QWidget):
                     self.submit(self.capture_pool,lambda:tracked_signature(frame,obs) if frame else None,checked,failed)
                 check_latest(latest)
             elif (live and self.choice_recheck_required and obs.get('scene') in ('choice_candidates','choice_unresolved')
-                  and obs.get('round') in STAGES and unchanged(signature,signature)):
+                  and len(obs.get('cards',[]))==3 and unchanged(signature,signature)):
                 self.ocr_busy=False
                 self.pending_choice_confirmation=(image,obs,signature,finish)
                 if not self.offline:record('ocr_verification_pending',reason='awaiting_next_capture')
