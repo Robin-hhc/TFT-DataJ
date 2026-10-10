@@ -1,6 +1,6 @@
 # 2026-10-11：匹配模式与截图取条件现场复验
 
-截至 02:34，普通自动截图 / OCR 请求补修已完成独立审阅及新的完整验证：公共 816 / 私有 839、31 批准原图、8 数据故障注入全部通过，313 文件零漂移。准备推送并启动新进程进行第四局实测；以下保留各阶段的原始结论，第三局现场证据仍只绑定旧源码 56369c8。
+截至 03:08，修复源码 `7c8a7db1b941f16cc9237048df71eef4ad3d92a0` 已推送 main，确切 SHA 的 CI 及产物审计通过；本机公共 816 / 私有 839、31 批准原图、8 数据故障注入全部通过。重启后第四局完成暴风之剑真实原图 → 条件 → 新 HTTP → 实际 Qt 卡片验证，以及 2-1 三个海克斯的来源统计核对；工具与遮挡英雄负例没有生成错误身份。游戏已回大厅，诊断实例正常退出，普通最新源码助手另行启动。以下保留各阶段原始结论；现场自动忙时入口、无遮挡英雄详情正例、物理侧键、游戏 FPS 和打包 EXE 不在已完成实测范围。
 
 ## 目标与范围
 
@@ -137,3 +137,41 @@
 - 故障注入命令 `work/p0-runtime/Scripts/python.exe -X utf8 tools/check_data_mutations.py --report work/live-match-20261011-r1/validation-automatic-final/mutations.json`，actual native exit 0，3.279 s；8 项逐项 caught、0 escaped，报告 SHA-256 `b25db0a17de94b7dfb35450df55b250d697716c478c105847e4775dd6339361b`。
 - `validation-automatic-final/final-summary.json` SHA-256 `3508f0d8b00f28360637200bf368cc2afa438cfd0290da19b22a1db3203f9d2c`，19 项断言全 true：受影响 / 两份对照 / 公共 / 私有 / mutations 六阶段严格串行，源冻结313项零漂移、新35方法全部实际执行、旧16 AST不变、旧25主题181引用25夹具及30原图哈希完整保留。受测 tracked diff SHA-256 `ea4c9b0bc4377794fd63dff046996abf2472cbc16a5b18472bf40769647133a1`；报告 head563加已测dirty diff，起始比较仍是c2f，尚不冒称干净clone或第四局证明。
 - 本轮补修上库仅7明确文件：app / condition_controller / test_condition_trigger_priority、regressions、主设计、regression-accumulation说明、此验收记录；不暂存其他人的流程 / 打包 / 索引改动。新的源码SHA、远端CI与重启游戏证据将在后续追加。
+## 补修上库与第四局启动（2026-10-11 02:35）
+
+- `git diff --check`、明确7文件暂存、`git diff --cached --check` 均 exit 0。`audit_followup_stage.py` 读取已测 final-summary、313原文件、5文件独立审阅哈希、说明文档哈希和每个 staged blob，全部匹配；`staged-followup-audit.json` 保存核对，cached diff SHA-256 `3cf8041d2945a45363bd6705d41cd78648373cac75c7e7997006931308e52810`。其余 dirty / untracked 原样保留。
+- 新源码提交 `7c8a7db1b941f16cc9237048df71eef4ad3d92a0`（`fix: prioritize condition requests during automatic capture`）；`git push origin 7c8a7db1b941f16cc9237048df71eef4ad3d92a0:refs/heads/main` exit 0，`git ls-remote origin refs/heads/main` 核对一致。确切SHA [CI 38076320272](https://github.com/Robin-hhc/TFT-DataJ/actions/runs/38076320272) 正在执行，实际parent为56369c8，最终artifact审计另补。
+- 共享旧QA requests35全部有response、无未处理旧命令；`DATAJ_QA_SOURCE_ROOT` 未设置，正常 `work/p0-runtime/Scripts/python.exe -X utf8 work/live-match-20261011-r1/qa_runner.py --start-collapsed` 新日志 `runner-session-5.log`。新PID119160 / run `858af066e02b4ccce6025b269ef88468`，166 runtime Python文件与新最终冻结逐字节一致、scoped源码empty，见 `post-followup-runtime-identity.json`；此前563进程已退出，不复用它的现场结论。
+- 新启动snapshot `bd119da7f7c04b378093191b5ac05800`：18.3/set18/259hex157equip86hero90trait，scopeNone、selected空、min50/avg/search空/jobs0。独立freeze-inputs `post-followup-independent/catalog-default-input-freeze.json` SHA-256 `0ef36bbd8386ed256c62b4fe12336b3be855a6f1fb1df765f50a3756407b6dc9`；全局初始38行不被用作详情身份或排名oracle。
+- 新画面0097证明已在大厅，0099–0103正常进入“自然之力-标准匹配”房间；18:36:03正常开始排队，并通过正常resume_detection/return_to_game槽开启automatic true、回到MuMu。未停止其他程序，未发布或覆盖EXE资产；第四局实际原图与后续链路仍待追加。
+
+## 补修源码 CI 完结（2026-10-11 02:41 起）
+
+- [CI 38076320272](https://github.com/Robin-hhc/TFT-DataJ/actions/runs/38076320272) 已 completed / success，`headSha` 精确等于 `7c8a7db1b941f16cc9237048df71eef4ad3d92a0`。新的运行元数据、原始产物及独立审计保存在 `work/live-match-20261011-r1/ci-source-7c8a7db/`；未覆盖以前产物。
+- 独立 `ci-audit.json` 23 项断言全 true：源码同 SHA、clean clone、实际 parent / compared_base 为 56369c8；公共 816 方法、相对开工新增 35 方法及本次补修 11 方法全部实际 passed，0 errors / failures / skips；旧 24 方法 AST 保留。REG 25 / 226 / 25、356 显示检查、8 mutations 全 passed / caught，source_gaps 为空；相对 56369c8 和开工 c2f 的旧 ID / scope / fixtures / 私有哈希保护完整。
+- CI 的 7 私有套件明确 not_run，31 图是 schema-only / 31 not_run；原图回放结论来自本机私有报告，不能归功于公共 CI。audit / offline / mutations 的 SHA-256 分别为 `f323f301146e441aee53b53b7ee31bbdc24d5ebce4e48f53ec72ac4c7e853a9d` / `511f84aae7db5fbd0a91bfd6569c33b9869ad58bcb6459c3571a7954648104f2` / `610abb365693b18a60411bc351c2acb80c7128fc0f44aae33d9db0deceb5e203`。
+
+## 第四局：新源码真实装备详情全链（2026-10-11 02:56 起）
+
+- 此局始终绑定上述新 PID119160 / run858af066e02b4ccce6025b269ef88468 / 源码7c8a7db。普通游戏操作打开基础装备选择、选择暴风之剑，再点左侧装备槽；18:56:23.195 UTC 的生产 MSS 原图 `3d981b7a5ff6f9a23a6d67fd12c42da0` 主标题“暴风之剑”清晰，独立核图和预先冻结的新目录先给出 equip1001 / 基础装备 / 单详情预期，未使用推荐栏或 OCR 生成身份。identity oracle SHA-256 `959e4fc3b85444167a604cdefe1f2372c231b967f04a0143a701a37eec399968`。
+- 正常取条件 request `509be943567a4427bb5779983429c226` → 实际 reader resolved / condition_detail → query `2181b42f584bebbf06668207a8d38fb8` → 新 HTTP `b9733a866bcb66ca5c6c13fa5509ef64`，HTTP201 / JSON code200 / success true / cached=false。请求版本18.3、set18、type equip、targetId1001、targetName暴风之剑、单条件开启 / and；starCount、hexRound、equipCarry、equipCount 全空，nameMatch / exclude 均 false，已选本局资源始终空。请求241 bytes / 响应176258 bytes，SHA-256 `29a18eeaec58ab0997013d026ce8aad8d585933a3adbcc8b6bddf5aaf231d7fc` / `9df21c4147d1b43fafefab841443553c588456c7176879c538d82e3ea71f639c`。响应字节恰与第三局相同，但本次有独立的新 run、query 和 HTTP；没有借旧观察值证明新进程执行。
+- 在检查实际 Qt 之前，独立从新响应38行按样本 >=50 保留21 / 排除17，再稳定均排升序；首8 ID 120 / 87 / 104 / 113 / 116 / 99 / 114 / 100，均排3.89 / 3.96 / 3.98 / 4.24 / 4.25 / 4.26 / 4.27 / 4.41，出场率0.02 / 0.03 / 0.04 / 0.01 / 0.05 / 0.17 / 0.01 / 0.01，不乘100。source projection SHA-256 `6534013bc44ae9ec3718e67cbc86d9b1226e3cc2eb4556114bf4131a9021faf6`。
+- 正常 show_panel 后实际快照 `905732b95f9748fba42636bf81416020`（18:57:03.291 UTC）jobs0 / flags全false / equip1001 / selected空 / min50 / avg / 搜索空；8 个真实 Qt 卡片的名称、顺序、均排、出场率、样本量文字全部符合独立源投影。实际面板截图独立查看，viewport 只有首两卡完整和第三卡上部；没有声称同屏能见全部8卡。
+- `post-followup-independent/3d981b7a5ff6f9a23a6d67fd12c42da0-positive-joined-audit.json` SHA-256 `f2a963d058ecae9f1097129fdfe123740c882fdf41139b8a2f84226f6c329330`，入口 / 视觉补审 `3d981b7a5ff6f9a23a6d67fd12c42da0-entry-and-visual-audit.json` SHA-256 `6188a2a9049c42f1e9aa901c2dbfad2e0fb5958088bbdfaee87a137e75f992b4`，独立助手均 actual exit0。入口时 automatic 已开启，但全部 busy flags 为 false / jobs0；随后 capture_pending 是本次手动捕获，故这张正例不证明现场自动任务忙时的接纳。忙路径已有永久 Qt 回归与受控性能对照，现场同场景仍未覆盖。
+
+## 第四局：2-1 选项统计和拒识边界（2026-10-11 02:41 起）
+
+- 生产 MSS `2a8a1871ccbd244e4338b05b21a58ec3`（18:41:22.635 UTC）先独立核图：2-1 左“利落保镖”20616 / 中“独自升级”20496 / 右“救赎盔甲”20575，冻结目录中名称及描述唯一。实际 ConditionReader 互斥路由 augment_choice → augment_stats；这层不负责输出三个身份。被动接受的游戏整帧 `4da4486895b6e7379d3a2d3fb5babafd` 解码 RGB 与上述 MSS 逐字节一致，实际 hex 观察、Session stage2-1、3 IDs 和3个真实 Qt 浮卡一致。
+- 新进程启动时18:34:39.295 UTC 获取的 SQLite 原始 `/stats/hex` 响应，在 gameVersion18.3 / set18 的 roundStats[0] 投影出20616=均排4.53 / 样本2647、20496=4.16 / 2909、20575=4.75 / 1571；3个实际浮卡字段匹配并分别核图。身份 oracle 在观察前冻结；统计投影在看到被动数值后独立从原始响应计算，未从观察值生成答案，不声称统计预期早于观察冻结。旧 stats 路径没有逐调用 HTTP observer，只能证明本次启动缓存原始来源一致，不能宣称此选项另有新 HTTP。
+- 选项显示时快照尚有 once_ocr_pending；18:41:30.5 UTC 退出选择场景后浮卡正常隐藏，后续快照 `27643ac4675644439250c47db20552b7` 已 jobs0 / flags全false / choices空。未证明确认了某个物理选项，也没有把它加入已选本局资源。正式 `2a8a1871ccbd244e4338b05b21a58ec3-joined-audit.json` SHA-256 `c00dfca936358db322f78fb6471b6a8a32a85e5a25ec1fd64aecccf9c9681255`，独立 helper actual exit0。
+- 基础装备锻造器原图 `16986cb5448ec2a92bb265d144354e5c` 是工具，没有可发布的装备 / 英雄详情身份；独立核图后 actual reader 为 unknown / none / 无entity，条件和已选不变、无新增详情查询。即时快照尚有1job；后续既有 settled 快照用于状态保持证明，不能当作即时完成。正式负例审计 `16986cb5448ec2a92bb265d144354e5c-joined-negative-audit.json` SHA-256 `eb0701fa3988e7be4c467c2b4c20112546852b187fb7fdfac869a3035331bfc8`。
+- 右侧英雄详情原图 `9567e15a04afc21d393b7b6b7e2a6330`（18:47:02.376 UTC）的英雄主标题 / 头像被 MuMu 宿主推荐栏覆盖，只见属性和技能。独立预期不借技能、推荐英雄或商店猜身份；实际 reader unknown / none / 无entity，真实 Qt 显示“未读到详情”，jobs0 / flags全false，原条件、已选、排名及控件不变，直到下一次 BF 入口前无新增详情查询。正式负例审计 SHA-256 `49584766d6d67f1d47425e21307fc02d732978ff0b68fcc67cbcf5454e70f418`，路径 `post-followup-independent/9567e15a04afc21d393b7b6b7e2a6330-joined-negative-audit.json`，actual exit0。
+- 宿主推荐栏不属于项目自身浮层。Windows Computer Use 刷新 MuMu 绑定后截图仍超时，重取窗口后仅重试一次也超时；停止宿主输入。ADB 原生游戏截图不包含该宿主层，不能用它点击宿主折叠按钮；没有伪造截图 ID 或改 Windows 捕获服务。无遮挡英雄详情正例未完成，应展示主标题后另行验收；不将安全拒识冒称英雄正例通过。
+- BF 现场原图和这些独立审计继续保留本机，未自动加入批准基线。批准数仍31；第四局18:39:32.266 UTC 新增1份 condition_unresolved / pending_review 归档，当前37份 / 31有独立expected / 6 pending；原5份待审未删除。本机最终统一验证当时36 / 31 / 5 的历史记录保持原样，新未批准图不计回放通过。真实匹配证明上述条件、来源和展示链，不能推断所有布局、物理侧键、游戏 FPS、Windows 原生截图已修复或打包 EXE。
+
+## 本轮收尾与普通源码实例（2026-10-11 03:08）
+
+- 第四局是“自然之力-标准匹配”，第8名；正常经过全场最佳、战绩、宝典结果页，未点击分享、付费升级或再开一局。原生画面 `0153-fourth-lobby-confirmed-5fb86fedf2.png`（19:07:17.976 UTC）确认已经回到大厅；MuMu 始终保留运行。
+- 最终只读快照 `15573d6c2160450ea8d0793fc9f9fe90` 仍为 equip1001 / selected空、实际卡片一致，0jobs / flags全false。先独占创建旧退出 `runner-exit-source-56369c8.json` 和本次 `runner-state-source-7c8a7db.json` 副本，再用正常 `qa_call.py --action quit` 发出2872e348016c47da9b1de246aea34e25；19:07:30.766 UTC 原退出记录证明 PID119160 退出，统一 exec 会话92837实际exit0，系统进程已不存在，当前退出原件另外保存 `runner-exit-source-7c8a7db.json`。没有停止其他实例或游戏进程。
+- `freeze_handoff_source.py` actual exit0 再核对7c源码、远端main、166 runtime Python文件与最终受测冻结完全一致，保存 `ordinary-handoff-source.json`。用隐藏窗口 `Start-Process` 正常启动 `work/p0-runtime/Scripts/python.exe -X utf8 outputs/companion/app.py --start-collapsed`，未设置诊断源码 / offscreen 环境；19:07:58 UTC launcher PID109348，实际 Python 应用 child PID117232，正常命令和父子关系保存 `ordinary-handoff-launch.json` / `ordinary-handoff-process-tree.json`。后续进程仍存活、stdout / stderr 均空，见 `ordinary-handoff-observed.json`。普通入口没有 QA observer 或45分钟诊断期限；启动身份检查单独留档，不作为新的匹配验收。
+- 本次后续上库范围仅此验收文档，引用受测源码7c8a7db及其确切SHA CI。按纯文档流程检查实际命令 / 链接 / diff，无运行代码更改，因此不重复完整负载验证；文档提交推送和对应 CI 元数据 / artifact 保留本轮新目录，避免记录自引用 SHA 的重复提交。既有其他人的流程 / 打包 / 索引工作树改动继续保留。
