@@ -197,6 +197,19 @@ class RegressionEntrypointTests(unittest.TestCase):
         self.assertEqual(source_frame.read_bytes(), before)
         self.assertRegex((result.stdout + result.stderr).lower(), r'report[^\n]*outside[^\n]*archive')
 
+    def test_malformed_evidence_field_cannot_enable_a_destructive_failure_report(self):
+        original = self.temp / 'own-evidence.png'
+        original.write_bytes(b'independent original evidence')
+        canonical = self.temp / 'regressions.json'
+        canonical.write_text('{"schema_version":1,"fixtures":[],"regressions":[]}', encoding='utf-8')
+        custom = self.temp / 'custom.json'
+        custom.write_text(json.dumps({'schema_version': 1, 'fixtures': [],
+                                      'regressions': [{'evidence': original.name}]}), encoding='utf-8')
+        before = original.read_bytes()
+        result = self.mirror_invocation(self.temp, ['--regressions', str(custom), '--report', str(original)])
+        self.assertNotEqual(result.returncode, 0, result.stdout + result.stderr)
+        self.assertEqual(original.read_bytes(), before)
+
 
 if __name__ == '__main__':
     unittest.main()

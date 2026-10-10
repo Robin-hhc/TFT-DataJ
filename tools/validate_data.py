@@ -25,13 +25,16 @@ def protected_inputs(registry):
         raise ValueError('Registry fixtures and regressions must be lists')
     paths = set()
     for fixture in registry.get('fixtures', []):
-        if isinstance(fixture, dict) and isinstance(fixture.get('path'), str):
-            paths.add((ROOT / fixture['path']).resolve())
+        if not isinstance(fixture, dict) or not isinstance(fixture.get('path'), str):
+            raise ValueError('Invalid fixture protection entry')
+        paths.add((ROOT / fixture['path']).resolve())
     for row in registry.get('regressions', []):
-        if isinstance(row, dict):
-            for path in row.get('evidence', []):
-                if isinstance(path, str):
-                    paths.add((ROOT / path).resolve())
+        if not isinstance(row, dict) or not isinstance(row.get('evidence'), list):
+            raise ValueError('Regression evidence must be a list')
+        for path in row['evidence']:
+            if not isinstance(path, str):
+                raise ValueError('Invalid evidence protection path')
+            paths.add((ROOT / path).resolve())
     return paths
 
 
@@ -126,10 +129,10 @@ def main(argv=None):
             raise OutputCollision('report must not overwrite frozen fixtures or registered evidence')
         protection_ready = True
         review_path = (ROOT / current_project.get('private_review_baseline', 'docs/testing/private-bug-baseline.json')).resolve()
-        if not review_path.is_relative_to(ROOT) or not review_path.is_file():
-            raise ValueError('Missing or invalid project private review baseline')
         if args.report.resolve() == review_path:
             raise OutputCollision('report must not overwrite approved review baseline')
+        if not review_path.is_relative_to(ROOT) or not review_path.is_file():
+            raise ValueError('Missing or invalid project private review baseline')
         if args.bug_review_baseline and args.bug_review_baseline.resolve() != review_path:
             if args.bug_cases_dir is None or case_archive.resolve() == (STATE_DIR / 'bug-cases').resolve():
                 raise ValueError('Alternative review baseline requires an explicit independent archive')

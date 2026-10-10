@@ -1190,6 +1190,10 @@
         {
           "id": "test_regression_entrypoint.RegressionEntrypointTests.test_independent_archive_mode_still_protects_default_source_originals",
           "scope": "public"
+        },
+        {
+          "id": "test_regression_entrypoint.RegressionEntrypointTests.test_malformed_evidence_field_cannot_enable_a_destructive_failure_report",
+          "scope": "public"
         }
       ]
     }
