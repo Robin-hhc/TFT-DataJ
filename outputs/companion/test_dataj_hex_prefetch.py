@@ -363,8 +363,8 @@ class HexPrefetchTests(unittest.TestCase):
         self.assertEqual(len(self.calls), 1)
 
     def test_joining_live_future_does_not_consume_an_extra_http_slot(self):
-        started, release, joined = (threading.Event() for _ in range(3))
-        remaining = threading.Barrier(2, timeout=1)
+        started, release, joined, two_live_entered = (threading.Event() for _ in range(4))
+        remaining = threading.Barrier(2, action=two_live_entered.set, timeout=1)
         def response(request):
             identity = json.loads(request.content)['filter']['rules'][0]['targetId']
             if identity == self.ENTITIES[0][0]:
@@ -373,27 +373,41 @@ class HexPrefetchTests(unittest.TestCase):
             else:remaining.wait()
             return self.healthy(request)
         self.handler = response
-        def current():
-            joined.set()
-            return True
         with ThreadPoolExecutor(max_workers=3) as pool:
             first = pool.submit(lambda: list(self.adapter.iter_comp_hex_supplements(
                 '107', '3-2', [self.ENTITIES[0]])))
             try:
                 self.assertTrue(started.wait(1))
-                background = pool.submit(self.adapter.prefetch_comp_hex, '107', '3-2',
-                                         self.ENTITIES[0], current=current)
-                self.assertTrue(joined.wait(1))
-                with self.assertRaises(FutureTimeout):background.result(timeout=.05)
-                two_live = pool.submit(lambda: list(self.adapter.iter_comp_hex_supplements(
-                    '107', '3-2', self.ENTITIES[1:])))
-                self.assertTrue(all(result is not None and error is None
-                                    for _, result, error in two_live.result(timeout=.3)))
+                with self.adapter.lock:
+                    self.assertEqual(len(self.adapter._hex_inflight), 1)
+                    shared = next(iter(self.adapter._hex_inflight.values()))
+                result = shared.result
+                def observed_join(timeout=None):
+                    joined.set()
+                    return result(timeout=timeout)
+                with patch.object(shared, 'result', side_effect=observed_join):
+                    background = pool.submit(self.adapter.prefetch_comp_hex, '107', '3-2',
+                                             self.ENTITIES[0])
+                    self.assertTrue(joined.wait(1))
+                    with self.assertRaises(FutureTimeout):background.result(timeout=.05)
+                    two_live = pool.submit(lambda: list(self.adapter.iter_comp_hex_supplements(
+                        '107', '3-2', self.ENTITIES[1:])))
+                    self.assertTrue(two_live_entered.wait(1),
+                                    'Both independent HTTP requests must arrive while the shared owner is blocked')
+                    self.assertFalse(release.is_set())
+                    self.assertFalse(first.done())
+                    self.assertFalse(background.done())
             finally:
                 release.set()
             self.assertIsNotNone(first.result(timeout=2)[0][1])
             self.assertIsNotNone(background.result(timeout=2))
+            self.assertTrue(all(result is not None and error is None
+                                for _, result, error in two_live.result(timeout=2)))
         self.assertEqual(len(self.calls), 3)
+
+        self.assertEqual({json.loads(request.content)['filter']['rules'][0]['targetId']
+                          for request in self.calls},
+                         {identity for identity, _ in self.ENTITIES})
 
     def test_cooldown_is_shared_but_cached_prefetch_and_live_results_remain_available(self):
         self.adapter.prefetch_hexes()

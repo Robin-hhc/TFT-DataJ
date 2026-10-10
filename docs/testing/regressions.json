@@ -967,7 +967,8 @@
       "history_key": "hex-pin-latency",
       "title": "固定阵容排名加载与预热",
       "coverage": "automated",
-      "verified_scope": "真实Qt/adapter事件屏障，已知rank先显、supplement逐个显、pin立即warm、900s正负table reuse/前后台capacity",
+      "verified_scope": "真实Qt/adapter事件屏障，已知rank先显、supplement逐个显、pin立即warm、900s正负table reuse/前后台capacity；已发live Future的后台join不额外占HTTP槽，两不同live请求在首请求与join仍阻塞时同时进入Mock边界",
+      "coverage_change_note": "2026-10-11：保留test_joining_live_future_does_not_consume_an_extra_http_slot原方法ID，将整批submit到完成0.3秒绝对速度断言改为两个不同请求同时进入Mock边界、首owner与实际shared Future等待均未完成的容量事件断言；原Barrier(2,timeout=1)、返回数据与3次HTTP断言保留，首owner/后台原2秒结果等待保留，two_live结果从释放前0.3秒改为释放后2秒有界核对，增加三次实际请求ID完整断言。bb15 CI只证明原完成等待超时；受控350ms构造/调度延迟在仍空闲2槽时拒绝正确实现，说明速度混入容量契约，不声称自然CI原因已复现。独立源码契约审计与额外占slot坏变体另留验收记录；原bb15方法源码/AST及旧不可变素材保留，HTTP总容量3、生产代码、其它旧方法与原图基线均不更改。",
       "limits": [
         "绝对网络ms无跨硬件SLA；release EXE另外诊断"
       ],
@@ -978,7 +979,8 @@
       "evidence": [
         "docs/testing/hex-full-prewarm-20261009.md",
         "outputs/companion/test_query_architecture.py",
-        "outputs/companion/test_source_budget.py"
+        "outputs/companion/test_source_budget.py",
+        "docs/development-records/2026-10-11-live-match-conditions.md"
       ],
       "tests": [
         {
@@ -999,6 +1001,10 @@
         },
         {
           "id": "test_dataj_hex_prefetch.HexPrefetchTests.test_background_uses_one_slot_while_two_live_options_and_ordinary_query_progress",
+          "scope": "public"
+        },
+        {
+          "id": "test_dataj_hex_prefetch.HexPrefetchTests.test_joining_live_future_does_not_consume_an_extra_http_slot",
           "scope": "public"
         },
         {
