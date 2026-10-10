@@ -234,6 +234,10 @@
         {
           "id": "test_hex_result_publication.HexResultPublicationTests.test_display_projection_cannot_change_refresh_retention_or_overlay_value",
           "scope": "public"
+        },
+        {
+          "id": "test_hex_result_publication.HexResultPublicationTests.test_stale_capture_defers_structured_publication_until_fresh_frame",
+          "scope": "public"
         }
       ]
     },

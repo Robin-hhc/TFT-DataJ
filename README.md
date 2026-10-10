@@ -4,9 +4,9 @@
 
 ## Windows 便携版
 
-[下载v0.2.14便携测试版](https://github.com/Robin-hhc/TFT-DataJ/releases/tag/v0.2.14)：先退出旧助手，完整解压 `TFT-DataJ-0.2.14-windows-x64.zip` 后双击 **TFT-DataJ.exe**，不需要安装Python或OCR环境。保留旁边的 `_internal` 文件夹；可以为EXE创建快捷方式。目标系统为Windows 10/11 x64，最新统计与攻略仍需联网。
+[下载v0.2.15便携测试版](https://github.com/Robin-hhc/TFT-DataJ/releases/tag/v0.2.15)：先退出旧助手，完整解压 `TFT-DataJ-0.2.15-windows-x64.zip` 后双击 **TFT-DataJ.exe**，不需要安装Python或OCR环境。保留旁边的 `_internal` 文件夹；可以为EXE创建快捷方式。目标系统为Windows 10/11 x64，最新统计与攻略仍需联网。
 
-v0.2.14 将海克斯统计事实与显示文案分离，执行前取消过期的排队查询，并在切换统计版本时复用来源并发上限、请求节奏与失败冷却。统计范围及缓存仍按版本隔离。[本版说明](docs/releases/v0.2.14.md)。
+v0.2.15 将海克斯统计事实与显示文案分离，执行前取消过期的排队查询，并在切换统计版本时复用来源并发上限、请求节奏与失败冷却。统计范围及缓存仍按版本隔离。[本版说明](docs/releases/v0.2.15.md)。
 
 v0.2.13修复奥恩装备卡框短暂识别不到时排名消失、在途查询中断的问题；标题和图像尺寸保持一致就保留已确认装备数据，真正换选项仍立即清空旧排名。包含定阵海克斯全量预读和整局缓存。 [发布说明](docs/releases/v0.2.13.md) · [奥恩修复验收](docs/testing/ornn-display-20261009.md)
 

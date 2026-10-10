@@ -1,8 +1,8 @@
 # Windows便携包
 
-[下载v0.2.14便携测试版](https://github.com/Robin-hhc/TFT-DataJ/releases/tag/v0.2.14)。完整解压后双击 `TFT-DataJ.exe`，保留 `_internal`。无需Python、pip或OCR安装，设置与缓存保存到 `%LOCALAPPDATA%\TFT-DataJ`。
+[下载v0.2.15便携测试版](https://github.com/Robin-hhc/TFT-DataJ/releases/tag/v0.2.15)。完整解压后双击 `TFT-DataJ.exe`，保留 `_internal`。无需Python、pip或OCR安装，设置与缓存保存到 `%LOCALAPPDATA%\TFT-DataJ`。
 
-v0.2.14 的源码、CI 与实际 ZIP 验收分别记录在[本版说明](../docs/releases/v0.2.14.md)及发布附件。构建本版使用 `work/p0-runtime/Scripts/python.exe -X utf8 packaging/build_windows.py --version 0.2.14`；下文的 v0.2.10 数字与示例保留为历史记录。
+v0.2.15 的源码、CI 与实际 ZIP 验收分别记录在[本版说明](../docs/releases/v0.2.15.md)及发布附件。构建本版使用 `work/p0-runtime/Scripts/python.exe -X utf8 packaging/build_windows.py --version 0.2.15`；下文的 v0.2.10 数字与示例保留为历史记录。
 
 目标为Windows 10/11 x64。默认用CPU识别，DataJ统计和攻略需要联网；网络失败不会使用其他版本数据。更新时退出旧版、解压新版，用户目录中的设置保留。当前是未签名的便携测试构建，没有安装器、自动更新或Windows ARM原生包。
 

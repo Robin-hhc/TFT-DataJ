@@ -1,4 +1,4 @@
-# 2026-10-10：架构优化与 v0.2.14 交付验收
+# 2026-10-10：架构优化与 v0.2.15 交付验收
 
 ## 目标与范围
 
@@ -6,7 +6,7 @@
 
 起始分支 `main`，起始 SHA `0bb8c13c81b22e05cb8f8a55bdbe051dd95d55ce`，远端 `https://github.com/Robin-hhc/TFT-DataJ.git`。Windows AMD64，Python 3.12.14，使用 `work/p0-runtime/Scripts/python.exe`；运行与构建依赖按仓库锁定版本核对。
 
-改动包括结构化海克斯结果、任务执行前有效性检查、跨版本共享来源预算及其实际 Qt 合同回归；同步[当前架构](../design/当前架构.md)、[版本说明](../releases/v0.2.14.md)和历史索引 REG-002/003/010/017/023。目录整理、归档保护和统一开发流程的其他未提交改动保留，不混入源码交付；发布包另从固定提交的干净 checkout 构建。
+改动包括结构化海克斯结果、任务执行前有效性检查、跨版本共享来源预算及其实际 Qt 合同回归；同步[当前架构](../design/当前架构.md)、[版本说明](../releases/v0.2.15.md)和历史索引 REG-002/003/010/017/023。目录整理、归档保护和统一开发流程的其他未提交改动保留，不混入源码交付；发布包另从固定提交的干净 checkout 构建。
 
 ## 实现与独立证据
 
@@ -45,3 +45,19 @@
 ## 追加验收
 
 后续结果追加在此；保留先前快照、失败证据和未覆盖范围。
+
+### 首次 CI 与候选保留
+
+源码 `494218449565f69ed7686bba5cc8a31ce394c386` 已推送 main、远端 SHA 一致。[CI 38058970801](https://github.com/Robin-hhc/TFT-DataJ/actions/runs/38058970801)为 `failed`：780 public tests 中 779 passed、1 failure，0 error/skip；356 显示通过，数据故障注入因前序失败未执行。唯一失败为 `test_hex_result_publication.HexResultPublicationTests.test_display_projection_cannot_change_refresh_retention_or_overlay_value`，模型 4.23 已正确，但停用 timer 的测试画面超出 1.5 秒门槛，浮层保持旧 pending。原报告保留于 `work/release-0.2.14/ci-source/offline.json`。私有模块和 30 原图在 CI 中明确未执行。
+
+受控时钟在第二次补查完成前推进 2 秒，0.710 秒稳定复现同一失败，日志 `work/data-validation/reproduce-publication-clock-red-20261010.log`。测试绘制前明确提供新鲜帧时间，保留全部数值/保留/文案断言；追加 REG-002 public 方法 `test_hex_result_publication.HexResultPublicationTests.test_stale_capture_defers_structured_publication_until_fresh_frame`。新方法同时验证旧画面禁止绘制、新鲜画面后正确投影。组合 8 项通过；受控延迟 2 项通过。独立内存注入仅移除生产 stale guard，新方法立即拒绝，证据 `work/data-validation/independent-publication-guard-review-20261010.log`。生产源码和 1.5 秒保护未改。
+
+候选 v0.2.14 未建 tag/Release。干净 SHA 的全新构建与独立 EXE 离线、在线通过，但不足以弥补 CI 失败，未公开：ZIP 281142172 bytes，SHA-256 `9a56282d0d3fbf48c547e6d01007ca2ebb9bd3be364811e0197330793434cf47`，3023 文件哈希、356 显示；真实帧观察为 2-1、1023/1479/1006，与既有独立源码 oracle 核对一致；巨人腰带 equip/1007；联网检查仅目录/头像。原 ZIP/校验/报告逐文件 hash 核对后复制到 `dist/archive/candidates/v0.2.14/`，日志/两次报告在 `work/release-0.2.14/`。三个新增模块经实际 PYZ 检查存在。
+
+最终候选改用未占用的 v0.2.15；原文件不覆盖、不重用。测试前置条件修正后重新执行完整含私有入口并等待新提交 CI，再从该提交重新完整构建。
+
+### v0.2.15 最终源码复验
+
+`work/p0-runtime/Scripts/python.exe -X utf8 tools/validate_data.py --include-private --release-gate --regression-base-ref 0bb8c13c81b22e05cb8f8a55bdbe051dd95d55ce --report work/data-validation/architecture-release-v15-final-20261010.json` 退出 0，804 tests，0 failure/error/skip，256.521 秒；356 显示通过，25 历史主题、181 方法引用、25 冻结 fixture 通过；30 approved 哈希和身份回放通过，5 pending 不算通过。受测版本为 `4942184` 加仅测试前置条件、新 stale→fresh 回归与台账的 diff，生产模块与该提交完全一致。报告 SHA-256 `faa029e350b15d473e3997cbfac9e9916633a417e43fe2d0ac4634992d0ffecf`。
+
+`work/p0-runtime/Scripts/python.exe -X utf8 tools/check_data_mutations.py --report work/data-validation/architecture-release-v15-mutations-20261010.json` 8/8 caught，退出 0。性能测量时的生产模块未改变，前述性能结果不重复解释成新版本速度提升。
