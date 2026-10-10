@@ -1,0 +1,1173 @@
+{
+  "schema_version": 1,
+  "private_review_baseline": "docs/testing/private-bug-baseline.json",
+  "fixtures": [
+    {
+      "path": "outputs/companion/fixtures/condition-inventory-glove-20261008.json",
+      "sha256": "860358fd0673e18d633dd17e25a6bfbaa2a1ea5caba13a97be7c36bb1eb883ce",
+      "format": "utf8-lf"
+    },
+    {
+      "path": "outputs/companion/fixtures/condition-inventory-glove-20261008.png",
+      "sha256": "460a56c2fcb69bc46e4795442191823d0aa8fc4e1c46cb0535d2186d519e57d8",
+      "format": "bytes"
+    },
+    {
+      "path": "outputs/companion/fixtures/condition-inventory-tear-20261008.json",
+      "sha256": "d60171c476102f3753ef2fedcf1198fdfe19fa3785c975a56e14d181567e99b6",
+      "format": "utf8-lf"
+    },
+    {
+      "path": "outputs/companion/fixtures/condition-inventory-tear-20261008.png",
+      "sha256": "6a6c93072bcee39b9bac7222d13ae4e47ab349e210e2fa1adce19568bfbe995c",
+      "format": "bytes"
+    },
+    {
+      "path": "outputs/companion/fixtures/data_display/amumu-equipment.json",
+      "sha256": "7943797fe0466b5d7a926b2d36b80a320b8cb7bedafa9f3c288b7a1d7c427452",
+      "format": "utf8-lf"
+    },
+    {
+      "path": "outputs/companion/fixtures/data_display/matrix.json.gz",
+      "sha256": "cda22161c76f1ff87b2c29f88225f46ecc0617a693d0921db16e990afaae36f1",
+      "format": "bytes"
+    },
+    {
+      "path": "outputs/companion/fixtures/explorer-dark-ritual.json",
+      "sha256": "e1ff97fa6c24e39c24ba5d45a835466903ab595d03d454321a0bb3503a3b1822",
+      "format": "utf8-lf"
+    },
+    {
+      "path": "outputs/companion/fixtures/hex-arcane-title-20261010.json",
+      "sha256": "86aa73cde2aab577abcc7820ebfd87bc05f718d749615d1d615e4a98c8c0e194",
+      "format": "utf8-lf"
+    },
+    {
+      "path": "outputs/companion/fixtures/hex-arcane-title-20261010.png",
+      "sha256": "746831fbfeb19c511d68a81d9bcc1011552bbfc7dd2f58368f93d189a2346612",
+      "format": "bytes"
+    },
+    {
+      "path": "outputs/companion/fixtures/hex-catalog-gap-20261010.json",
+      "sha256": "f4499da3ed5ffcffda27d9b0586de1230524db0e10b6d4e05c22ada1d3cdda51",
+      "format": "utf8-lf"
+    },
+    {
+      "path": "outputs/companion/fixtures/hex-comp-107-stage-20261008.json",
+      "sha256": "34206dd248b237e906ce8e5a0c28c1faee08a8aca4987874de87d4c49e38f9bc",
+      "format": "utf8-lf"
+    },
+    {
+      "path": "outputs/companion/fixtures/hex-data-gaps-20261010.json",
+      "sha256": "d4ebc2077530a925be7ed834d45c7302b3fb70dd6728b708a61353fe9825fd79",
+      "format": "utf8-lf"
+    },
+    {
+      "path": "outputs/companion/fixtures/hex-exit-20261007-animation.png",
+      "sha256": "957f348d7137e6a551b7171550bdc59077a670021756ad18184fa392ef2584eb",
+      "format": "bytes"
+    },
+    {
+      "path": "outputs/companion/fixtures/hex-exit-20261007-board.png",
+      "sha256": "4ae43942edb2f098b6c7886899c51180d1fc6f18b2895fe2fbe52628aac36545",
+      "format": "bytes"
+    },
+    {
+      "path": "outputs/companion/fixtures/hex-exit-20261007-choice.png",
+      "sha256": "562e73a6669a35c93cb5526c51fd4f7bf862a6bcb2865ceab95c204943f53787",
+      "format": "bytes"
+    },
+    {
+      "path": "outputs/companion/fixtures/hex-exit-20261007.json",
+      "sha256": "506caa23e56927ebc2b9dacfe86c5668fc3a1bc6fef861b06a8bbd47351ea9ba",
+      "format": "utf8-lf"
+    },
+    {
+      "path": "outputs/companion/fixtures/hex-identity-20261007.json",
+      "sha256": "2098e4f7fa6a8f17bfb31cd01ae92745d63db31624255db1a6816cc6843d0a4a",
+      "format": "utf8-lf"
+    },
+    {
+      "path": "outputs/companion/fixtures/hex-refresh-20261007.json",
+      "sha256": "004885746fa83bacfe27745c3eb394f1afe6b50f0481a87c54a5f401010ebec8",
+      "format": "utf8-lf"
+    },
+    {
+      "path": "outputs/companion/fixtures/hex-refresh-20261007.png",
+      "sha256": "aff69c2083ff9b98d2d274831c27ddc3cef9985ed0d358b526d6da61352aeee4",
+      "format": "bytes"
+    },
+    {
+      "path": "outputs/companion/fixtures/hex-round-2-1-20261007.json",
+      "sha256": "0759e096e0f6a06637ffae1e332943f0284811ed0cda5ee10e5095b31d65a520",
+      "format": "utf8-lf"
+    },
+    {
+      "path": "outputs/companion/fixtures/hex-round-2-1-20261007.png",
+      "sha256": "f33bcf4ab1818e6469278163bea4aa986350c88dda3a3cc82ea4e8e7ebfbe0bd",
+      "format": "bytes"
+    },
+    {
+      "path": "outputs/companion/fixtures/hex-signature-20261007.json",
+      "sha256": "56b33f541bde008e7074bea2e0c2ae762812ccf7573671999e304d1d3c892908",
+      "format": "utf8-lf"
+    },
+    {
+      "path": "outputs/companion/fixtures/hex-signature-20261007.png",
+      "sha256": "9b2a643f6a55f952f774a6037479131c3d0d6bda8ff4968c3d54527d5f32be03",
+      "format": "bytes"
+    },
+    {
+      "path": "outputs/companion/fixtures/hex-title-20261007.json",
+      "sha256": "1815821348ce52d1c99327b5566b2b840e40391f88fa3361f6c8f99dc1cd3c16",
+      "format": "utf8-lf"
+    },
+    {
+      "path": "outputs/companion/fixtures/hex-title-20261007.png",
+      "sha256": "2d6b8cc390a048b9ba2023ee470baba0013a557debb05ffe7ffd59a2b28c1e94",
+      "format": "bytes"
+    }
+  ],
+  "regressions": [
+    {
+      "id": "REG-001",
+      "history_key": "data-dark-ritual",
+      "title": "黑暗仪式检索错误",
+      "coverage": "automated",
+      "verified_scope": "实际冻结响应→DataJ/cache→Qt卡片ID120/100、50局门槛先于排序/搜索/分页、精确条件20778/18.2a",
+      "limits": [
+        "非实时网页DOM；未来结构变更须新来源样本"
+      ],
+      "origin_commits": [
+        "a212a09",
+        "1486a8b"
+      ],
+      "evidence": [
+        "outputs/companion/test_comp_browser.py"
+      ],
+      "tests": [
+        {
+          "id": "test_comp_browser.CompBrowserTests.test_dark_ritual_live_response_and_cached_response_match_site",
+          "scope": "public"
+        },
+        {
+          "id": "test_comp_browser.CompBrowserTests.test_sample_threshold_applies_before_sort_search_and_pagination",
+          "scope": "public"
+        },
+        {
+          "id": "test_comp_browser.CompBrowserTests.test_threshold_boundary_and_empty_results_never_fall_back_to_global",
+          "scope": "public"
+        }
+      ]
+    },
+    {
+      "id": "REG-002",
+      "history_key": "data-scope-stage",
+      "title": "排名与版本阶段串用",
+      "coverage": "automated",
+      "verified_scope": "158请求165响应356实际Qt显示组强制数量+维度+值；A-B-A和失败scope隔离",
+      "limits": [
+        "采样矩阵非所有实体；额外8类mutation另有CI命令"
+      ],
+      "origin_commits": [
+        "1486a8b",
+        "2d804dc"
+      ],
+      "evidence": [
+        "docs/testing/ranking-validation-20261006.md"
+      ],
+      "tests": [
+        {
+          "id": "test_display_replay.RealDisplayReplay.test_required_public_matrix_is_complete",
+          "scope": "public"
+        },
+        {
+          "id": "test_display_replay.RealDisplayReplay.test_explorer",
+          "scope": "public"
+        },
+        {
+          "id": "test_display_replay.RealDisplayReplay.test_hero_equipment",
+          "scope": "public"
+        },
+        {
+          "id": "test_display_replay.RealDisplayReplay.test_hex_stages",
+          "scope": "public"
+        },
+        {
+          "id": "test_display_replay.RealDisplayReplay.test_item_overlays",
+          "scope": "public"
+        },
+        {
+          "id": "test_display_lifecycle.DisplayLifecycle.test_all_screens_version_a_b_a_and_cache",
+          "scope": "public"
+        },
+        {
+          "id": "test_display_lifecycle.DisplayLifecycle.test_partial_hex_failure_preserves_global_without_global_as_comp",
+          "scope": "public"
+        }
+      ]
+    },
+    {
+      "id": "REG-003",
+      "history_key": "guide-pin-prompt",
+      "title": "固定阵容攻略状态错误",
+      "coverage": "automated",
+      "verified_scope": "actual Companion/Qt可见性/URL调用/复制启用/迟到detail",
+      "limits": [
+        "HTTP/setUrl模拟，不是永久在线攻略加载验收"
+      ],
+      "origin_commits": [
+        "85bfb30",
+        "60b9444",
+        "8d4fa2f"
+      ],
+      "evidence": [
+        "outputs/companion/test_display_lifecycle.py"
+      ],
+      "tests": [
+        {
+          "id": "test_display_lifecycle.DisplayLifecycle.test_pinned_guide_never_returns_to_choose_comp_prompt",
+          "scope": "public"
+        },
+        {
+          "id": "test_display_lifecycle.DisplayLifecycle.test_late_comp_detail_does_not_replace_pinned_comp",
+          "scope": "public"
+        },
+        {
+          "id": "test_display_lifecycle.DisplayLifecycle.test_explicit_guide_retry_reloads_same_url_but_version_refresh_does_not",
+          "scope": "public"
+        }
+      ]
+    },
+    {
+      "id": "REG-004",
+      "history_key": "clipboard",
+      "title": "复制阵容码失败",
+      "coverage": "partial",
+      "verified_scope": "仅mock clipboard.setText正确112码；迟到detail保存120码；本轮追加实际Qt按钮点击→系统剪贴板文字读回，保留并恢复原MIME内容；覆盖无code/损坏code、换阵容、详情失败、取消固定、版本变更和迟到回调。",
+      "limits": [
+        "本轮新增的是回归检查，没有修改生产复制逻辑；已保存原剪贴板并在测试后恢复。未验证金铲铲内粘贴、阵容码导入及所有来源阵容码有效性。"
+      ],
+      "origin_commits": [
+        "091d657",
+        "85bfb30"
+      ],
+      "evidence": [
+        "outputs/companion/test_display_lifecycle.py"
+      ],
+      "tests": [
+        {
+          "id": "test_display_lifecycle.DisplayLifecycle.test_historical_guide_opt_in_preserves_statistics_and_unpin_clears_it",
+          "scope": "public"
+        },
+        {
+          "id": "test_display_lifecycle.DisplayLifecycle.test_late_comp_detail_does_not_replace_pinned_comp",
+          "scope": "public"
+        },
+        {
+          "id": "test_comp_clipboard.CompClipboardTests.test_main_code_real_button_copies_chinese_symbols_and_newlines_exactly",
+          "scope": "public"
+        },
+        {
+          "id": "test_comp_clipboard.CompClipboardTests.test_no_pin_or_missing_invalid_code_never_overwrites_other_clipboard_formats",
+          "scope": "public"
+        },
+        {
+          "id": "test_comp_clipboard.CompClipboardTests.test_switch_and_detail_failure_disable_copy_and_clear_previous_code",
+          "scope": "public"
+        },
+        {
+          "id": "test_comp_clipboard.CompClipboardTests.test_late_previous_comp_completion_cannot_replace_new_code",
+          "scope": "public"
+        },
+        {
+          "id": "test_comp_clipboard.CompClipboardTests.test_unpin_retired_completion_cannot_reenable_or_copy_previous_code",
+          "scope": "public"
+        },
+        {
+          "id": "test_comp_clipboard.CompClipboardTests.test_version_change_rejects_old_detail_until_current_version_code_arrives",
+          "scope": "public"
+        }
+      ]
+    },
+    {
+      "id": "REG-005",
+      "history_key": "startup-crash-instance",
+      "title": "启动闪退、重复启动和无法退出",
+      "coverage": "partial",
+      "verified_scope": "Windows mutex真实多进程+实际Qt子进程close退出/timer停止/mark关闭",
+      "limits": [
+        "最早闪退traceback未逐一绑定。缺已发EXE/损坏配置/其他电脑矩阵"
+      ],
+      "origin_commits": [
+        "64d7c64",
+        "2b356a8"
+      ],
+      "evidence": [
+        "outputs/companion/test_single_instance.py"
+      ],
+      "tests": [
+        {
+          "id": "test_single_instance.AppSingleInstanceTests.test_startup_exception_releases_native_guard",
+          "scope": "public"
+        },
+        {
+          "id": "test_single_instance.NativeSingleInstanceTests.test_second_process_is_blocked_and_can_launch_after_first_exit",
+          "scope": "public"
+        },
+        {
+          "id": "test_compact_header.CompactHeaderExitProcessTests.test_close_button_exits_real_event_loop_and_process",
+          "scope": "public"
+        }
+      ]
+    },
+    {
+      "id": "REG-006",
+      "history_key": "ui-controls",
+      "title": "收起展开与关闭按钮",
+      "coverage": "automated",
+      "verified_scope": "actual Qt点击/rightcollapse不quit/leftclose quit/标志accessible label；资源搜索定阵攻略滚动恢复",
+      "limits": [
+        "视觉美观与全显示器实际游戏操作不能由bool断言证明"
+      ],
+      "origin_commits": [
+        "2b356a8",
+        "cb7bf30",
+        "53bab23"
+      ],
+      "evidence": [
+        "outputs/companion/test_compact_header.py"
+      ],
+      "tests": [
+        {
+          "id": "test_compact_header.CompactHeaderTests.test_rightmost_collapse_keeps_process_and_left_close_quits",
+          "scope": "public"
+        },
+        {
+          "id": "test_compact_header.CompactHeaderTests.test_collapse_and_mark_reopen_preserve_complete_game_plan_and_guide_scroll",
+          "scope": "public"
+        },
+        {
+          "id": "test_compact_header.CompactHeaderTests.test_refused_game_focus_keeps_panel_usable_and_pauses_automatic",
+          "scope": "public"
+        }
+      ]
+    },
+    {
+      "id": "REG-007",
+      "history_key": "ui-unified-search",
+      "title": "统一文字检索交互",
+      "coverage": "automated",
+      "verified_scope": "真实QTest键入/点击popup/保留实体ID；明确选项后不回填成local filter",
+      "limits": [
+        "不替代游戏详情识别"
+      ],
+      "origin_commits": [
+        "2b356a8"
+      ],
+      "evidence": [
+        "outputs/companion/test_comp_browser.py"
+      ],
+      "tests": [
+        {
+          "id": "test_comp_browser.CompBrowserTests.test_unified_search_plain_enter_does_not_guess_entity",
+          "scope": "public"
+        },
+        {
+          "id": "test_comp_browser.CompBrowserTests.test_real_completion_mouse_click_cannot_refill_as_local_filter",
+          "scope": "public"
+        },
+        {
+          "id": "test_comp_browser.CompBrowserTests.test_actual_typing_opens_popup_and_escape_keeps_local_text",
+          "scope": "public"
+        }
+      ]
+    },
+    {
+      "id": "REG-008",
+      "history_key": "version-latest",
+      "title": "启动默认网页最新版本",
+      "coverage": "automated",
+      "verified_scope": "实际Qt+adapter请求contract、站点顺序/首请求/次数/错误retry/旧callback",
+      "limits": [
+        "未知在线HTML变化safe fail，需要新capture适配"
+      ],
+      "origin_commits": [
+        "64d7c64"
+      ],
+      "evidence": [
+        "outputs/companion/test_startup_versions.py"
+      ],
+      "tests": [
+        {
+          "id": "test_startup_versions.StartupVersions.test_waits_for_versions_before_catalog_statistics_or_game_capture",
+          "scope": "public"
+        },
+        {
+          "id": "test_startup_versions.StartupVersions.test_latest_is_used_for_first_statistics_and_all_prewarming",
+          "scope": "public"
+        },
+        {
+          "id": "test_startup_versions.StartupVersions.test_uses_site_order_instead_of_sorting_version_strings",
+          "scope": "public"
+        },
+        {
+          "id": "test_startup_versions.StartupVersions.test_manual_historical_version_and_runtime_do_not_refetch_list",
+          "scope": "public"
+        },
+        {
+          "id": "test_startup_versions.StartupVersions.test_changed_page_has_explicit_retry",
+          "scope": "public"
+        },
+        {
+          "id": "test_patch_browser_lifecycle.PatchBrowserLifecycleTests.test_late_old_result_after_catalog_failure_cannot_restore_old_cards",
+          "scope": "public"
+        }
+      ]
+    },
+    {
+      "id": "REG-009",
+      "history_key": "overlay-flicker",
+      "title": "海克斯与装备浮层闪现",
+      "coverage": "partial",
+      "verified_scope": "actual Qt40帧生命周期、真实自有native client pixels、真实退出animation fixture",
+      "limits": [
+        "缺MuMu/compositor/driver短桌面视频gold；不能保证所有现场闪现消除"
+      ],
+      "origin_commits": [
+        "1e5d09f",
+        "a9eb9af",
+        "6e730ea"
+      ],
+      "evidence": [
+        "docs/testing/overlay-flicker-20261006.md"
+      ],
+      "tests": [
+        {
+          "id": "test_overlay_flicker_sequences.OverlayFlickerSequences.test_forty_same_frames_with_held_callbacks_have_no_qt_hide_show_events",
+          "scope": "public"
+        },
+        {
+          "id": "test_item_overlay_stability.ItemOverlayStabilityTests.test_forty_unchanged_frames_do_not_hide_show_or_repeat_ocr",
+          "scope": "public"
+        },
+        {
+          "id": "test_overlay_presentation.OverlayPresentation.test_repeated_rows_preserve_actual_client_pixels_without_paint_or_resize",
+          "scope": "public"
+        },
+        {
+          "id": "test_choice_exit_confirmation.ChoiceExitConfirmationTests.test_real_exit_animation_is_not_republished_from_its_own_ocr_frame",
+          "scope": "public"
+        }
+      ]
+    },
+    {
+      "id": "REG-010",
+      "history_key": "performance-memory",
+      "title": "触发卡顿和截图内存滞留",
+      "coverage": "partial",
+      "verified_scope": "线程调度、弱引用frame释放(GC禁用)、CPU线程限制、capture并发上限",
+      "limits": [
+        "profile_runtime另测CPU/memory不在UT阈值；缺游戏FPS/GPU/浏览器子进程/跨硬件稳定预算"
+      ],
+      "origin_commits": [
+        "1e5d09f",
+        "be87752"
+      ],
+      "evidence": [
+        "docs/testing/runtime-performance-20260929.md"
+      ],
+      "tests": [
+        {
+          "id": "test_runtime_stability.RuntimeStability.test_capture_processing_is_not_run_on_gui_callback",
+          "scope": "public"
+        },
+        {
+          "id": "test_runtime_stability.RuntimeStability.test_completed_capture_releases_frame_without_cyclic_gc",
+          "scope": "public"
+        },
+        {
+          "id": "test_runtime_stability.RuntimeStability.test_failed_capture_releases_frame_without_cyclic_gc",
+          "scope": "public"
+        },
+        {
+          "id": "test_runtime_stability.RuntimeStability.test_opencv_does_not_use_all_game_cpu_cores",
+          "scope": "public"
+        },
+        {
+          "id": "test_runtime_stability.RuntimeStability.test_repeated_shortcuts_keep_one_capture_in_flight",
+          "scope": "public"
+        }
+      ]
+    },
+    {
+      "id": "REG-011",
+      "history_key": "cadence-stage-refresh",
+      "title": "阶段触发与半秒刷新",
+      "coverage": "automated",
+      "verified_scope": "控制时钟真实tick/capture/worker/accept，30秒60capture无重复OCR，动画恢复解除旧cooldown",
+      "limits": [
+        "nativecapture速度/真实帧延迟不由fakeclock证明"
+      ],
+      "origin_commits": [
+        "df235f5",
+        "d56001e",
+        "6e730ea",
+        "1c21d82"
+      ],
+      "evidence": [
+        "outputs/companion/test_hex_refresh_cadence.py"
+      ],
+      "tests": [
+        {
+          "id": "test_hex_refresh_cadence.HexRefreshCadence.test_repeated_half_second_ticks_do_not_queue_parallel_captures",
+          "scope": "public"
+        },
+        {
+          "id": "test_hex_animation_recovery.HexAnimationRecovery.test_animation_lifecycle_ticks_dispatch_captures_without_repeated_ocr",
+          "scope": "public"
+        },
+        {
+          "id": "test_hex_animation_recovery.HexAnimationRecovery.test_first_stage_animation_keeps_half_second_capture_after_stage_window",
+          "scope": "public"
+        },
+        {
+          "id": "test_hex_animation_recovery.HexAnimationRecovery.test_first_readable_title_frame_retries_before_old_ocr_cooldown",
+          "scope": "public"
+        }
+      ]
+    },
+    {
+      "id": "REG-012",
+      "history_key": "items-heroes",
+      "title": "装备匹配英雄与头像",
+      "coverage": "automated",
+      "verified_scope": "actual Qt/HTTP三category/50局门槛/comp endpoint/多形态头像ID/manual holder恢复",
+      "limits": [
+        "CDN图IO由syntheticpixmap替代，此组不证明onlineCDN"
+      ],
+      "origin_commits": [
+        "c4a1c9c",
+        "1486a8b",
+        "a9eb9af"
+      ],
+      "evidence": [
+        "outputs/companion/test_item_holder_flow.py"
+      ],
+      "tests": [
+        {
+          "id": "test_item_holder_flow.ItemHolderFlow.test_completed_artifact_radiant_render_matching_hero_and_portrait",
+          "scope": "public"
+        },
+        {
+          "id": "test_item_holder_flow.ItemHolderFlow.test_pinned_holders_remain_in_comp_scope",
+          "scope": "public"
+        },
+        {
+          "id": "test_item_holder_flow.ItemHolderFlow.test_manual_same_offer_retries_failed_holder_without_ocr_or_blank",
+          "scope": "public"
+        },
+        {
+          "id": "test_item_portrait_identity.ItemPortraitIdentityTests.test_ordinary_item_holders_show_exact_form_portraits_from_statistical_ids",
+          "scope": "public"
+        }
+      ]
+    },
+    {
+      "id": "REG-013",
+      "history_key": "item-layout",
+      "title": "装备浮层尺寸和位置",
+      "coverage": "partial",
+      "verified_scope": "4Kbounds大小位置/透明input flag/多列文本与DPI/Windows字体",
+      "limits": [
+        "flag不等于实际物理clickthrough；全硬件gamegeometry需现场"
+      ],
+      "origin_commits": [
+        "c4a1c9c",
+        "1053183",
+        "a9eb9af"
+      ],
+      "evidence": [
+        "outputs/companion/test_item_overlay_compact.py"
+      ],
+      "tests": [
+        {
+          "id": "test_item_overlay_compact.ItemOverlayCompactTests.test_native_four_k_frame_is_smaller_and_lower",
+          "scope": "public"
+        },
+        {
+          "id": "test_item_overlay_compact.ItemOverlayCompactTests.test_two_portraits_and_every_text_line_fit_three_to_five_columns",
+          "scope": "public"
+        },
+        {
+          "id": "test_item_overlay_compact.ItemOverlayCompactTests.test_windows_default_font_keeps_fallback_text_inside_compact_frame",
+          "scope": "public"
+        }
+      ]
+    },
+    {
+      "id": "REG-014",
+      "history_key": "condition-details",
+      "title": "从游戏详情取条件",
+      "coverage": "partial",
+      "verified_scope": "actual giantbelt private OCR+public glove/tear anonymouspixels；primarykind/id不记selected",
+      "limits": [
+        "口称暴风之剑1001没有独立实际gold，sword目录原图是巨人腰带1007；双行已拥有hex列表未支持；实时侧键未完整现场验"
+      ],
+      "origin_commits": [
+        "d037215",
+        "a9eb9af"
+      ],
+      "evidence": [
+        "docs/testing/condition-detail-20261007.md"
+      ],
+      "tests": [
+        {
+          "id": "test_condition_reader.ConditionReaderTests.test_large_icon_layout_reads_only_the_first_header_title",
+          "scope": "public"
+        },
+        {
+          "id": "test_condition_reader.ConditionReaderTests.test_large_icon_title_does_not_fall_back_to_a_known_wearer_name",
+          "scope": "public"
+        },
+        {
+          "id": "test_condition_reader_local.LocalConditionScreenshotTests.test_native_4k_large_equipment_header_reads_item_not_its_wearer",
+          "scope": "private"
+        },
+        {
+          "id": "test_condition_inventory_regression.InventoryDetailRegressionTests.test_native_glove_detail_with_badge_occlusion_uses_primary_title",
+          "scope": "public"
+        },
+        {
+          "id": "test_condition_inventory_regression.InventoryDetailRegressionTests.test_native_tear_detail_keeps_its_identity_without_badge_occlusion",
+          "scope": "public"
+        }
+      ]
+    },
+    {
+      "id": "REG-015",
+      "history_key": "selected-resources",
+      "title": "候选误记为本局已选",
+      "coverage": "partial",
+      "verified_scope": "explicitconfirm才记本局、一次条件、不重复、session/ambiguous/layout拒绝",
+      "limits": [
+        "自动selected物理输入gold不足；自动确认门槛未通过，trackerfake不算现场已选正确"
+      ],
+      "origin_commits": [
+        "64d7c64",
+        "d037215"
+      ],
+      "evidence": [
+        "docs/testing/condition-inputs-20261006.md"
+      ],
+      "tests": [
+        {
+          "id": "test_game_resource_inputs.GameResourceInputTests.test_search_is_not_selected_until_explicit_confirmation",
+          "scope": "public"
+        },
+        {
+          "id": "test_game_resource_inputs.GameResourceInputTests.test_search_failure_unknown_and_duplicate_confirm_do_not_add_resources",
+          "scope": "public"
+        },
+        {
+          "id": "test_selection_tracker.SelectionTrackerTests.test_new_game_rejects_late_completion_and_old_offer",
+          "scope": "public"
+        },
+        {
+          "id": "test_selection_tracker.SelectionTrackerTests.test_ambiguous_entity_or_uncalibrated_layout_cannot_establish_offer",
+          "scope": "public"
+        }
+      ]
+    },
+    {
+      "id": "REG-016",
+      "history_key": "hex-pin-no-data",
+      "title": "固定阵容海克斯缺排名",
+      "coverage": "automated",
+      "verified_scope": "真实sourcesupplement identity+stage/low sample/cachebad清理/迟到success保留",
+      "limits": [
+        "上游无数据仍无均排，不能由测试补齐source"
+      ],
+      "origin_commits": [
+        "2d804dc",
+        "82aa1c9",
+        "a9189c1"
+      ],
+      "evidence": [
+        "docs/testing/hex-comp-statistics-20261008.md"
+      ],
+      "tests": [
+        {
+          "id": "test_hex_stats.CompHexLookupTests.test_real_3_2_low_sample_rows_are_recovered_by_exact_id_and_stage",
+          "scope": "public"
+        },
+        {
+          "id": "test_hex_stats.CompHexLookupTests.test_real_4_2_supplement_and_existing_shield_stage_are_kept_separate",
+          "scope": "public"
+        },
+        {
+          "id": "test_hex_stats.CompHexLookupTests.test_invalid_cached_supplement_is_refetched_when_source_recovers",
+          "scope": "public"
+        },
+        {
+          "id": "test_hex_stats.CompHexLookupTests.test_real_adapter_last_failure_retains_the_first_two_successful_supplements",
+          "scope": "public"
+        },
+        {
+          "id": "test_hex_stats.CompHexLookupTests.test_missing_stage_preserves_other_stages_and_does_not_use_overall",
+          "scope": "public"
+        }
+      ]
+    },
+    {
+      "id": "REG-017",
+      "history_key": "hex-pin-latency",
+      "title": "固定阵容排名加载与预热",
+      "coverage": "automated",
+      "verified_scope": "真实Qt/adapter事件屏障，已知rank先显、supplement逐个显、pin立即warm、900s正负table reuse/前后台capacity",
+      "limits": [
+        "绝对网络ms无跨硬件SLA；release EXE另外诊断"
+      ],
+      "origin_commits": [
+        "be87752",
+        "96b608e"
+      ],
+      "evidence": [
+        "docs/testing/hex-full-prewarm-20261009.md"
+      ],
+      "tests": [
+        {
+          "id": "test_hex_comp_latency.HexCompLatency.test_direct_ranks_are_visible_while_first_missing_rank_is_blocked",
+          "scope": "public"
+        },
+        {
+          "id": "test_hex_comp_latency.HexCompLatency.test_completed_supplement_is_visible_while_later_supplement_is_blocked",
+          "scope": "public"
+        },
+        {
+          "id": "test_hex_prewarm_ui.HexPrewarmUI.test_pin_starts_missing_stage_prefetch_while_detail_http_is_blocked",
+          "scope": "public"
+        },
+        {
+          "id": "test_hex_prewarm_ui.HexPrewarmUI.test_same_pin_reuses_positive_negative_and_tables_after_900_seconds",
+          "scope": "public"
+        },
+        {
+          "id": "test_dataj_hex_prefetch.HexPrefetchTests.test_background_uses_one_slot_while_two_live_options_and_ordinary_query_progress",
+          "scope": "public"
+        }
+      ]
+    },
+    {
+      "id": "REG-018",
+      "history_key": "ornn-outline",
+      "title": "奥恩装备外框漏检",
+      "coverage": "partial",
+      "verified_scope": "missingproposal保持exacttitles/query；真changedtitle清旧；private Ornn原图brightness派生",
+      "limits": [
+        "private素材未随CI发布；缺素材skip全gate失败；修后下一次Ornn现场待验"
+      ],
+      "origin_commits": [
+        "6384733",
+        "a9189c1"
+      ],
+      "evidence": [
+        "docs/testing/ornn-display-20261009.md"
+      ],
+      "tests": [
+        {
+          "id": "test_item_proposal_recovery.ItemProposalRecoveryTests.test_same_titles_keep_loaded_ranks_when_outline_proposal_disappears",
+          "scope": "public"
+        },
+        {
+          "id": "test_item_proposal_recovery.ItemProposalRecoveryTests.test_pending_statistics_finish_after_missing_outline_proposal",
+          "scope": "public"
+        },
+        {
+          "id": "test_item_proposal_recovery.ItemProposalRecoveryTests.test_changed_title_without_outlines_clears_ranks_immediately",
+          "scope": "public"
+        },
+        {
+          "id": "test_item_live_layout.PrivateArtifactPixelRecoveryTests.test_real_four_artifact_titles_survive_changed_outline_brightness",
+          "scope": "private"
+        }
+      ]
+    },
+    {
+      "id": "REG-019",
+      "history_key": "hex-title-identity",
+      "title": "海克斯身份与标题误读",
+      "coverage": "automated",
+      "verified_scope": "catalogprojection/exactsuffix/conflict拒绝；genuine II++ publictitlecrop hash+OCR",
+      "limits": [
+        "本次pipelineagent已将 II++ 从private module移到public，审计revision未提交该工作变化；非全海克斯图鉴"
+      ],
+      "origin_commits": [
+        "d037215",
+        "d56001e",
+        "1c21d82"
+      ],
+      "evidence": [
+        "docs/testing/hex-all-unresolved-20261010.md"
+      ],
+      "tests": [
+        {
+          "id": "test_hex_catalog.HexCatalogTests.test_real_titles_resolve_to_the_same_id_as_display_and_selected_resource",
+          "scope": "public"
+        },
+        {
+          "id": "test_title_consensus.TitleConsensusTests.test_exact_consensus_can_span_binary_and_wide_views_without_an_extra_read",
+          "scope": "public"
+        },
+        {
+          "id": "test_title_consensus.TitleConsensusTests.test_real_quality_conflict_cannot_be_outvoted_by_retry_views",
+          "scope": "public"
+        },
+        {
+          "id": "test_fast_title_regression.FastTitleRegressionTests.test_real_arcane_two_plus_title_preserves_exact_roman_and_plus_suffix",
+          "scope": "public"
+        }
+      ]
+    },
+    {
+      "id": "REG-020",
+      "history_key": "hex-animation",
+      "title": "海克斯动画识别与恢复",
+      "coverage": "automated",
+      "verified_scope": "realpublicpixels/Qt生命周期animationgate、首次独立frame、unknownround不rank、无重OCR",
+      "limits": [
+        "35档案30oracle；2fade/3condition缺完整oracle不计pass"
+      ],
+      "origin_commits": [
+        "d56001e",
+        "6e730ea",
+        "1c21d82"
+      ],
+      "evidence": [
+        "docs/testing/hex-all-unresolved-20261010.md"
+      ],
+      "tests": [
+        {
+          "id": "test_hex_animation_recovery.HexAnimationRecovery.test_first_stage_animation_recovery_requires_independent_frame",
+          "scope": "public"
+        },
+        {
+          "id": "test_hex_animation_recovery.HexAnimationRecovery.test_recovered_unknown_round_requires_independent_frame_and_no_rankings",
+          "scope": "public"
+        },
+        {
+          "id": "test_hex_animation_recovery.HexAnimationRecovery.test_continuous_animation_only_checks_existing_captures",
+          "scope": "public"
+        },
+        {
+          "id": "test_hex_animation_recovery.HexAnimationRecovery.test_obsolete_recovered_ocr_callback_cannot_restore_statistics",
+          "scope": "public"
+        },
+        {
+          "id": "test_real_signature_publication.RealSignaturePublicationTests.test_each_real_refresh_animation_rejects_old_ranks",
+          "scope": "public"
+        }
+      ]
+    },
+    {
+      "id": "REG-021",
+      "history_key": "source-gaps",
+      "title": "来源缺项不得借用排名",
+      "coverage": "automated",
+      "verified_scope": "frozenrealcatalog/stats/descriptions exactID/Qt缺数据，不借同名/otherstage",
+      "limits": [
+        "来源随版本变，须保存manifest重核"
+      ],
+      "origin_commits": [
+        "1c21d82"
+      ],
+      "evidence": [
+        "docs/testing/hex-catalog-gap-20261010.md"
+      ],
+      "tests": [
+        {
+          "id": "test_hex_catalog.HexCatalogTests.test_real_missing_unsuffixed_title_never_resolves_to_a_plus_variant",
+          "scope": "public"
+        },
+        {
+          "id": "test_hex_data_gaps.HexDataGapTests.test_missing_correct_ids_never_borrow_same_name_statistics",
+          "scope": "public"
+        },
+        {
+          "id": "test_hex_data_gaps.HexDataGapApplicationTests.test_confirmed_missing_ids_display_no_global_statistics",
+          "scope": "public"
+        },
+        {
+          "id": "test_hex_data_gaps.HexDataGapApplicationTests.test_gold_statistics_remain_separate_from_missing_prismatic_statistics",
+          "scope": "public"
+        }
+      ]
+    },
+    {
+      "id": "REG-022",
+      "history_key": "native-capture-gameinput",
+      "title": "MuMu截图和鼠标输入边界",
+      "coverage": "partial",
+      "verified_scope": "bindingguard mocknative/sidebuttonhook alwaysforward/noinjection/negative monitor",
+      "limits": [
+        "真实framequality/FPS/物理侧键/Windowscompositor需场验，不能由mock证明"
+      ],
+      "origin_commits": [
+        "db73999",
+        "1e5d09f"
+      ],
+      "evidence": [
+        "docs/testing/live-match-2026-10-07.md"
+      ],
+      "tests": [
+        {
+          "id": "test_capture_guard.CaptureGuardTest.test_only_bound_foreground_is_captured",
+          "scope": "public"
+        },
+        {
+          "id": "test_capture_guard.CaptureGuardTest.test_reused_handle_is_rejected",
+          "scope": "public"
+        },
+        {
+          "id": "test_capture_guard.CaptureGuardTest.test_fullscreen_with_negative_monitor_coordinates",
+          "scope": "public"
+        },
+        {
+          "id": "test_mouse_shortcut.MouseShortcutTests.test_hook_always_passes_input_through",
+          "scope": "public"
+        },
+        {
+          "id": "test_mouse_shortcut.MouseShortcutTests.test_release_only_and_no_injected_clicks",
+          "scope": "public"
+        }
+      ]
+    },
+    {
+      "id": "REG-023",
+      "history_key": "portable-other-pc",
+      "title": "便携版跨电脑运行",
+      "coverage": "partial",
+      "verified_scope": "source调用actualportable diagnosticfunc；build流程另有 extractedzip realEXE诊断",
+      "limits": [
+        "sourceunittest不启动realEXE；CI不构建release；其他实体电脑/权限/防杀软无永久矩阵"
+      ],
+      "origin_commits": [
+        "a212a09",
+        "75d887e",
+        "96b608e"
+      ],
+      "evidence": [
+        "docs/testing/README.md"
+      ],
+      "tests": [
+        {
+          "id": "test_portable_hex_prewarm.PortableHexPrewarmTests.test_packaged_prewarm_retains_exact_ranks_and_empty_queries_beyond_disk_ttl",
+          "scope": "public"
+        },
+        {
+          "id": "test_single_instance.AppSingleInstanceTests.test_launcher_diagnose_does_not_enter_application_main",
+          "scope": "public"
+        }
+      ]
+    },
+    {
+      "id": "REG-024",
+      "history_key": "bug-accumulation",
+      "title": "问题截图归档与核对回放",
+      "coverage": "partial",
+      "verified_scope": "archiveoriginalPNG/catalog/scope/token/hash；pending不算通过；oracle hashbinding；身份replay拒绝rank断言",
+      "limits": [
+        "缺历史bug强制testID台账/不删case门槛/修复必须red-green晋升规则；私有图不入CI；身份replay非统计验收"
+      ],
+      "origin_commits": [
+        "d037215",
+        "1c21d82"
+      ],
+      "evidence": [
+        "docs/testing/bug-recording-20261007.md"
+      ],
+      "tests": [
+        {
+          "id": "test_bug_capture_integration.BugCaptureIntegration.test_accepted_live_ocr_routes_exact_captured_frame_and_catalog_to_archive",
+          "scope": "public"
+        },
+        {
+          "id": "test_bug_capture_integration.BugCaptureIntegration.test_real_qt_background_save_releases_frame_after_task_completion",
+          "scope": "public"
+        },
+        {
+          "id": "test_bug_case_replay.BugCaseReplayTest.test_pending_is_listed_without_initializing_ocr",
+          "scope": "public"
+        },
+        {
+          "id": "test_bug_case_replay.BugCaseReplayTest.test_reviewed_identity_pass_uses_original_image_and_recorded_catalog",
+          "scope": "public"
+        },
+        {
+          "id": "test_bug_case_replay.BugCaseReplayTest.test_unsupported_rank_assertions_cannot_pass_identity_only_replay",
+          "scope": "public"
+        }
+      ]
+    },
+    {
+      "id": "REG-025",
+      "history_key": "regression-accumulation-gate",
+      "title": "历史回归台账与批准样本不得静默退化",
+      "coverage": "automated",
+      "verified_scope": "真实unittest方法ID、公开/私有scope、逐方法执行结果与fixture哈希必须匹配；历史项和30份批准病例不能静默删除、替换或把跳过/未执行当通过；私有文件缺失须明确失败。",
+      "limits": [
+        "机制只能保护已登记的行为和批准证据；不宣称所有历史问题或所有未来游戏画面都已覆盖。公共CI不读取私有原图；现场帧率、合成器闪现、物理输入和游戏导入仍需独立证据。"
+      ],
+      "origin_commits": [],
+      "evidence": [
+        "docs/testing/regression-accumulation.md"
+      ],
+      "tests": [
+        {
+          "id": "test_regression_registry.RegressionRegistryTests.test_missing_registered_test_cannot_be_hidden_by_remaining_green_tests",
+          "scope": "public"
+        },
+        {
+          "id": "test_regression_registry.RegressionRegistryTests.test_moving_public_regression_to_private_requires_explicit_scope_change",
+          "scope": "public"
+        },
+        {
+          "id": "test_regression_registry.RegressionRegistryTests.test_duplicate_history_id_or_test_reference_is_rejected",
+          "scope": "public"
+        },
+        {
+          "id": "test_regression_registry.RegressionRegistryTests.test_removed_fixture_or_changed_pixels_fail_without_rewriting_gold",
+          "scope": "public"
+        },
+        {
+          "id": "test_regression_registry.RegressionRegistryTests.test_text_fixture_hash_is_stable_across_windows_line_endings",
+          "scope": "public"
+        },
+        {
+          "id": "test_regression_registry.RegressionRegistryTests.test_skipped_or_unexecuted_registered_test_is_a_failure",
+          "scope": "public"
+        },
+        {
+          "id": "test_regression_registry.RegressionRegistryTests.test_declared_partial_and_unrun_private_scope_are_never_called_complete",
+          "scope": "public"
+        },
+        {
+          "id": "test_regression_registry.RegressionRegistryTests.test_history_entries_cannot_be_deleted_in_a_later_revision",
+          "scope": "public"
+        },
+        {
+          "id": "test_regression_registry.RegressionRegistryTests.test_scope_or_coverage_downgrade_requires_a_recorded_review_reason",
+          "scope": "public"
+        },
+        {
+          "id": "test_regression_registry.RegressionRegistryTests.test_actual_unittest_subtest_failure_is_not_recorded_as_passed",
+          "scope": "public"
+        },
+        {
+          "id": "test_regression_registry.RegressionRegistryTests.test_independent_approved_cases_cannot_be_removed_or_replaced",
+          "scope": "public"
+        },
+        {
+          "id": "test_bug_review_baseline.BugReviewBaselineTests.test_deleted_approved_expected_is_a_failure_not_pending",
+          "scope": "public"
+        },
+        {
+          "id": "test_bug_review_baseline.BugReviewBaselineTests.test_empty_or_missing_archive_fails_all_approved_requirements",
+          "scope": "public"
+        },
+        {
+          "id": "test_bug_review_baseline.BugReviewBaselineTests.test_each_approved_artifact_hash_change_is_a_failure",
+          "scope": "public"
+        },
+        {
+          "id": "test_bug_review_baseline.BugReviewBaselineTests.test_each_missing_approved_artifact_fails_without_recreating_it",
+          "scope": "public"
+        },
+        {
+          "id": "test_bug_review_baseline.BugReviewBaselineTests.test_duplicate_ids_and_invalid_schema_cannot_pass_even_without_private_files",
+          "scope": "public"
+        },
+        {
+          "id": "test_bug_review_baseline.BugReviewBaselineTests.test_append_registration_preserves_old_hashes_and_does_not_touch_originals",
+          "scope": "public"
+        },
+        {
+          "id": "test_bug_review_baseline.BugReviewBaselineTests.test_same_case_registration_is_byte_preserving_and_changed_approval_is_rejected",
+          "scope": "public"
+        },
+        {
+          "id": "test_bug_review_baseline.BugReviewBaselineTests.test_pending_or_invalid_oracle_cannot_be_registered_or_generated",
+          "scope": "public"
+        },
+        {
+          "id": "test_bug_review_baseline.BugReviewBaselineTests.test_new_unreviewed_case_does_not_join_or_break_the_approved_baseline",
+          "scope": "public"
+        },
+        {
+          "id": "test_bug_review_baseline.BugReviewBaselineTests.test_public_schema_inventory_does_not_read_private_files_or_initialize_ocr",
+          "scope": "public"
+        },
+        {
+          "id": "test_bug_review_baseline.BugReviewBaselineTests.test_baseline_must_be_outside_archive_and_ids_cannot_traverse",
+          "scope": "public"
+        },
+        {
+          "id": "test_bug_review_baseline.BugReviewBaselineTests.test_linked_baseline_or_artifact_is_rejected_before_access",
+          "scope": "public"
+        },
+        {
+          "id": "test_bug_review_baseline.BugReviewBaselineTests.test_missing_baseline_cannot_be_a_successful_public_inventory",
+          "scope": "public"
+        },
+        {
+          "id": "test_bug_review_baseline.BugReviewBaselineTests.test_cli_enforces_selected_baseline_and_protects_it_from_report_overwrite",
+          "scope": "public"
+        },
+        {
+          "id": "test_bug_review_baseline.BugReviewBaselineTests.test_cli_registration_requires_explicit_baseline_and_only_appends_selected_id",
+          "scope": "public"
+        },
+        {
+          "id": "test_regression_entrypoint.RegressionEntrypointTests.test_actual_tool_rejects_missing_registered_test_before_running_any_tests",
+          "scope": "public"
+        },
+        {
+          "id": "test_regression_entrypoint.RegressionEntrypointTests.test_actual_tool_rejects_public_test_declared_private_before_execution",
+          "scope": "public"
+        },
+        {
+          "id": "test_regression_entrypoint.RegressionEntrypointTests.test_actual_tool_does_not_ignore_a_well_formed_but_unavailable_history_ref",
+          "scope": "public"
+        },
+        {
+          "id": "test_regression_entrypoint.RegressionEntrypointTests.test_actual_tool_cannot_write_report_over_the_checked_in_regression_registry",
+          "scope": "public"
+        },
+        {
+          "id": "test_regression_entrypoint.RegressionEntrypointTests.test_actual_tool_cannot_write_report_over_the_checked_in_private_hash_baseline",
+          "scope": "public"
+        },
+        {
+          "id": "test_regression_entrypoint.RegressionEntrypointTests.test_actual_tool_cannot_write_report_over_a_custom_registry",
+          "scope": "public"
+        },
+        {
+          "id": "test_regression_entrypoint.RegressionEntrypointTests.test_actual_tool_cannot_write_report_over_a_custom_private_hash_baseline",
+          "scope": "public"
+        },
+        {
+          "id": "test_regression_registry.RegressionRegistryTests.test_old_review_reason_cannot_authorize_a_new_protection_loss",
+          "scope": "public"
+        },
+        {
+          "id": "test_regression_registry.RegressionRegistryTests.test_accepted_fixture_cannot_be_replaced_by_updating_its_hash",
+          "scope": "public"
+        },
+        {
+          "id": "test_regression_registry.RegressionRegistryTests.test_skipped_subtest_is_not_recorded_as_a_passed_parent",
+          "scope": "public"
+        }
+      ]
+    }
+  ]
+}

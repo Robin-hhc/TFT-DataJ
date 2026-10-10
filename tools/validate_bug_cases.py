@@ -318,7 +318,9 @@ def validate_cases(cases_root, *, run_reviewed=False, runner=None):
 
 
 def exit_code(report):
-    return int(bool(report['summary']['failed'] or report['summary']['invalid']))
+    baseline = report.get('review_baseline')
+    return int(bool(report['summary']['failed'] or report['summary']['invalid']
+                    or baseline is not None and exit_code(baseline)))
 
 
 def validate_report_path(path, cases_root):
@@ -353,10 +355,115 @@ def write_report(report, path, cases_root):
     return destination
 
 
+def _review_baseline_payload(cases_root, baseline_path):
+    """Load public hashes only; private originals are deliberately not read."""
+    destination = validate_report_path(baseline_path, cases_root)
+    baseline = _load_json(destination)
+    _version(baseline.get('schema_version'), 'review baseline')
+    _require(set(baseline) == {'schema_version', 'cases'}, 'unsupported review baseline fields')
+    entries = baseline.get('cases')
+    _require(isinstance(entries, list), 'review baseline cases must be a list')
+    seen = set()
+    fields = {'case_id', 'image_sha256', 'case_sha256', 'expected_sha256'}
+    for entry in entries:
+        _require(isinstance(entry, dict) and set(entry) == fields, 'invalid review baseline entry fields')
+        case_id = entry['case_id']
+        _require(isinstance(case_id, str) and CASE_NAME.fullmatch(case_id), 'invalid review baseline case ID')
+        _require(case_id not in seen, 'duplicate review baseline case ID')
+        seen.add(case_id)
+        for key in fields - {'case_id'}:
+            _require(isinstance(entry[key], str) and SHA256.fullmatch(entry[key]),
+                     f'invalid review baseline {key}')
+    return baseline
+
+
+def _reviewed_case_entry(cases_root, case_id):
+    """Read an existing independent oracle; never derive one from observation."""
+    _require(isinstance(case_id, str) and CASE_NAME.fullmatch(case_id), 'invalid reviewed case ID')
+    folder = Path(cases_root).absolute()
+    _no_links(folder)
+    case_dir = folder / case_id
+    artifacts = {'image_sha256': 'frame.png', 'case_sha256': 'case.json',
+                 'expected_sha256': 'expected.json'}
+    hashes = {key: hashlib.sha256(_read(case_dir / filename)).hexdigest()
+              for key, filename in artifacts.items()}
+    case, _, digest = _manifest(case_dir)
+    _require(_expected(case_dir, case, digest) is not None, 'approved case requires existing expected.json')
+    for key, filename in artifacts.items():
+        _require(hashes[key] == hashlib.sha256(_read(case_dir / filename)).hexdigest(),
+                 f'{filename} changed while validating reviewed evidence')
+    return {'case_id': case_id, **hashes}
+
+
+def validate_review_baseline(cases_root, baseline_path, *, verify_files=False):
+    """Require accepted evidence without inventing or silently dropping oracles.
+
+    Public mode checks only the hash-index schema. Explicit private mode also
+    checks every approved original and oracle; new pending captures do not join
+    the baseline automatically. This verifies integrity, not OCR correctness.
+    """
+    summary = dict.fromkeys(('required', 'verified', 'failed', 'invalid', 'not_run'), 0)
+    report = {'schema_version': 1, 'kind': 'reviewed_bug_case_baseline',
+              'mode': 'verify_files' if verify_files else 'schema_only',
+              'baseline_path': str(Path(baseline_path).absolute()),
+              'cases_root': str(Path(cases_root).absolute()), 'summary': summary, 'cases': [],
+              'limits': ['Hash integrity and existing oracle validity only; no OCR or statistics are replayed.',
+                         'Schema-only checks do not verify private files; newly unreviewed cases remain pending.']}
+    try:
+        baseline = _review_baseline_payload(cases_root, baseline_path)
+    except (OSError, InvalidCase) as error:
+        summary['invalid'] = 1
+        report.update(status='invalid', reason=str(error))
+        return report
+    summary['required'] = len(baseline['cases'])
+    for entry in baseline['cases']:
+        record = {'case_id': entry['case_id'], 'result': 'not_run'}
+        report['cases'].append(record)
+        if not verify_files:
+            summary['not_run'] += 1
+            continue
+        try:
+            case_dir = Path(cases_root).absolute() / entry['case_id']
+            for key, filename in (('image_sha256', 'frame.png'), ('case_sha256', 'case.json'),
+                                  ('expected_sha256', 'expected.json')):
+                actual = hashlib.sha256(_read(case_dir / filename)).hexdigest()
+                _require(actual == entry[key], f'approved {filename} SHA-256 differs from review baseline')
+            actual = _reviewed_case_entry(cases_root, entry['case_id'])
+            _require(actual == entry, 'approved evidence changed while validating review baseline')
+            record['result'] = 'verified'
+            summary['verified'] += 1
+        except (OSError, InvalidCase) as error:
+            record.update(result='failed', reason=str(error))
+            summary['failed'] += 1
+    report['status'] = 'failed' if summary['failed'] else 'passed'
+    return report
+
+
+def register_reviewed_case(cases_root, baseline_path, case_id):
+    """Explicitly append one independently reviewed case; never replace approvals.
+
+    The caller serializes registrations. Missing or invalid expected.json is
+    rejected, and observations are never promoted into expected answers.
+    """
+    destination = validate_report_path(baseline_path, cases_root)
+    baseline = (_review_baseline_payload(cases_root, destination) if destination.exists()
+                else {'schema_version': 1, 'cases': []})
+    entry = _reviewed_case_entry(cases_root, case_id)
+    previous = next((item for item in baseline['cases'] if item['case_id'] == case_id), None)
+    if previous is not None:
+        _require(previous == entry, 'approved case has changed; registration cannot overwrite old hashes')
+        return {'status': 'already_registered', 'entry': previous}
+    baseline['cases'].append(entry)
+    write_report(baseline, destination, cases_root)
+    return {'status': 'registered', 'entry': entry}
+
+
 def main(argv=None, *, runner=None):
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument('--cases-dir', type=Path, help='Archive root (default: bootstrap.STATE_DIR/bug-cases)')
     parser.add_argument('--run-reviewed', action='store_true', help='Replay only complete, hash-bound expected.json oracles')
+    parser.add_argument('--review-baseline', type=Path, help='Public hash index of approved private originals; verify all accepted files')
+    parser.add_argument('--register-reviewed-case', help='Explicitly append this already independently reviewed case ID to --review-baseline')
     parser.add_argument('--report', type=Path, help='Write JSON outside the archive root')
     args = parser.parse_args(argv)
     if args.cases_dir is None:
@@ -368,7 +475,21 @@ def main(argv=None, *, runner=None):
             validate_report_path(args.report, args.cases_dir)
         except (OSError, InvalidCase) as error:
             parser.error(str(error))
+    if args.register_reviewed_case and args.review_baseline is None:
+        parser.error('--register-reviewed-case requires --review-baseline')
+    if args.report is not None and args.review_baseline is not None:
+        if args.report.absolute().resolve() == args.review_baseline.absolute().resolve():
+            parser.error('--report must not overwrite the approved review baseline')
+    if args.register_reviewed_case:
+        try:
+            registered = register_reviewed_case(args.cases_dir, args.review_baseline, args.register_reviewed_case)
+        except (OSError, InvalidCase) as error:
+            parser.error(str(error))
+        print(f"Reviewed case: {registered['status']} ({registered['entry']['case_id']})")
+        return 0
     report = validate_cases(args.cases_dir, run_reviewed=args.run_reviewed, runner=runner)
+    if args.review_baseline is not None:
+        report['review_baseline'] = validate_review_baseline(args.cases_dir, args.review_baseline, verify_files=True)
     if args.report is not None:
         write_report(report, args.report, args.cases_dir)
     counts = report['summary']
@@ -376,6 +497,14 @@ def main(argv=None, *, runner=None):
           f"passed={counts['passed']}, failed={counts['failed']}, invalid={counts['invalid']}, skipped={counts['skipped']}")
     for case in report['cases']:
         print(f"  {case['case_id'] or '(archive)'}: {case['result']} ({case.get('reason', '')})")
+    if args.review_baseline is not None:
+        baseline = report['review_baseline']
+        print(f"Reviewed baseline: {baseline['status']}; {baseline['summary']}")
+        if baseline.get('reason'):
+            print(f"  {baseline['reason']}")
+        for case in baseline['cases']:
+            if case['result'] == 'failed':
+                print(f"  {case['case_id']}: {case['reason']}")
     return exit_code(report)
 
 
