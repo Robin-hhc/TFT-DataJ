@@ -740,9 +740,9 @@
       "history_key": "condition-details",
       "title": "从游戏详情取条件",
       "coverage": "partial",
-      "verified_scope": "actual giantbelt private OCR+public glove/tear anonymouspixels；primarykind/id不记selected；实际Qt item/stage/普通自动截图及live OCR期间首次请求、合并、有限等待与上下文保护",
+      "verified_scope": "actual giantbelt private OCR+public glove/tear anonymouspixels；primarykind/id不记selected；实际Qt item/stage/普通自动截图及live OCR期间首次请求、合并、有限等待与上下文保护；2026-10-11独立暴风之剑原图→新HTTP→实际Qt现场验证；离线版本重载延迟排名的取消保护",
       "limits": [
-        "口称暴风之剑1001没有独立实际gold，sword目录原图是巨人腰带1007；双行已拥有hex列表未支持；实时侧键未完整现场验"
+        "早期口称暴风之剑1001缺独立gold，sword目录原图仍是巨人腰带1007；本轮独立暴风之剑现场证据尚未加入私有自动回放基线；双行已拥有hex列表未支持；实时侧键、现场自动忙时及无遮挡英雄详情正例未完整现场验"
       ],
       "origin_commits": [
         "d037215",
@@ -879,6 +879,10 @@
         },
         {
           "id": "test_condition_trigger_priority.ConditionTriggerPriorityTests.test_repeated_requests_during_ordinary_automatic_capture_are_coalesced",
+          "scope": "public"
+        },
+        {
+          "id": "test_condition_trigger_priority.ConditionTriggerPriorityTests.test_patch_reload_with_delayed_mock_rank_keeps_stale_request_cancelled",
           "scope": "public"
         }
       ]

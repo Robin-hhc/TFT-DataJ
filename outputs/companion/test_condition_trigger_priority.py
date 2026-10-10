@@ -22,6 +22,33 @@ from dataj import DataJ
 from test_game_resource_inputs import CATALOG
 
 
+class _FixtureDataJClock:
+    """Advance only mocked source pacing; Qt and condition deadlines stay real."""
+    def __init__(self):
+        self._lock = threading.Lock()
+        self._offset = 0.0
+        self._sleeps = []
+
+    def monotonic(self):
+        with self._lock:
+            return time.monotonic() + self._offset
+
+    def time(self):
+        return time.time()
+
+    def sleep(self, seconds):
+        if seconds < 0:
+            raise ValueError('sleep length must be non-negative')
+        with self._lock:
+            self._offset += seconds
+            self._sleeps.append(seconds)
+
+    @property
+    def sleeps(self):
+        with self._lock:
+            return list(self._sleeps)
+
+
 class ConditionTriggerPriorityTests(unittest.TestCase):
     @classmethod
     def setUpClass(cls):
@@ -35,6 +62,23 @@ class ConditionTriggerPriorityTests(unittest.TestCase):
         self.capture_entered = threading.Event()
         self.capture_calls = []
         self.http_calls = []
+        self.transport_attempts = []
+        self.non_mock_attempts = []
+        self.pacing_clock = _FixtureDataJClock()
+        self.stack.enter_context(patch('dataj.time', self.pacing_clock))
+        send = httpx.Client.send
+
+        def mock_only_send(client, request, *args, **kwargs):
+            transport = client._transport_for_url(request.url)
+            attempt = {'method': request.method, 'url': str(request.url),
+                       'mock': isinstance(transport, httpx.MockTransport)}
+            self.transport_attempts.append(attempt)
+            if not attempt['mock']:
+                self.non_mock_attempts.append(attempt)
+                raise AssertionError('Condition fixture blocks non-Mock HTTPX transport')
+            return send(client, request, *args, **kwargs)
+
+        self.stack.enter_context(patch.object(httpx.Client, 'send', mock_only_send))
         self.gui_thread = threading.get_ident()
         self.now = [10.0]
         self.binding = SimpleNamespace(hwnd=7, pid=1, process='MuMuNxDevice.exe',
@@ -127,6 +171,7 @@ class ConditionTriggerPriorityTests(unittest.TestCase):
         self.stack.close()
         self.tmp.cleanup()
         self.image.close()
+        self.assertEqual(self.non_mock_attempts, [], 'Every fixture HTTPX request must use MockTransport')
 
     def test_first_condition_request_during_automatic_item_probe_is_not_lost(self):
         self.start_item_probe()
@@ -293,6 +338,57 @@ class ConditionTriggerPriorityTests(unittest.TestCase):
                 self.assertEqual(self.capture_calls, [], 'A stale request must not take a new screenshot')
                 self.reader.read.assert_not_called()
                 self.assertEqual(self.p.selected_resources.events, ())
+
+    def test_patch_reload_with_delayed_mock_rank_keeps_stale_request_cancelled(self):
+        import condition_controller
+        import dataj
+
+        self.p.browser.clear_filter()
+        self.wait(lambda: not self.p.jobs)
+        previous = self.p.adapter
+        delayed = threading.Event()
+        handler = previous.transport.handler
+
+        def delayed_response(request):
+            if (request.url.path.endswith('/comp/rank')
+                and request.url.params.get('gameVersion') == '18.3'):
+                delayed.set()
+                time.sleep(.25)
+            return handler(request)
+
+        self.stack.enter_context(patch.object(previous.transport, 'handler', delayed_response))
+        self.start_item_probe()
+        self.p.browser.input_bar.read.click()
+        self.assertIn('等待', self.p.browser.input_bar.note.text())
+        self.p.patch.addItem('18.3');self.p.patch.setCurrentText('18.3')
+        started = time.monotonic()
+        self.p.change_patch()
+        self.release_probe.set()
+        self.wait(lambda: not self.p.jobs, timeout=3)
+        elapsed = time.monotonic() - started
+
+        self.assertTrue(delayed.is_set(), 'The actual replacement rank request must reach the delayed Mock response')
+        self.assertEqual(self.p.adapter.patch, '18.3')
+        self.assertIsNot(self.p.adapter, previous)
+        self.assertIs(self.p.adapter.budget, previous.budget)
+        self.assertIs(self.p.adapter.transport, previous.transport)
+        self.assertIsInstance(self.p.adapter.transport, httpx.MockTransport)
+        paths = [(request.url.path, request.url.params.get('gameVersion')) for request in self.http_calls]
+        self.assertIn(('/api/web/gamedata', None), paths)
+        self.assertIn(('/api/web/stats/hex', '18.3'), paths)
+        self.assertIn(('/api/web/comp/rank', '18.3'), paths)
+        self.assertEqual(self.capture_calls, [], 'The canceled request must not capture after patch reload')
+        self.reader.read.assert_not_called()
+        self.assertIsNone(self.p.conditions.pending)
+        self.assertEqual(self.p.selected_resources.events, ())
+        self.assertIs(dataj.time, self.pacing_clock)
+        self.assertGreater(sum(self.pacing_clock.sleeps), 1.5)
+        self.assertIs(condition_controller.time, time)
+        self.assertIs(self.wait.__func__.__globals__['time'], time)
+        self.assertGreaterEqual(elapsed, .25, 'Mock response and Qt waits must still use the real clock')
+        self.assertTrue(self.transport_attempts, 'The fixture transport guard must observe actual HTTPX sends')
+        self.assertTrue(all(attempt['mock'] for attempt in self.transport_attempts))
+        self.assertEqual(self.non_mock_attempts, [])
 
     def test_ordinary_session_invalidation_does_not_discard_waiting_detail(self):
         self.start_item_probe()
