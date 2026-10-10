@@ -162,6 +162,19 @@ class Vision:
                             resolution={**confirmed,'method':'tight_color_two_views'}
                         elif confirmed['status'] in ('conflict','ambiguous'):
                             resolution=confirmed
+                        elif len(confirmed.get('candidates',[]))==1:
+                            # Short titles can still lose confidence at native
+                            # width. A different resampler supplies independent
+                            # pixels, not a second vote for the first OCR output.
+                            view=tight.resize((round(tight.width*1.6),tight.height),Image.Resampling.LANCZOS)
+                            result=self.engine(np.asarray(view)[:,:,::-1].copy(),
+                                               use_det=False,use_cls=False,return_word_box=False)
+                            readings.append(result.txts[0] if result.txts and result.scores[0]>=.90 else '')
+                            confirmed=resolve_name(readings,catalog)
+                            if confirmed['status']=='resolved':
+                                resolution={**confirmed,'method':'tight_color_resampled_two_views'}
+                            elif confirmed['status'] in ('conflict','ambiguous'):
+                                resolution=confirmed
         glyph=roman_evidence(crop)
         if glyph and resolution['status']=='unrecognized':
             prefix=crop.crop((0,0,glyph['prefix_right']+2,crop.height))

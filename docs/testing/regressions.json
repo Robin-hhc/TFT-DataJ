@@ -516,7 +516,8 @@
       "evidence": [
         "docs/testing/runtime-performance-20260929.md",
         "outputs/companion/test_background_jobs.py",
-        "outputs/companion/test_query_architecture.py"
+        "outputs/companion/test_query_architecture.py",
+        "docs/development-records/2026-10-11-live-match-conditions.md"
       ],
       "tests": [
         {
@@ -585,6 +586,22 @@
         },
         {
           "id": "test_query_architecture.QueryArchitectureTests.test_hero_equipment_queue_executes_only_latest_identity_and_publishes",
+          "scope": "public"
+        },
+        {
+          "id": "test_condition_trigger_priority.ConditionTriggerPriorityTests.test_first_condition_request_during_automatic_item_probe_is_not_lost",
+          "scope": "public"
+        },
+        {
+          "id": "test_condition_trigger_priority.ConditionTriggerPriorityTests.test_first_condition_request_during_automatic_stage_probe_is_not_lost",
+          "scope": "public"
+        },
+        {
+          "id": "test_condition_trigger_priority.ConditionTriggerPriorityTests.test_repeated_requests_during_probe_are_coalesced_into_one_capture",
+          "scope": "public"
+        },
+        {
+          "id": "test_condition_trigger_priority.ConditionTriggerPriorityTests.test_repeated_manual_capture_and_ocr_do_not_queue_another_request",
           "scope": "public"
         }
       ]
@@ -708,7 +725,8 @@
         "a9eb9af"
       ],
       "evidence": [
-        "docs/testing/condition-detail-20261007.md"
+        "docs/testing/condition-detail-20261007.md",
+        "docs/development-records/2026-10-11-live-match-conditions.md"
       ],
       "tests": [
         {
@@ -729,6 +747,70 @@
         },
         {
           "id": "test_condition_inventory_regression.InventoryDetailRegressionTests.test_native_tear_detail_keeps_its_identity_without_badge_occlusion",
+          "scope": "public"
+        },
+        {
+          "id": "test_condition_trigger_priority.ConditionTriggerPriorityTests.test_first_condition_request_during_automatic_item_probe_is_not_lost",
+          "scope": "public"
+        },
+        {
+          "id": "test_condition_trigger_priority.ConditionTriggerPriorityTests.test_first_condition_request_during_automatic_stage_probe_is_not_lost",
+          "scope": "public"
+        },
+        {
+          "id": "test_condition_trigger_priority.ConditionTriggerPriorityTests.test_configured_side_button_during_item_probe_keeps_foreground_guards_and_runs_once",
+          "scope": "public"
+        },
+        {
+          "id": "test_condition_trigger_priority.ConditionTriggerPriorityTests.test_repeated_requests_during_probe_are_coalesced_into_one_capture",
+          "scope": "public"
+        },
+        {
+          "id": "test_condition_trigger_priority.ConditionTriggerPriorityTests.test_new_explicit_request_after_filter_change_replaces_stale_waiting_request",
+          "scope": "public"
+        },
+        {
+          "id": "test_condition_trigger_priority.ConditionTriggerPriorityTests.test_explicit_request_after_expired_waiting_deadline_starts_a_new_wait",
+          "scope": "public"
+        },
+        {
+          "id": "test_condition_trigger_priority.ConditionTriggerPriorityTests.test_waiting_augment_and_equipment_routes_reuse_one_frame_exclusively",
+          "scope": "public"
+        },
+        {
+          "id": "test_condition_trigger_priority.ConditionTriggerPriorityTests.test_repeated_requests_do_not_extend_timeout_or_clear_background_busy_flags",
+          "scope": "public"
+        },
+        {
+          "id": "test_condition_trigger_priority.ConditionTriggerPriorityTests.test_context_changes_cancel_waiting_request_before_any_condition_capture",
+          "scope": "public"
+        },
+        {
+          "id": "test_condition_trigger_priority.ConditionTriggerPriorityTests.test_ordinary_session_invalidation_does_not_discard_waiting_detail",
+          "scope": "public"
+        },
+        {
+          "id": "test_condition_trigger_priority.ConditionTriggerPriorityTests.test_failed_background_item_and_stage_probe_still_release_one_manual_request",
+          "scope": "public"
+        },
+        {
+          "id": "test_condition_trigger_priority.ConditionTriggerPriorityTests.test_repeated_manual_capture_and_ocr_do_not_queue_another_request",
+          "scope": "public"
+        },
+        {
+          "id": "test_condition_trigger_priority.ConditionTriggerPriorityTests.test_stage_two_one_boundary_cancels_waiting_request_and_preserves_uncertain_guard",
+          "scope": "public"
+        },
+        {
+          "id": "test_condition_trigger_priority.ConditionTriggerPriorityTests.test_wrong_side_button_foreground_or_target_does_not_create_a_waiting_request",
+          "scope": "public"
+        },
+        {
+          "id": "test_condition_trigger_priority.ConditionTriggerPriorityTests.test_shutdown_cancels_waiting_request_before_background_completion",
+          "scope": "public"
+        },
+        {
+          "id": "test_condition_trigger_priority.ConditionTriggerPriorityTests.test_geometry_change_while_resuming_does_not_rebind_waiting_request",
           "scope": "public"
         }
       ]
@@ -925,7 +1007,7 @@
       "history_key": "hex-title-identity",
       "title": "海克斯身份与标题误读",
       "coverage": "automated",
-      "verified_scope": "catalogprojection/exactsuffix/conflict拒绝；genuine II++ publictitlecrop hash+OCR",
+      "verified_scope": "catalogprojection/exactsuffix/conflict拒绝；genuine II++ publictitlecrop hash+OCR；完整目录标题仅有一次可信读数时，最多追加一个独立Lanczos宽图视图；低置信、数字品质、真实后缀冲突不得凑共识；新增批准3-2拥抱I私有原图。",
       "limits": [
         "II++ 的匿名真实标题裁图已进入公共 OCR 回归；真实整屏识别仍为私人扩展，并非所有海克斯都已有图片用例"
       ],
@@ -935,7 +1017,9 @@
         "1c21d82"
       ],
       "evidence": [
-        "docs/testing/hex-all-unresolved-20261010.md"
+        "docs/testing/hex-all-unresolved-20261010.md",
+        "outputs/companion/test_title_retry_views.py",
+        "docs/development-records/2026-10-11-live-match-conditions.md"
       ],
       "tests": [
         {
@@ -952,6 +1036,38 @@
         },
         {
           "id": "test_fast_title_regression.FastTitleRegressionTests.test_real_arcane_two_plus_title_preserves_exact_roman_and_plus_suffix",
+          "scope": "public"
+        },
+        {
+          "id": "test_title_retry_views.TitleRetryViewTests.test_single_exact_wide_read_can_be_confirmed_by_distinct_resampling_pixels",
+          "scope": "public"
+        },
+        {
+          "id": "test_title_retry_views.TitleRetryViewTests.test_low_confidence_resampled_read_cannot_complete_consensus",
+          "scope": "public"
+        },
+        {
+          "id": "test_title_retry_views.TitleRetryViewTests.test_resampled_numeric_suffix_cannot_be_rewritten_to_roman_quality",
+          "scope": "public"
+        },
+        {
+          "id": "test_title_retry_views.TitleRetryViewTests.test_resampled_different_quality_title_vetoes_identity",
+          "scope": "public"
+        },
+        {
+          "id": "test_title_retry_views.TitleRetryViewTests.test_native_color_consensus_does_not_request_resampled_retry",
+          "scope": "public"
+        },
+        {
+          "id": "test_title_retry_views.TitleRetryViewTests.test_native_color_conflict_does_not_request_resampled_retry",
+          "scope": "public"
+        },
+        {
+          "id": "test_title_retry_views.TitleRetryViewTests.test_already_confirmed_title_does_not_request_resampled_retry",
+          "scope": "public"
+        },
+        {
+          "id": "test_title_retry_views.TitleRetryViewTests.test_missing_complete_catalog_title_does_not_request_resampled_retry",
           "scope": "public"
         }
       ]

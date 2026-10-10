@@ -180,6 +180,12 @@
       "image_sha256": "74ca51df2295ff0146aaa30eb92114ff7c6ec1a65e357851cd64bfa53af280e7",
       "case_sha256": "85c26cd34afb5fce399962a7af61ff6aa066599412cfcc773bd3c85678fab7aa",
       "expected_sha256": "282a45ce408a84f945f1c4fbdf3ce42cbcd7d4f7d1c04958e80c29dd8864b1c1"
+    },
+    {
+      "case_id": "case-bebf06ef248d400cd4e76cccadbd932500b118a6d414bbfa963abf2fce1d9224",
+      "image_sha256": "f566d6642ad3de466107090d2a8cc8cec8d22346d4ba604b44f79e1b18d8ec5d",
+      "case_sha256": "c4c12740bbaeeb5fc084219421b5570fa94a969700b744606d4d0db6cae859a4",
+      "expected_sha256": "4148fadf0281d1dd58c1064c12a070541dd1d86ee5abb5ffe7c99a4601da4181"
     }
   ]
 }

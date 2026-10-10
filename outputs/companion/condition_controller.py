@@ -13,6 +13,40 @@ def window_context(binding):
 class ConditionController:
     def __init__(self,panel):
         self.panel=panel;self.reader=None;self.generation=0
+        self.active=False;self.pending=None
+        self.pending_timer=QTimer(panel)
+        self.pending_timer.setInterval(25)
+        self.pending_timer.timeout.connect(self.resume_pending)
+
+    def background_probe_busy(self):
+        p=self.panel
+        return not self.active and not p.ocr_busy and (p.items.probing or p.stage_probe_pending)
+
+    def cancel_pending(self):
+        self.pending=None;self.pending_timer.stop()
+
+    def feedback(self,message,caption):
+        p=self.panel
+        p.browser.input_bar.show_note(message)
+        p.mark.button.setToolTip(message)
+        p.mark.button.show_feedback(caption)
+
+    def resume_pending(self):
+        if self.pending is None:return False
+        token,binding,deadline=self.pending
+        if not self.accepts(token):
+            self.cancel_pending()
+            self.feedback('取条件请求已取消，请在当前画面重新触发。','取条件已取消')
+            return False
+        if time.monotonic()>=deadline:
+            self.cancel_pending()
+            self.feedback('后台截图等待超时，请再次取条件；原检索条件已保留。','取条件超时')
+            return False
+        p=self.panel
+        if p.capture_pending or p.ocr_busy or p.stage_probe_pending:return False
+        self.cancel_pending()
+        self.start_capture(binding,token,time.monotonic(),False)
+        return self.active
 
     def configure(self):
         self.reader=ConditionReader(self.panel.vision,self.panel.entity_resolver)
@@ -33,7 +67,11 @@ class ConditionController:
     def trigger(self):
         p=self.panel
         if not p.versions_ready or not p.catalog or self.reader is None:return
-        if p.capture_pending or p.ocr_busy or p.stage_probe_pending:return
+        if self.pending is not None:
+            self.resume_pending()
+            if self.pending is not None or self.active:return
+        busy=p.capture_pending or p.ocr_busy or p.stage_probe_pending
+        if busy and not self.background_probe_busy():return
         current=win.describe(p.binding.hwnd) if p.binding else None
         if not p.binding or not win.same_target(p.binding,current):
             p.refresh_windows()
@@ -48,6 +86,15 @@ class ConditionController:
         needs_return=p.panel_open() or win.foreground_root()!=p.binding.hwnd
         if needs_return and p.return_to_game() is False:return
         token=self.token();binding=p.binding;started=time.monotonic()
+        if busy:
+            self.pending=(token,binding,started+2.0);self.pending_timer.start()
+            self.feedback('正在等待后台截图，随后读取当前详情。','等待取条件')
+            return
+        self.start_capture(binding,token,started,needs_return)
+
+    def start_capture(self,binding,token,started,needs_return):
+        p=self.panel
+        self.active=True
         p.capture_pending=True
         def failure_note(result=None):
             if self.accepts(token):
@@ -62,15 +109,15 @@ class ConditionController:
                 p.mark.button.setToolTip('未读到详情：打开名称详情后再按侧键')
                 p.mark.button.show_feedback('未读到详情')
         def capture_failed(_):
-            p.capture_pending=False;failure_note()
+            self.active=False;p.capture_pending=False;failure_note()
         def read_failed(_):
-            p.ocr_busy=False
+            self.active=False;p.ocr_busy=False
             if self.accepts(token):
                 p.bugs.observed_condition({'scene':'unknown','route':'none','status':'error',
                     'reason':'condition_ocr_failed','evidence':{}},frame[0])
             failure_note()
         def read_done(result):
-            p.ocr_busy=False
+            self.active=False;p.ocr_busy=False
             if not self.accepts(token):return
             route=result.get('route')
             if route=='augment_stats':
@@ -98,11 +145,12 @@ class ConditionController:
         def captured(capture_result):
             result,frame_time=capture_result
             p.capture_pending=False
-            if not self.accepts(token) or window_context(result[1])!=token[-1]:return
+            if not self.accepts(token) or window_context(result[1])!=token[-1]:
+                self.active=False;return
             frame[0]=result[0];frame[1]=frame_time;p.ocr_busy=True;reader=self.reader
             p.submit(p.ocr_pool,lambda:reader.read(frame[0]),read_done,read_failed)
         def begin():
-            if not self.accepts(token):p.capture_pending=False;return
+            if not self.accepts(token):self.active=False;p.capture_pending=False;return
             def capture():
                 result=capture_image(binding)
                 return result,time.monotonic()

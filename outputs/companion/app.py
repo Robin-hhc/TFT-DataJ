@@ -835,7 +835,8 @@ class Companion(QWidget):
 
     def mouse_capture(self,button,foreground):
         if button!=self.mouse_button.currentData() or not foreground:return
-        if self.capture_pending or self.ocr_busy:return
+        if (self.capture_pending or self.ocr_busy) and (
+            not hasattr(self,'conditions') or not self.conditions.background_probe_busy()):return
         now=time.monotonic()
         if now-self.last_mouse_trigger<0.7:return
         # Validate foreground both at release time and when queued work is handled.
@@ -1307,8 +1308,7 @@ class Companion(QWidget):
         if self.stage_probe_pending or self.ocr_busy or self.capture_pending or self.items.active:return
         self.stage_probe_pending=True;self.last_stage_probe=time.monotonic()
         token=self.session.token();binding=self.binding
-        def done(stage):
-            self.stage_probe_pending=False
+        def apply(stage):
             if not self.session.accepts(token) or not self.automatic.isChecked():return
             # A side-button request already owns the next full frame. A late
             # background probe must not cancel it before that frame is examined.
@@ -1327,7 +1327,13 @@ class Companion(QWidget):
                 self.last_probe_stage=stage
                 if self.hex_prewarm:self.hex_prewarm.prioritize(stage)
                 if stage in STAGES and not same_choice:self.once_ocr_pending=True
-        def failed(_):self.stage_probe_pending=False
+        def done(stage):
+            self.stage_probe_pending=False
+            try:apply(stage)
+            finally:self.conditions.resume_pending()
+        def failed(_):
+            self.stage_probe_pending=False
+            self.conditions.resume_pending()
         self.submit(self.ocr_pool,lambda:self.vision.read_round_crop(capture_stage(binding)),done,failed)
 
     def tick(self):
@@ -1534,6 +1540,7 @@ class Companion(QWidget):
                     lambda _:self.equip_note.setText('出装读取失败，请重试。') if current() else None,is_current=current)
 
     def shutdown(self):
+        self.conditions.cancel_pending()
         prewarm=self.stop_hex_prewarm()
         if not self.offline:
             self.mouse_settings.setValue('panel_geometry',self.saveGeometry())

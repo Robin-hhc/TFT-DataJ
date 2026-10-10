@@ -84,12 +84,16 @@ class ItemController:
         token=self.token();binding=p.binding;reference_boxes=tuple(self.boxes)
         def done(result):
             self.probing=False;self.probe_started=None;p.capture_pending=False
+            conditions=getattr(p,'conditions',None)
+            if conditions and conditions.resume_pending():return
             if self.accepts(token) and self.available():
                 image,current,prepared,frame_time=result
                 self.ingest(image,current,prepared=prepared,frame_time=frame_time,frame_scope='item_band')
         def failed(_):
             self.probing=False;self.probe_started=None;p.capture_pending=False
             if self.accepts(token):self.reset()
+            conditions=getattr(p,'conditions',None)
+            if conditions:conditions.resume_pending()
         def capture():
             image,current=capture_item_region(binding)
             frame_time=time.monotonic()

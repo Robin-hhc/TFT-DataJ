@@ -22,7 +22,7 @@ class TitleConsensusTests(unittest.TestCase):
     def test_two_exact_high_confidence_views_required(self):
         initial=[('',0)]*5
         self.assertEqual(self.recognize(initial+[('护甲 I',.95)]*2)['id'],'1')
-        self.assertEqual(self.recognize(initial+[('护甲 I',.95),('护甲 I',.89),('',0)])['status'],'unrecognized')
+        self.assertEqual(self.recognize(initial+[('护甲 I',.95),('护甲 I',.89),('',0),('',0)])['status'],'unrecognized')
 
     def test_numeric_suffix_not_rewritten(self):
         self.assertEqual(self.recognize([('护甲1',.99)]*7)['status'],'unrecognized')
@@ -50,8 +50,10 @@ class TitleConsensusTests(unittest.TestCase):
         self.assertEqual(self.recognize(output,self.celestial_catalog())['status'],'conflict')
 
     def test_one_or_low_confidence_quality_read_is_not_confirmation(self):
-        for output in ([('',0)]*5+[('星界赐福Ⅲ',.99),('',0),('',0)],
-                       [('',0)]*5+[('星界赐福Ⅲ',.99),('星界赐福Ⅲ',.899),('',0)]):
+        # The optional resampled view is also unreadable; every historical
+        # assertion still rejects a single high-confidence complete title.
+        for output in ([('',0)]*5+[('星界赐福Ⅲ',.99),('',0),('',0),('',0)],
+                       [('',0)]*5+[('星界赐福Ⅲ',.99),('星界赐福Ⅲ',.899),('',0),('',0)]):
             with self.subTest(output=output):
                 self.assertEqual(self.recognize(output,self.celestial_catalog())['status'],'unrecognized')
 
@@ -92,7 +94,7 @@ class TitleConsensusTests(unittest.TestCase):
         prefix=[('秘法帮派ⅡI++',.99)]*5+[('',0),('秘法帮派II++',.95)]
         for final in [('秘法帮派Ⅱ++',.89),('秘法帮派II+',.99),('',0)]:
             with self.subTest(final=final):
-                result=self.recognize(prefix+[final],catalog)
+                result=self.recognize(prefix+[final,('',0)],catalog)
                 self.assertNotEqual(result['status'],'resolved')
                 self.assertNotIn('id',result)
 
