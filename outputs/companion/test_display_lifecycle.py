@@ -34,7 +34,7 @@ class DisplayLifecycle(unittest.TestCase):
         self.stack.enter_context(patch.object(self.p,'panel_open',return_value=False))
         self.stack.enter_context(patch('app.win.foreground_root',return_value=7))
         self.stack.enter_context(patch.object(ItemOverlay,'place',lambda *a:None))
-        self.stack.enter_context(patch.object(self.p,'submit',lambda pool,fn,done,failed=lambda _:None:self.pending.append((fn,done,failed))))
+        self.stack.enter_context(patch.object(self.p,'submit',lambda pool,fn,done,failed=lambda _:None,**scheduling:self.pending.append((fn,done,failed))))
         self.set_version('18.2a')
 
     def tearDown(self):

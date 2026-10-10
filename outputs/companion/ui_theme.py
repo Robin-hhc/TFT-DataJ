@@ -124,3 +124,13 @@ class ResultCard(QFrame):
         self.average_label.setStyleSheet('color:'+color)
         self.sample.setText('样本 '+parts[1] if numeric and len(parts)>1 else global_text.lstrip('— '))
         self.comp.setText('本局阵容  ·  '+comp_text)
+
+    def update_statistics(self,choice):
+        from hex_results import statistic_text
+        stat=choice.global_stat
+        self.name.setText(choice.name)
+        self.average_label.setText(f'{stat.average:.2f}' if stat.ready else '—')
+        self.average_label.setStyleSheet('color:'+(placement_color(stat.average) if stat.ready else '#a7a1b5'))
+        self.sample.setText(('样本 '+str(stat.samples)+'局'+(' · 少' if stat.samples<50 else ''))
+                            if stat.ready else statistic_text(stat).lstrip('— '))
+        self.comp.setText('本局阵容  ·  '+statistic_text(choice.comp_stat,scope='comp'))

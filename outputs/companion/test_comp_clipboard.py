@@ -41,8 +41,8 @@ class CompClipboardTests(unittest.TestCase):
         db = Path(self.tmp.name) / 'cache.db'
 
         class Source(DataJ):
-            def __init__(self, patch='18.2a'):
-                super().__init__(patch=patch, db=db, transport=transport)
+            def __init__(self, patch='18.2a', *, budget=None):
+                super().__init__(patch=patch, db=db, transport=transport, budget=budget)
 
             def request(self, *args, **kwargs):
                 self.next_request = 0
@@ -52,7 +52,7 @@ class CompClipboardTests(unittest.TestCase):
         self.stack.enter_context(patch('app.Vision.prepare'))
         self.stack.enter_context(patch('app.win.enumerate_mumu', return_value=[]))
         self.stack.enter_context(patch.object(Companion, 'submit',
-            lambda panel, pool, fn, done, failed=lambda _: None:
+            lambda panel, pool, fn, done, failed=lambda _: None, **scheduling:
                 self.pending.append((fn, done, failed))))
         self.p = Companion(offline=True, offline_catalog=CATALOG)
         self.p.timer.stop()

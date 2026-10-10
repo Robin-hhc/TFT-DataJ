@@ -28,7 +28,7 @@ class BugReportingTests(unittest.TestCase):
             capture_pending=False,ocr_busy=False,versions_ready=True,
             capture_pool=QThreadPool(),return_to_game=Mock(return_value=True),
             refresh_windows=Mock(),bind_window=Mock(),windows=SimpleNamespace(count=lambda:1))
-        self.p.submit=lambda pool,fn,done,failed=None:self.queue.append((pool,fn,done,failed))
+        self.p.submit=lambda pool,fn,done,failed=None,**scheduling:self.queue.append((pool,fn,done,failed))
         self.r=BugReporter(self.p,store=BugCaseStore(self.directory))
         self.observation={'scene':'choice_candidates','round':'3-2','cards':[
             {'slot':i,'raw_text':name,'resolution':{'status':'resolved','id':str(i),'name':name,'readings':[name]*3}}

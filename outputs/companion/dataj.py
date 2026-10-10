@@ -6,10 +6,10 @@ from contextlib import closing
 from concurrent.futures import Future, ThreadPoolExecutor, as_completed, TimeoutError as FutureTimeout
 import re
 import sqlite3
-import threading
 import time
 import httpx
 from bootstrap import STATE_DIR
+from source_budget import SourceBudget
 
 # DataJ's explorer applies this default in its UI, not in /explorer/query.
 COMP_MIN_SAMPLE = 50
@@ -25,22 +25,37 @@ class _HexBatchCancelled(Exception):
 
 
 class DataJ:
-    def __init__(self, set_id=18, patch='18.2a', db=None, transport=None):
+    def __init__(self, set_id=18, patch='18.2a', db=None, transport=None, *, budget=None):
         if set_id != 18 or not re.fullmatch(r'18\.\d+(?:\.?[a-z])?', patch):
             raise ValueError('此试用版仅配置了 S18，需明确选择 18.x 统计版本')
         self.set_id, self.patch = set_id, patch
         self.db = db or STATE_DIR/'cache.sqlite'
         self.transport = transport
-        self.lock = threading.Lock()
-        self.request_lock = threading.Lock()
-        self.http_slots = threading.BoundedSemaphore(3)
-        self.background_slot = threading.BoundedSemaphore(1)
-        self._background_next_request = 0.0
-        self._background_wait = threading.Event()
-        self._hex_inflight = {}
-        self.next_request = 0.0
+        self.budget = budget if budget is not None else SourceBudget()
+        self.lock = self.budget.lock
+        self.request_lock = self.budget.request_lock
+        self.http_slots = self.budget.http_slots
+        self.background_slot = self.budget.background_slot
+        self._background_wait = self.budget.background_wait
+        self._hex_inflight = self.budget.inflight
         with closing(sqlite3.connect(self.db, isolation_level=None)) as conn:
             conn.execute('CREATE TABLE IF NOT EXISTS cache (key TEXT PRIMARY KEY, fetched REAL NOT NULL, body TEXT NOT NULL)')
+
+    @property
+    def next_request(self):
+        return self.budget.next_request
+
+    @next_request.setter
+    def next_request(self, value):
+        self.budget.next_request = value
+
+    @property
+    def _background_next_request(self):
+        return self.budget.background_next_request
+
+    @_background_next_request.setter
+    def _background_next_request(self, value):
+        self.budget.background_next_request = value
 
     def _request_identity(self, path, body, extra):
         allowed = re.fullmatch(r'/gamedata|/stats/(?:hex|equip)|/stats/equip/[1-9][0-9]*/heroes|/comp/rank|/explorer/query|/comp/[1-9][0-9]*(?:/hexes|/hero-equips|/equips|/equip-heroes)?', path)

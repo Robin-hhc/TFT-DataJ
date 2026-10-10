@@ -174,7 +174,9 @@
         "2d804dc"
       ],
       "evidence": [
-        "docs/testing/ranking-validation-20261006.md"
+        "docs/testing/ranking-validation-20261006.md",
+        "outputs/companion/test_hex_results.py",
+        "outputs/companion/test_hex_result_publication.py"
       ],
       "tests": [
         {
@@ -204,6 +206,34 @@
         {
           "id": "test_display_lifecycle.DisplayLifecycle.test_partial_hex_failure_preserves_global_without_global_as_comp",
           "scope": "public"
+        },
+        {
+          "id": "test_hex_results.HexResultsTests.test_frozen_statistics_keep_numeric_values_scope_and_provenance",
+          "scope": "public"
+        },
+        {
+          "id": "test_hex_results.HexResultsTests.test_refresh_retains_confirmed_values_without_reading_display_rows",
+          "scope": "public"
+        },
+        {
+          "id": "test_hex_results.HexResultsTests.test_retention_cannot_cross_version_stage_target_or_candidate_identity",
+          "scope": "public"
+        },
+        {
+          "id": "test_hex_results.HexResultsTests.test_finished_failure_drops_old_comp_values_and_remains_retryable",
+          "scope": "public"
+        },
+        {
+          "id": "test_hex_results.HexResultsTests.test_partial_progress_uses_new_source_for_new_value_and_retains_other_values",
+          "scope": "public"
+        },
+        {
+          "id": "test_hex_results.HexResultsTests.test_unrecognized_and_unpinned_states_never_claim_numeric_statistics",
+          "scope": "public"
+        },
+        {
+          "id": "test_hex_result_publication.HexResultPublicationTests.test_display_projection_cannot_change_refresh_retention_or_overlay_value",
+          "scope": "public"
         }
       ]
     },
@@ -222,7 +252,8 @@
         "8d4fa2f"
       ],
       "evidence": [
-        "outputs/companion/test_display_lifecycle.py"
+        "outputs/companion/test_display_lifecycle.py",
+        "outputs/companion/test_portable_query_lifecycle.py"
       ],
       "tests": [
         {
@@ -235,6 +266,10 @@
         },
         {
           "id": "test_display_lifecycle.DisplayLifecycle.test_explicit_guide_retry_reloads_same_url_but_version_refresh_does_not",
+          "scope": "public"
+        },
+        {
+          "id": "test_portable_query_lifecycle.PortableQueryLifecycleTests.test_actual_pinned_guide_diagnostic_completes_version_and_unpin_checks",
           "scope": "public"
         }
       ]
@@ -475,7 +510,9 @@
         "be87752"
       ],
       "evidence": [
-        "docs/testing/runtime-performance-20260929.md"
+        "docs/testing/runtime-performance-20260929.md",
+        "outputs/companion/test_background_jobs.py",
+        "outputs/companion/test_query_architecture.py"
       ],
       "tests": [
         {
@@ -496,6 +533,54 @@
         },
         {
           "id": "test_runtime_stability.RuntimeStability.test_repeated_shortcuts_keep_one_capture_in_flight",
+          "scope": "public"
+        },
+        {
+          "id": "test_background_jobs.BackgroundJobsTests.test_obsolete_queued_query_never_invokes_source_and_current_query_runs",
+          "scope": "public"
+        },
+        {
+          "id": "test_background_jobs.BackgroundJobsTests.test_rapid_pin_or_filter_revisions_execute_only_latest_queued_request",
+          "scope": "public"
+        },
+        {
+          "id": "test_background_jobs.BackgroundJobsTests.test_guard_and_callable_run_on_worker_and_completion_is_queued",
+          "scope": "public"
+        },
+        {
+          "id": "test_background_jobs.BackgroundJobsTests.test_unguarded_job_keeps_existing_success_contract",
+          "scope": "public"
+        },
+        {
+          "id": "test_background_jobs.BackgroundJobsTests.test_guard_failure_is_reported_without_invoking_source",
+          "scope": "public"
+        },
+        {
+          "id": "test_background_jobs.BackgroundJobsTests.test_callable_failure_has_one_queued_error_and_releases_references",
+          "scope": "public"
+        },
+        {
+          "id": "test_background_jobs.BackgroundJobsTests.test_cancelled_job_releases_callable_and_predicate_payload_without_gc",
+          "scope": "public"
+        },
+        {
+          "id": "test_background_jobs.BackgroundJobsTests.test_currentness_change_does_not_hard_cancel_already_running_callable",
+          "scope": "public"
+        },
+        {
+          "id": "test_query_architecture.QueryArchitectureTests.test_rapid_pin_executes_only_latest_queued_detail_request",
+          "scope": "public"
+        },
+        {
+          "id": "test_query_architecture.QueryArchitectureTests.test_rapid_list_refresh_executes_only_latest_queued_source_request",
+          "scope": "public"
+        },
+        {
+          "id": "test_query_architecture.QueryArchitectureTests.test_versioned_catalog_queue_fetches_only_current_adapter_and_publishes",
+          "scope": "public"
+        },
+        {
+          "id": "test_query_architecture.QueryArchitectureTests.test_hero_equipment_queue_executes_only_latest_identity_and_publishes",
           "scope": "public"
         }
       ]
@@ -733,7 +818,9 @@
         "96b608e"
       ],
       "evidence": [
-        "docs/testing/hex-full-prewarm-20261009.md"
+        "docs/testing/hex-full-prewarm-20261009.md",
+        "outputs/companion/test_query_architecture.py",
+        "outputs/companion/test_source_budget.py"
       ],
       "tests": [
         {
@@ -754,6 +841,42 @@
         },
         {
           "id": "test_dataj_hex_prefetch.HexPrefetchTests.test_background_uses_one_slot_while_two_live_options_and_ordinary_query_progress",
+          "scope": "public"
+        },
+        {
+          "id": "test_query_architecture.QueryArchitectureTests.test_version_change_reuses_budget_without_merging_cache_identity",
+          "scope": "public"
+        },
+        {
+          "id": "test_source_budget.SourceBudgetTests.test_patch_replacement_respects_source_failure_cooldown",
+          "scope": "public"
+        },
+        {
+          "id": "test_source_budget.SourceBudgetTests.test_patch_replacement_keeps_three_total_http_slots_for_canceled_inflight_requests",
+          "scope": "public"
+        },
+        {
+          "id": "test_source_budget.SourceBudgetTests.test_patch_replacement_keeps_one_background_request_active",
+          "scope": "public"
+        },
+        {
+          "id": "test_source_budget.SourceBudgetTests.test_patch_replacement_preserves_background_completion_spacing",
+          "scope": "public"
+        },
+        {
+          "id": "test_source_budget.SourceBudgetTests.test_ordinary_requests_remain_serialized_across_patch_replacement",
+          "scope": "public"
+        },
+        {
+          "id": "test_source_budget.SourceBudgetTests.test_identical_inflight_request_is_shared_between_adapters",
+          "scope": "public"
+        },
+        {
+          "id": "test_source_budget.SourceBudgetTests.test_default_adapter_keeps_independent_source_cooldown",
+          "scope": "public"
+        },
+        {
+          "id": "test_source_budget.SourceBudgetTests.test_distinct_versions_do_not_share_inflight_results_or_cached_statistics",
           "scope": "public"
         }
       ]
@@ -957,7 +1080,8 @@
         "96b608e"
       ],
       "evidence": [
-        "docs/testing/README.md"
+        "docs/testing/README.md",
+        "outputs/companion/test_portable_query_lifecycle.py"
       ],
       "tests": [
         {
@@ -966,6 +1090,22 @@
         },
         {
           "id": "test_single_instance.AppSingleInstanceTests.test_launcher_diagnose_does_not_enter_application_main",
+          "scope": "public"
+        },
+        {
+          "id": "test_portable_query_lifecycle.PortableQueryLifecycleTests.test_actual_pinned_guide_diagnostic_completes_version_and_unpin_checks",
+          "scope": "public"
+        },
+        {
+          "id": "test_portable_query_lifecycle.PortableQueryLifecycleTests.test_actual_resource_diagnostic_completes_queries_patch_change_and_new_game",
+          "scope": "public"
+        },
+        {
+          "id": "test_portable_query_lifecycle.PortableQueryLifecycleTests.test_diagnostic_dispatcher_cancels_stale_work_without_source_or_error",
+          "scope": "public"
+        },
+        {
+          "id": "test_portable_query_lifecycle.PortableQueryLifecycleTests.test_diagnostic_dispatcher_publishes_current_result_and_exposes_source_failure",
           "scope": "public"
         }
       ]

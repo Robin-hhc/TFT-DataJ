@@ -21,6 +21,8 @@ from dataj import DataJ, SourceError, COMP_MIN_SAMPLE
 from hex_stats import lookup_comp_hexes
 from hex_prewarm import HexPrewarm
 from snapshot_stats import stage_stat, STAGES
+from hex_results import ResultScope, build_hex_results, stat_text
+from background_jobs import Job
 from vision import Vision, capture_image, capture_stage, tracked_signature, unchanged
 from scene_gate import may_be_choice
 from floating_mark import FloatingMark
@@ -36,32 +38,13 @@ from entity_identity import EntityResolver
 from selected_resources import SelectedResources, SelectionEntity
 from selection_controller import SelectionController
 from condition_controller import ConditionController
-from PySide6.QtCore import Qt, QTimer, QObject, Signal, QRunnable, QThreadPool, QUrl, QAbstractNativeEventFilter, QSettings, QSize
+from PySide6.QtCore import Qt, QTimer, Signal, QThreadPool, QUrl, QAbstractNativeEventFilter, QSettings, QSize
 from PySide6.QtGui import QDesktopServices,QColor,QIcon
 from PySide6.QtWidgets import (QApplication, QWidget, QLabel, QPushButton, QComboBox, QLineEdit,
     QVBoxLayout, QHBoxLayout, QTabWidget, QTableWidget, QTableWidgetItem, QListWidget,
     QListWidgetItem, QCheckBox, QFileDialog, QHeaderView, QAbstractItemView,QFrame,QScrollArea,QButtonGroup,QSizeGrip,QSizePolicy)
 from PySide6.QtWebEngineWidgets import QWebEngineView
 from PySide6.QtWebEngineCore import QWebEnginePage, QWebEngineProfile,QWebEngineSettings
-
-
-class Signals(QObject):
-    done = Signal(object)
-    failed = Signal(str)
-
-
-class Job(QRunnable):
-    def __init__(self, fn):
-        super().__init__()
-        self.fn, self.signals = fn, Signals()
-
-    def run(self):
-        try:
-            self.signals.done.emit(self.fn())
-        except Exception as exc:
-            self.signals.failed.emit(str(exc))
-        finally:
-            self.fn=None
 
 
 def game_windows():
@@ -88,7 +71,7 @@ def table(headers):
     return obj
 
 
-def fill_table(widget, rows):
+def fill_table(widget, rows, *, averages=None):
     widget.setRowCount(len(rows))
     for row,values in enumerate(rows):
         for col,value in enumerate(values):
@@ -96,22 +79,13 @@ def fill_table(widget, rows):
             heading=widget.horizontalHeaderItem(col).text()
             if '均排' in heading or '平均排名' in heading:
                 try:
-                    average=float(str(value).split(' · ')[0])
-                    item.setForeground(QColor(*map(int,re.findall(r'\d+',placement_color(average)))))
-                    if isinstance(value,(int,float)):item.setText(f'{average:.2f}')
+                    average=(averages[row][col] if averages is not None else float(str(value).split(' · ')[0]))
+                    if average is not None:
+                        item.setForeground(QColor(*map(int,re.findall(r'\d+',placement_color(average)))))
+                        if isinstance(value,(int,float)):item.setText(f'{average:.2f}')
                 except ValueError:pass
             if col>0:item.setTextAlignment(Qt.AlignmentFlag.AlignCenter)
             widget.setItem(row,col,item)
-
-
-def stat_text(row, *, identified=True, scope='global'):
-    if not identified:return '— 未识别'
-    if row['status']=='ok':
-        return f"{row['avg_placement']:.2f} · {row['sample_count']}局"+(' · 少' if row['sample_count']<50 else '')
-    return {'no_stage_data':'— 无该阶段数据',
-            'missing_or_ambiguous_entity':'— 本阵容暂无统计' if scope=='comp' else '— 暂无全局统计',
-            'unsupported_stage':'— 阶段待确认',
-            'invalid_stat':'— 统计不可用'}.get(row['status'],'— 统计不可用')
 
 
 class CardOverlay(QLabel):
@@ -343,7 +317,7 @@ class Companion(QWidget):
         try:
             # Preserve an already-correct adapter (also used by frozen OCR
             # checks); otherwise select the first entry in the site's order.
-            adapter=self.adapter if self.adapter.patch==versions[0] else DataJ(patch=versions[0])
+            adapter=self.adapter if self.adapter.patch==versions[0] else DataJ(patch=versions[0],budget=self.adapter.budget)
         except Exception as exc:
             self.versions_failed(str(exc));return
         self.adapter=adapter;self.session.patch=adapter.patch
@@ -383,19 +357,20 @@ class Companion(QWidget):
         scroll=QScrollArea();scroll.setWidgetResizable(True);scroll.setWidget(page)
         self.tabs.addTab(scroll,title)
 
-    def submit(self,pool,fn,done,failed=None):
+    def submit(self,pool,fn,done,failed=None,*,is_current=None,cancelled=None):
         if len(self.jobs)>=8:
             message='已有多个任务处理中，请等待结果后再查询'
             self.status.setText(message)
             if failed:failed(message)
             return
-        job=Job(fn);self.jobs.add(job)
+        job=Job(fn,is_current=is_current);self.jobs.add(job)
         def release():
             # QObject connections own these closures, which own the job and
             # often a 4K image. Break that cycle on both completion paths.
             self.jobs.discard(job)
             job.signals.done.disconnect()
             job.signals.failed.disconnect()
+            job.signals.cancelled.disconnect()
         def finish(value):
             release()
             done(value)
@@ -403,8 +378,12 @@ class Companion(QWidget):
             release()
             self.status.setText(message)
             if failed:failed(message)
-        job.signals.done.connect(finish)
-        job.signals.failed.connect(error)
+        def cancel():
+            release()
+            if cancelled:cancelled()
+        job.signals.done.connect(finish,Qt.ConnectionType.QueuedConnection)
+        job.signals.failed.connect(error,Qt.ConnectionType.QueuedConnection)
+        job.signals.cancelled.connect(cancel,Qt.ConnectionType.QueuedConnection)
         pool.start(job)
 
     def make_choices(self):
@@ -673,7 +652,7 @@ class Companion(QWidget):
             if not current():return
             self.start_button.setEnabled(True)
             self.set_activity('catalog_failed','数据准备失败。检查网络后点击主按钮重试。')
-        self.submit(self.network,fetch,lambda r:self.catalog_loaded(r) if current() else None,failed)
+        self.submit(self.network,fetch,lambda r:self.catalog_loaded(r) if current() else None,failed,is_current=current)
 
     def catalog_loaded(self,result,offline=False):
         self.catalog=result['data']
@@ -710,7 +689,7 @@ class Companion(QWidget):
 
     def change_patch(self,*_):
         if not self.versions_ready:return
-        try:adapter=DataJ(patch=self.patch.currentText().strip())
+        try:adapter=DataJ(patch=self.patch.currentText().strip(),budget=self.adapter.budget)
         except ValueError as exc:self.status.setText(str(exc));return
         if adapter.patch==self.adapter.patch:return
         self.stop_hex_prewarm()
@@ -1253,40 +1232,14 @@ class Companion(QWidget):
                 if missing:self.bugs.hex_statistics('hex_data_gap',evidence={'stage':stage,'missing_ids':missing,'global_statistics':relevant})
                 if target and comp_finished and comp_result is None:
                     self.bugs.hex_statistics('hex_comp_query_failed',evidence={'stage':stage,'global_statistics':relevant})
-            supplement_errors=comp_result.get('supplement_errors',{}) if comp_result else {}
-            supplemented=comp_result.get('supplemented_ids',[]) if comp_result else []
-            comp_sources=dict(comp_result.get('supplement_sources',{})) if comp_result else {}
-            pending_ids=comp_result.get('pending_ids',[]) if comp_result else []
-            if retained and not comp_finished and comp_result is None:
-                supplemented=list(retained.get('comp_supplemented_ids',[]))
-                comp_sources=dict(retained.get('comp_supplement_sources',{}))
-            rendered=[];available=0;comp_available=0
-            for index,(entity,name) in enumerate(zip(ids,names)):
-                global_stat=stage_stat(global_result['data'],entity,stage)
-                comp_stat=stage_stat(comp_result['data'],entity,stage) if comp_result else None
-                available+=global_stat['status']=='ok' or (comp_stat is not None and comp_stat['status']=='ok')
-                comp_available+=comp_stat is not None and comp_stat['status']=='ok'
-                if not target:comp_text='未固定阵容'
-                elif entity is None:comp_text='— 未识别'
-                elif comp_stat and comp_stat['status']=='ok':comp_text=stat_text(comp_stat,scope='comp')
-                elif str(entity) in supplement_errors:comp_text='阵容补查失败'
-                elif str(entity) in pending_ids:comp_text='阵容数据读取中…'
-                elif comp_stat:comp_text=stat_text(comp_stat,scope='comp')
-                else:comp_text='阵容数据暂不可用' if comp_finished else '阵容数据读取中…'
-                if (retained and not comp_finished and target and entity is not None
-                        and not (comp_stat and comp_stat['status']=='ok')):
-                    previous=retained['rows'][index][2]
-                    if re.fullmatch(r'[1-8]\.\d{2} · [1-9]\d*局(?: · 少)?',previous):
-                        comp_text=previous;comp_available+=1
-                        identity=str(entity)
-                        if identity in retained.get('comp_supplement_sources',{}) and identity not in comp_sources:
-                            comp_sources[identity]=retained['comp_supplement_sources'][identity]
-                            supplemented.append(identity)
-                rendered.append([name,stat_text(global_stat,identified=entity is not None),comp_text])
-            supplemented=[identity for identity in dict.fromkeys(str(i) for i in ids if i is not None)
-                          if identity in supplemented]
-            self.stats_payload={'rows':rendered,'live':live,'created':time.monotonic(),'token':token,
-                                'retryable':bool(target and comp_finished and (comp_result is None or supplement_errors)),
+            result=build_hex_results(ResultScope(adapter.set_id,adapter.patch,stage,target),zip(ids,names),
+                                     global_result,comp_result,comp_finished=comp_finished,
+                                     previous=retained.get('result') if retained else None)
+            rendered=result.rows;available=result.available;comp_available=result.comp_available
+            supplemented=result.supplemented_ids;comp_sources=result.supplement_sources
+            supplement_errors=result.supplement_errors;pending_ids=list(result.pending_ids)
+            self.stats_payload={'result':result,'rows':rendered,'live':live,'created':time.monotonic(),'token':token,
+                                'retryable':result.retryable,
                                 'comp_supplemented_ids':supplemented,
                                 'comp_supplement_sources':comp_sources,
                                 'comp_supplement_errors':supplement_errors,
@@ -1294,8 +1247,9 @@ class Companion(QWidget):
             if not self.offline:record('stats_ready',available=available,live=live,stage=stage,target=target,
                                       confirmed_ids=ids,comp_available=comp_available,
                                       supplemented_ids=supplemented,comp_error_ids=list(supplement_errors))
-            fill_table(self.choice_table,rendered)
-            for card,row in zip(self.result_cards,rendered):card.update_result(row)
+            fill_table(self.choice_table,rendered,averages=[
+                [None,choice.global_stat.average,choice.comp_stat.average] for choice in result.choices])
+            for card,choice in zip(self.result_cards,result.choices):card.update_statistics(choice)
             stamp=datetime.fromtimestamp(global_result['fetched_at']).strftime('%m-%d %H:%M')
             self.choice_note.setText(f'S18 · {adapter.patch} · {stage} · 全局数据获取 {stamp}；全局与阵容分别统计')
             if supplemented:self.choice_note.setText(self.choice_note.text()+f'；{len(supplemented)}项阵容阶段补查，少=不足50局')
@@ -1336,13 +1290,18 @@ class Companion(QWidget):
         if not self.offline and reason!=self.last_overlay_diagnostic:
             record('overlay',state=reason);self.last_overlay_diagnostic=reason
         if reason!='shown':return
-        for label,card,row in zip(self.overlays,self.last_observation['cards'],payload['rows']):
-            def colored(value):
-                head=value.split(' · ')[0]
-                try:color=placement_color(float(head))
-                except ValueError:color='#a7a1b5'
+        result=payload.get('result')
+        rows=result.rows if result else payload['rows']
+        for index,(label,card,row) in enumerate(zip(self.overlays,self.last_observation['cards'],rows)):
+            def colored(value,stat=None):
+                if stat is not None:color=placement_color(stat.average) if stat.ready else '#a7a1b5'
+                else:
+                    # Older offline presentation fixtures contain text only.
+                    try:color=placement_color(float(value.split(' · ')[0]))
+                    except ValueError:color='#a7a1b5'
                 return f'<span style="color:{color}">{html.escape(value)}</span>'
-            label.place(self.binding,card['box'],f"{self.session.stage} · {html.escape(row[0])}<br>全局 {colored(row[1])}<br>阵容 {colored(row[2])}")
+            choice=result.choices[index] if result else None
+            label.place(self.binding,card['box'],f"{self.session.stage} · {html.escape(row[0])}<br>全局 {colored(row[1],choice.global_stat if choice else None)}<br>阵容 {colored(row[2],choice.comp_stat if choice else None)}")
 
     def probe_stage(self):
         if self.stage_probe_pending or self.ocr_busy or self.capture_pending or self.items.active:return
@@ -1428,6 +1387,7 @@ class Companion(QWidget):
         self.explorer_generation+=1;generation=self.explorer_generation;adapter=self.adapter
         minimum=self.browser.min_sample
         self.browser.set_loading()
+        def current():return generation==self.explorer_generation and adapter is self.adapter
         def done(result):
             if generation!=self.explorer_generation or adapter is not self.adapter:return
             try:
@@ -1438,7 +1398,7 @@ class Companion(QWidget):
             except Exception:self.browser.set_error();return
         def failed(_):
             if generation==self.explorer_generation and adapter is self.adapter:self.browser.set_error()
-        self.submit(self.network,lambda:adapter.explore(kind,entity) if kind else adapter.comps(min_sample=minimum),done,failed)
+        self.submit(self.network,lambda:adapter.explore(kind,entity) if kind else adapter.comps(min_sample=minimum),done,failed,is_current=current)
 
     def clear_explorer(self):self.browser.clear_filter()
 
@@ -1521,7 +1481,7 @@ class Companion(QWidget):
             self.open_guide('https://www.dataj.cc/comp/'+comp)
             self.status.setText('已固定 '+detail.get('name',comp))
             self.items.prewarm(comp)
-        self.submit(self.network,lambda:adapter.comp(comp),done,failed)
+        self.submit(self.network,lambda:adapter.comp(comp),done,failed,is_current=current)
 
     def unpin(self):
         self.stop_hex_prewarm()
@@ -1554,6 +1514,7 @@ class Companion(QWidget):
         self.equip_note.setText('正在读取本局阵容下 '+self.heroes.currentText()+' 的装备统计…')
         form=self.equip_form.currentText();kind=self.equip_type.currentText()
         hero_name=self.heroes.currentText();catalog={str(x['id']):x for x in self.catalog.get('equip',[])}
+        def current():return generation==self.equip_generation and adapter is self.adapter
         def done(result):
             if generation!=self.equip_generation or adapter is not self.adapter:return
             data=result['data']
@@ -1569,7 +1530,8 @@ class Companion(QWidget):
             selected.sort(key=lambda r:r[1] if isinstance(r[1],(int,float)) else 99)
             fill_table(self.equip_table,selected)
             self.equip_note.setText(f'{self.target_label.text()} · {hero_name} · {form} · {kind}（三件套按包含筛选） · 样本≥{COMP_MIN_SAMPLE}局' + (' · 暂无达标数据' if not selected else ''))
-        self.submit(self.network,lambda:adapter.equipment(comp,hero),done,lambda _:self.equip_note.setText('出装读取失败，请重试。') if generation==self.equip_generation else None)
+        self.submit(self.network,lambda:adapter.equipment(comp,hero),done,
+                    lambda _:self.equip_note.setText('出装读取失败，请重试。') if current() else None,is_current=current)
 
     def shutdown(self):
         prewarm=self.stop_hex_prewarm()

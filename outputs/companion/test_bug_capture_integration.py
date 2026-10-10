@@ -46,7 +46,7 @@ class BugCaptureIntegration(unittest.TestCase):
         self.stack.enter_context(patch.object(self.p,'display_overlays'))
         self.stack.enter_context(patch.object(self.p.items,'render'))
         self.stack.enter_context(patch.object(self.p,'submit',
-            lambda pool,fn,done,failed=None:self.pending.append((pool,fn,done,failed))))
+            lambda pool,fn,done,failed=None,**scheduling:self.pending.append((pool,fn,done,failed))))
         self.observation={'scene':'choice_candidates','round':'3-2','image_size':[1280,720],
             'elapsed_ms':200,'cards':[{'slot':i,'raw_text':name,
             'box':[[100+i*350,260],[300+i*350,260],[300+i*350,300],[100+i*350,300]],

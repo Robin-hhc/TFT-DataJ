@@ -21,7 +21,7 @@ def main():
     from test_display_lifecycle import DisplayLifecycle
     from dataj import DataJ
     from comp_browser import CompBrowser
-    import app
+    import hex_results
     import item_controller
     replay=DisplayReplay(args.fixture);results=[]
     def unit(cls,name):
@@ -37,8 +37,8 @@ def main():
         check('remove hero sample threshold',patch('app.COMP_MIN_SAMPLE',0),
               lambda:unit(EquipmentDisplayTests,'test_real_single_equipment_matches_site_filtered_rows'))
         runes=replay.matrix['hexes'][3:6]
-        original_stage=app.stage_stat
-        check('use 2-1 statistics at 4-2',patch('app.stage_stat',lambda rows,entity,stage:original_stage(rows,entity,'2-1')),
+        original_stage=hex_results.stage_stat
+        check('use 2-1 statistics at 4-2',patch('hex_results.stage_stat',lambda rows,entity,stage:original_stage(rows,entity,'2-1')),
               lambda:replay.hex('18.2a','112','4-2',runes))
         original_hexes=DataJ.hexes
         check('swap global and pinned comp statistics',patch.object(DataJ,'hexes',lambda self,comp=None:original_hexes(self,None if comp else '112')),
@@ -52,7 +52,7 @@ def main():
             finally:controller.rows.reverse()
         check('reverse item overlay slots',patch.object(item_controller.ItemController,'render',wrong_slots),
               lambda:replay.items('18.2a',None,replay.matrix['items'][3:6]))
-        check('visible augment panel never updates',patch('ui_theme.ResultCard.update_result',lambda *args:None),
+        check('visible augment panel never updates',patch('ui_theme.ResultCard.update_statistics',lambda *args:None),
               lambda:replay.hex('18.2a','112','3-2',runes))
         original_comp_render=CompBrowser.render
         def reversed_comp_ranks(browser):

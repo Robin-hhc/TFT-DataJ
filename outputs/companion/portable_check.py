@@ -8,18 +8,33 @@ import time
 import traceback
 
 
+def _run_diagnostic_job(pool,fn,done,failed=None,*,is_current=None,cancelled=None):
+    """Run diagnostic work synchronously with the submit cancellation contract.
+
+    Unexpected source/callback errors still propagate to the diagnostic's
+    existing failure report rather than being concealed by this test double.
+    """
+    if is_current is not None and not is_current():
+        if cancelled:cancelled()
+        return
+    done(fn())
+
+
 def check_pinned_guide(panel):
     """Drive real pinned-guide widgets with a bounded offline detail response."""
     from unittest.mock import patch
     from PySide6.QtCore import QUrl
     pending=[]
     detail={'compId':'116','name':'验证阵容','heroes':[],'gameCode':'【阵容码】便携验证'}
-    with patch.object(panel,'submit',side_effect=lambda pool,fn,done,failed=lambda _:None:pending.append((fn,done,failed))), \
+    def queue_job(pool,fn,done,failed=None,*,is_current=None,cancelled=None):
+        pending.append(lambda:_run_diagnostic_job(pool,fn,done,failed,
+            is_current=is_current,cancelled=cancelled))
+    with patch.object(panel,'submit',side_effect=queue_job), \
          patch.object(panel.adapter,'comp',return_value={'data':detail}):
         panel.versions_loaded(['18.3','18.2a'])
         panel.select_comp('116')
         assert len(pending)==1,'Expected one comp detail request'
-        fn,done,_=pending.pop();done(fn())
+        pending.pop()()
         assert panel.session.target=='116' and panel.copy_button.isEnabled(),'Pinned comp missing'
         assert panel.guide_empty.isHidden(),'Pinned guide incorrectly shows choose-comp prompt'
         assert not panel.guide_version.isHidden() and panel.web.isHidden(),'Historical guide state missing'
@@ -45,7 +60,7 @@ def check_pinned_guide(panel):
         assert not panel.guide_empty.isHidden() and panel.guide_version.isHidden() and panel.web.isHidden(),'Unpin left old guide visible'
         assert not panel.copy_button.isEnabled() and panel.guide_requested_url is None,'Unpin left old code or URL'
         panel.versions_loaded(['18.2a','18.2'])
-        panel.select_comp('116');fn,done,_=pending.pop();done(fn())
+        panel.select_comp('116');pending.pop()()
         assert panel.guide_empty.isHidden() and panel.guide_version.isHidden() and not panel.web.isHidden(),'Matching-version guide failed'
         panel.unpin()
 
@@ -107,9 +122,6 @@ def check_resource_inputs(panel, qt):
             self.next_request=0
             return super().request(path,body=body,ttl=0,**extra)
 
-    def run_job(pool,fn,done,failed=lambda _:None):
-        done(fn())
-
     def last_rule(expected_kind,expected_id,version):
         posts=[r['body'] for r in requests if r['method']=='POST']
         assert posts,'No DataJ Explorer body produced'
@@ -161,7 +173,7 @@ def check_resource_inputs(panel, qt):
         return rectangles
 
     original_loaded=panel.catalog_loaded
-    with patch('app.DataJ',OfflineDataJ),patch.object(panel,'submit',side_effect=run_job), \
+    with patch('app.DataJ',OfflineDataJ),patch.object(panel,'submit',side_effect=_run_diagnostic_job), \
          patch.object(panel,'catalog_loaded',side_effect=lambda result,offline=False:original_loaded(result,True)):
         panel.adapter=OfflineDataJ(patch='18.2a');panel.session.patch='18.2a'
         panel.versions_loaded(['18.3','18.2a'])

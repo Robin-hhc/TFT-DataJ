@@ -32,7 +32,7 @@ class RuntimeStability(unittest.TestCase):
         self.stack.enter_context(patch('app.win.foreground_root',return_value=123))
         self.stack.enter_context(patch('app.win.same_target',return_value=True))
         self.stack.enter_context(patch('app.win.capture_block_reason',return_value=None))
-        self.stack.enter_context(patch.object(self.p,'submit',lambda pool,fn,done,failed=None:self.jobs.append((fn,done,failed))))
+        self.stack.enter_context(patch.object(self.p,'submit',lambda pool,fn,done,failed=None,**scheduling:self.jobs.append((fn,done,failed))))
         self.stack.enter_context(patch('app.QTimer.singleShot',side_effect=lambda ms,fn:fn()))
         self.stack.enter_context(patch('app.win.user.SetForegroundWindow',return_value=True))
 

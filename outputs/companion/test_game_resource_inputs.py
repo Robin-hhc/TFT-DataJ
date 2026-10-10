@@ -25,10 +25,10 @@ class GameResourceInputTests(unittest.TestCase):
             self.stack.enter_context(patch(module+'.STATE_DIR',Path(self.tmp.name)))
         db=Path(self.tmp.name)/'cache.db';transport=httpx.MockTransport(self.response)
         class Source(DataJ):
-            def __init__(self,patch='18.2a'):super().__init__(patch=patch,db=db,transport=transport)
+            def __init__(self,patch='18.2a',*,budget=None):super().__init__(patch=patch,db=db,transport=transport,budget=budget)
             def request(self,*args,**kwargs):self.next_request=0;return super().request(*args,**kwargs)
         self.stack.enter_context(patch('app.DataJ',Source))
-        self.stack.enter_context(patch.object(Companion,'submit',lambda p,pool,fn,done,failed=lambda _:None:self.pending.append((fn,done,failed))))
+        self.stack.enter_context(patch.object(Companion,'submit',lambda p,pool,fn,done,failed=lambda _:None,**scheduling:self.pending.append((fn,done,failed))))
         self.p=Companion(offline=True,offline_catalog=CATALOG);self.p.timer.stop()
 
     def response(self,r):

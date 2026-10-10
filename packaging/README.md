@@ -1,6 +1,8 @@
 # Windows便携包
 
-[下载v0.2.10便携测试版](https://github.com/Robin-hhc/TFT-DataJ/releases/tag/v0.2.10)。完整解压后双击 `TFT-DataJ.exe`，保留 `_internal`。无需Python、pip或OCR安装，设置与缓存保存到 `%LOCALAPPDATA%\TFT-DataJ`。
+[下载v0.2.14便携测试版](https://github.com/Robin-hhc/TFT-DataJ/releases/tag/v0.2.14)。完整解压后双击 `TFT-DataJ.exe`，保留 `_internal`。无需Python、pip或OCR安装，设置与缓存保存到 `%LOCALAPPDATA%\TFT-DataJ`。
+
+v0.2.14 的源码、CI 与实际 ZIP 验收分别记录在[本版说明](../docs/releases/v0.2.14.md)及发布附件。构建本版使用 `work/p0-runtime/Scripts/python.exe -X utf8 packaging/build_windows.py --version 0.2.14`；下文的 v0.2.10 数字与示例保留为历史记录。
 
 目标为Windows 10/11 x64。默认用CPU识别，DataJ统计和攻略需要联网；网络失败不会使用其他版本数据。更新时退出旧版、解压新版，用户目录中的设置保留。当前是未签名的便携测试构建，没有安装器、自动更新或Windows ARM原生包。
 
@@ -41,7 +43,7 @@ work\p0-runtime\Scripts\python.exe -X utf8 packaging\verify_windows.py dist\TFT-
 
 v0.2.10新增20项定阵海克斯延迟与并发回归，覆盖逐项显示、三项并发、同键单飞、旧任务取消、HTTP上限、共享失败冷却、缓存快速返回与坏缓存恢复。源码门槛637项、356组冻结数据显示及8项故障注入；真实HTTPS探针空缓存7.047→3.266秒，主表预读后三项未缓存补查0.250秒。详见[v0.2.10发布说明](../docs/releases/v0.2.10.md)。数字不含截图、OCR或游戏FPS；本轮不启动MuMu。定阵补查的来源核验保留在[核验记录](../docs/testing/hex-comp-statistics-20261008.md)，历史实战与装备在线验证见[v0.2.7发布说明](../docs/releases/v0.2.7.md)。
 
-每次发布均需从本版源代码重新构建，并以上述命令验证实际ZIP；此前候选包不能代替交付包验证。门槛包含356组数据显示、真实2-1静态截图的三项ID `1023 / 1479 / 1006`、模型、WebEngine、联网DataJ与头像。保留打包后等价海克斯身份、问题图无损保存/去重/pending，以及真实4K巨人腰带 `equip/1007` 主标题诊断；新增实际EXE内的三项精确阶段补查、请求范围及缓存诊断，该项使用内嵌MockTransport，不把它称为联网实测。验证器把本机哈希锁定的私人原图复制到外部临时目录，图片不进入ZIP。实际执行项及结果保存为本版 `.validation.json`，下载校验值见 `.zip.sha256`。发布页先保持草稿，待CI通过、实际ZIP验证通过且ZIP与校验附件均上传完成后，发布为预发行测试版。
+每次发布均需从本版源代码重新构建，并以上述命令验证实际ZIP；此前候选包不能代替交付包验证。门槛包含356组数据显示、模型、WebEngine，以及加 `--online` 时的DataJ目录HTTPS与头像。真实2-1静态截图有本机输入时检查场景与非空ID，当前诊断没有精确三项ID断言；身份与阶段的精确核对由批准私有源码回放提供。保留打包后等价海克斯身份、问题图无损保存/去重/pending，以及有本机输入时哈希锁定的真实4K巨人腰带 `equip/1007` 主标题诊断；实际EXE内三项精确阶段补查、请求范围及缓存诊断使用内嵌MockTransport，不称为联网实测。验证器把所需私人输入复制到外部临时目录，图片不进入ZIP。原始执行结果保存为本版 `.validation.json`，公开附件使用去除本机路径的摘要，下载校验值见 `.zip.sha256`。发布页先保持草稿，待CI通过、实际ZIP验证通过且ZIP与校验附件均上传完成后，发布为预发行测试版。
 
 源码和已核对私有原图可通过统一入口复验：
 
