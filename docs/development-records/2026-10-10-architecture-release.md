@@ -30,8 +30,8 @@
 | 最终源码验收 | `work/p0-runtime/Scripts/python.exe -X utf8 tools/validate_data.py --include-private --release-gate --regression-base-ref 0bb8c13c81b22e05cb8f8a55bdbe051dd95d55ce --report work/data-validation/architecture-release-final-20261010.json`；803 tests，0 failure/error/skip，243.417 秒；356 显示通过 | 25 主题、180 方法引用、25 冻结素材；30 approved 原图哈希与身份回放通过，5 pending；报告 SHA-256 `f1b5ad66d1db0e3eccb225b77451e2509ff13b9a91369ddd5897b1dabee05135` |
 | 最终数据故障注入 | `work/p0-runtime/Scripts/python.exe -X utf8 tools/check_data_mutations.py --report work/data-validation/architecture-release-final-mutations-20261010.json`；8/8 caught，退出 0 | 原始 JSON 和同名前缀 log 保留本机 |
 | 固定帧触发性能对照 | `work/p0-runtime/Scripts/python.exe -X utf8 tools/profile_runtime.py --image work/companion/live-validation/choice-2-1.png --copy-frames --repeat 4 --captures 20 --report work/data-validation/architecture-release-performance-current-20261010.json`；baseline 使用相同参数加 `--baseline-ref 0bb8c13c81b22e05cb8f8a55bdbe051dd95d55ce` 与 baseline 报告名；均退出 0 | 帧 hash `9181da560fbf2c3d24acb6876a9c05b4620f18d8af940fd65048825f61fac767`；刷新中位数 34.66→42.96ms，GUI 最大间隔 11.58→9.57ms，峰值主进程工作集 386.57→383.38MiB；invalidate 后均不保留全帧。仅 4 次且基线只替换工具定义的 4 个模块，不声称速度提升或完整旧版本对照；不含网络、真实截图、WebEngine 子进程或游戏 FPS |
-| 固定 SHA 远端 CI | pending | 不引用旧 SHA 的绿色结果 |
-| 全新 ZIP / 实际 EXE | pending | 独立解压离线及线上诊断，分别留报告 |
+| 固定 SHA 远端 CI | b4d0fac / CI 38059884912 success；781 public、0 failure/error/skip、356 显示、8/8 caught | 对应 artifact、私有未运行边界及哈希见追加验收 |
+| 全新 ZIP / 实际 EXE | v0.2.15 全新构建；实际 EXE 离线/线上通过，3023 文件、356 显示 | 包 SHA、下载复核、独立原图预期与硬件限制见追加验收 |
 | 现场游戏/物理侧键/FPS/另一台电脑 | not_run | 本轮没有对应现场证据，不能从源码或隔离 EXE 推断 |
 
 ## 审阅
@@ -40,7 +40,7 @@
 
 ## 上库与发布
 
-交付候选版本 `v0.2.14`；版本选取时本地/远端 tag、Release 和 dist/archive 均未使用该版本。提交、精确 SHA CI、包身份、资产上传与公开状态尚需实际执行。源验证、公共 CI、隔离 EXE 与现场游戏分别记录。
+首次交付候选为 `v0.2.14`，版本选取时本地/远端 tag、Release 和 dist/archive 均未占用；该候选因首次 CI 失败未公开。最终 `v0.2.15` 的提交、精确 SHA CI、包身份、上传、公开状态与远端下载复核已完成，逐次结果见追加验收。源验证、公共 CI、隔离 EXE 与现场游戏分别记录。
 
 ## 追加验收
 
@@ -61,3 +61,19 @@
 `work/p0-runtime/Scripts/python.exe -X utf8 tools/validate_data.py --include-private --release-gate --regression-base-ref 0bb8c13c81b22e05cb8f8a55bdbe051dd95d55ce --report work/data-validation/architecture-release-v15-final-20261010.json` 退出 0，804 tests，0 failure/error/skip，256.521 秒；356 显示通过，25 历史主题、181 方法引用、25 冻结 fixture 通过；30 approved 哈希和身份回放通过，5 pending 不算通过。受测版本为 `4942184` 加仅测试前置条件、新 stale→fresh 回归与台账的 diff，生产模块与该提交完全一致。报告 SHA-256 `faa029e350b15d473e3997cbfac9e9916633a417e43fe2d0ac4634992d0ffecf`。
 
 `work/p0-runtime/Scripts/python.exe -X utf8 tools/check_data_mutations.py --report work/data-validation/architecture-release-v15-mutations-20261010.json` 8/8 caught，退出 0。性能测量时的生产模块未改变，前述性能结果不重复解释成新版本速度提升。
+
+### v0.2.15 上库、包与公开交付完成
+
+源码提交 `b4d0fac8ff0491139d5e8a3464f78459692bef3a` 已推送 main；[CI 38059884912](https://github.com/Robin-hhc/TFT-DataJ/actions/runs/38059884912) 的 `headSha`、完成状态和成功结论逐项核对一致。下载并检查原始 artifact：781 项公共测试、356 显示、25 主题/181 方法引用/25 fixture，0 failure/error/skip，8/8 数据故障捕获。CI 没有运行 7 个私有模块和 30 份批准原图。原始报告保存在 `work/release-0.2.15/ci-source/`：offline SHA-256 `6967860ee69ab8dcc2aca1b5871a159904792fb7e1c70fd335d6d96f7c26a94d`，mutations SHA-256 `610abb365693b18a60411bc351c2acb80c7128fc0f44aae33d9db0deceb5e203`。
+
+本机 804 项最终报告的基准仍是 `4942184` 加已测 diff；两份暂存快照中的 22 个源码/测试/工具/台账文件逐一核对受测字节及新提交内容，与 `b4d0fac8ff0491139d5e8a3464f78459692bef3a` 绑定一致，不能把 dirty 报告伪称干净 CI。
+
+从 `b4d0fac8ff0491139d5e8a3464f78459692bef3a` 的干净 checkout 安装锁定构建依赖后执行完整 `packaging/build_windows.py --version 0.2.15`，退出 0，未使用 `--skip-build`；manifest `base_commit` 相同、`working_changes=false`。独立审阅逐一重算 ZIP 内 3023 份 manifest 文件哈希，无缺失或额外内容；直接查看实际 EXE PYZ，三个新增模块 `background_jobs`、`hex_results`、`source_budget` 均存在且 EXE 字节与 ZIP 一致；3 份私有输入原始哈希未进入包。
+
+实际 EXE 在仓库外中文目录、空用户数据、限制 PATH 与源码搜索路径的隔离环境通过：自动离线 47.31 秒，随后 `packaging/verify_windows.py dist/TFT-DataJ-0.2.15-windows-x64.zip --online` 联网 46.62 秒，均 `exit_code=0`、`report.status=passed`、`frozen=true`、3023 文件及 356 显示通过。内置 OCR/ONNX、WebEngine 和 Windows TLS 通过；真实留存原图观察阶段 2-1、IDs 1023/1479/1006，与既有独立 oracle 核对一致；条件为 equip/1007 巨人腰带。联网项仅目录 HTTPS 与真实英雄头像，不证明实时统计排名。两份报告、构建/依赖/联网日志、manifest、PYZ 检查在 `work/release-0.2.15/`，本机私人路径和原始画面未上传。
+
+注解 tag `v0.2.15` 的远端剥离 SHA 为 `b4d0fac8ff0491139d5e8a3464f78459692bef3a`。[公开预发行版](https://github.com/Robin-hhc/TFT-DataJ/releases/tag/v0.2.15) 的公开时间 `2026-10-10T14:50:57Z`，`draft=false`、`prerelease=true`。先建草稿并上传明确三份附件，逐一核对 `state=uploaded`、大小及 GitHub SHA-256 后公开；随后重新读取状态并通过 `gh release download v0.2.15` 下载 ZIP、校验文件及公开摘要，三份字节哈希与本机一致。ZIP 为 281143481 bytes，SHA-256 `a7950a32e8269e7ae4763bbec46f6de599fadb629d4e361dc979c80562715d92`。下载副本和校验记录在 `work/release-0.2.15/download-verified/`、`download-verification.json`，草稿与公开 API 记录分别保留。公开摘要仅使用字段白名单，原始 validation/private 报告没有上传。
+
+这次补充仅更新交付文档，包与 tag 继续绑定已通过 CI 的源码提交 `b4d0fac8ff0491139d5e8a3464f78459692bef3a`。文档补充会另行提交推送并检查对应 CI，不改变包身份。其他任务的工作树字节保持不变；两份临时构建 checkout 在 ZIP/校验/报告/日志/manifest 留存后通过可恢复 Git 快照归档。v0.2.14 仍为未公开候选，原 ZIP 与失败证据保留。
+
+现场游戏、物理侧键、MuMu 合成器、游戏 FPS 和第二台实体电脑未运行，不能从本机隔离 EXE 推断通过。5 个 pending 样本继续保留、不计通过；几何上下文和坏缓存问题仍由其他任务独立验收。
