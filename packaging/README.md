@@ -68,3 +68,15 @@ work\p0-runtime\Scripts\python.exe -X utf8 tools\validate_data.py --include-priv
 不打包开发虚拟环境原目录、游戏录像、用户截图、统计缓存和账号数据。依赖及模型的第三方声明和许可文件在 `licenses/`，对应版本、模型哈希和打包文件哈希在 `manifest.json`。开发依赖的许可可能一并列入清单，不能据此认定其代码均进入运行包。
 
 模型归属按 [RapidOCR清单](https://github.com/RapidAI/RapidOCR/blob/main/python/MODEL_LICENSES.md) 与本地哈希核对。Qt和Chromium适用各自许可，官方依据：[Qt 6.8 WebEngine许可说明](https://doc.qt.io/qt-6.8/qtwebengine-licensing.html)。本次便携包用于用户跨电脑运行验证；正式对外发布前还需整理Qt/Chromium与实际二进制对应的完整第三方告知材料，不能将依赖元数据清单视作分发审计结论。
+
+## 已核对原图的精确包回放
+
+识别修复交付时，可给实际 ZIP 验证增加独立核对清单：
+
+```powershell
+python -X utf8 packaging/verify_windows.py 新版.zip --online --recognition-fixture 本机独立清单.json
+```
+
+清单 `schema_version=1`，`catalog` 包含目录文件 `path` 与 `sha256`（文件为 `{"data":{"hex":[...]}}`）；`cases` 每项包含唯一 `id`、原图 `frame={path,sha256}` 及独立答案 `expected={scene,round,ids}`。`ids` 为按左中右顺序的三个精确 ID。路径可以相对清单目录；不允许从当前识别结果生成答案。
+
+验证器校验哈希后将原字节复制到仓库外临时目录，真正 EXE 必须同时通过场景、回合、三个 ID、三个 `resolved` 状态和 `[0,1,2]` 槽位顺序检查。报告 `recognition_replay` 保留每例实际/预期及失败项。私人原图和目录不会加入 ZIP；这项检查证明指定静态原图的包内识别，不证明现场捕获、物理侧键或游戏 FPS。

@@ -1,6 +1,7 @@
 """Extract the shipped ZIP outside the checkout and exercise its actual EXE."""
 import argparse
 import hashlib
+import importlib.util
 import json
 import os
 from pathlib import Path
@@ -11,7 +12,25 @@ import time
 import zipfile
 
 
-def verify(archive,root,online=False):
+def copy_recognition_fixture(path,sandbox,root):
+    """Copy reviewed external inputs under fixed names, never into the ZIP."""
+    spec=importlib.util.spec_from_file_location('_portable_fixture',root/'outputs/companion/portable_check.py')
+    module=importlib.util.module_from_spec(spec);spec.loader.exec_module(module)
+    fixture=module.load_recognition_fixture(path)
+    destination=sandbox/'识别回放';destination.mkdir()
+    def copy_asset(asset,name):
+        (destination/name).write_bytes(asset['content'])
+        return {'path':name,'sha256':asset['sha256']}
+    manifest={'schema_version':1,'catalog':copy_asset(fixture['catalog'],'catalog.json'),'cases':[]}
+    for index,case in enumerate(fixture['cases']):
+        manifest['cases'].append({'id':case['id'],'expected':case['expected'],
+                                 'frame':copy_asset(case['frame'],f'frame-{index}.png')})
+    result=destination/'manifest.json'
+    result.write_text(json.dumps(manifest,ensure_ascii=False,indent=2),encoding='utf-8')
+    return result
+
+
+def verify(archive,root,online=False,recognition_fixture=None):
     sandbox=Path(tempfile.mkdtemp(prefix='TFT DataJ 便携验证 ')).resolve()
     assert sandbox.is_relative_to(Path(tempfile.gettempdir()).resolve())
     with zipfile.ZipFile(archive) as zipped:
@@ -33,6 +52,9 @@ def verify(archive,root,online=False):
     assert data_fixture.is_file(),'Required display regression fixture missing'
     shutil.copy2(data_fixture,sandbox/'数据显示.json.gz')
     command+=['--data-fixture',str(sandbox/'数据显示.json.gz')]
+    if recognition_fixture is not None:
+        copied=copy_recognition_fixture(recognition_fixture,sandbox,root)
+        command+=['--recognition-fixture',str(copied)]
     if online:command.append('--online')
     explorer_fixture=root/'outputs/companion/fixtures/explorer-dark-ritual.json'
     if explorer_fixture.is_file():
@@ -69,4 +91,5 @@ def verify(archive,root,online=False):
 
 if __name__=='__main__':
     parser=argparse.ArgumentParser();parser.add_argument('archive',type=Path);parser.add_argument('--online',action='store_true')
-    args=parser.parse_args();verify(args.archive.resolve(),Path(__file__).resolve().parents[1],args.online)
+    parser.add_argument('--recognition-fixture',type=Path,help='Optional external hash-bound exact OCR replay manifest; never added to the archive')
+    args=parser.parse_args();verify(args.archive.resolve(),Path(__file__).resolve().parents[1],args.online,args.recognition_fixture)

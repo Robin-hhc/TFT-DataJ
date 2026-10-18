@@ -175,6 +175,30 @@ class Vision:
                                 resolution={**confirmed,'method':'tight_color_resampled_two_views'}
                             elif confirmed['status'] in ('conflict','ambiguous'):
                                 resolution=confirmed
+            elif resolution['status']=='unrecognized':
+                # An inactive card can dim every title stroke below the white
+                # threshold. Require neutral local edges before trying relative
+                # contrast; flat lighting and texture supply no title evidence.
+                dim_mask=_text_strokes(crop.convert('RGB'))
+                _,dim_x=np.where(dim_mask)
+                if len(dim_x)>=8:
+                    # Keep the title band's vertical context: trimming to its
+                    # stroke height can add/remove a thin Roman suffix in OCR.
+                    # Horizontal context scales with the input title band.
+                    context=max(4,round(crop.height*.075))
+                    dim=crop.crop((max(0,int(dim_x.min())-context),0,
+                                   min(crop.width,int(dim_x.max())+context+1),crop.height))
+                    retries=[]
+                    for view in (dim,ImageOps.autocontrast(ImageOps.grayscale(dim)).convert('RGB')):
+                        result=self.engine(np.asarray(view)[:,:,::-1].copy(),
+                                           use_det=False,use_cls=False,return_word_box=False)
+                        retries.append(result.txts[0] if result.txts and result.scores[0]>=.90 else '')
+                    readings+=retries
+                    combined=resolve_name(readings,catalog)
+                    if combined['status']=='resolved':
+                        resolution={**combined,'method':'dim_context_two_views'}
+                    elif combined['status'] in ('conflict','ambiguous'):
+                        resolution=combined
         glyph=roman_evidence(crop)
         if glyph and resolution['status']=='unrecognized':
             prefix=crop.crop((0,0,glyph['prefix_right']+2,crop.height))

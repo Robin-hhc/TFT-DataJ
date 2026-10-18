@@ -1,0 +1,39 @@
+{
+  "source": "Private original game screenshot; title-only crop without player identifiers",
+  "source_case_id": "case-2d049c685cbc4311e0093de38557503a780e4ad07b13f93bdef6ff3a0d29b791",
+  "source_image_sha256": "bd006cc55f1f45544ebc4e1a7ecd42b2f354ba6fe84b0f4ecfb9ce6ceee45d29",
+  "source_case_sha256": "b59c1c0e463a22b24ed21f5fc7b53f8d25a11e1bba0a858368c5afea1b66df05",
+  "crop": [
+    1571,
+    734,
+    2262,
+    842
+  ],
+  "crop_sha256": "a7c1fe94e9b33e241916c81ed35909410b559a1733226d302fa1dd5c2ebb0d78",
+  "set_id": 18,
+  "patch": "18.4",
+  "expected": {
+    "name": "弑君突刺",
+    "id": "10196"
+  },
+  "reviewed_by": "agent:oracle_review",
+  "review_note": "Original full-game pixels show three complete silver-quality augment cards and top round 3-2. Left title includes one + and description says 3 three-cost units, then another 3 after 6 rounds. Center gives 1 coin after winning a player combat, 6 instead for a higher-health opponent, and immediately 1 coin. Right gives 100 health, 35 armor and 35 magic resist when exactly two units occupy the front row. All three titles, quality and descriptions each match one frozen catalog entry. Independent manual original-pixel review and frozen catalog comparison; no observation/OCR result used as an accepted answer. Identity and scene/hex-round scope only; ranking, display pixels, performance and physical gameplay are outside this oracle.",
+  "unicode_variant_source": "https://www.unicode.org/wg2/docs/n3318-org-Appendix.pdf",
+  "unicode_variant_note": "Unicode WG2 appendix lists 5F11 and 5F12. This establishes the character relationship, not the game identity; the independent original-frame and frozen-catalog review establishes 10196.",
+  "catalog": [
+    {
+      "id": "10196",
+      "name": "弑君突刺",
+      "descText": "在赢得玩家对战回合后，获得1金币。如果该玩家的生命值高于你，则获得6金币作为替代。即刻获得1金币。",
+      "icon": "https://img.dataj.cc/images/hex/kingslayer1.png",
+      "level": 1,
+      "isLegend": 0,
+      "heroEnhancementType": 0,
+      "fetterId": null,
+      "fetterType": "0",
+      "setId": "18",
+      "season": "S19",
+      "version": "18.18.1"
+    }
+  ]
+}

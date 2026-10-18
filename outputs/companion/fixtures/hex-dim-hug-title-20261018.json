@@ -1,0 +1,52 @@
+{
+  "source": "private original game screenshot; anonymous title band only, no player identifiers",
+  "source_image_sha256": "9a247dfb50dfe93350bb1c5faf7430907ecd78ab0be0b1b597809f438e72e85c",
+  "source_case_sha256": "1de52b05f56885237d074218399fd981e5805aea0a94683e7629a589b6752630",
+  "source_catalog_sha256": "bcb059532eb208de33a46e2715fce72d792b29d8b38d97b88f018b8c11775c39",
+  "source_catalog_hash_encoding": "UTF-8 JSON of evidence.catalog; ensure_ascii=false, sort_keys=true, separators=(comma,colon), no terminal newline",
+  "crop": [
+    1571,
+    734,
+    2262,
+    842
+  ],
+  "crop_sha256": "f23619e3831d130b5740e4d3690416ebc4ffc3a89e96ac9e936f20e6c7ec6de2",
+  "set_id": 18,
+  "patch": "18.3",
+  "expected": {
+    "id": "10616",
+    "name": "拥抱 II"
+  },
+  "reviewed_by": "agent:oracle_review",
+  "review_note": "Independent original-pixel review: center title visibly has Roman II; description gives 10 armor and magic resistance to neighboring units, stacking. Unique exact frozen catalog identity 10616. Review occurred before this fix; OCR outputs never define this answer.",
+  "catalog": [
+    {
+      "id": "10615",
+      "name": "拥抱 I",
+      "descText": "战斗开始时：弈子为其他邻格弈子提供7护甲和魔法抗性。此效果可叠加。",
+      "icon": "https://img.dataj.cc/images/hex/grouphugi1.png",
+      "level": 1,
+      "isLegend": 0,
+      "heroEnhancementType": 0,
+      "fetterId": null,
+      "fetterType": "0",
+      "setId": "18",
+      "season": "S19",
+      "version": "18.18.3"
+    },
+    {
+      "id": "10616",
+      "name": "拥抱 II",
+      "descText": "战斗开始时：弈子为其他邻格弈子提供10护甲和魔法抗性。此效果可叠加。",
+      "icon": "https://img.dataj.cc/images/hex/grouphugii2.png",
+      "level": 2,
+      "isLegend": 0,
+      "heroEnhancementType": 0,
+      "fetterId": null,
+      "fetterType": "0",
+      "setId": "18",
+      "season": "S19",
+      "version": "18.18.3"
+    }
+  ]
+}

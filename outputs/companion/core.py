@@ -45,8 +45,21 @@ class Session:
 
 
 def resolve_name(readings, catalog):
-    """Views are OCR outputs, not fuzzy substitutions or aliases inferred from stats."""
+    """Resolve trusted OCR views, with only independently reviewed title variants."""
     counts = Counter(normalize_name(x) for x in readings if x)
+    # The real set-18 title crop reproducibly reads 弒 while its independently
+    # reviewed DataJ hex identity is 弑君突刺 / 10196. Scope this equivalence to
+    # that complete title and frozen source identity; never normalize individual
+    # characters, qualities, item names or other seasons. A literal variant row
+    # keeps its exact semantics and disables the alias entirely. Keep all rows
+    # for the canonical title below so duplicate identities remain ambiguous.
+    if (counts.get('弒君突刺')
+            and not any(normalize_name(row['name']) == '弒君突刺' for row in catalog)
+            and any(row['name'] == '弑君突刺' and str(row['id']) == '10196'
+                    and str(row.get('setId')) == '18' and str(row.get('level')) == '1'
+                    and row.get('icon') == 'https://img.dataj.cc/images/hex/kingslayer1.png'
+                    for row in catalog)):
+        counts['弑君突刺'] += counts.pop('弒君突刺')
     valid = {name: [r for r in catalog if normalize_name(r['name']) == name]
              for name in counts}
     valid = {name:rows for name,rows in valid.items() if rows}

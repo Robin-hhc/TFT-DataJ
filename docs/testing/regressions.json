@@ -126,6 +126,26 @@
       "path": "outputs/companion/fixtures/hex-title-20261007.png",
       "sha256": "2d6b8cc390a048b9ba2023ee470baba0013a557debb05ffe7ffd59a2b28c1e94",
       "format": "bytes"
+    },
+    {
+      "path": "outputs/companion/fixtures/hex-dim-hug-title-20261018.png",
+      "sha256": "f23619e3831d130b5740e4d3690416ebc4ffc3a89e96ac9e936f20e6c7ec6de2",
+      "format": "bytes"
+    },
+    {
+      "path": "outputs/companion/fixtures/hex-dim-hug-title-20261018.json",
+      "sha256": "40f2d4397b9f431a647722ea3aa0a505d04fb2ac93b2a6d272eddb57b4e75736",
+      "format": "utf8-lf"
+    },
+    {
+      "path": "outputs/companion/fixtures/hex-kingslayer-title-20261018.png",
+      "sha256": "a7c1fe94e9b33e241916c81ed35909410b559a1733226d302fa1dd5c2ebb0d78",
+      "format": "bytes"
+    },
+    {
+      "path": "outputs/companion/fixtures/hex-kingslayer-title-20261018.json",
+      "sha256": "bbe78968a17616d0f548a4f9f0ad0e2fb18cd39364cd6a52f8afa0a20778806e",
+      "format": "utf8-lf"
     }
   ],
   "regressions": [
@@ -1097,7 +1117,8 @@
       "evidence": [
         "docs/testing/hex-all-unresolved-20261010.md",
         "outputs/companion/test_title_retry_views.py",
-        "docs/development-records/2026-10-11-live-match-conditions.md"
+        "docs/development-records/2026-10-11-live-match-conditions.md",
+        "docs/development-records/2026-10-18-recognition-fix.md"
       ],
       "tests": [
         {
@@ -1146,6 +1167,62 @@
         },
         {
           "id": "test_title_retry_views.TitleRetryViewTests.test_missing_complete_catalog_title_does_not_request_resampled_retry",
+          "scope": "public"
+        },
+        {
+          "id": "test_dim_hex_title.DimHexTitleTests.test_real_dim_hug_ii_title_preserves_exact_quality",
+          "scope": "public"
+        },
+        {
+          "id": "test_dim_hex_title.DimHexTitleTests.test_dim_context_requires_two_trusted_exact_title_reads",
+          "scope": "public"
+        },
+        {
+          "id": "test_dim_hex_title.DimHexTitleTests.test_one_trusted_dim_read_cannot_authorize_identity",
+          "scope": "public"
+        },
+        {
+          "id": "test_dim_hex_title.DimHexTitleTests.test_conflicting_dim_quality_titles_veto_identity",
+          "scope": "public"
+        },
+        {
+          "id": "test_dim_hex_title.DimHexTitleTests.test_conflicting_initial_title_vetoes_dim_consensus",
+          "scope": "public"
+        },
+        {
+          "id": "test_dim_hex_title.DimHexTitleTests.test_dim_numeric_or_incomplete_suffix_never_becomes_roman_quality",
+          "scope": "public"
+        },
+        {
+          "id": "test_dim_hex_title.DimHexTitleTests.test_flat_low_contrast_and_smooth_backgrounds_cannot_authorize_identity",
+          "scope": "public"
+        },
+        {
+          "id": "test_hex_title_variants.HexTitleVariantTests.test_real_kingslayer_title_resolves_frozen_identity",
+          "scope": "public"
+        },
+        {
+          "id": "test_hex_title_variants.HexTitleVariantTests.test_reviewed_variant_still_requires_two_trusted_complete_readings",
+          "scope": "public"
+        },
+        {
+          "id": "test_hex_title_variants.HexTitleVariantTests.test_any_conflicting_exact_title_vetoes_variant_consensus",
+          "scope": "public"
+        },
+        {
+          "id": "test_hex_title_variants.HexTitleVariantTests.test_literal_variant_catalog_identity_is_never_rewritten_to_canonical",
+          "scope": "public"
+        },
+        {
+          "id": "test_hex_title_variants.HexTitleVariantTests.test_duplicate_canonical_identities_remain_ambiguous",
+          "scope": "public"
+        },
+        {
+          "id": "test_hex_title_variants.HexTitleVariantTests.test_variant_never_crosses_frozen_season_domain_or_identity",
+          "scope": "public"
+        },
+        {
+          "id": "test_hex_title_variants.HexTitleVariantTests.test_other_titles_and_numeric_roman_plus_suffixes_are_not_rewritten",
           "scope": "public"
         }
       ]
@@ -1279,7 +1356,8 @@
       ],
       "evidence": [
         "docs/testing/README.md",
-        "outputs/companion/test_portable_query_lifecycle.py"
+        "outputs/companion/test_portable_query_lifecycle.py",
+        "docs/development-records/2026-10-18-recognition-fix.md"
       ],
       "tests": [
         {
@@ -1304,6 +1382,46 @@
         },
         {
           "id": "test_portable_query_lifecycle.PortableQueryLifecycleTests.test_diagnostic_dispatcher_publishes_current_result_and_exposes_source_failure",
+          "scope": "public"
+        },
+        {
+          "id": "test_portable_recognition_replay.PortableRecognitionReplayTests.test_exact_scene_round_and_three_ordered_ids_are_reported",
+          "scope": "public"
+        },
+        {
+          "id": "test_portable_recognition_replay.PortableRecognitionReplayTests.test_wrong_nonempty_or_reordered_ids_fail_exact_oracle",
+          "scope": "public"
+        },
+        {
+          "id": "test_portable_recognition_replay.PortableRecognitionReplayTests.test_expected_ids_with_unresolved_or_confirmation_status_are_rejected",
+          "scope": "public"
+        },
+        {
+          "id": "test_portable_recognition_replay.PortableRecognitionReplayTests.test_expected_ids_with_out_of_order_duplicate_or_missing_slots_are_rejected",
+          "scope": "public"
+        },
+        {
+          "id": "test_portable_recognition_replay.PortableRecognitionReplayTests.test_wrong_round_or_scene_fails_even_when_all_three_ids_match",
+          "scope": "public"
+        },
+        {
+          "id": "test_portable_recognition_replay.PortableRecognitionReplayTests.test_changed_frame_or_catalog_hash_is_rejected_before_ocr",
+          "scope": "public"
+        },
+        {
+          "id": "test_portable_recognition_replay.PortableRecognitionReplayTests.test_all_cases_are_reported_including_later_cases_after_mismatch",
+          "scope": "public"
+        },
+        {
+          "id": "test_portable_recognition_replay.PortableRecognitionReplayTests.test_malformed_or_empty_oracle_never_counts_as_pass",
+          "scope": "public"
+        },
+        {
+          "id": "test_portable_recognition_replay.PortableRecognitionReplayTests.test_nonobject_manifest_returns_failed_diagnostic_instead_of_raising",
+          "scope": "public"
+        },
+        {
+          "id": "test_portable_recognition_replay.PortableRecognitionReplayTests.test_verifier_copies_hash_bound_inputs_and_keeps_originals_unchanged",
           "scope": "public"
         }
       ]

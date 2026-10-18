@@ -1,11 +1,96 @@
 """Hidden packaged-app diagnostic. No game input and no network by default."""
 import argparse
+import hashlib
+import io
 import json
 import os
 from pathlib import Path
 import sys
 import time
 import traceback
+
+
+def load_recognition_fixture(path):
+    """Read a hash-bound external oracle without modifying any of its inputs.
+
+    Relative asset paths are resolved beside the manifest. This optional input
+    is supplied separately from the portable archive, never bundled as data.
+    """
+    path=Path(path).resolve()
+    fixture=json.loads(path.read_text(encoding='utf-8'))
+    if not isinstance(fixture,dict):
+        raise ValueError('Recognition fixture must be an object')
+    if fixture.get('schema_version')!=1:
+        raise ValueError('Recognition fixture schema_version must be 1')
+    def asset(descriptor,label):
+        if not isinstance(descriptor,dict) or not isinstance(descriptor.get('path'),str) or not descriptor['path']:
+            raise ValueError(label+' requires a path')
+        digest=descriptor.get('sha256')
+        if not isinstance(digest,str) or len(digest)!=64 or any(c not in '0123456789abcdef' for c in digest):
+            raise ValueError(label+' requires a lowercase SHA-256')
+        source=(path.parent/descriptor['path']).resolve()
+        content=source.read_bytes()
+        if hashlib.sha256(content).hexdigest()!=digest:
+            raise ValueError(label+' SHA-256 mismatch')
+        return {'path':source,'sha256':digest,'content':content}
+    catalog=asset(fixture.get('catalog'),'catalog')
+    data=json.loads(catalog['content'].decode('utf-8'))
+    if not isinstance(data,dict) or not isinstance(data.get('data'),dict) or not isinstance(data['data'].get('hex'),list):
+        raise ValueError('Recognition catalog requires data.hex list')
+    cases=fixture.get('cases')
+    if not isinstance(cases,list) or not cases:
+        raise ValueError('Recognition fixture requires nonempty cases')
+    reviewed=[];identities=set()
+    for case in cases:
+        if not isinstance(case,dict) or not isinstance(case.get('id'),str) or not case['id'] or case['id'] in identities:
+            raise ValueError('Recognition case IDs must be nonempty and unique')
+        identities.add(case['id'])
+        expected=case.get('expected')
+        if not isinstance(expected,dict) or set(expected)!= {'scene','round','ids'}:
+            raise ValueError(case['id']+' requires exact expected scene, round and ids')
+        if any(not isinstance(expected[key],str) or not expected[key] for key in ('scene','round')):
+            raise ValueError(case['id']+' requires nonempty expected scene and round')
+        if not isinstance(expected['ids'],list) or len(expected['ids'])!=3 or any(
+                not isinstance(identity,str) or not identity for identity in expected['ids']):
+            raise ValueError(case['id']+' requires exactly three expected string IDs')
+        reviewed.append({'id':case['id'],'frame':asset(case.get('frame'),case['id']+' frame'),
+                         'expected':expected})
+    return {'catalog':catalog,'hexes':data['data']['hex'],'cases':reviewed}
+
+
+def check_recognition_fixture(vision,path):
+    """Replay real full frames against independently frozen exact expectations."""
+    from PIL import Image
+    report={'status':'failed','cases':[]}
+    try:
+        fixture=load_recognition_fixture(path)
+    except (OSError,ValueError,TypeError) as error:
+        report['error']=str(error)
+        return report
+    report['catalog_sha256']=fixture['catalog']['sha256']
+    for case in fixture['cases']:
+        outcome={'id':case['id'],'frame_sha256':case['frame']['sha256'],
+                 'expected':case['expected'],'checks':[],'status':'failed'}
+        report['cases'].append(outcome)
+        try:
+            with Image.open(io.BytesIO(case['frame']['content'])) as frame:
+                result=vision.analyze_fast(frame.convert('RGB'),fixture['hexes'])
+            actual={'scene':result.get('scene'),'round':result.get('round'),
+                    'ids':[card.get('resolution',{}).get('id') for card in result.get('cards',[])],
+                    'slots':[card.get('slot') for card in result.get('cards',[])],
+                    'resolution_statuses':[card.get('resolution',{}).get('status') for card in result.get('cards',[])]}
+            outcome['actual']=actual
+            outcome['mismatches']=[key for key in ('scene','round','ids') if actual[key]!=case['expected'][key]]
+            if actual['resolution_statuses']!=['resolved']*3:outcome['mismatches'].append('resolved_cards')
+            if actual['slots']!=[0,1,2]:outcome['mismatches'].append('ordered_slots')
+            outcome['checks']=[name for key,name in (('scene','scene'),('round','round'),('ids','ordered_three_ids'),
+                                                    ('resolved_cards','resolved_cards'),('ordered_slots','ordered_slots'))
+                               if key not in outcome['mismatches']]
+            outcome['status']='failed' if outcome['mismatches'] else 'passed'
+        except Exception as error:
+            outcome['error']=str(error)
+    if all(case['status']=='passed' for case in report['cases']):report['status']='passed'
+    return report
 
 
 def _run_diagnostic_job(pool,fn,done,failed=None,*,is_current=None,cancelled=None):
@@ -434,6 +519,7 @@ def main():
     parser.add_argument('--online',action='store_true')
     parser.add_argument('--image',type=Path)
     parser.add_argument('--catalog',type=Path)
+    parser.add_argument('--recognition-fixture',type=Path,help='External hash-bound exact scene/round/three-ID replay manifest')
     parser.add_argument('--condition-image',type=Path,help='Optional original 4K giant-belt detail regression')
     parser.add_argument('--explorer-fixture',type=Path)
     parser.add_argument('--data-fixture',type=Path)
@@ -541,6 +627,10 @@ def main():
             report['real_frame']={'stage':result['round'],'ids':[c['resolution'].get('id') for c in result['cards']]}
             assert result['scene']=='choice_candidates' and all(report['real_frame']['ids']),report['real_frame']
             report['checks'].append('external real game frame recognition')
+        if args.recognition_fixture:
+            report['recognition_replay']=check_recognition_fixture(panel.vision,args.recognition_fixture)
+            assert report['recognition_replay']['status']=='passed',report['recognition_replay']
+            report['checks'].append('external reviewed exact scene, round and ordered three-ID recognition replay')
         if args.condition_image:
             if not args.catalog:parser.error('--condition-image requires --catalog')
             from condition_reader import ConditionReader
