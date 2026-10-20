@@ -2,11 +2,12 @@
 from __future__ import annotations
 import time
 import re
+import hashlib
 from dataclasses import dataclass
 import numpy as np
 from PIL import Image, ImageOps, ImageStat, ImageFilter
 import bootstrap
-from choice_reader import read_choice, bounds
+from choice_reader import read_choice, bounds, normalize_name
 from ocr_baseline import build_engine
 from core import resolve_name, description_terms, resolve_description
 from roman_glyph import roman_evidence
@@ -35,6 +36,24 @@ def name_views(crop):
     crop = crop.convert('RGB')
     large = crop.resize((crop.width*2, crop.height*2), Image.Resampling.LANCZOS)
     return [crop, large, ImageOps.autocontrast(ImageOps.grayscale(large)).convert('RGB')]
+
+
+def _may_have_roman_suffix(readings, catalog):
+    """Route extra pixel reads; a catalog family never supplies an identity.
+
+    The recognizer can drop a thin suffix or read it as punctuation/digits.
+    Keep those observations unchanged: only new, complete exact OCR reads can
+    pass resolve_name. The base must match literally, including punctuation.
+    """
+    titles = [normalize_name(value) for value in readings if value]
+    for row in catalog:
+        family = re.fullmatch(r'(.+?)(I{1,3})(\+{0,2})', normalize_name(row.get('name', '')))
+        if family:
+            base = family[1]
+            if any(value.startswith(base) and re.fullmatch(r'[Ii1l!|+]*', value[len(base):])
+                   for value in titles):
+                return True
+    return False
 
 
 class Vision:
@@ -106,9 +125,19 @@ class Vision:
     def read_name(self, crop, catalog):
         if self.engine is None:
             self.engine, _ = build_engine()
+        seen_title_pixels=set()
+
+        def read_title(view, *, unique=False):
+            pixels=np.asarray(view)[:,:,::-1].copy()
+            signature=(pixels.shape,hashlib.sha256(pixels).digest())
+            if unique and signature in seen_title_pixels:
+                return None
+            seen_title_pixels.add(signature)
+            return self.engine(pixels,use_det=False,use_cls=False,return_word_box=False)
+
         readings = []
         for view in name_views(crop):
-            result = self.engine(np.asarray(view)[:,:,::-1].copy(),use_det=False,use_cls=False,return_word_box=False)
+            result = read_title(view)
             readings.append(result.txts[0] if result.txts and result.scores[0] >= .90 else '')
         resolution=resolve_name(readings,catalog)
         if resolution['status']=='unrecognized':
@@ -122,7 +151,7 @@ class Vision:
                 binary=ImageOps.grayscale(tight).point(lambda value:255 if value>200 else 0).convert('RGB')
                 retries=[]
                 for view in (binary,ImageOps.invert(binary)):
-                    result=self.engine(np.asarray(view)[:,:,::-1].copy(),use_det=False,use_cls=False,return_word_box=False)
+                    result=read_title(view)
                     retries.append(result.txts[0] if result.txts and result.scores[0]>=.90 else '')
                 supported=resolve_name(retries,catalog)
                 combined=resolve_name(readings+retries,catalog)
@@ -137,7 +166,7 @@ class Vision:
                     widened=[]
                     for factor in (1.3,1.6):
                         view=tight.resize((round(tight.width*factor),tight.height),Image.Resampling.BICUBIC)
-                        result=self.engine(np.asarray(view)[:,:,::-1].copy(),use_det=False,use_cls=False,return_word_box=False)
+                        result=read_title(view)
                         widened.append(result.txts[0] if result.txts and result.scores[0]>=.90 else '')
                     supported=resolve_name(widened,catalog)
                     combined=resolve_name(readings+widened,catalog)
@@ -154,8 +183,7 @@ class Vision:
                         # One complete catalog title is evidence to try one
                         # independent color crop, not authority to assign its ID.
                         # Avoid extra reads for missing catalog names or conflicts.
-                        result=self.engine(np.asarray(tight)[:,:,::-1].copy(),
-                                           use_det=False,use_cls=False,return_word_box=False)
+                        result=read_title(tight)
                         readings.append(result.txts[0] if result.txts and result.scores[0]>=.90 else '')
                         confirmed=resolve_name(readings,catalog)
                         if confirmed['status']=='resolved':
@@ -167,8 +195,7 @@ class Vision:
                             # width. A different resampler supplies independent
                             # pixels, not a second vote for the first OCR output.
                             view=tight.resize((round(tight.width*1.6),tight.height),Image.Resampling.LANCZOS)
-                            result=self.engine(np.asarray(view)[:,:,::-1].copy(),
-                                               use_det=False,use_cls=False,return_word_box=False)
+                            result=read_title(view)
                             readings.append(result.txts[0] if result.txts and result.scores[0]>=.90 else '')
                             confirmed=resolve_name(readings,catalog)
                             if confirmed['status']=='resolved':
@@ -190,8 +217,7 @@ class Vision:
                                    min(crop.width,int(dim_x.max())+context+1),crop.height))
                     retries=[]
                     for view in (dim,ImageOps.autocontrast(ImageOps.grayscale(dim)).convert('RGB')):
-                        result=self.engine(np.asarray(view)[:,:,::-1].copy(),
-                                           use_det=False,use_cls=False,return_word_box=False)
+                        result=read_title(view)
                         retries.append(result.txts[0] if result.txts and result.scores[0]>=.90 else '')
                     readings+=retries
                     combined=resolve_name(readings,catalog)
@@ -199,6 +225,33 @@ class Vision:
                         resolution={**combined,'method':'dim_context_two_views'}
                     elif combined['status'] in ('conflict','ambiguous'):
                         resolution=combined
+        if resolution['status']=='unrecognized' and _may_have_roman_suffix(readings,catalog):
+            # A suffix needs context above/below its serifs. The old tight
+            # crop can turn I into !/1; a whole-height band can make short
+            # titles too small. Retain a proportional margin around ALL ink,
+            # then read the complete title twice without changing characters.
+            pixels=np.asarray(crop.convert('RGB'))
+            mask=(pixels.min(axis=2)>175)&((pixels.max(axis=2)-pixels.min(axis=2))<55)
+            yy,xx=np.where(mask)
+            if len(xx)>=8:
+                horizontal=max(4,round(crop.height*.075))
+                vertical=max(4,round(crop.height*.11))
+                context=crop.crop((max(0,int(xx.min())-horizontal),
+                                   max(0,int(yy.min())-vertical),
+                                   min(crop.width,int(xx.max())+horizontal+1),
+                                   min(crop.height,int(yy.max())+vertical+1)))
+                for view in (context,ImageOps.autocontrast(ImageOps.grayscale(context)).convert('RGB')):
+                    # An unchanged crop or binary-looking title can repeat an
+                    # earlier input exactly. Never count that as new evidence.
+                    result=read_title(view,unique=True)
+                    if result is None:
+                        continue
+                    readings.append(result.txts[0] if result.txts and result.scores[0]>=.90 else '')
+                combined=resolve_name(readings,catalog)
+                if combined['status']=='resolved':
+                    resolution={**combined,'method':'roman_title_context_two_views'}
+                elif combined['status'] in ('conflict','ambiguous'):
+                    resolution=combined
         glyph=roman_evidence(crop)
         if glyph and resolution['status']=='unrecognized':
             prefix=crop.crop((0,0,glyph['prefix_right']+2,crop.height))

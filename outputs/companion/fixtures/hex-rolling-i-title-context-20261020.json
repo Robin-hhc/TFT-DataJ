@@ -1,0 +1,41 @@
+{
+  "source": "private original game screenshot; anonymous title band only, no player identifiers",
+  "source_image_sha256": "b7f73e828e0a9800dbb22e18adce92ee2c21005c520a4daa7bfd225936b97c90",
+  "source_case_sha256": "248409245ccf585abde0f9ec35cb571a8063942564742924a0e8ca05dae26276",
+  "source_catalog_sha256": "6554f11c481fc39904f42b7e24a1461f7a51d05e8f63a774bca427467b12ce46",
+  "source_catalog_hash_encoding": "UTF-8 JSON of evidence.catalog; ensure_ascii=false, sort_keys=true, separators=(comma,colon), no terminal newline",
+  "crop": [
+    1571,
+    734,
+    2262,
+    842
+  ],
+  "crop_sha256": "1dc1bdfd0a062d96c615874f4b85e3002660610a8132e1004e887fac31e2d5b6",
+  "set_id": 18,
+  "patch": "18.4",
+  "expected": {
+    "id": "1134",
+    "name": "嘀个痛快！ I"
+  },
+  "reviewed_by": "agent:oracle_review_20261020",
+  "review_note": "10 free rerolls; first character independently rechecked from focused original-pixel crop as 嘀; visible single Roman I after exclamation mark. Original PNG and focused raw-pixel crops were independently reviewed before production change or these tests. No observation, OCR or ranking output defines the answer. All frozen catalog family variants retained.",
+  "catalog": [
+    {
+      "id": "1134",
+      "name": "嘀个痛快！ I",
+      "descText": "获得10次免费刷新。",
+      "icon": "https://img.dataj.cc/images/hex/rollingfordays1.png",
+      "level": 1,
+      "isLegend": 0,
+      "heroEnhancementType": 0,
+      "fetterId": null,
+      "fetterType": "0",
+      "setId": "18",
+      "season": "S19",
+      "version": "18.18.1"
+    }
+  ],
+  "source_catalog_scope": "Complete original case.evidence.catalog object. Embedded catalog below is the independently selected family projection, not the source object.",
+  "embedded_catalog_hash_encoding": "UTF-8 JSON of the catalog list below; ensure_ascii=false, sort_keys=true, separators=(comma,colon), no terminal newline",
+  "embedded_catalog_sha256": "88145b9cf09fc3e60f429255de4e6d923262cefbc4177d74511ce68275d2adc1"
+}

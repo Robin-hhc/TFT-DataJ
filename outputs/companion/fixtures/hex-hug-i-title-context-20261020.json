@@ -1,0 +1,55 @@
+{
+  "source": "private original game screenshot; anonymous title band only, no player identifiers",
+  "source_image_sha256": "22c8a46ed3547ed64b81cf0b46b109c52c1b679b1f9eacf2e5de83395abb1ee3",
+  "source_case_sha256": "3eefcfa3e194af6b78462ed43fb904a5cbd11e8caad617e62bccf82e8b138908",
+  "source_catalog_sha256": "6554f11c481fc39904f42b7e24a1461f7a51d05e8f63a774bca427467b12ce46",
+  "source_catalog_hash_encoding": "UTF-8 JSON of evidence.catalog; ensure_ascii=false, sort_keys=true, separators=(comma,colon), no terminal newline",
+  "crop": [
+    2577,
+    734,
+    3268,
+    842
+  ],
+  "crop_sha256": "aa6d0a64e048d4c072ebe8478a96eda8235cec1c9d3da3b1a7a5c300a123b376",
+  "set_id": 18,
+  "patch": "18.4",
+  "expected": {
+    "id": "10615",
+    "name": "拥抱 I"
+  },
+  "reviewed_by": "agent:oracle_review_20261020",
+  "review_note": "Neighboring allies provide 7 armor and magic resist; visible single Roman I. Original PNG and focused raw-pixel crops were independently reviewed before production change or these tests. No observation, OCR or ranking output defines the answer. All frozen catalog family variants retained.",
+  "catalog": [
+    {
+      "id": "10615",
+      "name": "拥抱 I",
+      "descText": "战斗开始时：弈子为其他邻格弈子提供7护甲和魔法抗性。此效果可叠加。",
+      "icon": "https://img.dataj.cc/images/hex/grouphugi1.png",
+      "level": 1,
+      "isLegend": 0,
+      "heroEnhancementType": 0,
+      "fetterId": null,
+      "fetterType": "0",
+      "setId": "18",
+      "season": "S19",
+      "version": "18.18.3"
+    },
+    {
+      "id": "10616",
+      "name": "拥抱 II",
+      "descText": "战斗开始时：弈子为其他邻格弈子提供10护甲和魔法抗性。此效果可叠加。",
+      "icon": "https://img.dataj.cc/images/hex/grouphugii2.png",
+      "level": 2,
+      "isLegend": 0,
+      "heroEnhancementType": 0,
+      "fetterId": null,
+      "fetterType": "0",
+      "setId": "18",
+      "season": "S19",
+      "version": "18.18.3"
+    }
+  ],
+  "source_catalog_scope": "Complete original case.evidence.catalog object. Embedded catalog below is the independently selected family projection, not the source object.",
+  "embedded_catalog_hash_encoding": "UTF-8 JSON of the catalog list below; ensure_ascii=false, sort_keys=true, separators=(comma,colon), no terminal newline",
+  "embedded_catalog_sha256": "423140953e5853c1e78055726cba90e3d8e463d96c2b1f21b101b661e22c7345"
+}

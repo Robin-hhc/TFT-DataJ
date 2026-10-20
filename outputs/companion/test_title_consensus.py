@@ -11,7 +11,13 @@ class TitleConsensusTests(unittest.TestCase):
         ImageDraw.Draw(image).rectangle((20,10,110,32),fill='white')
         stream=iter(outputs)
         vision=Vision()
-        def engine(*args,**kwargs):
+        def engine(array,**kwargs):
+            # This fixture's additional padded complete-title views are
+            # unreadable. Preserve the historical engine sequence (including
+            # the separate prefix-only glyph suggestion) and all assertions.
+            # White ink is x20..110/y10..32; the new view is 99x33 pixels.
+            if array.shape[:2] == (33,99):
+                return SimpleNamespace(txts=[''],scores=[0])
             text,score=next(stream)
             return SimpleNamespace(txts=[text],scores=[score])
         vision.engine=engine

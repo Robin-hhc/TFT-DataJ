@@ -216,6 +216,66 @@
       "image_sha256": "9a247dfb50dfe93350bb1c5faf7430907ecd78ab0be0b1b597809f438e72e85c",
       "case_sha256": "1de52b05f56885237d074218399fd981e5805aea0a94683e7629a589b6752630",
       "expected_sha256": "8a508013b72301d53de53d4581e9f51d11d480dd7466ba7238e83456b024b707"
+    },
+    {
+      "case_id": "case-7e75188b6640d80b8e208f560772f55249eb6f8eee86c08909d59584ff89068c",
+      "image_sha256": "22c8a46ed3547ed64b81cf0b46b109c52c1b679b1f9eacf2e5de83395abb1ee3",
+      "case_sha256": "3eefcfa3e194af6b78462ed43fb904a5cbd11e8caad617e62bccf82e8b138908",
+      "expected_sha256": "665c3615bb964f589b888847b192fe8ab70981d070cb0ffd7727fb04c2370f9d"
+    },
+    {
+      "case_id": "case-dd7823b3ea9c758e696e10c6ad88f854658d59668eae645c92e5df2f3e2edaa9",
+      "image_sha256": "98dfd653b3719ddd1318ee18b985a21e9e23681081347ee11fc8dded40a0b634",
+      "case_sha256": "027826248e0b4ebbe504386064c95dd64381818160ba3954358c4fd067ab5065",
+      "expected_sha256": "ca611db3292ab4874db8901463ec69fb34028b39765b21f9724b4674646cd942"
+    },
+    {
+      "case_id": "case-de47761e4ca4f713cadef986f78cc9ced29fa01a7522f8cf511860638676dddb",
+      "image_sha256": "f9a0f459cde1f0af73037fe850e5ed77a334b2a9238e16f515ca1c9d86fabc2e",
+      "case_sha256": "776fcd2a5a5bb520e71c1208eab5471be35aa2dd1dd21d6200f0bb998a27b6fd",
+      "expected_sha256": "2392314445d247c6eaecf1b79f101a733c8b6bd88b75a110c0ae5bd1f0745491"
+    },
+    {
+      "case_id": "case-52885cdf96fc4c97bece49c4d7b4edefe0d587a60e3e20e497c4d2077b7d63cc",
+      "image_sha256": "d14f780f3adbbe26aa0da9bed5f64c8d4179f2f12385407ea13fee30debed113",
+      "case_sha256": "d6fbb8df6cccbee4fcd4687e71fc09d7f6484a62a1e5dbd3dd56b2a91d09a29c",
+      "expected_sha256": "708af077daac16db633d6e07464c642d56b35c0c9ebca03c7b21494f4cf6ca27"
+    },
+    {
+      "case_id": "case-32463cfb13b16948610f34c6fc9f348cab61be80242008bfa65b5339e0f71586",
+      "image_sha256": "a2adefc0b1a4435106d5f388c8f1c970494757c4d2f4bfeec811513f5c11f885",
+      "case_sha256": "a83fab54e843050235d2b0dcc2f2e5a8648d601625389b5550239ea45974b376",
+      "expected_sha256": "bbd9aa800f8dea99edbe0bbde6a12e7250706eebf68119bac3e9f7b0b1e25c00"
+    },
+    {
+      "case_id": "case-f22d7ea4cd70e7005630f22aa3b07fe9ab20c706c97c65dca0de4b1fbb1b0cb0",
+      "image_sha256": "f8e7a873c64f51dc4c180e37f3f10f2289ce9d2628e57627adf1fbf619a82ed9",
+      "case_sha256": "8b1dc90886391bf089d652d4320aecec72c5d52abbda159dec36e77d97033bfe",
+      "expected_sha256": "1a1db206b0390cd592f61949725986dba9477797aa21d375c80d342ead9fc3ea"
+    },
+    {
+      "case_id": "case-cbd988802ed9ba1f58469a861a180941b698e9a3e6140463394736ee05c58b5c",
+      "image_sha256": "b7f73e828e0a9800dbb22e18adce92ee2c21005c520a4daa7bfd225936b97c90",
+      "case_sha256": "248409245ccf585abde0f9ec35cb571a8063942564742924a0e8ca05dae26276",
+      "expected_sha256": "e8410865eccf3cb47bbcb913c5f1c4c520faf6e15225f6da45070a2e2be1785b"
+    },
+    {
+      "case_id": "case-c93b5f272edf6d50184f3494ccafca2548fd2b03976fa9eee46b127da5507c57",
+      "image_sha256": "1c6f12e61bcd2e3be2348a8622f0599829dbee85e9701c6b8ea9831f6d366562",
+      "case_sha256": "524a048511563dd370221bc64401db675f16b9d4d73751a07348576361e933eb",
+      "expected_sha256": "918f9671ce2b105ecfc70878bd40e4db5ba817f4f0797d92f7d4a527efdf1232"
+    },
+    {
+      "case_id": "case-a0a4456ceb4778e7bd4aa8d9d421597b368621a86cd4653aba270ff2aee94cc9",
+      "image_sha256": "ee8796ae92d0487ee2d938d5809cb5461f7adfcc77b3072824bf411094f90854",
+      "case_sha256": "8ffe65d62ba205aca71ec7cf6a6050796323b9b0358e405dfa28c253832b35ff",
+      "expected_sha256": "ba77806bce086501147d2a3f413010546a1d7f3b49cb79c9e03572a0c5a12d68"
+    },
+    {
+      "case_id": "case-b2b8aa568873b894ec4611d3fd4b685a33cb000e73a16a77c0dda523e7bfb651",
+      "image_sha256": "bfc9c1ec9e19fa0bce47da69f024cbf510e3b45ffbdeae3d71ba78bd84facac5",
+      "case_sha256": "f0078fda11f8a0a96fbd2d0229438ae130ffa0ec72880823a02f3748fb58a16d",
+      "expected_sha256": "888a54f6836a2feb8de24323ebe1e61efb4ff77422f4d912f7ad30211b3dd590"
     }
   ]
 }

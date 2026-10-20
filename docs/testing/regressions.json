@@ -146,6 +146,26 @@
       "path": "outputs/companion/fixtures/hex-kingslayer-title-20261018.json",
       "sha256": "bbe78968a17616d0f548a4f9f0ad0e2fb18cd39364cd6a52f8afa0a20778806e",
       "format": "utf8-lf"
+    },
+    {
+      "path": "outputs/companion/fixtures/hex-hug-i-title-context-20261020.png",
+      "sha256": "aa6d0a64e048d4c072ebe8478a96eda8235cec1c9d3da3b1a7a5c300a123b376",
+      "format": "bytes"
+    },
+    {
+      "path": "outputs/companion/fixtures/hex-hug-i-title-context-20261020.json",
+      "sha256": "0df830cad542ed0172c568a9a4b4b1113fdcc34187bc5f610feae70df0fffc56",
+      "format": "utf8-lf"
+    },
+    {
+      "path": "outputs/companion/fixtures/hex-rolling-i-title-context-20261020.png",
+      "sha256": "1dc1bdfd0a062d96c615874f4b85e3002660610a8132e1004e887fac31e2d5b6",
+      "format": "bytes"
+    },
+    {
+      "path": "outputs/companion/fixtures/hex-rolling-i-title-context-20261020.json",
+      "sha256": "1acd71ed67ad842967b5d46be060f792489a30bba933780ffd910d02415eb333",
+      "format": "utf8-lf"
     }
   ],
   "regressions": [
@@ -1105,7 +1125,7 @@
       "history_key": "hex-title-identity",
       "title": "海克斯身份与标题误读",
       "coverage": "automated",
-      "verified_scope": "catalogprojection/exactsuffix/conflict拒绝；genuine II++ publictitlecrop hash+OCR；完整目录标题仅有一次可信读数时，最多追加一个独立Lanczos宽图视图；低置信、数字品质、真实后缀冲突不得凑共识；新增批准3-2拥抱I私有原图。",
+      "verified_scope": "catalogprojection/exactsuffix/conflict拒绝；genuine II++ publictitlecrop hash+OCR；完整目录标题仅有一次可信读数时，最多追加一个独立Lanczos宽图视图；低置信、数字品质、真实后缀冲突不得凑共识；新增批准3-2拥抱I私有原图。 2026-10-20：罗马数字家族前缀只用于路由最多两个有留白的整标题补读；两次完整精确读数、.90门槛、等级/加号冲突及目录歧义规则保留。匿名真实拥抱I与嘀个痛快！I已加入公共OCR，三份拥抱I及一份嘀个痛快！I原图加入私有回放。",
       "limits": [
         "II++ 的匿名真实标题裁图已进入公共 OCR 回归；真实整屏识别仍为私人扩展，并非所有海克斯都已有图片用例"
       ],
@@ -1118,7 +1138,8 @@
         "docs/testing/hex-all-unresolved-20261010.md",
         "outputs/companion/test_title_retry_views.py",
         "docs/development-records/2026-10-11-live-match-conditions.md",
-        "docs/development-records/2026-10-18-recognition-fix.md"
+        "docs/development-records/2026-10-18-recognition-fix.md",
+        "docs/development-records/2026-10-20-roman-title-context.md"
       ],
       "tests": [
         {
@@ -1224,8 +1245,69 @@
         {
           "id": "test_hex_title_variants.HexTitleVariantTests.test_other_titles_and_numeric_roman_plus_suffixes_are_not_rewritten",
           "scope": "public"
+        },
+        {
+          "id": "test_roman_title_context.RomanTitleContextTests.test_real_hug_i_title_context_requires_two_trusted_complete_reads",
+          "scope": "public"
+        },
+        {
+          "id": "test_roman_title_context.RomanTitleContextTests.test_real_rolling_i_title_context_requires_two_trusted_complete_reads",
+          "scope": "public"
+        },
+        {
+          "id": "test_roman_title_context_contract.RomanTitleContextContractTests.test_two_direct_complete_context_reads_resolve_exact_suffix",
+          "scope": "public"
+        },
+        {
+          "id": "test_roman_title_context_contract.RomanTitleContextContractTests.test_one_trusted_complete_context_read_is_insufficient",
+          "scope": "public"
+        },
+        {
+          "id": "test_roman_title_context_contract.RomanTitleContextContractTests.test_context_quality_conflict_cannot_be_outvoted",
+          "scope": "public"
+        },
+        {
+          "id": "test_roman_title_context_contract.RomanTitleContextContractTests.test_earlier_complete_quality_vetoes_two_context_reads",
+          "scope": "public"
+        },
+        {
+          "id": "test_roman_title_context_contract.RomanTitleContextContractTests.test_numeric_lowercase_or_incomplete_reads_do_not_assign_suffix",
+          "scope": "public"
+        },
+        {
+          "id": "test_roman_title_context_contract.RomanTitleContextContractTests.test_unknown_prefix_does_not_add_context_calls",
+          "scope": "public"
+        },
+        {
+          "id": "test_roman_title_context_contract.RomanTitleContextContractTests.test_two_complete_reads_cannot_disambiguate_duplicate_catalog_rows",
+          "scope": "public"
+        },
+        {
+          "id": "test_roman_title_context_contract.RomanTitleContextContractTests.test_complete_plus_suffix_retains_exact_identity",
+          "scope": "public"
+        },
+        {
+          "id": "test_roman_title_context_contract.RomanTitleContextContractTests.test_flat_background_cannot_create_context_title",
+          "scope": "public"
+        },
+        {
+          "id": "test_roman_title_context_contract.RomanTitleContextContractTests.test_plus_tier_conflict_rejects_both_context_readings",
+          "scope": "public"
+        },
+        {
+          "id": "test_roman_title_context_contract.RomanTitleContextContractTests.test_earlier_plus_tier_vetoes_two_matching_context_titles",
+          "scope": "public"
+        },
+        {
+          "id": "test_roman_title_context_contract.RomanTitleContextContractTests.test_context_cannot_count_an_old_binary_input_as_a_second_read",
+          "scope": "public"
+        },
+        {
+          "id": "test_roman_title_context_contract.RomanTitleContextContractTests.test_identical_native_and_gray_contexts_supply_only_one_new_read",
+          "scope": "public"
         }
-      ]
+      ],
+      "coverage_change_note": "2026-10-20：未删除或替换任何历史测试ID、断言、fixture或批准原图。test_title_consensus的有限OCR响应序列保留；新增99x33上下文视图在旧合成输入上明确返回空读数，避免额外调用消耗旧prefix-only建议序列。独立原图审阅和修复前真实OCR失败见本轮验收记录；新增15项方法另行保护新视图的两次完整标题、门槛、数字/l/!拒绝、前后冲突、加号、重复目录、调用路由及旧/新视图字节相同不得重复计票。"
     },
     {
       "id": "REG-020",
