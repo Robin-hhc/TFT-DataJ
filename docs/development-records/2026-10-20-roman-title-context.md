@@ -63,3 +63,9 @@
 - 2026-10-21 00:00:36 通过根源码运行环境启动，launcher `190940`、实际 GUI 子进程 `196812`；实际命令路径为根 `outputs/companion/launch.py --start-collapsed`，窗口 Responding=true，新日志无异常，pipeline 中新 PID 进入 `ready`，`automatic=true`。旧进程在 23:54:57 已记录 `game_closed`，当前 `bound=false` 符合游戏已关闭状态，不声称重启后实测游戏绑定。
 - 先备份 `input.ini` 与状态。首次按整份字节不变断言退出 1：正常退出将标记最新位置从 `@Point(6 4)` 保存成 `@Point(7 2)`；核对现有 shutdown 写入契约后确认只有这项变化，主面板几何、字号、收藏等其他设置全部相同，未用旧备份覆盖新位置。最终 `post-restart-check.json` passed，固定受测源码 manifest 无漂移。
 - 桌面 `D:/Desktop/金铲铲 DataJ 助手.cmd` 仍指向根源码启动入口，本轮修复已加载到当前源码进程。没有重建或覆盖 v0.2.16 EXE，没有推送或发布 Release；这两项未被本轮用户要求。
+
+## 固定源码提交与文档收口
+
+- 本地源码提交：`1d0d3af1e930f249bcc38fde9933a98258f5124d`，分支 `codex/roman-suffix-20261020`，14 个范围文件；显式暂存、暂存区 diff/空白检查通过，原件 `staged-scope.patch`。工作目录报告保留在根 `work/roman-suffix-20261020/`，私有原图未加入提交。
+- 提交与 `tested-scope-manifest.json` 的最终源码/测试/目录/fixture 完全一致。后续补充只更新本文及当前批准样本数量说明，不改变运行代码或验收素材，不重复运行重负载测试。
+- 没有推送或远端 CI。本轮结果来自上述固定源码的本机隔离完整门槛、主目录专项复验和实际源码进程启动；不能引用旧发布包的 CI/EXE 结果。
