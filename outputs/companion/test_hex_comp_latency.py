@@ -244,7 +244,9 @@ class HexCompLatency(unittest.TestCase):
     def test_refresh_progress_keeps_new_source_metadata_with_newly_finished_ranks(self):
         self.start_blocked_query()
         self.finish()
+        self.assertTrue(self.pump_until(lambda:not self.p.jobs))
         self.assertEqual(self.p.stats_payload['comp_supplemented_ids'],[self.IDS[0]])
+        previous=self.p.stats_payload['result']
         self.direct_ids.clear()
         self.block_id=self.IDS[2]
         self.blocked.clear()
@@ -252,14 +254,55 @@ class HexCompLatency(unittest.TestCase):
         with closing(sqlite3.connect(self.p.adapter.db)) as connection:
             connection.execute('UPDATE cache SET fetched=0')
             connection.commit()
-        self.p.query_stats(self.IDS,self.NAMES,True,refresh=True)
-        self.assertTrue(self.pump_until(self.blocked.is_set))
-        self.assertTrue(self.pump_until(
-            lambda:self.IDS[1] in self.p.stats_payload['comp_supplement_sources'],.25),
-            'Fresh completed ranks must carry their own source metadata during refresh')
-        self.assertIn(self.IDS[1],self.p.stats_payload['comp_supplemented_ids'])
-        self.assert_visible(1)
-        self.finish()
+        second_entered=threading.Event();release_second=threading.Event()
+        completed={identity:threading.Event() for identity in self.IDS[:2]}
+        original_iter=self.p.adapter.iter_comp_hex_supplements
+        def response(request):
+            if (request.url.path.endswith('/explorer/query')
+                and json.loads(request.content)['filter']['rules'][0]['targetId']==self.IDS[1]):
+                second_entered.set()
+                if not release_second.wait(1.5):raise AssertionError('Second response was not released')
+            return self.response(request)
+        def validated(*args,**kwargs):
+            for identity,result,error in original_iter(*args,**kwargs):
+                # A different concurrent request entering HTTP is not evidence
+                # that this validated result has completed or can be published.
+                if identity in completed and result is not None:completed[identity].set()
+                yield identity,result,error
+        with patch.object(self.p.adapter,'transport',httpx.MockTransport(response)), \
+             patch.object(self.p.adapter,'iter_comp_hex_supplements',side_effect=validated):
+            try:
+                self.p.query_stats(self.IDS,self.NAMES,True,refresh=True)
+                self.assertTrue(self.pump_until(self.blocked.is_set))
+                self.assertTrue(self.pump_until(second_entered.is_set))
+                self.assertFalse(completed[self.IDS[1]].is_set())
+                self.assertNotIn(self.IDS[1],self.p.stats_payload['comp_supplement_sources'])
+                self.assertEqual(self.p.stats_payload['result'].choices[1].comp_stat,previous.choices[1].comp_stat)
+                release_second.set()
+                self.assertTrue(self.pump_until(lambda:all(event.is_set() for event in completed.values())))
+                self.assertTrue(self.pump_until(
+                    lambda:self.IDS[1] in self.p.stats_payload['comp_supplement_sources'],.25),
+                    'Fresh completed ranks must carry their own source metadata during refresh')
+                self.assertIn(self.IDS[1],self.p.stats_payload['comp_supplemented_ids'])
+                self.assert_visible(1)
+                source=self.p.stats_payload['comp_supplement_sources'][self.IDS[1]]
+                self.assertEqual(source['scope'],{'set_id':18,'patch':'18.2a','comp':'112',
+                                                 'stage':'2-1','hex_id':self.IDS[1]})
+                self.assertEqual(source['sample_count'],52)
+                self.assertFalse(source['cached'])
+                self.assertEqual(self.p.stats_payload['comp_pending_ids'],[self.IDS[2]])
+                self.assertEqual(self.p.stats_payload['result'].choices[2].comp_stat,previous.choices[2].comp_stat)
+                self.assertFalse(self.release.is_set(),'Third response must remain blocked during refresh progress')
+                self.finish()
+                self.assertTrue(self.pump_until(lambda:not self.p.jobs))
+                self.assertEqual(self.p.stats_payload['comp_supplemented_ids'],self.IDS)
+                self.assertEqual(list(self.p.stats_payload['comp_supplement_sources']),self.IDS)
+                self.assertEqual(self.p.stats_payload['comp_pending_ids'],[])
+                self.assertEqual([row[0] for row in self.p.stats_payload['rows']],self.NAMES)
+                for index in range(3):self.assert_visible(index)
+            finally:
+                release_second.set();self.release.set()
+                self.assertTrue(self.pump_until(lambda:not self.p.jobs))
 
 
 if __name__ == '__main__':

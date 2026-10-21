@@ -1127,7 +1127,7 @@
       "title": "固定阵容排名加载与预热",
       "coverage": "automated",
       "verified_scope": "真实Qt/adapter事件屏障，已知rank先显、supplement逐个显、pin立即warm、900s正负table reuse/前后台capacity；已发live Future的后台join不额外占HTTP槽，两不同live请求在首请求与join仍阻塞时同时进入Mock边界；2026-10-12来源失败后至少60秒/共享冷却后自动恢复、延长冷却/新局/版本/取消及阶段推进保护",
-      "coverage_change_note": "2026-10-11：保留test_joining_live_future_does_not_consume_an_extra_http_slot原方法ID，将整批submit到完成0.3秒绝对速度断言改为两个不同请求同时进入Mock边界、首owner与实际shared Future等待均未完成的容量事件断言；原Barrier(2,timeout=1)、返回数据与3次HTTP断言保留，首owner/后台原2秒结果等待保留，two_live结果从释放前0.3秒改为释放后2秒有界核对，增加三次实际请求ID完整断言。bb15 CI只证明原完成等待超时；受控350ms构造/调度延迟在仍空闲2槽时拒绝正确实现，说明速度混入容量契约，不声称自然CI原因已复现。独立源码契约审计与额外占slot坏变体另留验收记录；原bb15方法源码/AST及旧不可变素材保留，HTTP总容量3、生产代码、其它旧方法与原图基线均不更改。",
+      "coverage_change_note": "2026-10-11：保留test_joining_live_future_does_not_consume_an_extra_http_slot原方法ID，将整批submit到完成0.3秒绝对速度断言改为两个不同请求同时进入Mock边界、首owner与实际shared Future等待均未完成的容量事件断言；原Barrier(2,timeout=1)、返回数据与3次HTTP断言保留，首owner/后台原2秒结果等待保留，two_live结果从释放前0.3秒改为释放后2秒有界核对，增加三次实际请求ID完整断言。bb15 CI只证明原完成等待超时；受控350ms构造/调度延迟在仍空闲2槽时拒绝正确实现，说明速度混入容量契约，不声称自然CI原因已复现。独立源码契约审计与额外占slot坏变体另留验收记录；原bb15方法源码/AST及旧不可变素材保留，HTTP总容量3、生产代码、其它旧方法与原图基线均不更改。 2026-10-21：补登记刷新元数据原方法；首轮exact9cc CI此方法失败，本机Event单变量重现证明第三卡进入HTTP不代表第二卡完成。仅将250ms发布检查起点绑定已校验结果完成Event，前后等待实际job终态，保留250ms和原metadata/已补查/可见文本断言，并新增旧均排保留、精确scope/sample/pending/第三卡未释放及终态顺序断言；未删除注册方法/旧fixture/原图，未改生产路径或性能预算。原失败/原方法源码及删除新source坏变体拒绝证据留本机，见本轮发布验收记录。",
       "limits": [
         "绝对网络ms无跨硬件SLA；release EXE另外诊断"
       ],
@@ -1140,7 +1140,8 @@
         "outputs/companion/test_query_architecture.py",
         "outputs/companion/test_source_budget.py",
         "docs/development-records/2026-10-11-live-match-conditions.md",
-        "docs/testing/hex-failure-root-cause-20261012.md"
+        "docs/testing/hex-failure-root-cause-20261012.md",
+        "docs/development-records/2026-10-21-release-v0.2.20.md"
       ],
       "tests": [
         {
@@ -1233,6 +1234,10 @@
         },
         {
           "id": "test_hex_prewarm_recovery.HexPrewarmRecoveryTests.test_invalid_successful_main_table_is_evicted_before_recovery_refetches_same_scope",
+          "scope": "public"
+        },
+        {
+          "id": "test_hex_comp_latency.HexCompLatency.test_refresh_progress_keeps_new_source_metadata_with_newly_finished_ranks",
           "scope": "public"
         }
       ]
@@ -1845,7 +1850,8 @@
       "evidence": [
         "docs/testing/README.md",
         "outputs/companion/test_portable_query_lifecycle.py",
-        "docs/development-records/2026-10-18-recognition-fix.md"
+        "docs/development-records/2026-10-18-recognition-fix.md",
+        "docs/development-records/2026-10-21-release-v0.2.20.md"
       ],
       "tests": [
         {
@@ -1911,8 +1917,13 @@
         {
           "id": "test_portable_recognition_replay.PortableRecognitionReplayTests.test_verifier_copies_hash_bound_inputs_and_keeps_originals_unchanged",
           "scope": "public"
+        },
+        {
+          "id": "test_portable_recognition_replay.PortableRecognitionReplayTests.test_verifier_keeps_canonical_containment_with_an_equivalent_noncanonical_parent",
+          "scope": "public"
         }
-      ]
+      ],
+      "coverage_change_note": "2026-10-21：保留原拷贝回放方法ID及归属/SHA/原文件字节/精确回放断言，将sandbox与destination均按canonical路径比较；Windows真实8.3别名原159断言红、samefile为真与双方resolve后的独立路径证据证明原测试拒绝合法同目录。新增不依赖8.3开启的parent/..等价路径回归，并用实际写到sibling的错误helper验证边界仍拒绝。不是放宽到字符串前缀、不是跳过或改oracle；生产verify入口原本已resolve，不改运行实现。CI未记录实际两侧路径，不把runner具体TEMP短名推断说成实证。"
     },
     {
       "id": "REG-024",

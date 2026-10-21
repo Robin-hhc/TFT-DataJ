@@ -147,6 +147,7 @@ class PortableRecognitionReplayTests(unittest.TestCase):
         spec.loader.exec_module(verifier)
         sandbox = self.directory / 'sandbox'
         sandbox.mkdir()
+        sandbox = sandbox.resolve()
         before = {path.name: path.read_bytes() for path in self.directory.iterdir() if path.is_file()}
         copied = verifier.copy_recognition_fixture(self.manifest_path, sandbox,
                                                    Path(__file__).resolve().parents[2])
@@ -159,6 +160,14 @@ class PortableRecognitionReplayTests(unittest.TestCase):
             self.assertTrue(destination.is_relative_to(sandbox))
             self.assertEqual(hashlib.sha256(destination.read_bytes()).hexdigest(), descriptor['sha256'])
         self.assertEqual(before, {path.name: path.read_bytes() for path in self.directory.iterdir() if path.is_file()})
+
+    def test_verifier_keeps_canonical_containment_with_an_equivalent_noncanonical_parent(self):
+        parent = self.directory / 'existing-parent'
+        parent.mkdir()
+        self.directory = parent / '..'
+        self.assertNotEqual(self.directory, self.directory.resolve())
+        self.assertTrue(self.directory.samefile(self.directory.resolve()))
+        self.test_verifier_copies_hash_bound_inputs_and_keeps_originals_unchanged()
 
 
 if __name__ == '__main__':
