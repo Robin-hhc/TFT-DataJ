@@ -23,6 +23,7 @@ QLabel#brand { font-size:15px; font-weight:700; color:#f7f1df; }
 QLabel#eyebrow { font-size:10px; color:#a6a2b4; letter-spacing:2px; }
 QLabel#pageTitle { font-size:20px; font-weight:700; }
 QLabel#subtitle, QLabel#muted { color:#a3a1b2; font-size:12px; }
+QLabel#appVersion { color:#777486; font-size:11px; }
 QLabel#section { font-size:14px; font-weight:600; color:#dddbe8; }
 QLabel#badge { color:#e5bc60; background:#29241c; border:1px solid #4b3f27; border-radius:6px; padding:5px 10px; }
 QLabel#target { color:#c1bccf; padding:6px 10px; background:#1b1a26; border:1px solid #302d3f; border-radius:8px; }

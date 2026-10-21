@@ -689,6 +689,16 @@ def main():
         panel=Companion(offline=True,offline_catalog={'hex':[],'hero':[],'equip':[],'trait':[]})
         panel.timer.stop();panel.hide()
         assert panel.grab().save(str(STATE_DIR/'portable-ui.png'))
+        from app_version import APP_VERSION
+        assert panel.app_version.text()==f'v{APP_VERSION}','Application version label disagrees with release identity'
+        assert not panel.app_version.isHidden(),'Application version label hidden'
+        assert panel.app_version.geometry().top()>panel.patch.geometry().bottom(),'Application version overlaps statistics selector'
+        assert panel.app_version.fontMetrics().horizontalAdvance(panel.app_version.text())<=panel.app_version.contentsRect().width(),'Application version clipped'
+        if FROZEN:
+            manifest=json.loads((Path(sys.executable).parent/'manifest.json').read_text(encoding='utf-8'))
+            assert manifest['version']==APP_VERSION,'Package version disagrees with application version'
+        report['app_version']=APP_VERSION
+        report['checks'].append('visible application version below statistics selector matches release and package identity')
         assert (RESOURCE_DIR/'assets/refresh-glyph.png').is_file()
         assert not QIcon(str(RESOURCE_DIR/'assets/collapse-panel.svg')).isNull(),'Collapse icon missing'
         assert (RESOURCE_DIR/'chevron-down.svg').is_file()

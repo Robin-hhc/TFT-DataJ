@@ -14,6 +14,7 @@ import time
 from pathlib import Path
 
 from bootstrap import ROOT, STATE_DIR, RESOURCE_DIR
+from app_version import APP_VERSION
 import win_capture as win
 from core import Session, parse_comp_url
 from hex_catalog import canonical_hex_catalog
@@ -28,6 +29,7 @@ from scene_gate import may_be_choice
 from floating_mark import FloatingMark
 from comp_browser import CompBrowser,HeroPortrait,portrait_catalog
 from mouse_shortcut import MouseShortcut
+from panel_dismissal import PanelDismissal
 from stat_colors import placement_color
 from ui_theme import STYLE, ResultCard, Rune, label
 from diagnostics import record, FrameRecorder
@@ -224,6 +226,7 @@ class Companion(QWidget):
         self.comp_detail=None
         self.stats_payload=None
         self.mark=FloatingMark(self.toggle)
+        self.dismissal=PanelDismissal(self,self.collapse_passively)
         self.last_observation=None
         self.last_frame=None
         self.was_available=False
@@ -252,6 +255,10 @@ class Companion(QWidget):
         self.patch.setStyleSheet('QComboBox::down-arrow {image:url("'+(RESOURCE_DIR/'chevron-down.svg').as_posix()+'");width:12px;height:8px;}')
         self.patch.activated.connect(self.change_patch);rail.addWidget(self.patch);rail.addSpacing(8)
         self.version_retry=button('重试版本列表',self.load_versions);self.version_retry.hide();rail.addWidget(self.version_retry)
+        self.app_version=label(f'v{APP_VERSION}','appVersion');self.app_version.setWordWrap(False)
+        self.app_version.setToolTip(f'助手版本 {APP_VERSION}（上方为 DataJ 统计版本）')
+        self.app_version.setAccessibleName(f'助手版本 {APP_VERSION}')
+        rail.addWidget(self.app_version)
 
         shell.addWidget(sidebar)
         content=QWidget();root=QVBoxLayout(content);root.setContentsMargins(10,8,10,6);root.setSpacing(5)
@@ -414,6 +421,13 @@ class Companion(QWidget):
         self.mouse_button.setCurrentIndex({'1':0,'2':1,'0':2}.get(saved,0))
         self.mouse_button.currentIndexChanged.connect(self.save_mouse_button)
         layout.addWidget(self.mouse_button)
+        self.outside_collapse=QCheckBox('点击助手外部自动收起')
+        saved=str(self.mouse_settings.value('outside_click_collapse',1)) if not self.offline else '1'
+        self.outside_collapse.setChecked(saved!='0')
+        self.outside_collapse.setToolTip('左键在助手外单击时收起，原点击继续交给目标窗口；拖动、菜单和对话框操作不触发')
+        self.dismissal.set_enabled(self.outside_collapse.isChecked())
+        self.outside_collapse.toggled.connect(self.save_outside_collapse)
+        layout.addWidget(self.outside_collapse)
         section=QHBoxLayout();section.addWidget(label('当前海克斯','section'));section.addStretch()
         section.addWidget(label('均排越低越好','muted'));layout.addLayout(section)
         cards=QHBoxLayout();cards.setSpacing(12)
@@ -813,28 +827,51 @@ class Companion(QWidget):
         if self.panel_open():self.return_to_game()
         else:self.invalidate();self.showNormal();self.raise_();self.activateWindow()
 
+    def collapse_passively(self):
+        if not self.panel_open():return
+        self.invalidate()
+        self.hide()
+
+    def connect_mouse(self,mouse):
+        mouse.released.connect(self.mouse_capture,Qt.ConnectionType.QueuedConnection)
+        mouse.left_event.connect(self.selections.on_mouse,Qt.ConnectionType.QueuedConnection)
+        mouse.panel_event.connect(self.dismissal.on_mouse,Qt.ConnectionType.QueuedConnection)
+        self.dismissal.tracking_changed.connect(mouse.set_panel_tracking)
+        mouse.set_panel_tracking(self.dismissal.tracking,self.dismissal.blocked)
+
+    def save_outside_collapse(self,enabled):
+        self.dismissal.set_enabled(enabled)
+        if not self.offline:
+            self.mouse_settings.setValue('outside_click_collapse',int(enabled))
+            self.mouse_settings.sync()
+
     def panel_open(self):
         return self.isVisible() and not self.isMinimized()
 
     def showEvent(self,event):
         super().showEvent(event)
-        self.mark.set_panel_open(True)
+        self.mark.set_panel_open(self.panel_open())
+        self.dismissal.set_open(self.panel_open())
 
     def hideEvent(self,event):
         super().hideEvent(event)
         self.mark.set_panel_open(False)
+        self.dismissal.set_open(False)
 
     def changeEvent(self,event):
         super().changeEvent(event)
         if hasattr(self,'mark'):self.mark.set_panel_open(self.panel_open())
+        if hasattr(self,'dismissal'):self.dismissal.set_open(self.panel_open())
 
     def closeEvent(self,event):
+        self.dismissal.shutdown()
         self.timer.stop();self.hide_overlays()
         event.accept()
         QApplication.instance().quit()
 
     def open_image(self):
-        path,_=QFileDialog.getOpenFileName(self,'读取截图','','图片 (*.png *.jpg *.jpeg)')
+        with self.dismissal.suspended():
+            path,_=QFileDialog.getOpenFileName(self,'读取截图','','图片 (*.png *.jpg *.jpeg)')
         if path:
             from PIL import Image
             self.invalidate()
@@ -1587,6 +1624,7 @@ class Companion(QWidget):
                     lambda _:self.equip_note.setText('出装读取失败，请重试。') if current() else None,is_current=current)
 
     def shutdown(self):
+        self.dismissal.shutdown()
         self.conditions.cancel_pending()
         prewarm=self.stop_hex_prewarm()
         if not self.offline:
@@ -1617,8 +1655,7 @@ def main():
         panel=Companion(offline=args.self_test)
         registered=[]
         mouse=MouseShortcut(panel)
-        mouse.released.connect(panel.mouse_capture,Qt.ConnectionType.QueuedConnection)
-        mouse.left_event.connect(panel.selections.on_mouse,Qt.ConnectionType.QueuedConnection)
+        panel.connect_mouse(mouse)
         class Hotkeys(QAbstractNativeEventFilter):
             def nativeEventFilter(self,event_type,message):
                 msg=w.MSG.from_address(int(message))
@@ -1633,7 +1670,7 @@ def main():
             panel.reopen_shortcut_available=51 in registered
             if not panel.reopen_shortcut_available:panel.status.setText('展开快捷键被占用。收起后，可点击左上角「阵容助手 · 展开」重新打开。')
             elif len(registered)!=3:panel.status.setText('部分快捷键被占用，可以使用面板按钮。')
-            if not mouse.start():panel.status.setText('鼠标侧键监听不可用，请用截图按钮或 Ctrl+Alt+F10。')
+            if not mouse.start():panel.status.setText('鼠标监听不可用，侧键与点击外部收起暂停；请用收起按钮或快捷键。')
             panel.setWindowFlag(Qt.WindowType.WindowStaysOnTopHint,True)
             area=app.primaryScreen().availableGeometry()
             if panel.mouse_settings.value('panel_geometry') is None:panel.move(area.left()+64,area.top()+12)
@@ -1651,6 +1688,7 @@ def main():
             QTimer.singleShot(200,app.quit)
         if args.seconds:QTimer.singleShot(args.seconds*1000,app.quit)
         def cleanup():
+            panel.dismissal.shutdown()
             mouse.stop()
             for key in registered:win.user.UnregisterHotKey(None,key)
             panel.shutdown()

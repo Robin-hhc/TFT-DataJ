@@ -6,6 +6,7 @@ import os
 from pathlib import Path
 import platform
 import re
+import runpy
 import shutil
 import subprocess
 import sys
@@ -22,10 +23,12 @@ MODELS={
 
 
 def main():
+    app_version=runpy.run_path(str(ROOT/'outputs/companion/app_version.py'))['APP_VERSION']
     parser=argparse.ArgumentParser();parser.add_argument('--skip-build',action='store_true')
-    parser.add_argument('--version',default='0.2.2-data.1',help='New candidate version; existing ZIPs are never overwritten')
+    parser.add_argument('--version',default=app_version,help='Application version; must match outputs/companion/app_version.py')
     args=parser.parse_args()
     if not re.fullmatch(r'\d+\.\d+\.\d+(?:-[a-zA-Z0-9.]+)?',args.version):parser.error('Invalid version')
+    if args.version!=app_version:parser.error('Version must match app_version.APP_VERSION; update the application release identity first')
     output=ROOT/'dist';output.mkdir(exist_ok=True)
     archive=output/f'TFT-DataJ-{args.version}-windows-x64.zip'
     if archive.exists():parser.error('Archive already exists; choose a new candidate version')

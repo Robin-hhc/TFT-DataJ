@@ -4,9 +4,11 @@ MSLLHOOKSTRUCT: https://learn.microsoft.com/en-us/windows/win32/api/winuser/ns-w
 """
 import ctypes as c
 from ctypes import wintypes as w
+import os
 import time
 from PySide6.QtCore import QObject, Signal
 from selection_tracker import MouseNotice
+from panel_dismissal import PanelMouseNotice
 
 
 class MouseEvent(c.Structure):
@@ -26,12 +28,16 @@ class MouseShortcut(QObject):
     # Connect this using Qt.QueuedConnection: game selection work must not run
     # synchronously inside LowLevelMouseProc on the GUI/native hook thread.
     left_event = Signal(object)
+    panel_event = Signal(object)
 
     def __init__(self, parent=None):
         super().__init__(parent)
         self.handle = None
         self.left_down = None
         self.drag_notified = False
+        self.panel_tracking = False
+        self.panel_blocked = False
+        self.process_id = os.getpid()
         self.user = c.WinDLL('user32', use_last_error=True)
         self.kernel = c.WinDLL('kernel32', use_last_error=True)
         self.proc_type = c.WINFUNCTYPE(c.c_ssize_t, c.c_int, w.WPARAM, w.LPARAM)
@@ -42,9 +48,32 @@ class MouseShortcut(QObject):
         self.user.UnhookWindowsHookEx.argtypes = [w.HANDLE]
         self.user.UnhookWindowsHookEx.restype = w.BOOL
         self.user.GetForegroundWindow.restype = w.HWND
+        self.user.WindowFromPoint.argtypes = [w.POINT]
+        self.user.WindowFromPoint.restype = w.HWND
+        self.user.GetAncestor.argtypes = [w.HWND, w.UINT]
+        self.user.GetAncestor.restype = w.HWND
+        self.user.GetWindowThreadProcessId.argtypes = [w.HWND, c.POINTER(w.DWORD)]
+        self.user.GetWindowThreadProcessId.restype = w.DWORD
         self.kernel.GetModuleHandleW.argtypes = [w.LPCWSTR]
         self.kernel.GetModuleHandleW.restype = w.HMODULE
         self.callback = self.proc_type(self.dispatch)
+
+    def set_panel_tracking(self, opened, blocked=False):
+        # Primitive snapshots only; no Qt inspection inside the native hook.
+        self.panel_tracking = bool(opened)
+        self.panel_blocked = bool(blocked)
+
+    def application_hit(self, point):
+        """Snapshot ownership before a popup can close or a window can move."""
+        try:
+            hwnd = self.user.WindowFromPoint(point)
+            owner = self.user.GetAncestor(hwnd, 3) if hwnd else None
+            pid = w.DWORD()
+            if not owner or not self.user.GetWindowThreadProcessId(owner, c.byref(pid)) or not pid.value:
+                return None
+            return pid.value == self.process_id
+        except OSError:
+            return None
 
     def dispatch(self, code, message, data):
         try:
@@ -76,8 +105,12 @@ class MouseShortcut(QObject):
                         if notify:
                             self.drag_notified = True
                     if notify:
-                        self.left_event.emit(MouseNotice(action, x, y, time.monotonic(),
+                        at = time.monotonic()
+                        self.left_event.emit(MouseNotice(action, x, y, at,
                                             int(self.user.GetForegroundWindow() or 0)))
+                        if getattr(self, 'panel_tracking', False):
+                            self.panel_event.emit(PanelMouseNotice(action, x, y, time.perf_counter(),
+                                self.application_hit(w.POINT(x, y)), self.panel_blocked))
         finally:
             return self.user.CallNextHookEx(self.handle, code, message, data)
 

@@ -470,9 +470,10 @@
       "history_key": "ui-controls",
       "title": "收起展开与关闭按钮",
       "coverage": "automated",
-      "verified_scope": "actual Qt点击/rightcollapse不quit/leftclose quit/标志accessible label；资源搜索定阵攻略滚动恢复",
+      "verified_scope": "actual Qt点击/rightcollapse不quit/leftclose quit/标志accessible label；资源搜索定阵攻略滚动恢复；2026-10-12外点收起：真实Qt队列、完整点击/拖动、弹层/模态/销毁、展开时序和设置保护",
       "limits": [
-        "视觉美观与全显示器实际游戏操作不能由bool断言证明"
+        "视觉美观与全显示器实际游戏操作不能由bool断言证明",
+        "外点自动检查使用人工 native 通知与自有窗口；物理鼠标、MuMu first-click/fullscreen合成、混合DPI实体多屏及EXE尚未现场验收"
       ],
       "origin_commits": [
         "2b356a8",
@@ -480,7 +481,10 @@
         "53bab23"
       ],
       "evidence": [
-        "outputs/companion/test_compact_header.py"
+        "outputs/companion/test_compact_header.py",
+        "outputs/companion/test_outside_click_collapse.py",
+        "outputs/companion/test_panel_dismissal.py",
+        "docs/design/点击外部自动收起-20261012.md"
       ],
       "tests": [
         {
@@ -493,6 +497,130 @@
         },
         {
           "id": "test_compact_header.CompactHeaderTests.test_refused_game_focus_keeps_panel_usable_and_pauses_automatic",
+          "scope": "public"
+        },
+        {
+          "id": "test_outside_click_collapse.OutsideClickCollapseTests.test_external_click_collapses_on_qt_queue_and_never_takes_game_focus",
+          "scope": "public"
+        },
+        {
+          "id": "test_outside_click_collapse.OutsideClickCollapseTests.test_fast_click_with_identical_legacy_monotonic_ticks_still_collapses",
+          "scope": "public"
+        },
+        {
+          "id": "test_outside_click_collapse.OutsideClickCollapseTests.test_native_file_dialog_scope_blocks_clicks_and_discards_queued_release",
+          "scope": "public"
+        },
+        {
+          "id": "test_outside_click_collapse.OutsideClickCollapseTests.test_internal_controls_and_owned_child_window_do_not_collapse",
+          "scope": "public"
+        },
+        {
+          "id": "test_outside_click_collapse.OutsideClickCollapseTests.test_marker_opening_release_and_old_queued_click_cannot_close_new_panel",
+          "scope": "public"
+        },
+        {
+          "id": "test_outside_click_collapse.OutsideClickCollapseTests.test_real_drag_excursion_then_return_to_start_does_not_collapse",
+          "scope": "public"
+        },
+        {
+          "id": "test_outside_click_collapse.OutsideClickCollapseTests.test_setting_disables_mid_click_and_persists_without_changing_side_key",
+          "scope": "public"
+        },
+        {
+          "id": "test_outside_click_collapse.OutsideClickCollapseTests.test_passive_collapse_preserves_plan_query_and_local_guide_scroll",
+          "scope": "public"
+        },
+        {
+          "id": "test_outside_click_collapse.OutsideClickCollapseTests.test_focus_change_without_click_and_shutdown_are_safe",
+          "scope": "public"
+        },
+        {
+          "id": "test_outside_click_collapse.OutsideClickCollapseTests.test_hidden_to_minimized_never_enables_external_hit_tracking",
+          "scope": "public"
+        },
+        {
+          "id": "test_outside_click_collapse.OutsideClickCollapseTests.test_first_fresh_click_after_expired_queued_release_is_accepted",
+          "scope": "public"
+        },
+        {
+          "id": "test_panel_dismissal.PanelDismissalTests.test_complete_external_click_collapses_once_only_after_release",
+          "scope": "public"
+        },
+        {
+          "id": "test_panel_dismissal.PanelDismissalTests.test_both_ends_must_be_known_external_and_unblocked",
+          "scope": "public"
+        },
+        {
+          "id": "test_panel_dismissal.PanelDismissalTests.test_eight_pixel_tolerance_accepts_release_within_threshold",
+          "scope": "public"
+        },
+        {
+          "id": "test_panel_dismissal.PanelDismissalTests.test_excursion_over_eight_cannot_be_hidden_by_returning_to_origin",
+          "scope": "public"
+        },
+        {
+          "id": "test_panel_dismissal.PanelDismissalTests.test_orphan_and_out_of_order_release_cannot_complete_click",
+          "scope": "public"
+        },
+        {
+          "id": "test_panel_dismissal.PanelDismissalTests.test_repeated_down_cancels_until_release_then_accepts_next_click",
+          "scope": "public"
+        },
+        {
+          "id": "test_panel_dismissal.PanelDismissalTests.test_invalid_or_nonfinite_notice_cancels_pending_click",
+          "scope": "public"
+        },
+        {
+          "id": "test_panel_dismissal.PanelDismissalTests.test_future_and_over_age_queue_notice_cancel_without_deferred_collapse",
+          "scope": "public"
+        },
+        {
+          "id": "test_panel_dismissal.PanelDismissalTests.test_notice_at_queue_age_limit_is_accepted",
+          "scope": "public"
+        },
+        {
+          "id": "test_panel_dismissal.PanelDismissalTests.test_reopen_rejects_old_down_and_up_from_previous_open_period",
+          "scope": "public"
+        },
+        {
+          "id": "test_panel_dismissal.PanelDismissalTests.test_disable_and_enable_drop_transaction_and_reject_old_queue",
+          "scope": "public"
+        },
+        {
+          "id": "test_panel_dismissal.PanelDismissalTests.test_idempotent_open_update_keeps_current_valid_transaction",
+          "scope": "public"
+        },
+        {
+          "id": "test_panel_dismissal.PanelDismissalTests.test_actual_menu_show_hide_barrier_rejects_first_external_queue",
+          "scope": "public"
+        },
+        {
+          "id": "test_panel_dismissal.PanelDismissalTests.test_actual_menu_action_still_receives_its_qt_click",
+          "scope": "public"
+        },
+        {
+          "id": "test_panel_dismissal.PanelDismissalTests.test_actual_modal_dialog_pauses_and_its_close_rejects_old_queue",
+          "scope": "public"
+        },
+        {
+          "id": "test_panel_dismissal.PanelDismissalTests.test_destroyed_menu_releases_blocker_without_replaying_click",
+          "scope": "public"
+        },
+        {
+          "id": "test_panel_dismissal.PanelDismissalTests.test_initially_visible_popup_is_tracked_and_released_on_destruction",
+          "scope": "public"
+        },
+        {
+          "id": "test_panel_dismissal.PanelDismissalTests.test_nested_native_dialog_suspension_has_entry_and_exit_queue_barriers",
+          "scope": "public"
+        },
+        {
+          "id": "test_panel_dismissal.PanelDismissalTests.test_shutdown_inside_native_scope_remains_terminal_after_scope_exit",
+          "scope": "public"
+        },
+        {
+          "id": "test_panel_dismissal.PanelDismissalTests.test_shutdown_is_terminal_despite_reopen_enable_and_popup_events",
           "scope": "public"
         }
       ]
@@ -1799,16 +1927,19 @@
       "history_key": "native-capture-gameinput",
       "title": "MuMu截图和鼠标输入边界",
       "coverage": "partial",
-      "verified_scope": "bindingguard mocknative/sidebuttonhook alwaysforward/noinjection/negative monitor",
+      "verified_scope": "bindingguard mocknative/sidebuttonhook alwaysforward/noinjection/negative monitor；panel notice事件发生时root-owner/PID归属快照，关闭不查询，未知拒绝，始终转发",
       "limits": [
-        "真实framequality/FPS/物理侧键/Windowscompositor需场验，不能由mock证明"
+        "真实framequality/FPS/物理侧键/Windowscompositor需场验，不能由mock证明",
+        "外点自动检查使用人工 native 通知与自有窗口；物理鼠标、MuMu first-click/fullscreen合成、混合DPI实体多屏及EXE尚未现场验收"
       ],
       "origin_commits": [
         "db73999",
         "1e5d09f"
       ],
       "evidence": [
-        "docs/testing/live-match-2026-10-07.md"
+        "docs/testing/live-match-2026-10-07.md",
+        "outputs/companion/test_mouse_panel_notice.py",
+        "docs/design/点击外部自动收起-20261012.md"
       ],
       "tests": [
         {
@@ -1829,6 +1960,42 @@
         },
         {
           "id": "test_mouse_shortcut.MouseShortcutTests.test_release_only_and_no_injected_clicks",
+          "scope": "public"
+        },
+        {
+          "id": "test_mouse_panel_notice.MousePanelNoticeTests.test_tracking_updates_only_flags_and_never_installs_another_hook",
+          "scope": "public"
+        },
+        {
+          "id": "test_mouse_panel_notice.MousePanelNoticeTests.test_closed_panel_skips_all_hit_queries_and_keeps_selection_notices",
+          "scope": "public"
+        },
+        {
+          "id": "test_mouse_panel_notice.MousePanelNoticeTests.test_owned_popup_is_inside_via_root_owner_process_identity",
+          "scope": "public"
+        },
+        {
+          "id": "test_mouse_panel_notice.MousePanelNoticeTests.test_other_root_owner_process_is_outside",
+          "scope": "public"
+        },
+        {
+          "id": "test_mouse_panel_notice.MousePanelNoticeTests.test_failed_hit_owner_or_pid_queries_emit_unknown_and_forward",
+          "scope": "public"
+        },
+        {
+          "id": "test_mouse_panel_notice.MousePanelNoticeTests.test_queued_notices_copy_native_memory_and_snapshot_blocked_state",
+          "scope": "public"
+        },
+        {
+          "id": "test_mouse_panel_notice.MousePanelNoticeTests.test_bad_panel_receiver_cannot_swallow_input_or_remove_selection_notice",
+          "scope": "public"
+        },
+        {
+          "id": "test_mouse_panel_notice.MousePanelNoticeTests.test_injected_negative_idle_right_and_wheel_never_query_or_notify",
+          "scope": "public"
+        },
+        {
+          "id": "test_mouse_panel_notice.MousePanelNoticeTests.test_drag_excursion_notices_stay_bounded_and_preserve_selection_stream",
           "scope": "public"
         }
       ]
