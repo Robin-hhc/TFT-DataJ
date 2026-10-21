@@ -2348,6 +2348,95 @@
           "scope": "public"
         }
       ]
+    },
+    {
+      "id": "REG-028",
+      "history_key": "hex-prewarm-bounded-source-recovery",
+      "title": "持续来源异常的后台预热与同画面查询有界停止",
+      "coverage": "automated",
+      "verified_scope": "真实DataJ/SQLite与MockTransport持续503及坏HTTP200；同一预热对象累计三轮SourceError后停止自动恢复，前两轮单Timer至少60秒并遵守共享冷却；start/prioritize及迟到回调不解锁，保留成功结果、待办及前台查询，新对象独立预算；同组全局失败停止无限OCR/HTTP、保留两次partial补读与手动补查/新上下文；EXE嵌入持续503和坏200三轮停止诊断",
+      "limits": [
+        "预算按同一HexPrewarm对象的SourceError失败轮数计，不保证每轮均发生HTTP；新对象仍受共享来源冷却约束。",
+        "重新固定、新局或现有应用流程显式新建预热对象会获得新预算；不是整局全局熔断，也未新增专用预热恢复按钮。"
+      ],
+      "origin_commits": [],
+      "evidence": [
+        "docs/specs/cache-reliability-memory.md",
+        "docs/development-records/2026-10-21-cache-reliability.md",
+        "outputs/companion/test_hex_prewarm_recovery.py",
+        "outputs/companion/test_global_stats_retry.py",
+        "outputs/companion/test_portable_retry_limits.py"
+      ],
+      "tests": [
+        {
+          "id": "test_hex_prewarm_recovery.HexPrewarmRecoveryTests.test_persistent_http_failure_stops_after_three_rounds_and_cannot_be_restarted",
+          "scope": "public"
+        },
+        {
+          "id": "test_hex_prewarm_recovery.HexPrewarmRecoveryTests.test_persistent_invalid_http_200_stops_without_retaining_bad_tables",
+          "scope": "public"
+        },
+        {
+          "id": "test_hex_prewarm_recovery.HexPrewarmRecoveryTests.test_partial_success_and_cached_reads_do_not_reset_failures_or_disable_foreground_queries",
+          "scope": "public"
+        },
+        {
+          "id": "test_hex_prewarm_recovery.HexPrewarmRecoveryTests.test_new_controller_gets_a_new_budget_without_bypassing_shared_source_cooldown",
+          "scope": "public"
+        },
+        {
+          "id": "test_global_stats_retry.GlobalStatsRetryTests.test_invalid_http200_does_not_poll_or_repeat_ocr_for_unchanged_choices",
+          "scope": "public"
+        },
+        {
+          "id": "test_global_stats_retry.GlobalStatsRetryTests.test_manual_same_choices_recovers_without_repeating_ocr",
+          "scope": "public"
+        },
+        {
+          "id": "test_global_stats_retry.GlobalStatsRetryTests.test_pending_side_key_retry_respects_source_cooldown_without_repeating_ocr",
+          "scope": "public"
+        },
+        {
+          "id": "test_global_stats_retry.GlobalStatsRetryTests.test_changed_cards_after_failure_are_still_detected_and_recognized",
+          "scope": "public"
+        },
+        {
+          "id": "test_global_stats_retry.GlobalStatsRetryTests.test_session_reset_after_failure_does_not_block_new_group",
+          "scope": "public"
+        },
+        {
+          "id": "test_global_stats_retry.GlobalStatsRetryTests.test_changed_stage_after_failure_does_not_block_new_group",
+          "scope": "public"
+        },
+        {
+          "id": "test_global_stats_retry.GlobalStatsRetryTests.test_changed_patch_after_failure_does_not_block_new_group",
+          "scope": "public"
+        },
+        {
+          "id": "test_global_stats_retry.GlobalStatsRetryTests.test_failure_keeps_routine_capture_for_changed_card_detection",
+          "scope": "public"
+        },
+        {
+          "id": "test_global_stats_retry.GlobalStatsRetryTests.test_failed_partial_choices_keep_two_bounded_recognition_retries",
+          "scope": "public"
+        },
+        {
+          "id": "test_global_stats_retry.GlobalStatsRetryTests.test_late_failure_cannot_clear_new_group_results",
+          "scope": "public"
+        },
+        {
+          "id": "test_global_stats_retry.GlobalStatsRetryTests.test_replaced_adapter_failure_cannot_poison_current_result",
+          "scope": "public"
+        },
+        {
+          "id": "test_portable_retry_limits.PortableRetryLimitsTests.test_embedded_diagnostic_stops_http_and_invalid_200_after_three_failures",
+          "scope": "public"
+        },
+        {
+          "id": "test_portable_retry_limits.PortableRetryLimitsTests.test_diagnostic_rejects_a_runtime_that_keeps_retrying_after_three_failures",
+          "scope": "public"
+        }
+      ]
     }
   ]
 }

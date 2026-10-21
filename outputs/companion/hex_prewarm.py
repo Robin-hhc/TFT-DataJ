@@ -11,6 +11,7 @@ from dataj import DataJ, SourceError
 
 
 STAGES = ('2-1', '3-2', '4-2')
+FAILURE_LIMIT = 3
 
 
 class HexPrewarm:
@@ -34,6 +35,7 @@ class HexPrewarm:
         self._interactive = 0
         self._retry_timer = None
         self._retry_after = 0.0
+        self._failure_count = 0
 
     def _current(self):
         return (not self._cancelled.is_set() and self.current()
@@ -61,6 +63,7 @@ class HexPrewarm:
         return self
 
     def _start_worker_locked(self):
+        if self._failure_count >= FAILURE_LIMIT:return
         self._status, self._error = 'running', None
         self._worker = threading.Thread(target=self._run, name='hex-prewarm', daemon=True)
         self._worker.start()
@@ -116,6 +119,8 @@ class HexPrewarm:
             status = 'paused' if self._status == 'running' and self._interactive else self._status
             return {'status': status, 'tables': len(self._tables),
                     'completed': len(self._exact), 'pending': len(self._pending),
+                    'failure_count': self._failure_count, 'failure_limit': FAILURE_LIMIT,
+                    'retry_exhausted': self._failure_count >= FAILURE_LIMIT,
                     'error': self._error, 'retry_pending': self._retry_timer is not None,
                     'retry_in_seconds': max(0.0, self._retry_after-time.monotonic())
                     if self._retry_timer is not None else None}
@@ -299,7 +304,8 @@ class HexPrewarm:
             with self._lock:
                 if not self._cancelled.is_set():
                     self._status, self._error = 'failed', str(error)
-                    if self._current():
+                    self._failure_count += 1
+                    if self._current() and self._failure_count < FAILURE_LIMIT:
                         # HTTP failures already apply the shared 60s source
                         # cooldown. Validation failures also need bounded
                         # backoff rather than retrying a corrupt response hot.

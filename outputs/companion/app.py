@@ -201,6 +201,7 @@ class Companion(QWidget):
         self.mouse_settings=QSettings(str(STATE_DIR/"input.ini"),QSettings.Format.IniFormat)
         self.last_mouse_trigger=-1.0
         self.stats_inflight_token=None
+        self.stats_failed_token=None
         self.binding=None
         self.geometry=None
         self.capture_pending=False
@@ -739,6 +740,7 @@ class Companion(QWidget):
         if hasattr(self,'items'):self.items.reset()
         self.partial_retries=0
         self.stats_inflight_token=None
+        self.stats_failed_token=None
         self.comp_stats_update=None
         self.session.invalidate();self.signature=None;self.stable=0;self.stats_payload=None;self.last_observation=None
         self.last_frame=None
@@ -977,6 +979,17 @@ class Companion(QWidget):
             if not unchanged(signature,self.signature):
                 # Keep a manual request armed when it actually discovers new cards.
                 self.choices_changed(once)
+            elif (self.session.accepts(self.stats_failed_token)
+                  and all(c.get('resolution',{}).get('id') for c in self.last_observation['cards'])):
+                # Failed statistics do not erase verified identities. A manual
+                # frame check may retry HTTP directly; unchanged automatic
+                # frames keep detecting changed cards without repeating OCR.
+                retry_stats=once or self.once_ocr_pending
+                self.once_ocr_pending=False;once=False
+                self.selections.observe(self.last_observation,image.size,binding,captured_at)
+                if retry_stats:
+                    names=[c['resolution'].get('name') or c.get('raw_text','') for c in self.last_observation['cards']]
+                    self.query_stats(list(self.session.choices),names,True,refresh=True)
             elif (self.stats_payload and self.stats_payload['live']
                   and self.session.accepts(self.stats_payload['token'])
                   and all(c.get('resolution',{}).get('id') for c in self.last_observation['cards'])):
@@ -1034,6 +1047,7 @@ class Companion(QWidget):
             self.analyze(image,True,retain_confirmed=True)
         elif (self.automatic.isChecked() and time.monotonic()>=self.next_ocr_allowed
               and time.monotonic()-self.last_ocr>2
+              and not self.session.accepts(self.stats_failed_token)
               and not (self.last_observation and (self.stats_payload or self.stats_inflight_token==self.session.token()))):
             self.analyze(image,True)
         if self.stats_payload and self.last_observation:
@@ -1212,6 +1226,7 @@ class Companion(QWidget):
                   and self.stats_payload['live'] and self.session.accepts(self.stats_payload['token']) else None)
         self.release_hex_priority()
         self.session.set_choices(self.stage.currentText(),ids)
+        self.stats_failed_token=None
         self.set_activity('querying','正在获取海克斯均排…')
         if retained:retained['token']=self.session.token()
         else:
@@ -1302,12 +1317,13 @@ class Companion(QWidget):
             if release:self.release_hex_priority(release)
             if self.stats_inflight_token==token:self.stats_inflight_token=None
             if self.comp_stats_update and self.comp_stats_update[0]==token:self.comp_stats_update=None
-            if self.session.accepts(token):
+            if current():
                 if live:self.bugs.hex_statistics('hex_query_failed',evidence={'stage':stage,'requested_ids':ids})
+                self.stats_failed_token=token
                 self.stats_payload=None
                 self.choice_table.setRowCount(0)
                 for card in self.result_cards:card.clear(self.session.target is not None)
-                self.hide_overlays();self.set_activity('stats_failed','暂时取不到均排，请按正常节奏选择。助手稍后会重试。')
+                self.hide_overlays();self.set_activity('stats_failed','暂时取不到均排，请按正常节奏选择。稍后可用鼠标侧键或「立即补查一次」重试。')
         self.submit(self.hex_network,fetch,done,failed)
 
     def display_overlays(self):

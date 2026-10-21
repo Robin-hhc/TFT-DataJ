@@ -467,6 +467,85 @@ def check_hex_prewarm():
             warm.cancel();assert warm.wait(5),'Background worker did not stop'
 
 
+def check_retry_limits():
+    """Prove persistent failures stop in the frozen EXE without live HTTP."""
+    import tempfile
+    from unittest.mock import patch
+    import httpx
+    from dataj import DataJ
+    from hex_prewarm import HexPrewarm
+
+    class DelayedWake:
+        def __init__(self, interval, function):
+            self.interval, self.function = interval, function
+            self.daemon = False
+
+        def start(self):
+            pass
+
+        def cancel(self):
+            pass
+
+        def fire(self):
+            # Deliver even obsolete/cancelled callbacks, as the OS may do.
+            self.function()
+
+    cases = []
+    for fault in ('http_503', 'invalid_200'):
+        clock, wakes, requests = [1000.0], [], []
+
+        def timer(interval, function):
+            wake = DelayedWake(interval, function)
+            wakes.append(wake)
+            return wake
+
+        def response(request):
+            requests.append(request)
+            return (httpx.Response(503) if fault == 'http_503' else
+                    httpx.Response(200, json={'success': True, 'code': 200, 'data': {}}))
+
+        with tempfile.TemporaryDirectory(prefix='TFT-DataJ-retry-diagnostic-') as directory:
+            adapter = DataJ(patch='18.3', db=Path(directory)/'cache.sqlite',
+                            transport=httpx.MockTransport(response))
+            with patch('hex_prewarm.time.monotonic', side_effect=lambda: clock[0]), \
+                    patch('hex_prewarm.threading.Timer', side_effect=timer):
+                warm = HexPrewarm(adapter, '107')
+                try:
+                    warm.start('3-2')
+                    for attempt in range(3):
+                        assert warm.wait(2), 'Retry diagnostic worker did not finish'
+                        assert len(requests) == attempt+1, 'Unexpected persistent-failure request count'
+                        if attempt < 2:
+                            assert len(wakes) == attempt+1, 'Missing bounded delayed wake'
+                            assert wakes[-1].interval >= 60, 'Retry bypassed the source delay'
+                            clock[0] += wakes[-1].interval+1
+                            wakes[-1].fire()
+                    state = warm.snapshot()
+                    assert len(wakes) == 2 and not state['retry_pending'], \
+                        'Persistent source continued scheduling after three failures'
+                    assert state['retry_exhausted'] and state['failure_count'] == 3, state
+                    before = len(requests)
+                    clock[0] += 10000
+                    for wake in wakes:
+                        wake.fire()
+                    for _ in range(3):
+                        warm.start('3-2')
+                        warm.prioritize('4-2')
+                        assert warm.wait(2), 'Repeated start did not settle'
+                    assert len(requests) == before and len(wakes) == 2, \
+                        'Old callbacks or ordinary start bypassed exhausted retries'
+                    cases.append({'fault': fault, 'http_request_count': len(requests),
+                                  'scheduled_wakes': len(wakes),
+                                  'minimum_retry_seconds': min(w.interval for w in wakes),
+                                  'late_callbacks_and_restarts_stopped': True})
+                finally:
+                    warm.cancel()
+                    assert warm.wait(2), 'Retry diagnostic worker did not stop'
+    return {'status': 'passed',
+            'evidence': 'temporary SQLite, MockTransport and controlled delayed wakes; no live outage or minute-long waiting',
+            'cases': cases}
+
+
 def check_cache_recovery():
     """Prove durable bad-cache recovery using temporary SQLite and synthetic HTTP."""
     from contextlib import closing
@@ -622,6 +701,8 @@ def main():
         report['comp_hex_supplements']=check_comp_hex_supplements()
         report['checks'].append('packaged exact-stage comp hex supplements and repeated lookup cache via embedded mock transport')
         report['hex_prewarm']=check_hex_prewarm()
+        report['retry_limits']=check_retry_limits()
+        report['checks'].append('packaged persistent HTTP/invalid-data failures stop after three prewarm failures')
         report['checks'].append('packaged full pinned hex prewarm and positive/empty session cache beyond disk expiry')
         report['cache_recovery']=check_cache_recovery()
         report['checks'].append('packaged durable bad-cache recovery, fresh-adapter hit and last-good directory preservation')

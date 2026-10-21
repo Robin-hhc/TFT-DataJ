@@ -213,6 +213,146 @@ class HexPrewarmRecoveryTests(unittest.TestCase):
         self.assertEqual(self.prewarm.snapshot()['completed'], 2)
         self.assertEqual(len(self.calls), 5)
 
+    def test_persistent_http_failure_stops_after_three_rounds_and_cannot_be_restarted(self):
+        self.start_failed()
+        for attempt in (2, 3):
+            self.assertGreaterEqual(self.timers[-1].interval, 59)
+            self.now += 61
+            self.timers[-1].fire()
+            self.assertTrue(self.prewarm.wait(2))
+            self.assertEqual(len(self.calls), attempt)
+            self.assertEqual(self.prewarm.snapshot()['status'], 'failed')
+        self.assertEqual(len(self.timers), 2,
+                         'Three failed rounds include the initial request; no fourth round may be scheduled')
+        state = self.prewarm.snapshot()
+        self.assertTrue((state['failure_count'], state['failure_limit']) == (3, 3))
+        self.assertTrue(state['retry_exhausted'])
+        self.assertFalse(state['retry_pending'])
+        self.assertIsNone(state['retry_in_seconds'])
+        self.assertTrue((state['tables'], state['completed'], state['pending']) == (2, 0, 2))
+        self.fail = False
+        self.now += 3600
+        self.prewarm.start('3-2')
+        self.prewarm.prioritize('4-2')
+        for timer in self.timers:
+            timer.fire()  # A queued old callback must not resurrect an exhausted task.
+        self.assertTrue(self.prewarm.wait(2))
+        self.assertEqual(len(self.calls), 3)
+        self.assertEqual(len(self.timers), 2)
+        self.assertEqual(self.prewarm.snapshot()['status'], 'failed')
+
+    def test_persistent_invalid_http_200_stops_without_retaining_bad_tables(self):
+        self.fresh_table_source()
+        self.corrupt_table = True
+        self.prewarm.start('3-2')
+        for attempt in (1, 2, 3):
+            self.assertTrue(self.prewarm.wait(2))
+            self.assertEqual(len(self.calls), attempt)
+            state = self.prewarm.snapshot()
+            self.assertEqual(state['status'], 'failed')
+            self.assertEqual(state['failure_count'], attempt)
+            self.assertTrue((state['tables'], state['completed']) == (0, 0))
+            if attempt < 3:
+                self.assertTrue(state['retry_pending'])
+                self.assertGreaterEqual(self.timers[-1].interval, 59)
+                self.now += 61
+                self.timers[-1].fire()
+        self.assertEqual(len(self.timers), 2)
+        self.assertTrue(state['retry_exhausted'])
+        self.assertFalse(state['retry_pending'])
+        self.assertTrue(all(request.url.path.endswith('/stats/hex') for request in self.calls))
+        self.corrupt_table = self.fail = False
+        self.now += 61
+        self.prewarm.start('3-2')
+        for timer in self.timers:
+            timer.fire()
+        self.assertTrue(self.prewarm.wait(2))
+        self.assertEqual(len(self.calls), 3)
+
+    def test_partial_success_and_cached_reads_do_not_reset_failures_or_disable_foreground_queries(self):
+        def partial_source(request):
+            if request.url.path.endswith('/query'):
+                identity = json.loads(request.content)['filter']['rules'][0]['targetId']
+                self.fail = not self.calls or identity == '30668'
+            return self.response(request)
+        self.adapter.transport = httpx.MockTransport(partial_source)
+        self.start_failed()
+        self.now += 61
+        self.timers[-1].fire()
+        self.assertTrue(self.prewarm.wait(2))
+        state = self.prewarm.snapshot()
+        self.assertTrue((state['failure_count'], state['completed'], state['pending']) == (2, 1, 1),
+                        'Partial success must preserve the two accumulated failed rounds')
+        self.assertEqual(len(self.calls), 3)
+        cached = list(self.prewarm.iter_comp_hex_supplements(
+            '107', '3-2', [('20742', '四之力')]))
+        self.assertEqual(cached[0][1]['data']['comps'][0]['avgPlacement'], 4.23)
+        self.assertTrue(cached[0][1]['cached'])
+        self.assertEqual(len(self.calls), 3)
+        self.assertEqual(self.prewarm.snapshot()['failure_count'], 2)
+        self.now += 61
+        self.timers[-1].fire()
+        self.assertTrue(self.prewarm.wait(2))
+        state = self.prewarm.snapshot()
+        self.assertTrue((state['failure_count'], state['tables'], state['completed'], state['pending'])
+                        == (3, 2, 1, 1))
+        self.assertTrue(state['retry_exhausted'])
+        self.assertFalse(state['retry_pending'])
+        self.assertEqual(len(self.timers), 2)
+        self.assertEqual(len(self.calls), 4)
+        self.assertTrue(self.prewarm.hexes()['data'] == self.global_rows)
+        self.assertTrue(self.prewarm.hexes('107')['data'] == [])
+        self.assertEqual(len(self.calls), 4, 'Exhaustion must preserve already useful tables')
+        self.adapter.transport = httpx.MockTransport(self.response)
+        self.fail = False
+        self.now += 61
+        manual = list(self.prewarm.iter_comp_hex_supplements(
+            '107', '3-2', [('20742', '四之力'), ('30668', '厨神阿福')]))
+        self.assertTrue([entry[0] for entry in manual] == ['20742', '30668'])
+        self.assertTrue(all(entry[2] is None for entry in manual))
+        self.assertTrue([entry[1]['data']['comps'][0]['avgPlacement'] for entry in manual]
+                        == [4.23, 4.54])
+        self.assertEqual(len(self.calls), 5,
+                         'A user query must still fetch the missing item once after background exhaustion')
+        self.prewarm.start('3-2')
+        self.assertTrue(self.prewarm.wait(2))
+        state = self.prewarm.snapshot()
+        self.assertTrue((state['failure_count'], state['completed']) == (3, 2))
+        self.assertTrue(state['retry_exhausted'])
+        self.assertFalse(state['retry_pending'])
+        self.assertEqual(len(self.calls), 5)
+
+    def test_new_controller_gets_a_new_budget_without_bypassing_shared_source_cooldown(self):
+        self.start_failed()
+        for _ in range(2):
+            self.now += 61
+            self.timers[-1].fire()
+            self.assertTrue(self.prewarm.wait(2))
+        previous = self.prewarm
+        self.assertTrue(previous.snapshot()['retry_exhausted'])
+        self.prewarm = HexPrewarm(self.adapter, '107', current=lambda: self.active)
+        try:
+            self.assertEqual(self.prewarm.snapshot()['failure_count'], 0)
+            self.assertFalse(self.prewarm.snapshot()['retry_exhausted'])
+            self.prewarm.start('3-2')
+            self.assertTrue(self.prewarm.wait(2))
+            self.assertEqual(len(self.calls), 3, 'A new task must not bypass the shared source cooldown')
+            self.assertEqual(self.prewarm.snapshot()['failure_count'], 1)
+            self.assertTrue(self.prewarm.snapshot()['retry_pending'])
+            self.assertGreaterEqual(self.timers[-1].interval, 59)
+            self.fail = False
+            self.now += 61
+            self.timers[-1].fire()
+            self.assertTrue(self.prewarm.wait(2))
+            state = self.prewarm.snapshot()
+            self.assertTrue((state['status'], state['completed'], state['failure_count'])
+                            == ('complete', 2, 1))
+            self.assertFalse(state['retry_pending'])
+            self.assertEqual(len(self.calls), 5)
+            self.assertEqual(previous.snapshot()['failure_count'], 3)
+        finally:
+            previous.cancel()
+
     def test_invalid_successful_main_table_is_evicted_before_recovery_refetches_same_scope(self):
         self.fresh_table_source()
         self.corrupt_table = True

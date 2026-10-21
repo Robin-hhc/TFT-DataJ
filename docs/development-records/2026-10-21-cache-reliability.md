@@ -1,6 +1,6 @@
 # 2026-10-21：缓存恢复、头像与交付一致性
 
-当前状态：主树1026项、干净交付树986项与两边16类故障注入通过，57项交付方法两边逐项审计通过；准备全新本地候选包。正常路径固定对照达原预算；坏缓存恢复的额外成本未通过原+5/+10ms，用户故障专属取舍仍待答。尚未安装/重启或公开发布。
+当前状态：用户已明确接受仅坏缓存恢复的额外几毫秒；有限重试补丁及17新回归已完成，主树1043/交付树1003项、两边16类故障注入与74方法逐项审计通过，46批准原图复验通过。正常帧时延A/A及A/B达原预算。准备从新干净提交构建v0.2.19并验收/更新本机，尚未安装；v0.2.18候选及其先前结果保留，不替代新增保护的EXE验收。
 
 ## 目标与范围
 
@@ -64,7 +64,7 @@ v2最终来源为`candidate-source-v2.json`：DataJ SHA256 `2c43d07a051e5c59c6ff
 
 保持FULL同步和完整构造/close计时，在临时数据库比较日志模式：`data-agent/sqlite-journals-full.json`、`sqlite-wal-full.json`。TRUNCATE/PERSIST及WAL短连接/临时keep连接都更慢，拒绝所有候选；生产数据库未切换。候选依据核对[SQLite journal_mode文档](https://www.sqlite.org/pragma.html#pragma_journal_mode)及[WAL文档](https://www.sqlite.org/wal.html)，结论以本机数据为准，没有采用OFF/NORMAL降低保障。
 
-据此修订v3业务合同，见设计第3项：网络入口拒绝旧坏行作为miss，正确响应一次原子替换；snapshot/shared保留精确物理删除。每请求拒绝指纹避免重复解码，不是跨请求常驻缓存。独立设计审阅确认安全条件，新增SQLite observer提交数红测、网络并发替换和完整894行坏目录组；旧源/旧测试/失败报告保留，等待实际红绿及完整固定预算复测。
+当时试验v3业务合同（最终未采纳）：网络入口拒绝旧坏行作为miss，正确响应一次原子替换；snapshot/shared保留精确物理删除。每请求拒绝指纹避免重复解码，不是跨请求常驻缓存。独立设计审阅确认安全条件，新增SQLite observer提交数红测、网络并发替换和完整894行坏目录组；旧源/旧测试/失败报告保留。最终选择及原预算未通过情况见后文，不把这一试验描述当作当前生产实现。
 
 ### 后续候选仍未达标，保留真实边界
 
@@ -116,4 +116,59 @@ cwd为`C:/Users/Robin/.codex/worktrees/recognition-fix-20261018/tft-helper`，�
 
 `clean-gate-source-after.json`核对373个非ignored来源前后无漂移；`final-production-performance-binding.json`确认最终运行代码与正式性能来源0差异，仅增加两业务测试的一文件改变。`private-materials-readiness.json`验证批准46份的frame/case/expected共138文件及其它39旧私有素材全部匹配原hash；未省略私有回放或生成oracle。主树`root-runtime-and-lock-post-gate.json`确认307运行来源未变，全部运行/构建依赖精确匹配锁定版本，msgspec未安装。
 
-下一步从干净提交构建未使用v0.2.18。旧`work/package-build`将经绝对路径/运行依赖核验后在同workspace内可逆归档，从空目录运行真正PyInstaller，避免copy2保留旧mtime而复用旧Analysis/PYZ；不使用skip-build，不覆盖旧ZIP/安装或模型。该候选构建不代表已接受故障恢复预算例外，也不更新当前实例。
+干净范围已提交为`e101e70ec54ef25c88059048373dde44bd881823`（本地分支`codex/roman-suffix-20261020`，未推送）；31个文件，独立审阅通过的暂存补丁SHA256为`1314cf5d15bae06bef35215db5604f501068f89ce58786fde39913d6813ce8f8`。提交后工作树无改动，先前主树未授权变化继续留在主树。
+
+### 全新候选包及EXE验收
+
+旧`work/package-build`经绝对路径、无reparse及无进程依赖核验后，可逆移至同交付workspace的`work/pb17-20261021`，旧v0.2.17 manifest SHA256 `7cf8786eb410908b33260b90b4893904055c5a434f9c81b68e8af22c5febabb0`保持不变。证据：`build-work-archive-preflight.json`、`build-work-archive-result.json`。从空目录运行真正PyInstaller，不使用skip-build、不复用旧Analysis/PYZ、不覆盖旧ZIP/安装或模型。
+
+构建命令（cwd为上述干净交付树）：`E:/tft-helper/work/p0-runtime/Scripts/python.exe -u -X utf8 packaging/build_windows.py --version 0.2.18`，退出0。新ZIP 281,185,363字节，SHA256 `eef3aab16167a7400c3492e05d08906f62bb45dcbefb6dbe69ab908b81ef54be`；3023个manifest文件逐一核对。`build-v0.2.18.log`保留完整构建输出，`package-offline-v0.2.18.json`单独保留实际EXE离线验收：退出0、status=passed、frozen=true；缓存修复2HTTP、fresh-adapter命中、坏刷新拒绝、最后好目录保留、snapshot 0HTTP均通过。此为本机隔离路径和环境验证，不是另一台物理机器。
+
+联网与9张批准原图命令：`E:/tft-helper/work/p0-runtime/Scripts/python.exe -u -X utf8 packaging/verify_windows.py C:/Users/Robin/.codex/worktrees/recognition-fix-20261018/tft-helper/dist/TFT-DataJ-0.2.18-windows-x64.zip --online --recognition-fixture E:/tft-helper/work/suffix-recognition-20261021/package-agent/exe-recognition-v0.2.17.json`，退出0、status=passed。真实DataJ HTTPS与英雄头像读取通过；9张既有批准原图及独立oracle hash均匹配，9/9通过，三个slot均resolved、mismatches=[]。目录hash `37f4d7f4559c9c189353ecb315d14887699c7acdd14fa6d5fe1351f456a5f925`。完整日志`package-online-v0.2.18.log`，原始在线报告`package-online-v0.2.18.json`的SHA256为`5b32179f80f5f553035b5149b87c20d7e3a468f55ad49bfa57b574d79716c499`。
+
+ZIP、checksum和在线报告复制到主树`dist/`同名路径，目标预先确认不存在，复制前后流式hash相同，未覆盖v0.2.17或任何旧产物。`candidate-package-final.json`记录全部路径/大小/hash及离线缓存合同。候选manifest为干净提交e101e70、working_changes=false；manifest hash `752a3acde1e81572d00bc943d62969a38a7f9257c7fb36758a64c502a2688d4e`。
+
+只读安装预检命令：`E:/tft-helper/work/p0-runtime/Scripts/python.exe -X utf8 work/cache-reliability-20261021/delivery-agent/install_validated_package.py E:/tft-helper/dist/TFT-DataJ-0.2.18-windows-x64.zip E:/tft-helper/dist/TFT-DataJ-0.2.18-windows-x64.validation.json --source-root C:/Users/Robin/.codex/worktrees/recognition-fix-20261018/tft-helper --expected-commit e101e70ec54ef25c88059048373dde44bd881823`，退出0。3023成员及192打包来源hash、干净HEAD、9原图/oracle/目录、真实HTTPS头像、EXE缓存修复证据与旧安装/桌面身份全部匹配；mode=preflight、shortcut_updated=false、old_version_retained=true。原审计`delivery-agent/local-install-20261021-130546-596035.json`，日志`installation-preflight-v0.2.18.log`。未使用`--execute`。
+
+`final-active-state-unchanged.json`在预检后只读核对源GUI PID206544/launcher202668及原创建时间、命令和路径，input.ini、CMD、EXE快捷方式hash均未改变，v0.2.18安装目录仍不存在。源307个冻结文件hash继续匹配。一次辅助摘要使用了错误字段`cmd_sha256`而KeyError；按实际schema改读`source_cmd_sha256`后上述检查通过，失败的辅助查询没有修改运行实例或设置。
+
+该候选构建不代表已接受故障恢复预算例外，也不更新当前实例。桌面CMD、EXE快捷方式、源实例和旧安装均保持原状；任何最终安装/重启仍受上文待答边界约束。本轮没有证据证明常规RAM显著下降，也未采纳另一个DB、缩略头像或原生解析依赖。未推送，因此没有该提交的远端CI或公开release证据；本机源码、隔离EXE、硬件/游戏FPS与跨机结果分别记录，不能互相替代。
+
+### 16:30后：用户接受故障成本，并复核持续来源异常
+
+用户明确答复“增加几毫秒就加吧”，撤销上文故障恢复成本待答状态；正常路径原性能要求不变。随后追问持续网站异常是否一直重试、是否有阈值。只读复核发现两处需要修正，尚未将v0.2.18安装到本机：
+
+- 固定阵容HexPrewarm原来只有限速：唯一Timer、至少60秒及共享冷却；缺少累计轮数上限。
+- 同画面全局统计完全失败会清空stats_payload，普通accept_frame兜底因而约每2秒重新OCR和查询。HTTP/JSON包络错误受60秒共享冷却；业务字段无效则仅有原1秒成功请求间隔。真实DataJ+Qt红测6次同帧导致7次HTTP，证明不是仅检查内部计数。
+
+本轮开始前保存`before-retry-limits/`四文件原字节/hash，原e101e70/v0.2.18包、全部旧测试和失败报告继续保留。追加合同已写设计第5项；同对象总3轮SourceError（含首次），前两轮至少60秒重试，第三轮停止自动恢复，成功或缓存命中不重置总失败计数，已成功表/精确值/待办保留。普通start/prioritize与晚到Timer不能解锁；新任务有独立预算但仍尊重共享来源冷却。这里是“三轮失败”，不是保证每轮恰好一次HTTP。
+
+同候选组全局失败保留失败token，普通同帧不重复OCR/查询；已确认三卡时侧键/「立即补查一次」直接复用身份补查、不再OCR。换牌检测与既有两次partial补读保留，真正换阶段/版本/新局能继续；过时组或旧adapter的失败回调不能清掉当前结果。失败状态不伪装成成功统计。
+
+定向红绿与敏感性：`retry-cap/RETRY-CAP-RESULTS.md`记录旧恢复8方法/原helpers逐字和AST不变，首红第三次失败仍产生第三个Timer（3 != 2），新4方法及受影响61项/76.498s全过，去掉上限、成功即清零两故障均被业务断言捕获（0error/skip）。`global-retry/RESULTS.md`记录真实red及11新方法、82受影响项/9.011s全过，3/3故障捕获；partial实际请求链路保留初次+两次后停止，普通画面捕获仍继续。
+
+为真EXE加入仅诊断模式的`check_retry_limits()`：临时SQLite、MockTransport、受控时钟/延迟回调分别测持续503和坏HTTP200，均3HTTP/2Timer后停止；晚到回调及start/prioritize不产生新HTTP。`test_portable_retry_limits`先红（诊断缺失）、后绿；将运行上限错误改4的故障被明确“continued scheduling after three failures”断言拒绝。与旧缓存诊断共5方法/0.163s通过。该嵌入诊断不接触活动数据库，也不真实等待两分钟，不算现场网站故障。
+
+REG-028登记共17新公共方法（4后台、11同画面、2EXE诊断）；`retry-cap/final-17-methods.json`逐项列出，`perf-agent/required-delivery-methods-final74.json`在最终门槛前冻结旧57+新17。当前仅定向检查通过；下面追加最终统一门槛、新包与本机更新的实际结果，不能沿用1026/986或v0.2.18验收当作新增保护已交付。
+
+追加独立审阅：后台/EXE诊断经另一实现者及独立Standards审阅，无阻断；全局失败token/app与EXE诊断由后台实现者独立审阅，无阻断，见`retry-cap/APP-PORTABLE-REVIEW.md`。其边界明确：嵌入EXE的新retry_limits只实际执行后台封顶分支；全局失败同帧分支由11个源码Qt方法及最终包精确来源绑定证明，不称作在frozenEXE完整执行了那11个分支。
+
+正常帧时延：`retry-cap/profile_accept_frame.py --help`后先2对/1warm验证隔离，再按冻结500对/20warm、交错顺序串行A/A、A/B。`accept-frame-normal.json`（SHA256 `31612e7babd579d7f948fc2cc47d420776769a131d99ead11d6c49c55c9736d2`）四场均过原P50+5ms/P95+max(5%,10ms)：A/B自动P50+0.000500ms/P95+0.012255ms；手动P50−0.000400ms/P95−0.020425ms；A/A通过。真实Qt排队回调及accept_frame状态/文本生成，每帧相同3文本，OCR/query_stats/HTTP=0，源前后hash相同；不包含截图、OCR、像素准备、原生浮层定位、实战FPS或完整冷启动。没有通过减少调用或降低刷新换绿色。
+
+`candidate-source-final-retry-limits.json`冻结309运行/测试/打包文件，相对v2只有app/hex_prewarm/恢复测试/portable_check四个既有来源改变，另加两测试模块；DataJ、Vision、头像生产仍是原字节。旧fixtures及所有旧回归条目保持。`retry-integration/scoped-retry.patch`仅将本轮增量应用到干净e101e70，保留隔离外点收起范围；根与干净树的accept_frame/query_stats AST一致，`retry-integration/performance-binding.json`单独绑定本次正常帧性能与干净交付。
+
+### 有界重试：最终主树门槛
+
+命令：`E:/tft-helper/work/p0-runtime/Scripts/python.exe -u -X utf8 tools/validate_data.py --include-private --release-gate --regression-base-ref 1ae8f6a6c40cacebebaf0c5b6bbe4afb55be4c42 --report E:/tft-helper/work/cache-reliability-20261021/retry-final-validation/root-with-private.json`，退出0；1043项/331.655秒，失败0、错误0、跳过0、source_gaps=[]；46批准原图实际回放和46/46原始frame/case/oracle校验通过，15未审核原样pending、未算通过。
+
+随后`tools/check_data_mutations.py --report E:/tft-helper/work/cache-reliability-20261021/retry-final-validation/mutations-root.json`退出0，16/16捕获；`perf-agent/audit_gate.py --validation .../retry-final-validation/root-with-private.json --mutations .../retry-final-validation/mutations-root.json --requirements .../perf-agent/required-delivery-methods-final74.json --report .../retry-final-validation/root-74-audit.json`退出0，74/74具体方法实际passed、0缺失、0未注册。`root-source-unchanged.json`证明309冻结文件检查后无变化。
+
+干净交付树正在按原7620751开工SHA、独立工作树diff及同74方法、原46素材执行最终门槛。v0.2.18构建目录已在运行依赖/reparse/绝对目标检查后可逆移动到同workspace的`work/pb18-20261021`，原manifest `752a3acde1e81572d00bc943d62969a38a7f9257c7fb36758a64c502a2688d4e`保持一致，见`retry-final-validation/build-v18-archive.json`。下一新包使用未占用v0.2.19，不覆盖v0.2.18候选或v0.2.17安装。
+
+### 有界重试：最终交付树门槛
+
+cwd为隔离交付树，解释器仍为绝对路径Python3.12：`E:/tft-helper/work/p0-runtime/Scripts/python.exe -u -X utf8 tools/validate_data.py --include-private --release-gate --regression-base-ref 7620751de3849df4e534697b6e6a3dbd924dc6fb --bug-cases-dir E:/tft-helper/work/companion/bug-cases --report E:/tft-helper/work/cache-reliability-20261021/retry-final-validation/clean-with-private.json`，退出0；1003项、0失败/错误/跳过、source_gaps=[]，28历史主题/410方法引用/46素材均通过，46批准原图均校验/回放通过，15pending不计通过。
+
+随后相同解释器执行`tools/check_data_mutations.py --report E:/tft-helper/work/cache-reliability-20261021/retry-final-validation/mutations-clean.json`与`perf-agent/audit_gate.py --root C:/Users/Robin/.codex/worktrees/recognition-fix-20261018/tft-helper --validation .../retry-final-validation/clean-with-private.json --mutations .../retry-final-validation/mutations-clean.json --requirements .../perf-agent/required-delivery-methods-final74.json --report .../retry-final-validation/clean-74-audit.json`，均退出0，16/16故障捕获、74/74方法通过，0缺失/未注册。两边测试后未再改运行代码/依赖/资源。
+
+本机交付脚本按v0.2.19单独保留于`delivery-v0.2.19/`，不会覆盖原v0.2.18预检证据；安装器增加实际EXE retry_limits字段、持续503/坏200各3HTTP/2wake/min60s的强校验。独立只读审阅发现正常shutdown保存panel_geometry/mark_position可能令旧脚本在退出后中止：现改为备份退出前和正常保存后的文件，仅允许这两个合法窗口位置字段变化，后续使用退出后设置，不回写旧值。3个专门核对及3脚本compile通过，日志`settings-validation.log`；该修正仅在work交付脚本，不进入产品或影响已过源码门槛。
