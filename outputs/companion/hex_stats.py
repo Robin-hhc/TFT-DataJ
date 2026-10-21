@@ -8,6 +8,7 @@ from copy import deepcopy
 
 from dataj import DataJ, SourceError
 from snapshot_stats import STAGES, stage_stat
+from source_failures import source_failure_details
 
 
 def lookup_comp_hexes(adapter, comp, stage, entities, *, on_progress=None, current=lambda:True):
@@ -33,7 +34,7 @@ def lookup_comp_hexes(adapter, comp, stage, entities, *, on_progress=None, curre
     if not current():
         return None
     rows = deepcopy(primary['data'])
-    supplemented, errors, sources = [], {}, {}
+    supplemented, errors, sources, error_details = [], {}, {}, {}
     pending = {identity:name for identity,name in candidates.items()
                if stage_stat(rows, identity, stage)['status'] in (
                    'missing_or_ambiguous_entity', 'no_stage_data')}
@@ -44,6 +45,7 @@ def lookup_comp_hexes(adapter, comp, stage, entities, *, on_progress=None, curre
         return {**primary, 'data':deepcopy(rows),
                 'supplemented_ids':[identity for identity in candidates if identity in supplemented],
                 'supplement_errors':dict(errors), 'supplement_sources':deepcopy(sources),
+                'supplement_error_details':deepcopy(error_details),
                 'pending_ids':list(pending)}
 
     if pending and on_progress:
@@ -80,7 +82,13 @@ def lookup_comp_hexes(adapter, comp, stage, entities, *, on_progress=None, curre
                                  'cached':result['cached'], 'sample_count':selected['sampleCount'],
                                  'scope':{'set_id':adapter.set_id, 'patch':adapter.patch,
                                           'comp':str(comp), 'stage':stage, 'hex_id':identity}}
-        except SourceError:
+        except SourceError as error:
             errors[identity] = '阵容阶段补查暂不可用'
+            error_details[identity] = source_failure_details(error, adapter,
+                scope={'set_id':adapter.set_id, 'patch':adapter.patch, 'comp':str(comp),
+                       'stage':stage, 'hex_id':identity},
+                request={'method':'POST', 'path':'/explorer/query',
+                         'body':DataJ.explore_body('hex', {'id':identity, 'name':name}, stage,
+                                                  set_id=adapter.set_id, patch=adapter.patch)})
         if on_progress:on_progress(snapshot())
     return snapshot() if current() else None

@@ -13,3 +13,4 @@ class SourceBudget:
         self.background_wait = threading.Event()
         self.inflight = {}
         self.next_request = 0.0
+        self.last_failure = None

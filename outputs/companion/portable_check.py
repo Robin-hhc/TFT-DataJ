@@ -467,6 +467,61 @@ def check_hex_prewarm():
             warm.cancel();assert warm.wait(5),'Background worker did not stop'
 
 
+def check_cache_recovery():
+    """Prove durable bad-cache recovery using temporary SQLite and synthetic HTTP."""
+    from contextlib import closing
+    import sqlite3
+    import tempfile
+    import httpx
+    from dataj import DataJ,SourceError
+
+    good={'hex':[{'id':'1023','name':'应急护甲 I','setId':'18','level':1,
+                   'descText':'便携缓存离线诊断'}],'hero':[],'equip':[],'trait':[]}
+    requests=[]
+    def respond(request):
+        assert request.method=='GET' and request.url.path=='/api/web/gamedata',request.url
+        assert dict(request.url.params)=={'setId':'18'},request.url
+        requests.append(request)
+        assert len(requests)<=2,'Cache diagnostic issued unexpected HTTP'
+        data=good if len(requests)==1 else {'hex':[None]}
+        return httpx.Response(200,json={'success':True,'code':200,'data':data})
+
+    with tempfile.TemporaryDirectory(prefix='TFT-DataJ-cache-diagnostic-') as directory:
+        db=Path(directory)/'cache.sqlite';transport=httpx.MockTransport(respond)
+        adapter=DataJ(patch='18.4',db=db,transport=transport)
+        # Existing durable format, constructed independently of private helpers.
+        key=json.dumps(['GET','/gamedata',{'setId':18},None],sort_keys=True,ensure_ascii=False)
+        with closing(sqlite3.connect(db,isolation_level=None)) as connection:
+            connection.execute('INSERT INTO cache VALUES(?,?,?)',
+                               (key,time.time(),json.dumps({'hex':'legacy-invalid'})))
+        repaired=adapter.catalog()
+        assert repaired['data']==good and repaired['cached'] is False,'Legacy bad directory was reused'
+        assert len(requests)==1,'Expected one real adapter source recovery'
+        restarted=DataJ(patch='18.4',db=db,transport=transport)
+        hit=restarted.catalog()
+        assert hit['data']==good and hit['cached'] is True,'Fresh adapter did not reuse good durable data'
+        assert len(requests)==1,'Fresh adapter unexpectedly sent HTTP'
+        expired=repaired['fetched_at']-7200
+        with closing(sqlite3.connect(db,isolation_level=None)) as connection:
+            connection.execute('UPDATE cache SET fetched=? WHERE key=?',(expired,key))
+        try:restarted.catalog()
+        except SourceError:pass
+        else:raise AssertionError('A malformed new HTTP 200 directory was accepted')
+        assert len(requests)==2,'Expected exactly one failed source refresh'
+        # A further adapter proves last-good persistence rather than an object cache.
+        final=DataJ(patch='18.4',db=db,transport=transport)
+        before=len(requests);fallback=final.catalog_snapshot()
+        assert fallback and fallback['data']==good,'Bad refresh replaced the last good directory'
+        assert fallback['cached'] is True and fallback['stale'] is True,'Expired directory not labelled local/stale'
+        assert fallback['fetched_at']==expired,'Failed refresh changed last-good timestamp'
+        assert len(requests)==before,'Local directory fallback issued HTTP'
+        return {'status':'passed','evidence':'synthetic MockTransport and temporary SQLite only; no live API/user cache',
+                'scope':{'set_id':18,'patch':'18.4'},'http_request_count':len(requests),
+                'legacy_bad_cache_repaired':True,'fresh_adapter_hit':True,
+                'bad_refresh_rejected':True,'last_good_preserved':True,
+                'local_fallback_stale':True,'snapshot_http_request_count':len(requests)-before}
+
+
 def check_identity_and_bug_archive():
     """Exercise new packaged modules with bounded synthetic evidence, offline."""
     import hashlib
@@ -568,6 +623,8 @@ def main():
         report['checks'].append('packaged exact-stage comp hex supplements and repeated lookup cache via embedded mock transport')
         report['hex_prewarm']=check_hex_prewarm()
         report['checks'].append('packaged full pinned hex prewarm and positive/empty session cache beyond disk expiry')
+        report['cache_recovery']=check_cache_recovery()
+        report['checks'].append('packaged durable bad-cache recovery, fresh-adapter hit and last-good directory preservation')
         report['identity_and_bug_archive']=check_identity_and_bug_archive()
         report['checks'].append('packaged hex alias identity, variant rejection and lossless pending bug archive deduplication')
         if args.explorer_fixture:

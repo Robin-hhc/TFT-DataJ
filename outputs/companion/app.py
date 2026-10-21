@@ -641,7 +641,13 @@ class Companion(QWidget):
         self.catalog_generation+=1;generation=self.catalog_generation
         def current():return adapter is self.adapter and generation==self.catalog_generation
         def fetch():
-            result=adapter.catalog()
+            try:result=adapter.catalog()
+            except SourceError:
+                # Only identity/catalog data may fall back to a validated local
+                # snapshot. Statistics keep their current-patch TTL and budget.
+                result=adapter.catalog_snapshot()
+                if result is None:raise
+                result={**result,'catalog_refresh_failed':True}
             # The same global prewarm also supplies the current patch's identity
             # mapping. Never filter real variants by statistical availability.
             try:statistics=adapter.hexes()['data']
@@ -670,8 +676,13 @@ class Companion(QWidget):
         self.conditions.configure()
         self.refresh_selected_resources()
         self.start_button.setEnabled(True)
-        self.set_activity('ready','收起面板后自动检查海克斯与装备选择，侧键可随时补查。' if self.automatic.isChecked() else '自动识别已暂停，鼠标侧键可随时补查。')
-        self.status.setText('离线演示已准备好。' if offline else '目录已准备好，正在后台预热识别与统计；首次查询可能稍慢。')
+        ready_message=('收起面板后自动检查海克斯与装备选择，侧键可随时补查。' if self.automatic.isChecked()
+                       else '自动识别已暂停，鼠标侧键可随时补查。')
+        if result.get('catalog_refresh_failed'):ready_message='目录更新失败，使用已验证的本地目录。'+ready_message
+        self.set_activity('ready',ready_message)
+        self.status.setText('离线演示已准备好。' if offline else
+            '目录更新失败，使用已验证的本地目录；统计仍按当前版本查询。' if result.get('catalog_refresh_failed') else
+            '目录已准备好，正在后台预热识别与统计；首次查询可能稍慢。')
         if not offline:
             # Native OCR runtime initialization on a Qt worker crashes on first
             # inference in this Windows runtime. Initialize on the GUI thread;
@@ -1078,7 +1089,7 @@ class Companion(QWidget):
             self.observed(obs,live)
         def done(result):
             obs,signature=result
-            if not self.offline:record('ocr_complete',scene=obs.get('scene'),reason=obs.get('reason'),diagnostic_frame=obs.get('diagnostic_frame'),stage=obs.get('round'),elapsed_ms=obs.get('elapsed_ms'),resolutions=[c.get('resolution',{}).get('status') for c in obs.get('cards',[])],unresolved=[{'slot':c.get('slot'),'status':c.get('resolution',{}).get('status'),'readings':c.get('resolution',{}).get('readings',[]),'candidate_ids':[str(r.get('id')) for r in c.get('resolution',{}).get('candidates',[])],'description_readings':[s[:260] for s in c.get('resolution',{}).get('description_readings',[])]} for c in obs.get('cards',[]) if not c.get('resolution',{}).get('id')],session_valid=self.session.accepts(token))
+            if not self.offline:record('ocr_complete',scene=obs.get('scene'),reason=obs.get('reason'),diagnostic_frame=obs.get('diagnostic_frame'),stage=obs.get('round'),elapsed_ms=obs.get('elapsed_ms'),resolutions=[c.get('resolution',{}).get('status') for c in obs.get('cards',[])],unresolved=[{'slot':c.get('slot'),'status':c.get('resolution',{}).get('status'),'reason':c.get('resolution',{}).get('reason'),'readings':c.get('resolution',{}).get('readings',[]),'candidate_ids':[str(r.get('id')) for r in c.get('resolution',{}).get('candidates',[])],'description_readings':[s[:260] for s in c.get('resolution',{}).get('description_readings',[])]} for c in obs.get('cards',[]) if not c.get('resolution',{}).get('id')],session_valid=self.session.accepts(token))
             if not self.session.accepts(token):self.ocr_busy=False;return
             self.next_ocr_allowed=time.monotonic()+1.5
             latest=self.last_frame
@@ -1146,7 +1157,8 @@ class Companion(QWidget):
             resolved=card['resolution'];entity=resolved.get('id')
             pending=('品质待确认' if len({str(row.get('level')) for row in resolved.get('candidates',[])})>1
                      else '身份待确认') if resolved.get('status')=='ambiguous' else (
-                     '等级待确认' if resolved.get('status')=='needs_confirmation' else '名称待确认')
+                     '等级待确认' if resolved.get('status')=='needs_confirmation' else
+                     '目录无精确项' if resolved.get('reason')=='catalog_missing_title' else '名称待确认')
             ids.append(entity);names.append(resolved.get('name',card['raw_text'])+(f'（{pending}）' if entity is None else ''))
             pick.blockSignals(True);pick.setCurrentIndex(max(0,pick.findData(entity or resolved.get('suggested_id'))));pick.blockSignals(False)
         self.choice_note.setText(f"{'MuMu' if live else '文件回放（赛季由用户确认，不用于实时浮层）'} · OCR {obs['elapsed_ms']} ms")
@@ -1237,6 +1249,18 @@ class Companion(QWidget):
                 if missing:self.bugs.hex_statistics('hex_data_gap',evidence={'stage':stage,'missing_ids':missing,'global_statistics':relevant})
                 if target and comp_finished and comp_result is None:
                     self.bugs.hex_statistics('hex_comp_query_failed',evidence={'stage':stage,'global_statistics':relevant})
+                if target and comp_finished and comp_result and comp_result.get('supplement_errors'):
+                    evidence={'stage':stage, 'requested_ids':list(ids),
+                              'failed_ids':list(comp_result['supplement_errors']),
+                              'supplement_errors':deepcopy(comp_result['supplement_errors']),
+                              'supplement_error_details':deepcopy(comp_result.get('supplement_error_details',{})),
+                              'global_statistics':relevant,
+                              'comp_statistics':deepcopy(comp_result['data'])}
+                    if not self.offline:
+                        record('hex_comp_supplement_failed',set_id=adapter.set_id,patch=adapter.patch,
+                               target=target,stage=stage,failed_ids=evidence['failed_ids'],
+                               supplement_error_details=evidence['supplement_error_details'])
+                    self.bugs.hex_statistics('hex_comp_supplement_failed',evidence=evidence)
             result=build_hex_results(ResultScope(adapter.set_id,adapter.patch,stage,target),zip(ids,names),
                                      global_result,comp_result,comp_finished=comp_finished,
                                      previous=retained.get('result') if retained else None)
@@ -1248,6 +1272,7 @@ class Companion(QWidget):
                                 'comp_supplemented_ids':supplemented,
                                 'comp_supplement_sources':comp_sources,
                                 'comp_supplement_errors':supplement_errors,
+                                'comp_supplement_error_details':deepcopy(comp_result.get('supplement_error_details',{})) if comp_result else {},
                                 'comp_pending_ids':pending_ids}
             if not self.offline:record('stats_ready',available=available,live=live,stage=stage,target=target,
                                       confirmed_ids=ids,comp_available=comp_available,

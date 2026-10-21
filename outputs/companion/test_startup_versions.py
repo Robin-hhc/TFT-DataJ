@@ -1,9 +1,11 @@
 """Startup version selection through real Qt callbacks and HTTP requests."""
-from contextlib import ExitStack
+from contextlib import ExitStack, closing
 from copy import deepcopy
 from pathlib import Path
 import json
+import sqlite3
 import tempfile
+import time
 import unittest
 from unittest.mock import patch
 
@@ -28,6 +30,7 @@ class StartupVersions(unittest.TestCase):
         self.calls = []
         self.versions = ['18.3', '18.2a', '18.1.c']
         self.failure = None
+        self.catalog_failure = None
         self.catalog = {'hex': [], 'hero': [], 'trait': [], 'equip': []}
         self.statistics = {}
         self.statistics_failures = {}
@@ -71,6 +74,10 @@ class StartupVersions(unittest.TestCase):
             chunk = json.dumps({'gameVersions': rows}, separators=(',', ':'))
             return httpx.Response(200, text='self.__next_f.push([1,' + json.dumps(chunk) + '])')
         if request.url.path.endswith('/gamedata'):
+            if self.catalog_failure == 'network':
+                raise httpx.ConnectError('catalog offline', request=request)
+            if self.catalog_failure == 'malformed':
+                return httpx.Response(200, json={'success': True, 'code': 200, 'data': []})
             data = self.catalog
         elif request.url.path.endswith('/stats/hex'):
             version = request.url.params['gameVersion']
@@ -307,6 +314,50 @@ class StartupVersions(unittest.TestCase):
     def test_changed_page_has_explicit_retry(self):
         self.failure = 'malformed'
         self.assert_failed_then_retry()
+
+    def seed_expired_catalog(self):
+        self.use_hex_fixture()
+        self.p.adapter.catalog()
+        with closing(sqlite3.connect(self.p.adapter.db, isolation_level=None)) as conn:
+            conn.execute('UPDATE cache SET fetched=?', (time.time() - 3601,))
+        self.calls.clear()
+
+    def test_expired_local_catalog_survives_bad_refresh_without_old_statistics(self):
+        self.seed_expired_catalog()
+        self.catalog_failure = 'malformed'
+        self.statistics['18.3'] = []
+        self.flush()
+        self.assertTrue(self.p.versions_ready)
+        self.assertEqual(self.p.activity_code, 'ready')
+        self.assert_duplicate_hex_titles_retained()
+        self.assertIn('本地', self.p.activity.text())
+        self.assertIn('更新失败', self.p.activity.text())
+        self.assertEqual(len([r for r in self.calls if r.url.path.endswith('/gamedata')]), 1)
+        self.assertTrue(all(r.url.params['gameVersion'] == '18.3' for r in self.calls
+                            if r.url.path.endswith('/stats/hex')))
+
+    def test_local_catalog_recovery_uses_confirmed_current_patch_identity_only(self):
+        self.seed_expired_catalog()
+        self.catalog_failure = 'network'
+        self.p.adapter.next_request = 0
+        # Use production pacing for this path: the failed refresh must block
+        # current-patch statistics rather than borrowing expired evidence.
+        with patch.object(type(self.p.adapter), 'request', DataJ.request):
+            self.flush()
+        self.assertTrue(self.p.start_button.isEnabled())
+        self.assertEqual(self.p.activity_code, 'ready')
+        self.assert_duplicate_hex_titles_retained()
+        self.assertEqual(self.p.adapter.patch, '18.3')
+        self.assertIn('本地', self.p.activity.text())
+        self.assertFalse(any(r.url.params.get('gameVersion') == '18.2a' for r in self.calls))
+        self.assertFalse(any(r.url.path.endswith('/stats/hex') for r in self.calls))
+
+    def test_catalog_failure_without_last_good_keeps_explicit_retry(self):
+        self.catalog_failure = 'malformed'
+        self.flush()
+        self.assertEqual(self.p.catalog, {})
+        self.assertEqual(self.p.activity_code, 'catalog_failed')
+        self.assertTrue(self.p.start_button.isEnabled())
 
 
 if __name__ == '__main__':

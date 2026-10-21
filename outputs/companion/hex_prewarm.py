@@ -32,6 +32,8 @@ class HexPrewarm:
         self._status = 'idle'
         self._error = None
         self._interactive = 0
+        self._retry_timer = None
+        self._retry_after = 0.0
 
     def _current(self):
         return (not self._cancelled.is_set() and self.current()
@@ -52,10 +54,37 @@ class HexPrewarm:
             if self._worker is not None and self._worker.is_alive():
                 self._wake.set()
                 return self
-            self._status, self._error = 'running', None
-            self._worker = threading.Thread(target=self._run, name='hex-prewarm', daemon=True)
-            self._worker.start()
+            # Starting again must not turn a pending source cooldown into a
+            # fresh request. The delayed wake owns the retained queue.
+            if self._retry_timer is not None:return self
+            self._start_worker_locked()
         return self
+
+    def _start_worker_locked(self):
+        self._status, self._error = 'running', None
+        self._worker = threading.Thread(target=self._run, name='hex-prewarm', daemon=True)
+        self._worker.start()
+
+    def _schedule_retry_locked(self, retry_after):
+        """A failed worker exits; one cancellable wake resumes its exact queue."""
+        self._retry_after = retry_after
+        def resume():
+            with self._lock:
+                if self._retry_timer is not timer:return
+                self._retry_timer = None
+                if not self._current():return
+                # A different request may have extended the shared source
+                # cooldown after this wake was scheduled. Never shorten it.
+                due = max(self._retry_after, self.adapter.next_request)
+                if due > time.monotonic():
+                    self._schedule_retry_locked(due)
+                    return
+                self._retry_after = 0.0
+                self._start_worker_locked()
+        timer = threading.Timer(max(0.0, retry_after-time.monotonic()), resume)
+        timer.daemon = True
+        self._retry_timer = timer
+        timer.start()
 
     def prioritize(self, round_hint):
         with self._lock:
@@ -66,6 +95,9 @@ class HexPrewarm:
     def cancel(self):
         self._cancelled.set()
         with self._lock:
+            retry, self._retry_timer = self._retry_timer, None
+            self._retry_after = 0.0
+            if retry is not None:retry.cancel()
             self._tables.clear()
             self._exact.clear()
             self._pending.clear()
@@ -84,7 +116,9 @@ class HexPrewarm:
             status = 'paused' if self._status == 'running' and self._interactive else self._status
             return {'status': status, 'tables': len(self._tables),
                     'completed': len(self._exact), 'pending': len(self._pending),
-                    'error': self._error}
+                    'error': self._error, 'retry_pending': self._retry_timer is not None,
+                    'retry_in_seconds': max(0.0, self._retry_after-time.monotonic())
+                    if self._retry_timer is not None else None}
 
     def begin_interactive(self):
         """Hold background issuance across a whole foreground query group."""
@@ -265,3 +299,10 @@ class HexPrewarm:
             with self._lock:
                 if not self._cancelled.is_set():
                     self._status, self._error = 'failed', str(error)
+                    if self._current():
+                        # HTTP failures already apply the shared 60s source
+                        # cooldown. Validation failures also need bounded
+                        # backoff rather than retrying a corrupt response hot.
+                        self._schedule_retry_locked(max(time.monotonic()+60.0,
+                                                       self.adapter.next_request,
+                                                       self._next_background))

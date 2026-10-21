@@ -324,6 +324,14 @@ class Vision:
                             'name':supported['name'],'candidates':supported['candidates'],
                             'method':'separated_roman_strokes','glyph':glyph,
                             'prefix_readings':suffix_readings}
+        if resolution['status']=='unrecognized':
+            # Classify the complete evidence, including retries spread across
+            # groups, without granting any identity a previous gate rejected.
+            classified=resolve_name(readings,catalog)
+            if classified['status']=='unrecognized':
+                for key in ('reason','consensus_title','consensus_read_count'):
+                    resolution.pop(key,None)
+                    if key in classified:resolution[key]=classified[key]
         return {**resolution,'readings':readings}
 
     def analyze(self, image, catalog):

@@ -1,0 +1,127 @@
+{
+  "schema_version": 1,
+  "reviewed_by": "agent:recognition root-cause review",
+  "review_note": "Original pixels independently inspected before replay. Tear title has Goddess Tear, description6500mana and2extra items; frozen recorded catalog contains four other Supply titles with no exact Tear title. Flora title and150%/3coin description agree with two frozen same-name/quality/description catalog rows having different IDs/icons, so no unique ID is independently provable. Anonymous title crops exclude player context. Reasons classify title lookup failure, not truth of OCR; expected IDs remain null. Fresh source contract is separately saved by root.",
+  "cases": [
+    {
+      "source_frame_sha256": "e30a195b5f903f5f3547a151d9261f3d9b09c2559c8f115315ca2d155797ae6e",
+      "source_case_sha256": "48093deed189c3d242bb4f5ae10d3c7c8fcf3bd69467a817c69bf2649c847892",
+      "derived_crop_box": [
+        561,
+        734,
+        1252,
+        842
+      ],
+      "file": "hex-title-catalog-boundary-20261012-tear.png",
+      "crop_sha256": "f3ba9175abb1d6bbb9f9a93072a941c06aa8f8770ccc9e81eb7952a457e6f542",
+      "independently_reviewed_title": "战时补给：女神之泪",
+      "expected_status": "unrecognized",
+      "expected_reason": "catalog_missing_title",
+      "expected_id": null,
+      "catalog": [
+        {
+          "id": "10579",
+          "name": "战时补给：巨人腰带",
+          "descText": "获得1个【巨人腰带】。在你的队伍承受75000伤害后，额外获得2个。  已承受的伤害：0",
+          "icon": "https://img.dataj.cc/images/hex/extrabuckles1.png",
+          "level": 1,
+          "isLegend": 0,
+          "heroEnhancementType": 0,
+          "fetterId": null,
+          "fetterType": "0",
+          "setId": "18",
+          "season": "S19",
+          "version": "18.18.1"
+        },
+        {
+          "id": "10580",
+          "name": "战时补给：无用大棒",
+          "descText": "获得1个【无用大棒】。在你的队伍造成42000魔法伤害后，额外获得2个。  已造成的伤害：0",
+          "icon": "https://img.dataj.cc/images/hex/hyperbolicrodextender1.png",
+          "level": 1,
+          "isLegend": 0,
+          "heroEnhancementType": 0,
+          "fetterId": null,
+          "fetterType": "0",
+          "setId": "18",
+          "season": "S19",
+          "version": "18.18.1"
+        },
+        {
+          "id": "10582",
+          "name": "战时补给：暴风大剑",
+          "descText": "获得1个【暴风大剑】。在你的队伍造成65000物理伤害后，额外获得2个。  已造成的伤害：0",
+          "icon": "https://img.dataj.cc/images/hex/carveapath1.png",
+          "level": 1,
+          "isLegend": 0,
+          "heroEnhancementType": 0,
+          "fetterId": null,
+          "fetterType": "0",
+          "setId": "18",
+          "season": "S19",
+          "version": "18.18.1"
+        },
+        {
+          "id": "10583",
+          "name": "战时补给：反曲之弓",
+          "descText": "获得1个【反曲之弓】。在你的队伍攻击1000次后，额外获得2个。  攻击次数：0",
+          "icon": "https://img.dataj.cc/images/hex/recurvewrecker1.png",
+          "level": 1,
+          "isLegend": 0,
+          "heroEnhancementType": 0,
+          "fetterId": null,
+          "fetterType": "0",
+          "setId": "18",
+          "season": "S19",
+          "version": "18.18.1"
+        }
+      ]
+    },
+    {
+      "source_frame_sha256": "0c42277e382f4ddcad0cbe17097d17ad685224bd3823fc5a55b0fed6c7b542d2",
+      "source_case_sha256": "e45b28298f52693516f403a486f30ca489a1f45165dc6a7392f5212e0ca0fcc6",
+      "derived_crop_box": [
+        2577,
+        734,
+        3268,
+        842
+      ],
+      "file": "hex-title-catalog-boundary-20261012-flora.png",
+      "crop_sha256": "1a786f59eef22c33f6c0caa10e3d272598ef65c18fedb3e9dff0bbbd4ed61847",
+      "independently_reviewed_title": "致命丽花",
+      "expected_status": "ambiguous",
+      "expected_reason": "catalog_ambiguous",
+      "expected_id": null,
+      "catalog": [
+        {
+          "id": "20760",
+          "name": "致命丽花",
+          "descText": "获得1个【绝命花妖纹章】。携带该纹章的弈子通过【绝命花妖】获得150%额外加成。获得3金币。",
+          "icon": "https://img.dataj.cc/images/hex/florafatalisaugment2.png",
+          "level": 2,
+          "isLegend": 0,
+          "heroEnhancementType": 0,
+          "fetterId": null,
+          "fetterType": "0",
+          "setId": "18",
+          "season": "S19",
+          "version": "18.18.2"
+        },
+        {
+          "id": "30760",
+          "name": "致命丽花",
+          "descText": "获得1个【绝命花妖纹章】。携带该纹章的弈子通过【绝命花妖】获得150%额外加成。获得3金币。",
+          "icon": "https://img.dataj.cc/images/hex/florafatalisaugment22.png",
+          "level": 2,
+          "isLegend": 0,
+          "heroEnhancementType": 0,
+          "fetterId": null,
+          "fetterType": "0",
+          "setId": "18",
+          "season": "S19",
+          "version": "18.18.2"
+        }
+      ]
+    }
+  ]
+}

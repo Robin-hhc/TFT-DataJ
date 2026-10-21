@@ -216,6 +216,21 @@
       "path": "outputs/companion/fixtures/hex-quality-silver-rolling-i-20261021.png",
       "sha256": "8bd796a1d5e790c5351b2a2075a9ec33bbef11a9b13d0b62a9e407a8c511f7dc",
       "format": "bytes"
+    },
+    {
+      "path": "outputs/companion/fixtures/hex-title-catalog-boundary-20261012-flora.png",
+      "sha256": "1a786f59eef22c33f6c0caa10e3d272598ef65c18fedb3e9dff0bbbd4ed61847",
+      "format": "bytes"
+    },
+    {
+      "path": "outputs/companion/fixtures/hex-title-catalog-boundary-20261012-tear.png",
+      "sha256": "f3ba9175abb1d6bbb9f9a93072a941c06aa8f8770ccc9e81eb7952a457e6f542",
+      "format": "bytes"
+    },
+    {
+      "path": "outputs/companion/fixtures/hex-title-catalog-boundary-20261012.json",
+      "sha256": "d1e7417e680aac663cbd738c2ab9098329a44b4c7a339130153d6a4f5fe9edfa",
+      "format": "utf8-lf"
     }
   ],
   "regressions": [
@@ -1017,7 +1032,7 @@
       "history_key": "hex-pin-no-data",
       "title": "固定阵容海克斯缺排名",
       "coverage": "automated",
-      "verified_scope": "真实sourcesupplement identity+stage/low sample/cachebad清理/迟到success保留",
+      "verified_scope": "真实sourcesupplement identity+stage/low sample/cachebad清理/迟到success保留；2026-10-12非法200主表同键同获取时间缓存精确失效、真实来源恢复重取",
       "limits": [
         "上游无数据仍无均排，不能由测试补齐source"
       ],
@@ -1027,7 +1042,8 @@
         "a9189c1"
       ],
       "evidence": [
-        "docs/testing/hex-comp-statistics-20261008.md"
+        "docs/testing/hex-comp-statistics-20261008.md",
+        "docs/testing/hex-failure-root-cause-20261012.md"
       ],
       "tests": [
         {
@@ -1049,15 +1065,68 @@
         {
           "id": "test_hex_stats.CompHexLookupTests.test_missing_stage_preserves_other_stages_and_does_not_use_overall",
           "scope": "public"
+        },
+        {
+          "id": "test_hex_prewarm_recovery.HexPrewarmRecoveryTests.test_transient_http_failure_automatically_resumes_pending_exact_stages_after_cooldown",
+          "scope": "public"
+        },
+        {
+          "id": "test_hex_prewarm_recovery.HexPrewarmRecoveryTests.test_early_wake_obeys_extended_shared_source_cooldown_without_http_or_retry_storm",
+          "scope": "public"
+        },
+        {
+          "id": "test_hex_prewarm_recovery.HexPrewarmRecoveryTests.test_cancelled_or_obsolete_context_rejects_a_late_retry_callback",
+          "scope": "public"
+        },
+        {
+          "id": "test_hex_prewarm_recovery.HexPrewarmRecoveryTests.test_patch_change_rejects_retry_without_using_old_tables_or_issuing_http",
+          "scope": "public"
+        },
+        {
+          "id": "test_hex_prewarm_recovery.HexPrewarmRecoveryTests.test_new_session_rejects_retry_and_old_cached_tables_without_http",
+          "scope": "public"
+        },
+        {
+          "id": "test_hex_prewarm_recovery.HexPrewarmRecoveryTests.test_round_advance_drops_passed_stage_while_recovery_is_delayed",
+          "scope": "public"
+        },
+        {
+          "id": "test_hex_prewarm_recovery.HexPrewarmRecoveryTests.test_transient_main_table_http_failure_resumes_without_discarding_future_exact_jobs",
+          "scope": "public"
+        },
+        {
+          "id": "test_hex_prewarm_recovery.HexPrewarmRecoveryTests.test_invalid_successful_main_table_is_evicted_before_recovery_refetches_same_scope",
+          "scope": "public"
+        },
+        {
+          "id": "test_hex_failure_diagnostics.HexFailureDiagnosticsTests.test_partial_timeout_archives_exact_failure_and_preserves_two_successes",
+          "scope": "public"
+        },
+        {
+          "id": "test_hex_failure_diagnostics.HexFailureDiagnosticsTests.test_partial_http_503_archives_status_without_private_body",
+          "scope": "public"
+        },
+        {
+          "id": "test_hex_failure_diagnostics.HexFailureDiagnosticsTests.test_successful_empty_exact_query_is_no_data_and_produces_no_failure_archive",
+          "scope": "public"
+        },
+        {
+          "id": "test_hex_failure_diagnostics.HexFailureDiagnosticsTests.test_obsolete_terminal_failure_cannot_archive_against_a_new_target",
+          "scope": "public"
+        },
+        {
+          "id": "test_hex_failure_diagnostics.HexFailureDiagnosticsTests.test_catalog_missing_title_and_unconfirmed_text_keep_distinct_qt_labels_and_no_ids",
+          "scope": "public"
         }
-      ]
+      ],
+      "coverage_change_note": "2026-10-21：原历史方法及断言、不可变素材全部保留。域校验移到写入之前后，旧“将_discard设为空操作”不再模拟坏值进入缓存，故仅将数据故障注入改为绕过_send写前validate，由新真实DataJ测试test_invalid_hex_refresh_cannot_replace_last_good_statistics直接拒绝（不能以线程等待超时充当业务证据）；另注入绕过命中validate，由test_legacy_bad_entries_are_repaired_for_each_public_query对既有坏持久值拒绝。旧清理实现、测试及原14故障报告保留在开工快照和2026-10-12证据；本轮SQL精确失效加强为同key+fetched+原body。见本轮验收记录及实际16故障报告。"
     },
     {
       "id": "REG-017",
       "history_key": "hex-pin-latency",
       "title": "固定阵容排名加载与预热",
       "coverage": "automated",
-      "verified_scope": "真实Qt/adapter事件屏障，已知rank先显、supplement逐个显、pin立即warm、900s正负table reuse/前后台capacity；已发live Future的后台join不额外占HTTP槽，两不同live请求在首请求与join仍阻塞时同时进入Mock边界",
+      "verified_scope": "真实Qt/adapter事件屏障，已知rank先显、supplement逐个显、pin立即warm、900s正负table reuse/前后台capacity；已发live Future的后台join不额外占HTTP槽，两不同live请求在首请求与join仍阻塞时同时进入Mock边界；2026-10-12来源失败后至少60秒/共享冷却后自动恢复、延长冷却/新局/版本/取消及阶段推进保护",
       "coverage_change_note": "2026-10-11：保留test_joining_live_future_does_not_consume_an_extra_http_slot原方法ID，将整批submit到完成0.3秒绝对速度断言改为两个不同请求同时进入Mock边界、首owner与实际shared Future等待均未完成的容量事件断言；原Barrier(2,timeout=1)、返回数据与3次HTTP断言保留，首owner/后台原2秒结果等待保留，two_live结果从释放前0.3秒改为释放后2秒有界核对，增加三次实际请求ID完整断言。bb15 CI只证明原完成等待超时；受控350ms构造/调度延迟在仍空闲2槽时拒绝正确实现，说明速度混入容量契约，不声称自然CI原因已复现。独立源码契约审计与额外占slot坏变体另留验收记录；原bb15方法源码/AST及旧不可变素材保留，HTTP总容量3、生产代码、其它旧方法与原图基线均不更改。",
       "limits": [
         "绝对网络ms无跨硬件SLA；release EXE另外诊断"
@@ -1070,7 +1139,8 @@
         "docs/testing/hex-full-prewarm-20261009.md",
         "outputs/companion/test_query_architecture.py",
         "outputs/companion/test_source_budget.py",
-        "docs/development-records/2026-10-11-live-match-conditions.md"
+        "docs/development-records/2026-10-11-live-match-conditions.md",
+        "docs/testing/hex-failure-root-cause-20261012.md"
       ],
       "tests": [
         {
@@ -1131,6 +1201,38 @@
         },
         {
           "id": "test_source_budget.SourceBudgetTests.test_distinct_versions_do_not_share_inflight_results_or_cached_statistics",
+          "scope": "public"
+        },
+        {
+          "id": "test_hex_prewarm_recovery.HexPrewarmRecoveryTests.test_transient_http_failure_automatically_resumes_pending_exact_stages_after_cooldown",
+          "scope": "public"
+        },
+        {
+          "id": "test_hex_prewarm_recovery.HexPrewarmRecoveryTests.test_early_wake_obeys_extended_shared_source_cooldown_without_http_or_retry_storm",
+          "scope": "public"
+        },
+        {
+          "id": "test_hex_prewarm_recovery.HexPrewarmRecoveryTests.test_cancelled_or_obsolete_context_rejects_a_late_retry_callback",
+          "scope": "public"
+        },
+        {
+          "id": "test_hex_prewarm_recovery.HexPrewarmRecoveryTests.test_patch_change_rejects_retry_without_using_old_tables_or_issuing_http",
+          "scope": "public"
+        },
+        {
+          "id": "test_hex_prewarm_recovery.HexPrewarmRecoveryTests.test_new_session_rejects_retry_and_old_cached_tables_without_http",
+          "scope": "public"
+        },
+        {
+          "id": "test_hex_prewarm_recovery.HexPrewarmRecoveryTests.test_round_advance_drops_passed_stage_while_recovery_is_delayed",
+          "scope": "public"
+        },
+        {
+          "id": "test_hex_prewarm_recovery.HexPrewarmRecoveryTests.test_transient_main_table_http_failure_resumes_without_discarding_future_exact_jobs",
+          "scope": "public"
+        },
+        {
+          "id": "test_hex_prewarm_recovery.HexPrewarmRecoveryTests.test_invalid_successful_main_table_is_evicted_before_recovery_refetches_same_scope",
           "scope": "public"
         }
       ]
@@ -1193,7 +1295,8 @@
         "docs/development-records/2026-10-20-roman-title-context.md",
         "docs/specs/hex-family-quality-recognition.md",
         "docs/development-records/2026-10-21-suffix-recognition.md",
-        "docs/research/suffix-identity-feasibility-20261021.md"
+        "docs/research/suffix-identity-feasibility-20261021.md",
+        "docs/testing/hex-failure-root-cause-20261012.md"
       ],
       "tests": [
         {
@@ -1559,6 +1662,30 @@
         {
           "id": "test_hex_quality_integration.HexQualityIntegrationTests.test_one_frame_uses_one_catalog_snapshot_and_next_frame_rechecks",
           "scope": "public"
+        },
+        {
+          "id": "test_title_catalog_boundary.TitleCatalogBoundaryTests.test_repeated_missing_title_is_reported_as_catalog_lookup_failure_without_an_id",
+          "scope": "public"
+        },
+        {
+          "id": "test_title_catalog_boundary.TitleCatalogBoundaryTests.test_empty_single_and_disagreeing_unknown_reads_stay_title_unconfirmed",
+          "scope": "public"
+        },
+        {
+          "id": "test_title_catalog_boundary.TitleCatalogBoundaryTests.test_partial_known_title_and_conflicting_exact_variants_remain_rejected",
+          "scope": "public"
+        },
+        {
+          "id": "test_title_catalog_boundary.TitleCatalogBoundaryTests.test_catalog_lookup_reason_does_not_assert_unknown_ocr_is_correct",
+          "scope": "public"
+        },
+        {
+          "id": "test_title_catalog_boundary.TitleCatalogBoundaryTests.test_real_anonymous_title_pixels_preserve_missing_and_ambiguous_boundaries",
+          "scope": "public"
+        },
+        {
+          "id": "test_title_catalog_boundary.TitleCatalogBoundaryTests.test_missing_title_consensus_can_span_retry_views_without_claiming_an_id",
+          "scope": "public"
         }
       ],
       "coverage_change_note": "2026-10-20：未删除或替换任何历史测试ID、断言、fixture或批准原图。test_title_consensus的有限OCR响应序列保留；新增99x33上下文视图在旧合成输入上明确返回空读数，避免额外调用消耗旧prefix-only建议序列。独立原图审阅和修复前真实OCR失败见本轮验收记录；新增15项方法另行保护新视图的两次完整标题、门槛、数字/l/!拒绝、前后冲突、加号、重复目录、调用路由及旧/新视图字节相同不得重复计票。 2026-10-21：用户确认以准确中文前缀加真实图标品质补充后缀识别。仅已独立核对的set18十九个纯Roman家族/34成员、完整目录身份集合未漂移时启用；两次不同像素可信完整前缀，所有已取得完整合法title冲突仍veto。默认read_name无品质上下文、旧方法ID及断言全部保留；没有重写数字/l/!或删除原oracle。新增图标原像素、真实OCR/帧接口、去重/品质/目录/冲突及未知回退回归；阶段/plus未核准不补全。旧测试未替换或降低覆盖。"
@@ -1616,7 +1743,8 @@
         "1c21d82"
       ],
       "evidence": [
-        "docs/testing/hex-catalog-gap-20261010.md"
+        "docs/testing/hex-catalog-gap-20261010.md",
+        "docs/testing/hex-failure-root-cause-20261012.md"
       ],
       "tests": [
         {
@@ -1633,6 +1761,30 @@
         },
         {
           "id": "test_hex_data_gaps.HexDataGapApplicationTests.test_gold_statistics_remain_separate_from_missing_prismatic_statistics",
+          "scope": "public"
+        },
+        {
+          "id": "test_title_catalog_boundary.TitleCatalogBoundaryTests.test_repeated_missing_title_is_reported_as_catalog_lookup_failure_without_an_id",
+          "scope": "public"
+        },
+        {
+          "id": "test_title_catalog_boundary.TitleCatalogBoundaryTests.test_empty_single_and_disagreeing_unknown_reads_stay_title_unconfirmed",
+          "scope": "public"
+        },
+        {
+          "id": "test_title_catalog_boundary.TitleCatalogBoundaryTests.test_partial_known_title_and_conflicting_exact_variants_remain_rejected",
+          "scope": "public"
+        },
+        {
+          "id": "test_title_catalog_boundary.TitleCatalogBoundaryTests.test_catalog_lookup_reason_does_not_assert_unknown_ocr_is_correct",
+          "scope": "public"
+        },
+        {
+          "id": "test_title_catalog_boundary.TitleCatalogBoundaryTests.test_real_anonymous_title_pixels_preserve_missing_and_ambiguous_boundaries",
+          "scope": "public"
+        },
+        {
+          "id": "test_title_catalog_boundary.TitleCatalogBoundaryTests.test_missing_title_consensus_can_span_retry_views_without_claiming_an_id",
           "scope": "public"
         }
       ]
@@ -1767,7 +1919,7 @@
       "history_key": "bug-accumulation",
       "title": "问题截图归档与核对回放",
       "coverage": "partial",
-      "verified_scope": "archiveoriginalPNG/catalog/scope/token/hash；pending不算通过；oracle hashbinding；身份replay拒绝rank断言",
+      "verified_scope": "archiveoriginalPNG/catalog/scope/token/hash；pending不算通过；oracle hashbinding；身份replay拒绝rank断言；2026-10-12实际Qt→DataJ→BugReporter→BugCaseStore部分补查终态取证，超时/503/冷却来源/精确请求、迟到失败拒绝、合法空数据不误报",
       "limits": [
         "缺历史bug强制testID台账/不删case门槛/修复必须red-green晋升规则；私有图不入CI；身份replay非统计验收"
       ],
@@ -1776,7 +1928,8 @@
         "1c21d82"
       ],
       "evidence": [
-        "docs/testing/bug-recording-20261007.md"
+        "docs/testing/bug-recording-20261007.md",
+        "docs/testing/hex-failure-root-cause-20261012.md"
       ],
       "tests": [
         {
@@ -1797,6 +1950,54 @@
         },
         {
           "id": "test_bug_case_replay.BugCaseReplayTest.test_unsupported_rank_assertions_cannot_pass_identity_only_replay",
+          "scope": "public"
+        },
+        {
+          "id": "test_hex_failure_diagnostics.HexFailureDiagnosticsTests.test_partial_timeout_archives_exact_failure_and_preserves_two_successes",
+          "scope": "public"
+        },
+        {
+          "id": "test_hex_failure_diagnostics.HexFailureDiagnosticsTests.test_partial_http_503_archives_status_without_private_body",
+          "scope": "public"
+        },
+        {
+          "id": "test_hex_failure_diagnostics.HexFailureDiagnosticsTests.test_successful_empty_exact_query_is_no_data_and_produces_no_failure_archive",
+          "scope": "public"
+        },
+        {
+          "id": "test_hex_failure_diagnostics.HexFailureDiagnosticsTests.test_obsolete_terminal_failure_cannot_archive_against_a_new_target",
+          "scope": "public"
+        },
+        {
+          "id": "test_hex_failure_diagnostics.HexFailureDiagnosticsTests.test_catalog_missing_title_and_unconfirmed_text_keep_distinct_qt_labels_and_no_ids",
+          "scope": "public"
+        },
+        {
+          "id": "test_source_failure_details.SourceFailureDetailsTests.test_invalid_response_during_an_unrelated_cooldown_remains_invalid_response",
+          "scope": "public"
+        },
+        {
+          "id": "test_source_failure_details.SourceFailureDetailsTests.test_actual_dataj_cooldown_is_distinct_and_sends_no_http",
+          "scope": "public"
+        },
+        {
+          "id": "test_source_failure_details.SourceFailureDetailsTests.test_wrapped_timeout_keeps_cause_types_without_request_secrets",
+          "scope": "public"
+        },
+        {
+          "id": "test_source_failure_details.SourceFailureDetailsTests.test_http_status_keeps_only_status_and_body_digest_without_private_body",
+          "scope": "public"
+        },
+        {
+          "id": "test_source_failure_details.SourceFailureDetailsTests.test_prewarm_failure_records_the_canonical_body_that_actually_reached_http",
+          "scope": "public"
+        },
+        {
+          "id": "test_source_failure_details.SourceFailureDetailsTests.test_exact_query_cooldown_retains_the_actual_prior_http_failure_origin",
+          "scope": "public"
+        },
+        {
+          "id": "test_source_failure_details.SourceFailureDetailsTests.test_failure_cooldown_and_its_origin_are_published_atomically",
           "scope": "public"
         }
       ]
@@ -1985,6 +2186,165 @@
         },
         {
           "id": "test_regression_entrypoint.RegressionEntrypointTests.test_malformed_evidence_field_cannot_enable_a_destructive_failure_report",
+          "scope": "public"
+        }
+      ]
+    },
+    {
+      "id": "REG-026",
+      "history_key": "domain-cache-recovery",
+      "title": "坏业务响应缓存与最后有效目录恢复",
+      "coverage": "automated",
+      "verified_scope": "真实DataJ/SQLite生命周期、精确请求范围、冷却/取消/共享、并发同时间戳原body保护、当前版本Qt目录兜底",
+      "limits": [
+        "目录兜底不证明网站当前内容已更新；统计不使用过期响应。"
+      ],
+      "origin_commits": [],
+      "evidence": [
+        "docs/specs/cache-reliability-memory.md",
+        "docs/development-records/2026-10-21-cache-reliability.md"
+      ],
+      "tests": [
+        {
+          "id": "test_validated_cache.ValidatedCacheTests.test_catalog_rejects_bad_source_then_recovers_after_restart",
+          "scope": "public"
+        },
+        {
+          "id": "test_validated_cache.ValidatedCacheTests.test_composition_ranks_recover_with_exact_minimum_and_patch",
+          "scope": "public"
+        },
+        {
+          "id": "test_validated_cache.ValidatedCacheTests.test_composition_details_recover_without_reusing_wrong_identity",
+          "scope": "public"
+        },
+        {
+          "id": "test_validated_cache.ValidatedCacheTests.test_hero_equipment_recovers_with_exact_hero_query",
+          "scope": "public"
+        },
+        {
+          "id": "test_validated_cache.ValidatedCacheTests.test_item_statistics_recover_in_global_and_pinned_scopes",
+          "scope": "public"
+        },
+        {
+          "id": "test_validated_cache.ValidatedCacheTests.test_item_holders_recover_with_exact_equipment_and_composition",
+          "scope": "public"
+        },
+        {
+          "id": "test_validated_cache.ValidatedCacheTests.test_explorer_recovers_with_exact_body_and_acquisition_stage",
+          "scope": "public"
+        },
+        {
+          "id": "test_validated_cache.ValidatedCacheTests.test_invalid_hex_refresh_cannot_replace_last_good_statistics",
+          "scope": "public"
+        },
+        {
+          "id": "test_validated_cache.ValidatedCacheTests.test_catalog_snapshot_keeps_expired_good_data_after_bad_refresh",
+          "scope": "public"
+        },
+        {
+          "id": "test_validated_cache.ValidatedCacheTests.test_legacy_bad_entries_are_repaired_for_each_public_query",
+          "scope": "public"
+        },
+        {
+          "id": "test_validated_cache.ValidatedCacheTests.test_invalid_persisted_json_does_not_break_local_snapshot_or_recovery",
+          "scope": "public"
+        },
+        {
+          "id": "test_validated_cache.ValidatedCacheTests.test_local_snapshot_does_not_borrow_another_set_or_bad_directory",
+          "scope": "public"
+        },
+        {
+          "id": "test_validated_cache.ValidatedCacheTests.test_expired_statistics_are_not_returned_as_last_good_during_outage",
+          "scope": "public"
+        },
+        {
+          "id": "test_validated_cache.ValidatedCacheTests.test_legacy_repair_does_not_delete_concurrent_good_row_even_at_same_timestamp",
+          "scope": "public"
+        },
+        {
+          "id": "test_validated_cache.ValidatedCacheTests.test_shared_stricter_consumer_rejects_owner_data_before_it_can_persist_as_usable",
+          "scope": "public"
+        },
+        {
+          "id": "test_validated_cache.ValidatedCacheTests.test_repair_preserves_other_hero_sample_patch_and_stage_cache_keys",
+          "scope": "public"
+        },
+        {
+          "id": "test_validated_cache.ValidatedCacheTests.test_bad_legacy_cache_cannot_bypass_an_existing_source_cooldown",
+          "scope": "public"
+        },
+        {
+          "id": "test_validated_cache.ValidatedCacheTests.test_malformed_catalog_rows_cannot_replace_a_consumable_directory",
+          "scope": "public"
+        },
+        {
+          "id": "test_validated_cache.ValidatedCacheTests.test_catalog_accepts_known_nullable_optional_text_and_unknown_fields",
+          "scope": "public"
+        },
+        {
+          "id": "test_validated_cache.ValidatedCacheTests.test_network_repair_rechecks_a_concurrent_good_row_after_bad_decode",
+          "scope": "public"
+        },
+        {
+          "id": "test_validated_cache.ValidatedCacheTests.test_network_bad_json_recovers_after_failed_source_and_restart",
+          "scope": "public"
+        },
+        {
+          "id": "test_startup_versions.StartupVersions.test_expired_local_catalog_survives_bad_refresh_without_old_statistics",
+          "scope": "public"
+        },
+        {
+          "id": "test_startup_versions.StartupVersions.test_local_catalog_recovery_uses_confirmed_current_patch_identity_only",
+          "scope": "public"
+        },
+        {
+          "id": "test_startup_versions.StartupVersions.test_catalog_failure_without_last_good_keeps_explicit_retry",
+          "scope": "public"
+        },
+        {
+          "id": "test_portable_cache_recovery.PortableCacheRecoveryTests.test_embedded_diagnostic_repairs_legacy_cache_and_preserves_last_good_directory",
+          "scope": "public"
+        },
+        {
+          "id": "test_portable_cache_recovery.PortableCacheRecoveryTests.test_diagnostic_rejects_a_cache_reader_that_ignores_its_domain_contract",
+          "scope": "public"
+        },
+        {
+          "id": "test_portable_cache_recovery.PortableCacheRecoveryTests.test_diagnostic_rejects_writing_a_new_response_before_domain_validation",
+          "scope": "public"
+        }
+      ],
+      "coverage_change_note": "2026-10-21：最终候选保留v2原19个缓存方法及全部断言，另保留普通网络并发好值替换和坏JSON来源失败后重启恢复两个业务方法。v3“一次持久提交”仅为未采纳性能设计的内部试验，从未登记为业务回归；其22方法完整源、红绿与全部失败性能报告保留work/cache-reliability-20261021/data-agent。不以删除已登记测试、弱化断言或重算预期恢复绿色。源报告与故障恢复预算未通过的边界详见本轮验收记录。"
+    },
+    {
+      "id": "REG-027",
+      "history_key": "portrait-original-readability",
+      "title": "英雄原图可读性与热命中保护",
+      "coverage": "automated",
+      "verified_scope": "Qt原图保留、16/18/34px、DPR1至4、常用64原图80可见槽位热命中无重复请求",
+      "limits": [
+        "未修改生产头像缓存；不宣称全进程RSS或常见场景内存减少。"
+      ],
+      "origin_commits": [],
+      "evidence": [
+        "docs/specs/cache-reliability-memory.md",
+        "docs/development-records/2026-10-21-cache-reliability.md"
+      ],
+      "tests": [
+        {
+          "id": "test_portrait_cache.PortraitCacheTests.test_received_portrait_retains_original_pixels_dimensions_and_depth",
+          "scope": "public"
+        },
+        {
+          "id": "test_portrait_cache.PortraitCacheTests.test_all_consumers_preserve_existing_34_18_16px_pixels_and_high_dpi_icons",
+          "scope": "public"
+        },
+        {
+          "id": "test_portrait_cache.PortraitCacheTests.test_warm_64_originals_recreate_80_visible_hero_slots_without_new_request",
+          "scope": "public"
+        },
+        {
+          "id": "test_portrait_cache.PortraitCacheTests.test_source_device_pixel_ratio_is_preserved_when_consumer_reads_original",
           "scope": "public"
         }
       ]

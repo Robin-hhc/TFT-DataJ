@@ -64,14 +64,22 @@ def resolve_name(readings, catalog):
              for name in counts}
     valid = {name:rows for name,rows in valid.items() if rows}
     if len(valid) > 1:
-        return {'status':'conflict','candidates':[r for rows in valid.values() for r in rows]}
+        return {'status':'conflict','reason':'title_conflict',
+                'candidates':[r for rows in valid.values() for r in rows]}
     if not valid:
-        return {'status':'unrecognized','candidates':[]}
+        # This diagnoses the exact lookup boundary only. Repeated OCR can still
+        # misread a suffix; it cannot prove that the source omitted a real title.
+        repeated = [(name,count) for name,count in counts.items() if name and count >= 2]
+        if len(repeated) == 1:
+            name,count = repeated[0]
+            return {'status':'unrecognized','reason':'catalog_missing_title','candidates':[],
+                    'consensus_title':name,'consensus_read_count':count}
+        return {'status':'unrecognized','reason':'title_unconfirmed','candidates':[]}
     name, matches = next(iter(valid.items()))
     if len(matches) != 1:
-        return {'status':'ambiguous','candidates':matches}
+        return {'status':'ambiguous','reason':'catalog_ambiguous','candidates':matches}
     if counts[name] < 2:
-        return {'status':'unrecognized','candidates':matches}
+        return {'status':'unrecognized','reason':'title_unconfirmed','candidates':matches}
     return {'status':'resolved','id':str(matches[0]['id']),'name':matches[0]['name'], 'candidates':matches}
 
 

@@ -1,5 +1,21 @@
 # TFT-DataJ development rules
 
+## Start here: development, validation and delivery
+
+Read [the unified workflow](docs/development-workflow.md) before each task.
+It defines scope selection, required checks by change type, independent evidence,
+scoped commits, exact-SHA CI verification and the requested release process.
+Follow the user's settled scope and existing authorization; do not require
+repeated permission for work already approved.
+
+For each meaningful development, fix, refactor or delivery, maintain a dated
+record from [the acceptance template](docs/development-records/template.md)
+and add it to [the record index](docs/development-records/README.md). Record
+actual commands, tested source revision/diff, reports and uncovered checks.
+Keep original logs/images local; publish only suitable summaries and indexes.
+Documentation-only tasks require command/link/diff checks, not new runtime tests.
+Historical acceptance records never prove that a later working tree passes.
+
 ## Bug fixes and accumulated regression protection
 
 Before fixing a reported bug, read `docs/testing/regression-accumulation.md`
