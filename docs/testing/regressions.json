@@ -166,6 +166,56 @@
       "path": "outputs/companion/fixtures/hex-rolling-i-title-context-20261020.json",
       "sha256": "1acd71ed67ad842967b5d46be060f792489a30bba933780ffd910d02415eb333",
       "format": "utf8-lf"
+    },
+    {
+      "path": "outputs/companion/fixtures/hex-quality-gold-bronze-i-20261021.json",
+      "sha256": "5d3435aab946923c5d9b1a4080a2cf1e35b5f3126983975d337d77c529727b1b",
+      "format": "utf8-lf"
+    },
+    {
+      "path": "outputs/companion/fixtures/hex-quality-gold-bronze-i-20261021.png",
+      "sha256": "23254bc4e142536c901b84565bd400e1bace9db727cd557ede8f039a87d02f68",
+      "format": "bytes"
+    },
+    {
+      "path": "outputs/companion/fixtures/hex-quality-gold-dim-hug-ii-20261021.json",
+      "sha256": "bf333c0ab82f3e84604f9ca7a341906a54afc0bc7c8f6e5e7e0d034099ef1293",
+      "format": "utf8-lf"
+    },
+    {
+      "path": "outputs/companion/fixtures/hex-quality-gold-dim-hug-ii-20261021.png",
+      "sha256": "f47f756f1e82867f994fae5d90c33db6c896c8d37b3f86bf281ff60d293958f2",
+      "format": "bytes"
+    },
+    {
+      "path": "outputs/companion/fixtures/hex-quality-prismatic-arcane-two-plus-20261021.json",
+      "sha256": "ae24b2f86e8486d3371499756a64832b3c11520bffd1974a09800a83b8ba41e0",
+      "format": "utf8-lf"
+    },
+    {
+      "path": "outputs/companion/fixtures/hex-quality-prismatic-arcane-two-plus-20261021.png",
+      "sha256": "3463a98fc122657490c33d90462e7544468b0c62c341bed4b3cc648fbc1c1875",
+      "format": "bytes"
+    },
+    {
+      "path": "outputs/companion/fixtures/hex-quality-silver-hug-i-20261021.json",
+      "sha256": "13543e55b728f1bf9e3230fe3e553a6c002ea79c7d9391d002382fbac25c6fec",
+      "format": "utf8-lf"
+    },
+    {
+      "path": "outputs/companion/fixtures/hex-quality-silver-hug-i-20261021.png",
+      "sha256": "5418b45ce61af233a396fd5a9a9d7e6a73cf9b8aaf0186d2f50efd871b279b7a",
+      "format": "bytes"
+    },
+    {
+      "path": "outputs/companion/fixtures/hex-quality-silver-rolling-i-20261021.json",
+      "sha256": "99de86f13f7a49fa46a650fb73a35872e67561401cd05964378ce4c940ef9f0e",
+      "format": "utf8-lf"
+    },
+    {
+      "path": "outputs/companion/fixtures/hex-quality-silver-rolling-i-20261021.png",
+      "sha256": "8bd796a1d5e790c5351b2a2075a9ec33bbef11a9b13d0b62a9e407a8c511f7dc",
+      "format": "bytes"
     }
   ],
   "regressions": [
@@ -1125,9 +1175,10 @@
       "history_key": "hex-title-identity",
       "title": "海克斯身份与标题误读",
       "coverage": "automated",
-      "verified_scope": "catalogprojection/exactsuffix/conflict拒绝；genuine II++ publictitlecrop hash+OCR；完整目录标题仅有一次可信读数时，最多追加一个独立Lanczos宽图视图；低置信、数字品质、真实后缀冲突不得凑共识；新增批准3-2拥抱I私有原图。 2026-10-20：罗马数字家族前缀只用于路由最多两个有留白的整标题补读；两次完整精确读数、.90门槛、等级/加号冲突及目录歧义规则保留。匿名真实拥抱I与嘀个痛快！I已加入公共OCR，三份拥抱I及一份嘀个痛快！I原图加入私有回放。",
+      "verified_scope": "catalogprojection/exactsuffix/conflict拒绝；genuine II++ publictitlecrop hash+OCR；完整目录标题仅有一次可信读数时，最多追加一个独立Lanczos宽图视图；低置信、数字品质、真实后缀冲突不得凑共识；新增批准3-2拥抱I私有原图。 2026-10-20：罗马数字家族前缀只用于路由最多两个有留白的整标题补读；两次完整精确读数、.90门槛、等级/加号冲突及目录歧义规则保留。匿名真实拥抱I与嘀个痛快！I已加入公共OCR，三份拥抱I及一份嘀个痛快！I原图加入私有回放。 2026-10-21：审核家族前缀与独立图标品质的显式新通道、不同像素计票、完整标题冲突否决、真实匿名glyph/真实OCR集成及默认旧接口保护。",
       "limits": [
-        "II++ 的匿名真实标题裁图已进入公共 OCR 回归；真实整屏识别仍为私人扩展，并非所有海克斯都已有图片用例"
+        "II++ 的匿名真实标题裁图已进入公共 OCR 回归；真实整屏识别仍为私人扩展，并非所有海克斯都已有图片用例",
+        "2026-10-21：自动品质只用于核准fast-layout；仅十九家族。plus阶段规则未核准、未知图标/目录漂移继续原路径；离线原图和时延不证明现场游戏FPS或未见画面。"
       ],
       "origin_commits": [
         "d037215",
@@ -1139,7 +1190,10 @@
         "outputs/companion/test_title_retry_views.py",
         "docs/development-records/2026-10-11-live-match-conditions.md",
         "docs/development-records/2026-10-18-recognition-fix.md",
-        "docs/development-records/2026-10-20-roman-title-context.md"
+        "docs/development-records/2026-10-20-roman-title-context.md",
+        "docs/specs/hex-family-quality-recognition.md",
+        "docs/development-records/2026-10-21-suffix-recognition.md",
+        "docs/research/suffix-identity-feasibility-20261021.md"
       ],
       "tests": [
         {
@@ -1305,9 +1359,209 @@
         {
           "id": "test_roman_title_context_contract.RomanTitleContextContractTests.test_identical_native_and_gray_contexts_supply_only_one_new_read",
           "scope": "public"
+        },
+        {
+          "id": "test_hex_family.HexFamilyTests.test_two_complete_hug_prefixes_and_silver_recover_reviewed_i",
+          "scope": "public"
+        },
+        {
+          "id": "test_hex_family.HexFamilyTests.test_arabic_two_three_tail_is_noise_and_never_supplies_quality",
+          "scope": "public"
+        },
+        {
+          "id": "test_hex_family.HexFamilyTests.test_all_34_reviewed_members_resolve_from_complete_base_and_true_quality",
+          "scope": "public"
+        },
+        {
+          "id": "test_hex_family.HexFamilyTests.test_complete_catalog_title_inconsistent_with_quality_vetoes",
+          "scope": "public"
+        },
+        {
+          "id": "test_hex_family.HexFamilyTests.test_conflicting_complete_titles_and_other_identity_cannot_be_outvoted",
+          "scope": "public"
+        },
+        {
+          "id": "test_hex_family.HexFamilyTests.test_two_different_complete_family_bases_conflict",
+          "scope": "public"
+        },
+        {
+          "id": "test_hex_family.HexFamilyTests.test_unknown_quality_and_non_integer_quality_do_not_authorize_identity",
+          "scope": "public"
+        },
+        {
+          "id": "test_hex_family.HexFamilyTests.test_one_complete_base_or_wrong_chinese_is_not_enough",
+          "scope": "public"
+        },
+        {
+          "id": "test_hex_family.HexFamilyTests.test_normalization_keeps_punctuation_and_gold_i_uses_source_level",
+          "scope": "public"
+        },
+        {
+          "id": "test_hex_family.HexFamilyTests.test_family_catalog_drift_or_partial_family_disables_completion",
+          "scope": "public"
+        },
+        {
+          "id": "test_hex_family.HexFamilyTests.test_duplicate_extra_plus_and_unknown_quality_family_rows_cannot_be_filtered_away",
+          "scope": "public"
+        },
+        {
+          "id": "test_hex_family.HexFamilyTests.test_unreviewed_and_plus_mixed_families_are_not_new_identity_routes",
+          "scope": "public"
+        },
+        {
+          "id": "test_hex_family.HexFamilyTests.test_malformed_catalog_does_not_raise_or_discard_an_unknown_row",
+          "scope": "public"
+        },
+        {
+          "id": "test_hex_family.HexFamilyTests.test_observed_only_reads_never_add_prefix_votes",
+          "scope": "public"
+        },
+        {
+          "id": "test_hex_family.HexFamilyTests.test_observed_complete_title_from_duplicate_pixels_still_vetoes",
+          "scope": "public"
+        },
+        {
+          "id": "test_hex_family.HexFamilyTests.test_real_id_reused_under_another_catalog_name_disables_family",
+          "scope": "public"
+        },
+        {
+          "id": "test_hex_family.HexFamilyTests.test_all_34_exact_titles_keep_identity_and_wrong_quality_vetoes",
+          "scope": "public"
+        },
+        {
+          "id": "test_hex_family.HexFamilyTests.test_vote_titles_cannot_be_hidden_with_an_empty_observed_list",
+          "scope": "public"
+        },
+        {
+          "id": "test_hex_family.HexFamilyTests.test_existing_core_contract_still_rejects_prefix_and_suffix_substitution",
+          "scope": "public"
+        },
+        {
+          "id": "test_hex_quality.HexQualityTests.test_original_silver_hug_i_glyph_is_level_one",
+          "scope": "public"
+        },
+        {
+          "id": "test_hex_quality.HexQualityTests.test_original_dim_gold_hug_ii_glyph_is_level_two",
+          "scope": "public"
+        },
+        {
+          "id": "test_hex_quality.HexQualityTests.test_original_silver_rolling_i_glyph_is_level_one",
+          "scope": "public"
+        },
+        {
+          "id": "test_hex_quality.HexQualityTests.test_original_gold_bronze_i_uses_color_not_roman_one",
+          "scope": "public"
+        },
+        {
+          "id": "test_hex_quality.HexQualityTests.test_original_prismatic_arcane_two_plus_uses_multicolor_glyph",
+          "scope": "public"
+        },
+        {
+          "id": "test_hex_quality.HexQualityTests.test_flat_colors_and_green_backgrounds_are_unknown",
+          "scope": "public"
+        },
+        {
+          "id": "test_hex_quality.HexQualityTests.test_ornate_gold_border_without_central_glyph_is_unknown",
+          "scope": "public"
+        },
+        {
+          "id": "test_hex_quality.HexQualityTests.test_plain_yellow_or_silver_panel_is_not_an_icon",
+          "scope": "public"
+        },
+        {
+          "id": "test_hex_quality.HexQualityTests.test_conflicting_gold_and_silver_icon_halves_are_unknown",
+          "scope": "public"
+        },
+        {
+          "id": "test_hex_quality.HexQualityTests.test_too_dark_and_transparent_original_glyphs_are_unknown",
+          "scope": "public"
+        },
+        {
+          "id": "test_hex_quality.HexQualityTests.test_unstructured_mixed_color_noise_is_unknown",
+          "scope": "public"
+        },
+        {
+          "id": "test_hex_quality.HexQualityTests.test_half_covered_glyph_requires_unknown",
+          "scope": "public"
+        },
+        {
+          "id": "test_hex_quality.HexQualityTests.test_faded_gold_strokes_are_not_automatic_quality_evidence",
+          "scope": "public"
+        },
+        {
+          "id": "test_hex_quality.HexQualityTests.test_transparent_and_partly_transparent_rgba_glyphs_are_unknown",
+          "scope": "public"
+        },
+        {
+          "id": "test_hex_quality.HexQualityTests.test_palette_transparency_cannot_reveal_an_invisible_glyph",
+          "scope": "public"
+        },
+        {
+          "id": "test_hex_quality.HexQualityTests.test_regular_silver_or_gold_stripes_are_not_glyphs",
+          "scope": "public"
+        },
+        {
+          "id": "test_hex_quality_integration.HexQualityIntegrationTests.test_frame_recovers_missing_suffix_from_reviewed_icon_and_literal_prefix",
+          "scope": "public"
+        },
+        {
+          "id": "test_hex_quality_integration.HexQualityIntegrationTests.test_third_initial_view_legal_tier_vetoes_two_prefix_votes",
+          "scope": "public"
+        },
+        {
+          "id": "test_hex_quality_integration.HexQualityIntegrationTests.test_trusted_complete_title_cannot_override_contradictory_icon",
+          "scope": "public"
+        },
+        {
+          "id": "test_hex_quality_integration.HexQualityIntegrationTests.test_single_confident_prefix_and_low_confidence_views_do_not_resolve",
+          "scope": "public"
+        },
+        {
+          "id": "test_hex_quality_integration.HexQualityIntegrationTests.test_exact_catalog_duplicates_still_reject_quality_completion",
+          "scope": "public"
+        },
+        {
+          "id": "test_hex_quality_integration.HexQualityIntegrationTests.test_unknown_quality_preserves_default_title_reads_and_call_sequence",
+          "scope": "public"
+        },
+        {
+          "id": "test_hex_quality_integration.HexQualityIntegrationTests.test_repeated_identical_pixels_cannot_supply_two_prefix_votes",
+          "scope": "public"
+        },
+        {
+          "id": "test_hex_quality_integration.HexQualityIntegrationTests.test_absent_icon_keeps_missing_suffix_unconfirmed",
+          "scope": "public"
+        },
+        {
+          "id": "test_hex_quality_integration.HexQualityIntegrationTests.test_non_choice_frame_does_not_initialize_ocr",
+          "scope": "public"
+        },
+        {
+          "id": "test_hex_quality_integration.HexQualityIntegrationTests.test_actual_ocr_uses_reviewed_prefix_and_icon_without_suffix_rewriting",
+          "scope": "public"
+        },
+        {
+          "id": "test_hex_family.HexFamilyTests.test_frame_snapshot_is_independent_of_later_input_rows_and_nested_alias_changes",
+          "scope": "public"
+        },
+        {
+          "id": "test_hex_family.HexFamilyTests.test_returned_candidate_edits_do_not_mutate_frame_snapshot",
+          "scope": "public"
+        },
+        {
+          "id": "test_hex_family.HexFamilyTests.test_reused_frame_resolver_checks_each_batch_titles_and_quality_again",
+          "scope": "public"
+        },
+        {
+          "id": "test_hex_quality_integration.HexQualityIntegrationTests.test_non_family_frame_keeps_quality_pixels_unread",
+          "scope": "public"
+        },
+        {
+          "id": "test_hex_quality_integration.HexQualityIntegrationTests.test_one_frame_uses_one_catalog_snapshot_and_next_frame_rechecks",
+          "scope": "public"
         }
       ],
-      "coverage_change_note": "2026-10-20：未删除或替换任何历史测试ID、断言、fixture或批准原图。test_title_consensus的有限OCR响应序列保留；新增99x33上下文视图在旧合成输入上明确返回空读数，避免额外调用消耗旧prefix-only建议序列。独立原图审阅和修复前真实OCR失败见本轮验收记录；新增15项方法另行保护新视图的两次完整标题、门槛、数字/l/!拒绝、前后冲突、加号、重复目录、调用路由及旧/新视图字节相同不得重复计票。"
+      "coverage_change_note": "2026-10-20：未删除或替换任何历史测试ID、断言、fixture或批准原图。test_title_consensus的有限OCR响应序列保留；新增99x33上下文视图在旧合成输入上明确返回空读数，避免额外调用消耗旧prefix-only建议序列。独立原图审阅和修复前真实OCR失败见本轮验收记录；新增15项方法另行保护新视图的两次完整标题、门槛、数字/l/!拒绝、前后冲突、加号、重复目录、调用路由及旧/新视图字节相同不得重复计票。 2026-10-21：用户确认以准确中文前缀加真实图标品质补充后缀识别。仅已独立核对的set18十九个纯Roman家族/34成员、完整目录身份集合未漂移时启用；两次不同像素可信完整前缀，所有已取得完整合法title冲突仍veto。默认read_name无品质上下文、旧方法ID及断言全部保留；没有重写数字/l/!或删除原oracle。新增图标原像素、真实OCR/帧接口、去重/品质/目录/冲突及未知回退回归；阶段/plus未核准不补全。旧测试未替换或降低覆盖。"
     },
     {
       "id": "REG-020",

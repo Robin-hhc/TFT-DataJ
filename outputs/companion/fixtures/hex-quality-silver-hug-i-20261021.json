@@ -1,0 +1,20 @@
+{
+  "schema_version": 1,
+  "source": "Anonymous original central augment glyph pixels only; no title, ranking or player identifiers.",
+  "source_image_sha256": "22c8a46ed3547ed64b81cf0b46b109c52c1b679b1f9eacf2e5de83395abb1ee3",
+  "source_case_sha256": "3eefcfa3e194af6b78462ed43fb904a5cbd11e8caad617e62bccf82e8b138908",
+  "crop": [
+    2711,
+    302,
+    3133,
+    670
+  ],
+  "crop_sha256": "5418b45ce61af233a396fd5a9a9d7e6a73cf9b8aaf0186d2f50efd871b279b7a",
+  "set_id": 18,
+  "expected": {
+    "status": "confirmed",
+    "level": 1
+  },
+  "reviewed_by": "agent:oracle_review",
+  "review_note": "Independent manual color review from original-pixel contact sheets before implementing quality reader; silver-gray/gold-yellow/multicolor prismatic hue assigned without Roman suffix, catalog or neighboring card. Stable complete central glyph."
+}

@@ -10,6 +10,8 @@ import bootstrap
 from choice_reader import read_choice, bounds, normalize_name
 from ocr_baseline import build_engine
 from core import resolve_name, description_terms, resolve_description
+from hex_family import FamilyNameResolver
+from hex_quality import read_hex_quality
 from roman_glyph import roman_evidence
 from scene_gate import may_be_choice
 
@@ -85,12 +87,23 @@ class Vision:
         stage_rect=rect(.344,.008,.374,.043)
         stage=self.read_round_crop(image.crop(stage_rect))
         cards=[]
+        frame_family_resolver=None
+        def family_context():
+            nonlocal frame_family_resolver
+            if frame_family_resolver is None:
+                frame_family_resolver=FamilyNameResolver(catalog)
+            return frame_family_resolver
         for i,cx in enumerate((.236,.499,.761)):
             # Live titles extend below .382h; clipping their lower strokes can
             # turn 赐 into 喝 and remove a Roman quality suffix. Keep the whole
             # title above the description region, without changing OCR matching.
             area=rect(cx-.09,.34,cx+.09,.39)
-            result=self.read_name(image.crop(area),catalog)
+            quality={'status':'unknown','level':None,'reason':'no_reviewed_family'}
+            def quality_context():
+                quality.update(read_hex_quality(image.crop(rect(cx-.055,.14,cx+.055,.31))))
+                return quality
+            result=self.read_name(image.crop(area),catalog,_quality_context=quality_context,
+                                  _family_context=family_context)
             description=None
             if result['status']=='ambiguous' and any(description_terms(result['candidates'])):
                 description=rect(cx-.085,.395,cx+.085,.505)
@@ -98,6 +111,7 @@ class Vision:
             readings=[s for s in result['readings'] if s]
             raw=result.get('name') or (max(set(readings),key=readings.count) if readings else '未确认选项')
             cards.append({'slot':i,'raw_text':raw,'box':box(area),'resolution':result})
+            cards[-1]['quality']=quality
             if description:cards[-1]['description_box']=box(description)
         confirmed=sum(c['resolution']['status']=='resolved' for c in cards)
         return {**base,'scene':'choice_candidates' if confirmed>=1 else 'choice_unresolved',
@@ -122,23 +136,53 @@ class Vision:
                 if result.txts and result.scores[0]>=.95:readings[index]+=result.txts[0]
         return {**resolve_description(resolution,readings),'description_readings':readings}
 
-    def read_name(self, crop, catalog):
+    def read_name(self, crop, catalog, *, quality=None, _family_context=None, _quality_context=None):
         if self.engine is None:
             self.engine, _ = build_engine()
         seen_title_pixels=set()
+        family_readings=[]
+        family_resolver=None
+        quality_checked=quality is not None
 
         def read_title(view, *, unique=False):
             pixels=np.asarray(view)[:,:,::-1].copy()
             signature=(pixels.shape,hashlib.sha256(pixels).digest())
+            repeated=signature in seen_title_pixels
             if unique and signature in seen_title_pixels:
                 return None
             seen_title_pixels.add(signature)
-            return self.engine(pixels,use_det=False,use_cls=False,return_word_box=False)
+            result=self.engine(pixels,use_det=False,use_cls=False,return_word_box=False)
+            if ((quality is not None or _quality_context is not None) and not repeated and result.txts
+                    and result.scores[0]>=.90):
+                family_readings.append(result.txts[0])
+            return result
 
         readings = []
+        def family_result():
+            nonlocal family_resolver,quality,quality_checked
+            if quality is None and (_quality_context is None or quality_checked):
+                return None
+            if family_resolver is None:
+                if not FamilyNameResolver.has_family_readings(readings):
+                    return None
+                if not quality_checked:
+                    measured=_quality_context()
+                    quality_checked=True
+                    quality=measured['level'] if measured['status']=='confirmed' else None
+                    if quality is None:
+                        return None
+                family_resolver=(_family_context() if _family_context is not None
+                                 else FamilyNameResolver(catalog))
+            result=family_resolver.resolve(family_readings,quality,observed_readings=readings)
+            return {**result,'readings':list(readings)} if result is not None else None
+
         for view in name_views(crop):
             result = read_title(view)
             readings.append(result.txts[0] if result.txts and result.scores[0] >= .90 else '')
+        # Always acquire the initial three views before accepting a new route.
+        # All complete trusted titles veto; only distinct pixels supply votes.
+        family=family_result()
+        if family is not None:return family
         resolution=resolve_name(readings,catalog)
         if resolution['status']=='unrecognized':
             # Tight white title strokes avoid wide background and thin punctuation.
@@ -156,6 +200,8 @@ class Vision:
                 supported=resolve_name(retries,catalog)
                 combined=resolve_name(readings+retries,catalog)
                 readings+=retries
+                family=family_result()
+                if family is not None:return family
                 if supported['status']=='resolved' and combined['status']=='resolved':
                     resolution={**combined,'method':'tight_binary_two_views'}
                 elif combined['status'] in ('conflict','ambiguous'):
@@ -171,6 +217,8 @@ class Vision:
                     supported=resolve_name(widened,catalog)
                     combined=resolve_name(readings+widened,catalog)
                     readings+=widened
+                    family=family_result()
+                    if family is not None:return family
                     if combined['status']=='resolved':
                         # Exact agreement may span a binary and a wider color
                         # view; both are direct reads with the same confidence
@@ -185,6 +233,8 @@ class Vision:
                         # Avoid extra reads for missing catalog names or conflicts.
                         result=read_title(tight)
                         readings.append(result.txts[0] if result.txts and result.scores[0]>=.90 else '')
+                        family=family_result()
+                        if family is not None:return family
                         confirmed=resolve_name(readings,catalog)
                         if confirmed['status']=='resolved':
                             resolution={**confirmed,'method':'tight_color_two_views'}
@@ -197,6 +247,8 @@ class Vision:
                             view=tight.resize((round(tight.width*1.6),tight.height),Image.Resampling.LANCZOS)
                             result=read_title(view)
                             readings.append(result.txts[0] if result.txts and result.scores[0]>=.90 else '')
+                            family=family_result()
+                            if family is not None:return family
                             confirmed=resolve_name(readings,catalog)
                             if confirmed['status']=='resolved':
                                 resolution={**confirmed,'method':'tight_color_resampled_two_views'}
@@ -220,6 +272,8 @@ class Vision:
                         result=read_title(view)
                         retries.append(result.txts[0] if result.txts and result.scores[0]>=.90 else '')
                     readings+=retries
+                    family=family_result()
+                    if family is not None:return family
                     combined=resolve_name(readings,catalog)
                     if combined['status']=='resolved':
                         resolution={**combined,'method':'dim_context_two_views'}
@@ -248,6 +302,8 @@ class Vision:
                         continue
                     readings.append(result.txts[0] if result.txts and result.scores[0]>=.90 else '')
                 combined=resolve_name(readings,catalog)
+                family=family_result()
+                if family is not None:return family
                 if combined['status']=='resolved':
                     resolution={**combined,'method':'roman_title_context_two_views'}
                 elif combined['status'] in ('conflict','ambiguous'):
