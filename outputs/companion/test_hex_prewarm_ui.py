@@ -161,6 +161,18 @@ class HexPrewarmUI(unittest.TestCase):
         self.p.comp_url.setText('https://www.dataj.cc/comp/' + comp)
         self.p.pin_comp()
 
+    def prime_prewarm_cache(self, *, exact_ids=()):
+        # These cases start with known tables/cached ranks and exercise a
+        # blocked exact request. Establish that state through the real adapter
+        # before starting their readiness deadline; cold scheduling and source
+        # pacing remain covered by the dedicated unmodified tests.
+        self.p.adapter.hexes()
+        self.p.adapter.hexes('112')
+        for identity in exact_ids:
+            self.p.adapter.explore('hex',
+                {'id': identity, 'name': self.NAMES[self.IDS.index(identity)]},
+                hex_stage='2-1', required_comp='112')
+
     def exact_requests(self):
         with self.call_lock:
             requests = list(self.calls)
@@ -253,6 +265,7 @@ class HexPrewarmUI(unittest.TestCase):
         self.direct_ids.clear()
         self.block_exact = ('1006', '0')
         self.exact_release.clear()
+        self.prime_prewarm_cache(exact_ids=('1023', '1479'))
         self.pin()
         self.assertTrue(self.pump_until(
             lambda: self.block_exact in self.exact_keys(), 5))
@@ -284,6 +297,7 @@ class HexPrewarmUI(unittest.TestCase):
         self.direct_ids.clear()
         self.block_exact = ('1023', '0')
         self.exact_release.clear()
+        self.prime_prewarm_cache()
         self.pin()
         self.assertTrue(self.pump_until(self.exact_entered.is_set))
         warm = self.p.hex_prewarm
@@ -327,6 +341,7 @@ class HexPrewarmUI(unittest.TestCase):
         self.direct_ids.clear()
         self.block_exact = ('1023', '0')
         self.exact_release.clear()
+        self.prime_prewarm_cache()
         self.pin()
         self.assertTrue(self.pump_until(self.exact_entered.is_set))
         old = self.p.hex_prewarm
@@ -347,6 +362,7 @@ class HexPrewarmUI(unittest.TestCase):
         self.direct_ids.clear()
         self.block_exact = ('1023', '0')
         self.exact_release.clear()
+        self.prime_prewarm_cache()
         self.pin()
         self.assertTrue(self.pump_until(self.exact_entered.is_set))
         count = len(self.exact_requests())

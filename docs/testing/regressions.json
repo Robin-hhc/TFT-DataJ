@@ -1254,10 +1254,11 @@
       "history_key": "hex-pin-latency",
       "title": "固定阵容排名加载与预热",
       "coverage": "automated",
-      "verified_scope": "真实Qt/adapter事件屏障，已知rank先显、supplement逐个显、pin立即warm、900s正负table reuse/前后台capacity；已发live Future的后台join不额外占HTTP槽，两不同live请求在首请求与join仍阻塞时同时进入Mock边界；2026-10-12来源失败后至少60秒/共享冷却后自动恢复、延长冷却/新局/版本/取消及阶段推进保护",
-      "coverage_change_note": "2026-10-11：保留test_joining_live_future_does_not_consume_an_extra_http_slot原方法ID，将整批submit到完成0.3秒绝对速度断言改为两个不同请求同时进入Mock边界、首owner与实际shared Future等待均未完成的容量事件断言；原Barrier(2,timeout=1)、返回数据与3次HTTP断言保留，首owner/后台原2秒结果等待保留，two_live结果从释放前0.3秒改为释放后2秒有界核对，增加三次实际请求ID完整断言。bb15 CI只证明原完成等待超时；受控350ms构造/调度延迟在仍空闲2槽时拒绝正确实现，说明速度混入容量契约，不声称自然CI原因已复现。独立源码契约审计与额外占slot坏变体另留验收记录；原bb15方法源码/AST及旧不可变素材保留，HTTP总容量3、生产代码、其它旧方法与原图基线均不更改。 2026-10-21：补登记刷新元数据原方法；首轮exact9cc CI此方法失败，本机Event单变量重现证明第三卡进入HTTP不代表第二卡完成。仅将250ms发布检查起点绑定已校验结果完成Event，前后等待实际job终态，保留250ms和原metadata/已补查/可见文本断言，并新增旧均排保留、精确scope/sample/pending/第三卡未释放及终态顺序断言；未删除注册方法/旧fixture/原图，未改生产路径或性能预算。原失败/原方法源码及删除新source坏变体拒绝证据留本机，见本轮发布验收记录。",
+      "verified_scope": "真实Qt/adapter事件屏障，已知rank先显、supplement逐个显、pin立即warm、900s正负table reuse/前后台capacity；已发live Future的后台join不额外占HTTP槽，两不同live请求在首请求与join仍阻塞时同时进入Mock边界；2026-10-12来源失败后至少60秒/共享冷却后自动恢复、延长冷却/新局/版本/取消及阶段推进保护；2026-10-22已缓存排名与生命周期测试在真实adapter准备后执行原阻塞/共享在途/槽位/取消与迟到发布断言，冷启动及生产节奏由未修改的独立方法覆盖",
+      "coverage_change_note": "2026-10-11：保留test_joining_live_future_does_not_consume_an_extra_http_slot原方法ID，将整批submit到完成0.3秒绝对速度断言改为两个不同请求同时进入Mock边界、首owner与实际shared Future等待均未完成的容量事件断言；原Barrier(2,timeout=1)、返回数据与3次HTTP断言保留，首owner/后台原2秒结果等待保留，two_live结果从释放前0.3秒改为释放后2秒有界核对，增加三次实际请求ID完整断言。bb15 CI只证明原完成等待超时；受控350ms构造/调度延迟在仍空闲2槽时拒绝正确实现，说明速度混入容量契约，不声称自然CI原因已复现。独立源码契约审计与额外占slot坏变体另留验收记录；原bb15方法源码/AST及旧不可变素材保留，HTTP总容量3、生产代码、其它旧方法与原图基线均不更改。 2026-10-21：补登记刷新元数据原方法；首轮exact9cc CI此方法失败，本机Event单变量重现证明第三卡进入HTTP不代表第二卡完成。仅将250ms发布检查起点绑定已校验结果完成Event，前后等待实际job终态，保留250ms和原metadata/已补查/可见文本断言，并新增旧均排保留、精确scope/sample/pending/第三卡未释放及终态顺序断言；未删除注册方法/旧fixture/原图，未改生产路径或性能预算。原失败/原方法源码及删除新source坏变体拒绝证据留本机，见本轮发布验收记录。 2026-10-22：v1.0.0发布后的tag/document CI分别在new_game取消动作前、partial_cached前台查询前的准备等待处失败；本机仅给原MockTransport响应加入固定650ms/350ms延迟，两方法在相同准备断言红色复现，保持原生产路径、响应答案、断言及等待不变，不声称已确定自然CI每段调度耗时。仅在六项已缓存/生命周期测试pin前通过真实DataJ.hexes/explore校验并建立约定主表/已有排名；待取消的首个exact或partial_cached的第三项exact仍须真实进入阻塞。相同延迟两方法由红转绿；AST审计移除新增准备helper与四处调用后，全部既有方法、断言、5s/3.5s等待及6s受控HTTP释放期限与旧源码一致。三项真正冷启动/900s留存/阶段计划测试原样保留；本组原有Source.request普通节奏豁免未改变，生产后台完成节奏/容量/冷却仍由未改动test_source_budget与test_dataj_hex_prefetch独立约束。补登记六项精确public方法，旧ID/fixture/oracle/批准图像与生产代码全部保留；原失败报告、旧测试源码、readiness-red/green及逐方法AST审计留本机，公开依据见2026-10-22-prewarm-test-readiness验收记录。",
       "limits": [
-        "绝对网络ms无跨硬件SLA；release EXE另外诊断"
+        "绝对网络ms无跨硬件SLA；release EXE另外诊断",
+        "六项已缓存/生命周期方法不作为冷启动准备速度或真实网络时延SLA；三项冷启动/留存/阶段计划方法及独立来源节奏检查另行运行，受控响应延迟不是自然CI完整时序重建"
       ],
       "origin_commits": [
         "be87752",
@@ -1269,7 +1270,9 @@
         "outputs/companion/test_source_budget.py",
         "docs/development-records/2026-10-11-live-match-conditions.md",
         "docs/testing/hex-failure-root-cause-20261012.md",
-        "docs/development-records/2026-10-21-release-v0.2.20.md"
+        "docs/development-records/2026-10-21-release-v0.2.20.md",
+        "outputs/companion/test_hex_prewarm_ui.py",
+        "docs/development-records/2026-10-22-prewarm-test-readiness.md"
       ],
       "tests": [
         {
@@ -1366,6 +1369,30 @@
         },
         {
           "id": "test_hex_comp_latency.HexCompLatency.test_refresh_progress_keeps_new_source_metadata_with_newly_finished_ranks",
+          "scope": "public"
+        },
+        {
+          "id": "test_hex_prewarm_ui.HexPrewarmUI.test_partial_cached_ranks_keep_candidate_slots_and_exact_source_scope",
+          "scope": "public"
+        },
+        {
+          "id": "test_hex_prewarm_ui.HexPrewarmUI.test_unpin_cancels_queued_missing_stages_and_late_publication",
+          "scope": "public"
+        },
+        {
+          "id": "test_hex_prewarm_ui.HexPrewarmUI.test_new_game_cancels_queued_missing_stages_and_late_publication",
+          "scope": "public"
+        },
+        {
+          "id": "test_hex_prewarm_ui.HexPrewarmUI.test_changing_statistics_version_cancels_old_missing_stages",
+          "scope": "public"
+        },
+        {
+          "id": "test_hex_prewarm_ui.HexPrewarmUI.test_changing_composition_cannot_reuse_old_target_rank",
+          "scope": "public"
+        },
+        {
+          "id": "test_hex_prewarm_ui.HexPrewarmUI.test_shutdown_cancels_queued_missing_stages",
           "scope": "public"
         }
       ]
