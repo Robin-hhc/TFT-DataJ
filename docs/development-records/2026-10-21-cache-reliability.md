@@ -188,3 +188,7 @@ cwd为隔离交付树，解释器仍为绝对路径Python3.12：`E:/tft-helper/w
 新launcher193684/GUI207648（创建于2026-10-21T09:01:33.1915920Z），同root/source命令和--start-collapsed；PID绑定ready与所有owned窗口WM_NULL响应通过，309源码冻结hash仍匹配。初次隐藏UIA没有版本控件，脚本明确退出1并留存`source-restart-incomplete-20261021-170142-678158.json`，没有再次退出/重启。随后只对新GUI线程使用已有WM_HOTKEY/id51短暂展开，实际同PID的ComboBox selected value为18.4，与先前独立保存的当前网页首个set18 gameVersions条目一致，再收起。`source-restart-final-ui.json`与`local-delivery-final.json`最终通过；后者再次核对3023安装文件、旧EXE保留、快捷方式、设置、309来源及16个owned窗口响应。初始未完成记录保留，未以缓存query key或构造器默认版本冒充UI验证。
 
 收口：本轮已完成授权的本机修复、回归、打包和两个入口更新。没有新增数据库/解析依赖或缩略头像，没有证实常规RAM明显减少；正常路径原预算保持，原故障恢复5/10ms失败报告与用户接受成本的决定均保留。未重新开展实战FPS、MuMu合成、物理侧键或另一台电脑验证；这些边界不由源码与隔离EXE结果替代。
+
+## 2026-10-21 后续公开发布
+
+本记录上文保留v0.2.19本机交付阶段的状态。用户随后授权发布，公共CI发现两处测试路径/异步同步缺陷；红复现、原业务断言保留、受控坏变体及独立审阅后，仅修两个测试和台账/文档，运行模块/依赖/资源不变。保留v19候选，另从精确 `3f79b145125661a957ea6b22f5f87c0b715dea41` 完整构建并发布[v0.2.20](https://github.com/Robin-hhc/TFT-DataJ/releases/tag/v0.2.20)：本机1004、CI981、76方法、46批准原图、16故障、新EXE离线/联网/9图与三附件公开下载核验通过。桌面EXE更新v20，源码CMD及活动GUI运行逻辑不变；15pending另留原归档，硬件/FPS限制不变。完整命令、SHA及首轮失败见[后续验收](2026-10-21-release-v0.2.20.md)。
