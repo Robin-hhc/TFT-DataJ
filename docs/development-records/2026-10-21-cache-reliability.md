@@ -1,6 +1,6 @@
 # 2026-10-21：缓存恢复、头像与交付一致性
 
-当前状态：用户已明确接受仅坏缓存恢复的额外几毫秒；有限重试补丁及17新回归已完成，主树1043/交付树1003项、两边16类故障注入与74方法逐项审计通过，46批准原图复验通过。正常帧时延A/A及A/B达原预算。准备从新干净提交构建v0.2.19并验收/更新本机，尚未安装；v0.2.18候选及其先前结果保留，不替代新增保护的EXE验收。
+当前状态：已安装v0.2.19并更新桌面EXE入口，源码版正常退出后重启，新GUI实际选中18.4且恢复收起。用户已明确接受仅坏缓存恢复的额外几毫秒；有限重试及17新回归完成，主树1043/交付树1003项、两边16类故障注入与74方法逐项审计通过，46批准原图复验通过。新EXE离线/联网/9原图/后台持续故障封顶诊断通过；正常帧时延A/A及A/B达原预算。旧v0.2.17安装与v0.2.18候选保留；未推送或公开发布，不宣称实战FPS/物理侧键/异机重新验收。
 
 ## 目标与范围
 
@@ -172,3 +172,19 @@ cwd为隔离交付树，解释器仍为绝对路径Python3.12：`E:/tft-helper/w
 随后相同解释器执行`tools/check_data_mutations.py --report E:/tft-helper/work/cache-reliability-20261021/retry-final-validation/mutations-clean.json`与`perf-agent/audit_gate.py --root C:/Users/Robin/.codex/worktrees/recognition-fix-20261018/tft-helper --validation .../retry-final-validation/clean-with-private.json --mutations .../retry-final-validation/mutations-clean.json --requirements .../perf-agent/required-delivery-methods-final74.json --report .../retry-final-validation/clean-74-audit.json`，均退出0，16/16故障捕获、74/74方法通过，0缺失/未注册。两边测试后未再改运行代码/依赖/资源。
 
 本机交付脚本按v0.2.19单独保留于`delivery-v0.2.19/`，不会覆盖原v0.2.18预检证据；安装器增加实际EXE retry_limits字段、持续503/坏200各3HTTP/2wake/min60s的强校验。独立只读审阅发现正常shutdown保存panel_geometry/mark_position可能令旧脚本在退出后中止：现改为备份退出前和正常保存后的文件，仅允许这两个合法窗口位置字段变化，后续使用退出后设置，不回写旧值。3个专门核对及3脚本compile通过，日志`settings-validation.log`；该修正仅在work交付脚本，不进入产品或影响已过源码门槛。
+
+### v0.2.19包与本机更新完成
+
+最终产品源码提交`9cc6fef243152895867c2a84e10a010cd0bfd36f`（9个范围文件，657插入/8删除），暂存补丁SHA256 `1fc04499e6dbcf9e3d8839c7419b25b401b9d6a99aac7a499689bbdbef1420c5`。提交前175个交付Python来源与全套后审计hash完全一致；提交后工作树干净。仅本地提交，未推送/tag/公开Release。
+
+在空work/package-build从头执行`E:/tft-helper/work/p0-runtime/Scripts/python.exe -u -X utf8 packaging/build_windows.py --version 0.2.19`，退出0。新`dist/TFT-DataJ-0.2.19-windows-x64.zip`为281,188,988字节，SHA256 `52fd69e26fdc5dbc1cd56deafe0e6a7a9064c48db9ce8734a0d888c429c80cc0`；manifest源码为9cc6fef、working_changes=false，3023个文件和194来源指纹逐项核对，manifest SHA256 `976f6e0ba6eba2e593b4762e0dd752aee9fa0516d3971771ebfaba24f51985f7`。完整日志`retry-final-validation/build-v0.2.19.log`，离线原报告另存`package-offline-v0.2.19.json`。
+
+随后同解释器运行`packaging/verify_windows.py C:/Users/Robin/.codex/worktrees/recognition-fix-20261018/tft-helper/dist/TFT-DataJ-0.2.19-windows-x64.zip --online --recognition-fixture E:/tft-helper/work/suffix-recognition-20261021/package-agent/exe-recognition-v0.2.17.json`，退出0、report.status=passed；真实HTTPS英雄头像及9张批准原图回放通过，原图/目录/独立oracle hash不变，三个slot逐项resolved且无mismatch。实际EXE的retry_limits分别在持续503和业务无效200下3请求/2延迟wake后停止，min60秒、过期回调与重复start无新增请求；cache_recovery全部合同也通过。联网原报告`package-online-v0.2.19.json` SHA256 `dbc89b38fb1085e24e98d16228f8f319060cc10b64d6dc135fe21a7e07adfce3`。ZIP/checksum/在线报告复制到主树dist不存在的同名路径，源与目标hash相同，不覆盖旧版本。
+
+本机安装：`delivery-v0.2.19/install_validated_package.py`按README完整参数先preflight、再`--execute --update-shortcut`，两次退出0。新目录`%LOCALAPPDATA%/Programs/TFT-DataJ/v0.2.19/TFT-DataJ`全部3023文件核对通过，旧v0.2.17 EXE hash `5d98a088962c5cad1ddcd338441669ada0e68745d47c2fc9da47e574d49390bb`未改变。桌面TFT-DataJ.lnk目标/图标/描述均为v0.2.19，参数保留，link SHA256 `b1123bc9a0df796763018190020899dc074d29a0ef6df040ccd21978c4a33855`；源码CMD仍指向E:/tft-helper且字节hash `63ceb22957232c7ab934ac0cf15f0a870b68bef67fe227a39fbf36745ae5f374`未变。原快捷方式备份在交付work目录，原始执行日志`installation-execute-v0.2.19.log`保留。
+
+源码更新：`delivery-v0.2.19/restart_source.py --source-fingerprint E:/tft-helper/work/cache-reliability-20261021/candidate-source-final-retry-limits.json --expected-patch 18.4`先只读preflight，再`--execute`。原GUI206544/launcher202668经creation/exe/argv确认后，仅向其拥有的Qt线程投递原app.quit的WM_HOTKEY/id53，正常退出，未强杀。窗口浮标位置由Qt正常保存，只有General/mark_position值变化；退出前及正常保存后均备份，不覆盖新位置，其余偏好值未变。启动及后续验收的input.ini SHA256固定为`0d56a0ab19d6205411c016a5771247a11a5ecadadd0a0853708770fcbc495880`。
+
+新launcher193684/GUI207648（创建于2026-10-21T09:01:33.1915920Z），同root/source命令和--start-collapsed；PID绑定ready与所有owned窗口WM_NULL响应通过，309源码冻结hash仍匹配。初次隐藏UIA没有版本控件，脚本明确退出1并留存`source-restart-incomplete-20261021-170142-678158.json`，没有再次退出/重启。随后只对新GUI线程使用已有WM_HOTKEY/id51短暂展开，实际同PID的ComboBox selected value为18.4，与先前独立保存的当前网页首个set18 gameVersions条目一致，再收起。`source-restart-final-ui.json`与`local-delivery-final.json`最终通过；后者再次核对3023安装文件、旧EXE保留、快捷方式、设置、309来源及16个owned窗口响应。初始未完成记录保留，未以缓存query key或构造器默认版本冒充UI验证。
+
+收口：本轮已完成授权的本机修复、回归、打包和两个入口更新。没有新增数据库/解析依赖或缩略头像，没有证实常规RAM明显减少；正常路径原预算保持，原故障恢复5/10ms失败报告与用户接受成本的决定均保留。未重新开展实战FPS、MuMu合成、物理侧键或另一台电脑验证；这些边界不由源码与隔离EXE结果替代。
